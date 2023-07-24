@@ -1,0 +1,3 @@
+{
+  "extends": "./projects/client/tsconfig.json"
+}
