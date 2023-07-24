@@ -33,3 +33,11 @@ coverage
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# environments
+.env
+.env.*
+!.env.example
+
+# docker 
+.docker-vol
