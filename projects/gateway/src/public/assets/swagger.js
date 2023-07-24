@@ -31,7 +31,7 @@ function renderMenu() {
 
 function menuTrigger(menuDom) {
   menuDom.classList.remove('active');
-  const triggerArea = 5;
+  const triggerArea = 20;
   window.addEventListener('mousemove', (e) => {
     const { clientX } = e;
     const showing = menuDom.classList.contains('active');
