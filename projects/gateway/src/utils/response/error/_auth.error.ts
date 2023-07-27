@@ -1,4 +1,5 @@
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common'
+import { ErrorCode } from 'zjf-types'
 
 const _authErrors: ErrorMessageCollection = {
   [ErrorCode.AUTH_LOGIN_EXPIRED]: {
@@ -9,14 +10,18 @@ const _authErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.UNAUTHORIZED,
     message: '请登录后重试',
   },
-  [ErrorCode.AUTH_USERNAME_NOT_REGISTERED]: {
+  [ErrorCode.AUTH_PHONE_NUMBER_NOT_REGISTERED]: {
     httpStatus: HttpStatus.FORBIDDEN,
-    message: '用户名未注册',
+    message: '手机号码未注册',
+  },
+  [ErrorCode.AUTH_EMAIL_NOT_REGISTERED]: {
+    httpStatus: HttpStatus.FORBIDDEN,
+    message: '邮箱未注册',
   },
   [ErrorCode.AUTH_PASSWORD_NOT_MATCHED]: {
     httpStatus: HttpStatus.FORBIDDEN,
     message: '密码错误',
   },
-};
+}
 
-export default _authErrors;
+export default _authErrors

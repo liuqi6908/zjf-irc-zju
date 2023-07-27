@@ -5,7 +5,7 @@ export interface IUser extends ICreatedAt, IUpdatedAt {
   id: string;
 
   /** 手机号 */
-  phoneNumber: string;
+  phone: string;
 
   /** 邮箱 */
   email?: string;
@@ -18,4 +18,7 @@ export interface IUser extends ICreatedAt, IUpdatedAt {
 
   /** 头像地址 */
   avatar?: string;
+
+  /** 账号是否被删除 */
+  isDeleted?: boolean;
 }

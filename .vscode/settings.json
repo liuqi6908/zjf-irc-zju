@@ -16,6 +16,7 @@
     "unplugin",
     "Vite",
     "vitejs",
+    "vitepress",
     "Vitesse",
     "vitest",
     "vueuse"

@@ -1,22 +1,27 @@
-import { join } from 'path';
-import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { validatePath } from '@catsjuice/utils';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { join } from 'node:path'
+import { Module } from '@nestjs/common'
+import { APP_INTERCEPTOR } from '@nestjs/core'
+import { validatePath } from '@catsjuice/utils'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { ServeStaticModule } from '@nestjs/serve-static'
+import type { TypeOrmModuleOptions } from '@nestjs/typeorm'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 
-import allConfig from './config';
+import allConfig from './config'
 
-import { AppService } from './app.service';
-import { AppController } from './app.controller';
-import { UserModule } from './modules/user/user.module';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { AppService } from './app.service'
+import { AppController } from './app.controller'
+import { UserModule } from './modules/user/user.module'
+import { AuthModule } from './modules/auth/auth.module'
+import { RedisModule } from './modules/redis/redis.module'
+import { ResponseInterceptor } from './interceptors/response.interceptor'
 
 @Module({
   imports: [
     // Internal Modules
     UserModule,
+    AuthModule,
+    RedisModule,
 
     // External Modules
     ConfigModule.forRoot({

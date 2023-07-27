@@ -1,8 +1,9 @@
-import { IUser } from 'zjf-types';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import type { IUser } from 'zjf-types'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 
-import { BaseTimeStamp } from './_timestamp';
+import { BaseTimeStamp } from './_timestamp'
+import { UserDeleted } from './user-deleted'
 
 @Entity()
 export class User extends BaseTimeStamp implements IUser {
@@ -11,7 +12,7 @@ export class User extends BaseTimeStamp implements IUser {
     example: 'd0b0d0b0-d0b0-d0b0-d0b0-d0b0d0b0d0b0',
   })
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: string
 
   @ApiProperty({
     description: '手机号码',
@@ -19,24 +20,30 @@ export class User extends BaseTimeStamp implements IUser {
     uniqueItems: true,
   })
   @Column({ unique: true })
-  phoneNumber: string;
+  phone: string
 
   @ApiPropertyOptional({
     description: '邮箱',
     example: 'somebody@gmail.com',
   })
   @Column({ nullable: true })
-  email?: string;
+  email?: string
 
   @ApiProperty({ description: '密码（加密后）' })
   @Column({ select: false })
-  password: string;
+  password: string
 
   @ApiPropertyOptional({ description: '用户昵称' })
   @Column({ nullable: true })
-  nickname?: string;
+  nickname?: string
 
   @ApiPropertyOptional({ description: '头像地址' })
   @Column({ nullable: true })
-  avatar?: string;
+  avatar?: string
+
+  @Column({ select: false, default: false })
+  isDeleted?: boolean
+
+  @OneToOne(() => UserDeleted, deleted => deleted.user)
+  deletedRecord: UserDeleted
 }

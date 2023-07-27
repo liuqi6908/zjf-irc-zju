@@ -1,4 +1,5 @@
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common'
+import { ErrorCode } from 'zjf-types'
 
 const _commonError: ErrorMessageCollection = {
   [ErrorCode.COMMON_PARAMS_NOT_VALID]: {
@@ -13,6 +14,6 @@ const _commonError: ErrorMessageCollection = {
     httpStatus: HttpStatus.INTERNAL_SERVER_ERROR,
     message: '发生未知错误',
   },
-};
+}
 
-export default _commonError;
+export default _commonError

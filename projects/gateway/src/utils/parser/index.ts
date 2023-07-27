@@ -1,1 +1,1 @@
-export * from "./parseBoolRaw";
+export * from './parseBoolRaw'

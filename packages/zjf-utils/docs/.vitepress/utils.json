@@ -1,0 +1,54 @@
+[
+  {
+    "text": "browser",
+    "items": [
+      {
+        "text": "download",
+        "link": "/browser/download"
+      }
+    ]
+  },
+  {
+    "text": "common",
+    "items": [
+      {
+        "text": "camel2dash",
+        "link": "/common/camel2dash"
+      },
+      {
+        "text": "dash2camel",
+        "link": "/common/dash2camel"
+      },
+      {
+        "text": "parser",
+        "items": [
+          {
+            "text": "parseBoolRaw",
+            "link": "/common/parser/parseBoolRaw"
+          }
+        ]
+      },
+      {
+        "text": "random",
+        "items": [
+          {
+            "text": "random-int",
+            "link": "/common/random/random-int"
+          },
+          {
+            "text": "random-password",
+            "link": "/common/random/random-password"
+          }
+        ]
+      },
+      {
+        "text": "sleep",
+        "link": "/common/sleep"
+      },
+      {
+        "text": "validatePath",
+        "link": "/common/validatePath"
+      }
+    ]
+  }
+]

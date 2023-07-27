@@ -1,6 +1,6 @@
-import { decorate, Mixin } from 'ts-mixer';
-import { ApiProperty } from '@nestjs/swagger';
-import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Mixin, decorate } from 'ts-mixer'
+import { ApiProperty } from '@nestjs/swagger'
+import { CreateDateColumn, UpdateDateColumn } from 'typeorm'
 
 export class CreatedAt {
   @decorate(
@@ -11,7 +11,7 @@ export class CreatedAt {
     }),
   )
   @decorate(CreateDateColumn({ name: 'createdAt', type: 'timestamp' }))
-  createdAt: Date;
+  createdAt: Date
 }
 
 export class UpdatedAt {
@@ -23,7 +23,7 @@ export class UpdatedAt {
     }),
   )
   @decorate(UpdateDateColumn({ name: 'updatedAt', type: 'timestamp' }))
-  updatedAt: Date;
+  updatedAt: Date
 }
 
 export class BaseTimeStamp extends Mixin(CreatedAt, UpdatedAt) {}

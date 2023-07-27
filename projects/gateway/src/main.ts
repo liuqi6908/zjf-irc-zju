@@ -1,38 +1,51 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import * as path from 'node:path'
+import { NestFactory } from '@nestjs/core'
+import compression from '@fastify/compress'
+import { ConfigService } from '@nestjs/config'
+import { validatePath } from '@catsjuice/utils'
+import { Logger, ValidationPipe } from '@nestjs/common'
+
+import type { NestFastifyApplication } from '@nestjs/platform-fastify'
 import {
   FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
-import * as path from 'path';
-import { ConfigService } from '@nestjs/config';
-import { validatePath } from '@catsjuice/utils';
-import { parseBoolRaw } from './utils/parser';
-import registerSwagger from './bootstrap/register-swagger';
-import { Logger } from '@nestjs/common';
+} from '@nestjs/platform-fastify'
+import registerSwagger from './bootstrap/register-swagger'
+
+import { AppModule } from './app.module'
+import { parseBoolRaw } from './utils/parser'
+import { getExceptionFactory } from './utils/response/validate-exception-factory'
 
 async function bootstrap() {
-  const logger = new Logger('Bootstrap');
+  const logger = new Logger('Bootstrap')
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
-  );
+  )
 
-  const packageJson = await require(path.join(__dirname, '../package.json'));
-  const cfgSrv = app.get(ConfigService);
-  const globalPrefix = validatePath(cfgSrv.get('SERVER_BASE_PATH') || '/');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const packageJson = await require(path.join(__dirname, '../package.json'))
+  const cfgSrv = app.get(ConfigService)
+  const globalPrefix = validatePath(cfgSrv.get('SERVER_BASE_PATH') || '/')
 
   // Register Swagger
   if (parseBoolRaw(cfgSrv.get('SWAGGER_ENABLED')))
-    await registerSwagger(app, cfgSrv, globalPrefix, packageJson.version);
+    await registerSwagger(app, cfgSrv, globalPrefix, packageJson.version)
+
+  /** 启用 压缩 */
+  app.register(compression)
+
+  /** 启用 validation */
+  app.useGlobalPipes(
+    new ValidationPipe({ exceptionFactory: getExceptionFactory() }),
+  )
 
   // Global variables
-  global.prefix = globalPrefix;
-  global.version = packageJson.version;
+  globalThis.prefix = globalPrefix
+  globalThis.version = packageJson.version
 
   // Start server
-  await app.listen(parseInt(cfgSrv.get('SERVER_PORT')) || 3000, '::');
-  logger.log(`App is running on ${await app.getUrl()}`);
+  await app.listen(Number.parseInt(cfgSrv.get('SERVER_PORT')) || 3000, '::')
+  logger.log(`App is running on ${await app.getUrl()}`)
 }
-bootstrap();
+bootstrap()

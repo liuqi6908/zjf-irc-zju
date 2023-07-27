@@ -1,7 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common'
 
-import { AppService } from './app.service';
-import { ApiErrorResponse, ApiSuccessResponse } from './utils/response';
+import { ErrorCode } from 'zjf-types'
+import { AppService } from './app.service'
+import { ApiErrorResponse, ApiSuccessResponse } from './utils/response'
 
 @Controller()
 export class AppController {
@@ -11,6 +12,6 @@ export class AppController {
   @ApiSuccessResponse(String)
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    return this.appService.getHello()
   }
 }
