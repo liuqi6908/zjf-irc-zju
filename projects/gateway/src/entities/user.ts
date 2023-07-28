@@ -29,7 +29,7 @@ export class User extends BaseTimeStamp implements IUser {
   @Column({ nullable: true })
   email?: string
 
-  @ApiProperty({ description: '密码（加密后）' })
+  // @ApiProperty({ description: '密码（加密后）' })
   @Column({ select: false })
   password: string
 
