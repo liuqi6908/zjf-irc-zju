@@ -15,7 +15,7 @@ export class AuthController {
   @ApiSuccessResponse(LoginSuccessResDto)
   @ApiOperation({ summary: '通过账号与密码登录' })
   @Post('login/password')
-  public async login(@Body() body: LoginByPasswordBodyDto) {
+  public async loginByPassword(@Body() body: LoginByPasswordBodyDto) {
     emailPhoneAtLeastOne(body)
     return await this._authSrv.loginByPassword(body)
   }

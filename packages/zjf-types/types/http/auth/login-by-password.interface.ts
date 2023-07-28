@@ -1,5 +1,14 @@
-import { IUser } from '../../entities/user.interface';
 import { IBasicResponse } from '../basic.interface';
+import { IUser } from '../../entities/user.interface';
+import { IPasswordDto } from '../../dto/password.interface';
+import { IPhoneOptionalDto } from '../../dto/phone.interface';
+import { IEmailOptionalDto } from '../../dto/email.interface';
+
+export interface ILoginByPasswordBodyDto 
+  extends 
+  IPasswordDto,
+  IPhoneOptionalDto,
+  IEmailOptionalDto {}
 
 /** 登录成功的响应类型定义 */
 export interface ILoginSuccessResData {
