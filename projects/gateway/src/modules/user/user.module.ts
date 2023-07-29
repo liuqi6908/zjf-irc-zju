@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { UserDeleted } from 'src/entities/user-deleted'
 
 import { UserService } from './user.service'
-import { UserController } from './user.controller';
+import { UserController } from './user.controller'
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, UserDeleted])],

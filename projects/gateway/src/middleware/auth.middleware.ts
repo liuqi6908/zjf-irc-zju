@@ -40,6 +40,8 @@ export class AuthMiddleware implements NestMiddleware {
       next()
       return
     }
+
+    req.token = access_token
     const _jwtAuthSrv = this._modRef.get(JwtAuthService, { strict: false })
     const _userSrv = this._modRef.get(UserService, { strict: false })
     let info, user: User
@@ -62,18 +64,18 @@ export class AuthMiddleware implements NestMiddleware {
       return next()
 
     if (user.isDeleted) {
-      this.logger.error(`用户 ${user.phone}, ${user.id} 已被删除，无法登录`)
+      this.logger.error(`用户 ${user.account}, ${user.id} 已被删除，无法登录`)
       return next()
     }
     // 比较数据库内的用户手机号与 access_token 解析的手机号是否一致
-    if (info?.phone && info?.phone === user.phone) {
+    if (info?.account && info?.account === user.account) {
       req.user = user
     }
     else {
       // 如果手机号不一致，判定用户已更新了手机号，旧的登录授权 token 全部销毁
       req.accessTokenExpired = true
       this.logger.warn(
-        `User[${info?.id}]'s phone in db[${user.phone}] not match phone in token[${info.phone}]`,
+        `User[${info?.id}]'s account in db[${user.account}] not match account in token[${info.account}]`,
       )
       // 直接销毁 token
       try {

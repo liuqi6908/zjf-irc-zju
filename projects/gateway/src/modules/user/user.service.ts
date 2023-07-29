@@ -100,7 +100,7 @@ export class UserService {
   public async deleteUser(where: FindOptionsWhere<User>) {
     await this._userRepo.update(where, {
       isDeleted: true,
-      phone: null,
+      account: null,
       email: null,
     })
   }

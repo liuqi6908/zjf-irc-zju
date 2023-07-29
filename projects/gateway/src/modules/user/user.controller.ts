@@ -6,6 +6,7 @@ import { emailPhoneAtLeastOne } from 'src/utils/validator/email-phone-at-least-o
 
 import { UserService } from './user.service'
 import { UserProfileResponseDto } from './dto/user.res.dto'
+import { CreateUserResDto } from './dto/create-user.res.dto'
 import { CreateUserBodyDto } from './dto/create-user.body.dto'
 
 @ApiTags('User | 用户')
@@ -16,15 +17,16 @@ export class UserController {
   ) {}
 
   @ApiOperation({ summary: '创建一个新用户' })
+  @ApiSuccessResponse(CreateUserResDto)
   @Put('create')
   public async createUser(@Body() body: CreateUserBodyDto) {
     emailPhoneAtLeastOne(body)
     return await this._userSrv.insertUser(body)
   }
 
-  @IsLogin()
-  @ApiSuccessResponse(UserProfileResponseDto)
   @ApiOperation({ summary: '获取当前登录用户的信息' })
+  @ApiSuccessResponse(UserProfileResponseDto)
+  @IsLogin()
   @Get('profile/own')
   public async getOwnProfile(@Req() req: FastifyRequest) {
     return req.raw.user

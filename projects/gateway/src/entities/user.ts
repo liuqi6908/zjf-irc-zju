@@ -15,12 +15,12 @@ export class User extends BaseTimeStamp implements IUser {
   id: string
 
   @ApiProperty({
-    description: '手机号码',
-    example: '15829296464',
+    description: '账号',
+    example: 'catsjuice',
     uniqueItems: true,
   })
   @Column({ unique: true })
-  phone: string
+  account: string
 
   @ApiPropertyOptional({
     description: '邮箱',
