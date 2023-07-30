@@ -10,15 +10,11 @@ const deprecated = computed(() => decryptPasswordInHttp(encrypted.value))
 </script>
 
 <template>
-  <div>
-    <div i-carbon:campsite inline-block />
-    <input v-model="input">
-    <div>{{ encrypted }}</div>
-    <div>{{ deprecated }}</div>
-  </div>
+  <div full />
 </template>
 
 <route lang="yaml">
+redirect: /home
 meta:
   layout: home
 </route>
