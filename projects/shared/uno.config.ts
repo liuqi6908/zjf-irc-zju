@@ -49,5 +49,11 @@ export default defineConfig({
       alert: { success: '#F5F7FA', error: '#F44336', warning: '#FFBA2F' },
       opacity: { primary: 'rgba(48, 123, 246, 0.12)' }
     },
+    breakpoints: {
+      'xs': '320px',
+      'sm': '640px',
+      'lg': '1024px',
+      'xl': '1280px',
+    },
   },
 })
