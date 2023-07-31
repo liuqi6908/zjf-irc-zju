@@ -56,6 +56,7 @@ export class UserService implements OnModuleInit {
         })
       }
       catch (err) {
+        console.error(err)
         await this._userRepo.update({ account: sa.account }, {
           password: await encryptPassword(sa.password),
           isSysAdmin: true,

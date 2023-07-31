@@ -1,9 +1,10 @@
 import type { IUser } from 'zjf-types'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 
 import { BaseTimeStamp } from './_timestamp'
 import { UserDeleted } from './user-deleted'
+import { Role } from './role'
 
 @Entity()
 export class User extends BaseTimeStamp implements IUser {
@@ -48,5 +49,12 @@ export class User extends BaseTimeStamp implements IUser {
   isSysAdmin: boolean
 
   @OneToOne(() => UserDeleted, deleted => deleted.user)
-  deletedRecord: UserDeleted
+  deletedRecord?: UserDeleted
+
+  @ManyToOne(() => Role, role => role.users, { onDelete: 'SET NULL' })
+  @JoinColumn()
+  role?: Role
+
+  @Column({ nullable: true })
+  roleName?: string
 }

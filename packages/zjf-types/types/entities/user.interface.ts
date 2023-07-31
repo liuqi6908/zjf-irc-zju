@@ -1,3 +1,4 @@
+import { IRole } from './role.interface';
 import { IAccountDto } from '../dto/account.interface';
 import { IPasswordDto } from '../dto/password.interface';
 import { IEmailOptionalDto } from '../dto/email.interface';
@@ -23,4 +24,10 @@ export interface IUser extends
 
   /** 是否是系统管理员 */
   isSysAdmin: boolean;
+
+  /** 用户的角色信息 */
+  role?: IRole;
+
+  /** 角色名称（角色信息外键） */
+  roleName?: string;
 }

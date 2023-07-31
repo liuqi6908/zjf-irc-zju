@@ -14,16 +14,20 @@ import { AppService } from './app.service'
 import { AppController } from './app.controller'
 import { UserModule } from './modules/user/user.module'
 import { AuthModule } from './modules/auth/auth.module'
+import { RoleModule } from './modules/role/role.module'
 import { RedisModule } from './modules/redis/redis.module'
 import { AuthMiddleware } from './middleware/auth.middleware'
 import { ResponseInterceptor } from './interceptors/response.interceptor'
+import { PermissionModule } from './modules/permission/permission.module'
 
 @Module({
   imports: [
     // Internal Modules
     UserModule,
     AuthModule,
+    RoleModule,
     RedisModule,
+    PermissionModule,
 
     // External Modules
     ConfigModule.forRoot({
