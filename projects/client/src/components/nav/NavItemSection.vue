@@ -9,14 +9,14 @@ const props = withDefaults(defineProps<Props>(), {
   iconSize: 24,
 })
 
-function getImageUrl(url: string) {
-  return new URL(`${url}`, import.meta.url).href
-}
+// function getImageUrl(url: string) {
+//   return new URL(`${url}`, import.meta.url).href
+// }
 </script>
 
 <template>
   <q-item-section avatar min-w-0 p-0>
-    <img :style="{ width: `${iconSize}px`, height: `${iconSize}px` }" :src="getImageUrl(icon)">
+    <div v-html="icon" />
   </q-item-section>
   <q-item-section ml-4 items-start font-600>
     {{ name }}

@@ -16,38 +16,38 @@ const navList = [
   {
     id: 'home',
     name: '首页',
-    icon: '../../assets/layout/home.svg',
+    icon: ' <div  i-mingcute:home-4-line  style="width:24px;height:24px"/>',
     authority: '',
   },
   {
     id: 'buyData',
     name: '已购数据资源',
-    icon: '../../assets/layout/bag.svg',
+    icon: '<div i-mingcute:shopping-bag-1-line style="width:24px;height:24px"/ >',
   },
   {
     id: 'selfData',
     name: '自建数据库',
-    icon: '../../assets/layout/folder.svg',
+    icon: '<div i-mingcute:folder-2-line style="width:24px;height:24px"/>',
   },
   {
     id: 'publicData',
     name: '公共数据资源',
-    icon: '../../assets/layout/chart.svg',
+    icon: '<div i-mingcute:chart-bar-line style="width:24px;height:24px"/>',
   },
   {
     id: 'preData',
     name: '预购数据资源',
-    icon: '../../assets/layout/cart.svg',
+    icon: '<div i-mingcute:shopping-cart-1-line style="width:24px;height:24px"/ >',
   },
 ]
 
 const question = [
   {
-    icon: '../../assets/layout/question.svg',
+    icon: '<div i-mingcute:question-line style="width:24px;height:24px"/>',
     name: '常见问题解答(Q&A)',
     id: 'QandA',
   },
-  { icon: '../../assets/layout/manager.svg', id: 'adminQRCode', name: '管理员二维码', back: 'fas fa-chevron-right' },
+  { icon: '<div i-mingcute:user-setting-line style="width:24px;height:24px"/>', id: 'adminQRCode', name: '管理员二维码', back: 'fas fa-chevron-right' },
 ]
 function toQuestionLink(item: any) {
   questionLink.value = item.id
@@ -71,6 +71,7 @@ function toQuestionLink(item: any) {
             <span text-xl font-600 text-grey-8>
               智能云科研平台
             </span>
+            <!-- <Icon text-grey-8 icon="mdi-light:home" /> -->
           </div>
 
           <div>
@@ -82,7 +83,6 @@ function toQuestionLink(item: any) {
 
       <q-drawer
         style="border-right: 1px solid var(--grey-3, #D4DDEA);"
-
         show-if-above flex flex-col bg-grey-2
         :width="260"
         :mini-width="80"
@@ -109,10 +109,8 @@ function toQuestionLink(item: any) {
             >
               <q-item
                 v-ripple
-
                 :active="link === item.id"
                 active-class="bg-primary-1 text-white"
-
                 clickable border-rd-2 text-grey-5
                 @click="() => link = item.id"
               >
@@ -128,7 +126,6 @@ function toQuestionLink(item: any) {
               :key="item.id"
               :active="questionLink === item.id"
               active-class="text-primary-1 opacity-primary-1"
-
               clickable border-rd-2 text-grey-5
               @click="toQuestionLink(item)"
             >
