@@ -44,6 +44,9 @@ export class User extends BaseTimeStamp implements IUser {
   @Column({ select: false, default: false })
   isDeleted?: boolean
 
+  @Column({ select: false, default: false })
+  isSysAdmin: boolean
+
   @OneToOne(() => UserDeleted, deleted => deleted.user)
   deletedRecord: UserDeleted
 }

@@ -20,4 +20,7 @@ export interface IUser extends
 
   /** 账号是否被删除 */
   isDeleted?: boolean;
+
+  /** 是否是系统管理员 */
+  isSysAdmin: boolean;
 }

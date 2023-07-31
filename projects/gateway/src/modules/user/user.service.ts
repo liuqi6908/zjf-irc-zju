@@ -1,8 +1,13 @@
+import { ErrorCode } from 'zjf-types'
 import { User } from 'src/entities/user'
 import { Injectable } from '@nestjs/common'
 import { objectKeys } from '@catsjuice/utils'
+import { ConfigService } from '@nestjs/config'
 import { mergeDeep } from 'src/utils/mergeDeep'
+import type { OnModuleInit } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { responseError } from 'src/utils/response'
+import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { encryptPassword } from 'src/utils/encrypt/encrypt-password'
 
 import type {
@@ -12,22 +17,52 @@ import type {
 } from 'typeorm'
 import {
   In,
+  Not,
   Repository,
 } from 'typeorm'
-import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
-import { responseError } from 'src/utils/response'
-import { ErrorCode } from 'zjf-types'
+import type { SysAdmin } from '../../config/_sa.config'
 
 const defaultQueryUserOptions = {
-  where: { isDeleted: false },
+  where: { isDeleted: false, isSysAdmin: false },
 }
 
 @Injectable()
-export class UserService {
+export class UserService implements OnModuleInit {
   constructor(
     @InjectRepository(User)
     private readonly _userRepo: Repository<User>,
+    private readonly _cfgSrv: ConfigService,
   ) {}
+
+  onModuleInit() {
+    this.initSysAdmin()
+  }
+
+  public async initSysAdmin() {
+    const superAdminList = this._cfgSrv.get<SysAdmin[]>('sa.list')
+    // 删除无效的超级管理员
+    await this._userRepo.delete({
+      isSysAdmin: true,
+      account: Not(In(superAdminList.map(sa => sa.account))),
+    })
+
+    // 添加新的超级管理员
+    for (const sa of superAdminList) {
+      try {
+        await this._userRepo.save({
+          account: sa.account,
+          password: await encryptPassword(sa.password),
+          isSysAdmin: true,
+        })
+      }
+      catch (err) {
+        await this._userRepo.update({ account: sa.account }, {
+          password: await encryptPassword(sa.password),
+          isSysAdmin: true,
+        })
+      }
+    }
+  }
 
   /**
    * 查找指定 id 的用户

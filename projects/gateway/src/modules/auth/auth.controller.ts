@@ -2,9 +2,9 @@ import { IsLogin } from 'src/guards/login.guard'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { ApiSuccessResponse } from 'src/utils/response'
 import { Body, Controller, Post, Req } from '@nestjs/common'
-import { emailPhoneAtLeastOne } from 'src/utils/validator/email-phone-at-least-one'
 
 import { JwtAuthService } from '../jwt-auth/jwt-auth.service'
+import { emailAccountAtLeastOne } from '../../utils/validator/account-phone-at-least-one'
 import { AuthService } from './auth.service'
 import { LoginSuccessResDto } from './dto/login-success.res.dto'
 import { LoginByPasswordBodyDto } from './dto/login-by-password.body.dto'
@@ -21,7 +21,7 @@ export class AuthController {
   @ApiOperation({ summary: '通过 账号/邮箱 + 密码 登录' })
   @Post('login/password')
   public async loginByPassword(@Body() body: LoginByPasswordBodyDto) {
-    emailPhoneAtLeastOne(body)
+    emailAccountAtLeastOne(body)
     return await this._authSrv.loginByPassword(body)
   }
 
