@@ -14,6 +14,12 @@ export default defineConfig({
     ['full', 'w-full h-full'],
     ['flex-center', 'flex items-center justify-center'],
   ],
+  rules: [
+    // [/^h-([\.\d]+)$/, ([_, num]) => ({ height: `${num+1}rem` })],
+    // [/^text-h(\d+)$/, ([_, size]) => ({
+    //   fontSize: `${32 - (size - 1) * 4}px`
+    // })],
+  ],
   presets: [
     presetUno(),
     presetAttributify(),
@@ -36,4 +42,12 @@ export default defineConfig({
     transformerVariantGroup(),
   ],
   safelist: 'prose m-auto text-left'.split(' '),
+  theme: {
+    colors: {
+      primary: { 1: '#307BF6', 2: '#0057B2', 3: '#D1E8FD' },
+      grey: { 1: '#FFFFFF', 2: '#F5F7FA', 3: '#D4DDEA', 4: '#A6B1C2', 5: '#6E7686', 6: '#575E6A', 7: '#373C48', 8: '#292D36' },
+      alert: { success: '#F5F7FA', error: '#F44336', warning: '#FFBA2F' },
+      opacity: { primary: 'rgba(48, 123, 246, 0.12)' }
+    },
+  },
 })
