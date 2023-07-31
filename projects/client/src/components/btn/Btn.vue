@@ -21,7 +21,7 @@ const btnClass = computed(() => {
 </script>
 
 <template>
-  <q-btn :flat="transparent === true" :label="label" :outline="outline === true" :class="btnClass">
+  <q-btn :flat="transparent === true" :label="label" :outline="outline === true" :class="btnClass" unelevated>
     <div v-if="transparent" class="translucent-mask" :class="`bg-${bgColor}`" />
   </q-btn>
 </template>
@@ -31,12 +31,12 @@ const btnClass = computed(() => {
     border-radius:inherit;
 }
 .translucent-mask {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0.12;
-            border-radius:inherit;
-        }
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0.12;
+    border-radius:inherit;
+}
 </style>
