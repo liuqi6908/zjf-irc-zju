@@ -14,6 +14,9 @@ import {
   In,
   Repository,
 } from 'typeorm'
+import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
+import { responseError } from 'src/utils/response'
+import { ErrorCode } from 'zjf-types'
 
 const defaultQueryUserOptions = {
   where: { isDeleted: false },
@@ -84,12 +87,25 @@ export class UserService {
    * @returns
    */
   public async insertUser(user: Partial<User>) {
-    return await this._userRepo.save(
-      await this._userRepo.create({
-        ...user,
-        password: await encryptPassword(user.password),
-      }),
-    )
+    try {
+      return await this._userRepo.save(
+        await this._userRepo.create({
+          ...user,
+          password: await encryptPassword(user.password),
+        }),
+      )
+    }
+    catch (err) {
+      const error = parseSqlError(err)
+      if (error === SqlError.DUPLICATE_ENTRY) {
+        const value = err.message.match(/Duplicate entry\s+'(.*?)'/)?.[1]
+        if (value === user.account)
+          responseError(ErrorCode.USER_ACCOUNT_REGISTERED)
+        else if (value === user.email)
+          responseError(ErrorCode.USER_EMAIL_REGISTERED)
+      }
+      throw err
+    }
   }
 
   /**

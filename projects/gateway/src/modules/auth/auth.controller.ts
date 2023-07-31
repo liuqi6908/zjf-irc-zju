@@ -18,7 +18,7 @@ export class AuthController {
   ) {}
 
   @ApiSuccessResponse(LoginSuccessResDto)
-  @ApiOperation({ summary: '通过 手机号/邮箱 + 密码 登录' })
+  @ApiOperation({ summary: '通过 账号/邮箱 + 密码 登录' })
   @Post('login/password')
   public async loginByPassword(@Body() body: LoginByPasswordBodyDto) {
     emailPhoneAtLeastOne(body)

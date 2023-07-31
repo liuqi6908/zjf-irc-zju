@@ -20,18 +20,18 @@ export class AuthService {
    * @returns
    */
   public async loginByPassword(body: LoginByPasswordBodyDto) {
-    const { phone, email, password } = body
-    if (!phone && !email)
+    const { account, email, password } = body
+    if (!account && !email)
       throw new Error('手机号码或邮箱地址至少需要填写一个')
     const qb = this._userSrv.qb().addSelect('u.password')
-    if (phone)
-      qb.where('phone = :phone', { phone })
+    if (account)
+      qb.where('account = :account', { account })
     else if (email)
       qb.where('email = :email', { email })
     const user = await qb.getOne()
     if (!user) {
       responseError(
-        phone
+        account
           ? ErrorCode.AUTH_PHONE_NUMBER_NOT_REGISTERED
           : ErrorCode.AUTH_EMAIL_NOT_REGISTERED)
     }

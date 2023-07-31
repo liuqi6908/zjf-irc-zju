@@ -26,7 +26,7 @@ export class User extends BaseTimeStamp implements IUser {
     description: '邮箱',
     example: 'somebody@gmail.com',
   })
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   email?: string
 
   // @ApiProperty({ description: '密码（加密后）' })

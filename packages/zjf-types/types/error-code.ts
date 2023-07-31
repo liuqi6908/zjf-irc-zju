@@ -17,12 +17,20 @@ export enum ErrorCode {
   AUTH_PHONE_NUMBER_NOT_REGISTERED = 200005,
   /** 邮箱未注册 */
   AUTH_EMAIL_NOT_REGISTERED = 200006,
+  /** 账号未注册 */
+  AUTH_ACCOUNT_NOT_REGISTERED = 200007,
 
   // 权限相关错误
   PERMISSION_DENIED = 300001,
 
   // 用户相关
   USER_NOT_FOUND = 400001,
+  /** 账号已注册 */
+  USER_ACCOUNT_REGISTERED = 400002,
+  /** 邮箱已注册 */
+  USER_EMAIL_REGISTERED = 400003,
+  /** 用户已存在 */
+  USER_EXISTED = 400004,
 }
 
 export type ErrorMessageCollection = Partial<
