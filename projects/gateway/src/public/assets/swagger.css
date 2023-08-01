@@ -157,3 +157,8 @@ td.parameters-col_description .renderedMarkdown:nth-child(2) p {
   text-align: right;
   padding-right: 1rem;
 }
+
+.swagger-ui .renderedMarkdown code {
+  display: inline-block;
+  margin: 2px;
+}

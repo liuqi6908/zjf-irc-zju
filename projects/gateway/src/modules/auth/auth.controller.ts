@@ -25,6 +25,8 @@ export class AuthController {
     return await this._authSrv.loginByPassword(body)
   }
 
+  // @ApiOperation({ summary: '注册' })
+
   @ApiOperation({ summary: '登出' })
   @IsLogin()
   @Post('logout')
