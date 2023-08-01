@@ -1,13 +1,12 @@
-<script>
-export default {
+<script setup lang="ts">
 
-}
 </script>
 
 <template lang="">
   <div>注册</div>
 </template>
 
-<style lang="">
-
-</style>
+<route lang="yaml">
+meta:
+  layout: auth
+</route>
