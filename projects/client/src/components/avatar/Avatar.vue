@@ -2,6 +2,7 @@
 interface Props {
   name: string
   size?: number
+  visitor?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   size: 30,
@@ -18,10 +19,10 @@ const subStr = computed(() => {
 <template>
   <div
     :style="{ width: `${size}px`, height: `${size}px` }"
-
-    flex-center border-size-1.5 b-primary-1 rounded-full
+    flex-center border-size-1.5 b-primary-1 rounded-full text-primary-1
   >
-    <span text-primary-1>
+    <div v-if="visitor" i-mingcute:user-2-fill />
+    <span v-else>
       {{ subStr }}
     </span>
   </div>

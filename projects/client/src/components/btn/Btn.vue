@@ -21,7 +21,7 @@ const btnClass = computed(() => {
 </script>
 
 <template>
-  <q-btn :flat="transparent === true" :label="label" :outline="outline === true" :class="btnClass" unelevated>
+  <q-btn :flat="transparent === true" :label="label" :outline="outline === true" :class="btnClass" unelevated rounded-2>
     <div v-if="transparent" class="translucent-mask" :class="`bg-${bgColor}`" />
   </q-btn>
 </template>
