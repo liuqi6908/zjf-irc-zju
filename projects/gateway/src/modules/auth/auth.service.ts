@@ -1,9 +1,11 @@
+import { ErrorCode } from 'zjf-types'
 import { Injectable } from '@nestjs/common'
 import { responseError } from 'src/utils/response'
-import { ErrorCode } from 'zjf-types'
 import { comparePassword } from 'src/utils/encrypt/encrypt-password'
+
 import { UserService } from '../user/user.service'
 import { JwtAuthService } from '../jwt-auth/jwt-auth.service'
+
 import type { LoginByPasswordBodyDto } from './dto/login-by-password.body.dto'
 
 @Injectable()
@@ -32,8 +34,9 @@ export class AuthService {
     if (!user) {
       responseError(
         account
-          ? ErrorCode.AUTH_PHONE_NUMBER_NOT_REGISTERED
-          : ErrorCode.AUTH_EMAIL_NOT_REGISTERED)
+          ? ErrorCode.AUTH_ACCOUNT_NOT_REGISTERED
+          : ErrorCode.AUTH_EMAIL_NOT_REGISTERED,
+      )
     }
 
     // 校验密码

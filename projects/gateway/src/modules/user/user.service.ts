@@ -56,7 +56,6 @@ export class UserService implements OnModuleInit {
         })
       }
       catch (err) {
-        console.error(err)
         await this._userRepo.update({ account: sa.account }, {
           password: await encryptPassword(sa.password),
           isSysAdmin: true,
@@ -72,9 +71,7 @@ export class UserService implements OnModuleInit {
    * @returns
    */
   public async findById(id: string, options?: FindManyOptions<User>) {
-    const defaultOptions: FindOneOptions<User> = {
-      ...defaultQueryUserOptions,
-    }
+    const defaultOptions: FindOneOptions<User> = {}
     const requiredOptions: FindOneOptions<User> = {
       where: { id },
     }

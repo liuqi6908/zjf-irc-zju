@@ -20,6 +20,7 @@
     "build:cjs": "rimraf dist/cjs/**/* && tsc -p \"tsconfig.cjs.json\""
   },
   "devDependencies": {
+    "@catsjuice/utils": "^0.1.7",
     "concurrently": "^8.0.1",
     "nodemon": "^2.0.22",
     "rimraf": "^5.0.0"

@@ -7,11 +7,14 @@ import { Permission } from 'src/entities/permission'
 import { objectEntries, objectKeys } from '@catsjuice/utils'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 
+import { RoleService } from '../role/role.service'
+
 @Injectable()
 export class PermissionService implements OnModuleInit {
   constructor(
     @InjectRepository(Permission)
     private readonly _permissionRepo: Repository<Permission>,
+    private readonly _roleSrv: RoleService,
   ) {}
 
   onModuleInit() {
@@ -19,7 +22,7 @@ export class PermissionService implements OnModuleInit {
   }
 
   private async _initPermissions() {
-    objectEntries(permissionDescriptions).forEach(async ([name, description]) => {
+    await Promise.all(objectEntries(permissionDescriptions).map(async ([name, description]) => {
       // do upsert
       try {
         await this._permissionRepo.save({ name, description })
@@ -33,6 +36,9 @@ export class PermissionService implements OnModuleInit {
       }
       // delete unused permissions
       await this._permissionRepo.delete({ name: Not(In(objectKeys(permissionDescriptions))) })
-    })
+    }))
+
+    // init roles after permissions are ready
+    await this._roleSrv.initDefaultRoles()
   }
 }

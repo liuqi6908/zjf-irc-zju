@@ -11,6 +11,9 @@ export function parseSqlError(error: any) {
     if (error.message.match(/foreign key constraint fails/))
       return SqlError.FOREIGN_KEY_CONSTRAINT_FAILS
   }
+  else if (error.name === 'EntityPropertyNotFoundError') {
+    return SqlError.ENTITY_PROPERTY_NOT_FOUND
+  }
 
   return SqlError.UNEXPECTED
 }
