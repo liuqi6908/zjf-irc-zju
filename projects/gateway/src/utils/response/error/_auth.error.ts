@@ -26,6 +26,10 @@ const _authErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.FORBIDDEN,
     message: '密码错误',
   },
+  [ErrorCode.AUTH_CODE_NOT_MATCHED]: {
+    httpStatus: HttpStatus.FORBIDDEN,
+    message: '验证码错误',
+  },
 }
 
 export default _authErrors

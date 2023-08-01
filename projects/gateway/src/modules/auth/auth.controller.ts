@@ -1,10 +1,11 @@
+import { ErrorCode } from 'zjf-types'
 import { IsLogin } from 'src/guards/login.guard'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { ApiSuccessResponse } from 'src/utils/response'
-import { Body, Controller, Post, Req } from '@nestjs/common'
+import { Body, Controller, Post, Put, Req } from '@nestjs/common'
+import { ApiErrorResponse, ApiSuccessResponse } from 'src/utils/response'
+import { emailAccountAtLeastOne } from 'src/utils/validator/account-phone-at-least-one'
 
 import { JwtAuthService } from '../jwt-auth/jwt-auth.service'
-import { emailAccountAtLeastOne } from '../../utils/validator/account-phone-at-least-one'
 import { AuthService } from './auth.service'
 import { RegisterBodyDto } from './dto/register.body.dto'
 import { LoginSuccessResDto } from './dto/login-success.res.dto'
@@ -26,11 +27,12 @@ export class AuthController {
     return await this._authSrv.loginByPassword(body)
   }
 
-  @ApiOperation({ summary: '注册' })
-  public async register(
-    @Body() body: RegisterBodyDto,
-  ) {
-    // return await this._authSrv.register()
+  @ApiOperation({ summary: '注册（邮箱+验证码）' })
+  @ApiSuccessResponse(LoginSuccessResDto)
+  @ApiErrorResponse(ErrorCode.AUTH_CODE_NOT_MATCHED)
+  @Put('register')
+  public async register(@Body() body: RegisterBodyDto) {
+    return await this._authSrv.register(body)
   }
 
   @ApiOperation({ summary: '登出' })

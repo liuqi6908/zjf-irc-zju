@@ -19,6 +19,8 @@ export enum ErrorCode {
   AUTH_EMAIL_NOT_REGISTERED = 200006,
   /** 账号未注册 */
   AUTH_ACCOUNT_NOT_REGISTERED = 200007,
+  /** 验证码错误 */
+  AUTH_CODE_NOT_MATCHED = 200008,
 
   // 权限相关错误
   PERMISSION_DENIED = 300001,
