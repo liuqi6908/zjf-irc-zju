@@ -29,8 +29,10 @@ export enum ErrorCode {
   USER_ACCOUNT_REGISTERED = 400002,
   /** 邮箱已注册 */
   USER_EMAIL_REGISTERED = 400003,
+  /** 邮箱未注册 */
+  USER_EMAIL_NOT_REGISTERED = 400004,
   /** 用户已存在 */
-  USER_EXISTED = 400004,
+  USER_EXISTED = 400005,
 }
 
 export type ErrorMessageCollection = Partial<

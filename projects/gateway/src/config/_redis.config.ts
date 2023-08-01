@@ -27,5 +27,12 @@ export default registerAs('redis', () => {
       username: process.env.REDIS_AUTH_JWT_USERNAME,
       password: process.env.REDIS_AUTH_JWT_PASSWORD,
     }),
+    [RedisType.CODE]: getUrl({
+      host: process.env.REDIS_CODE_HOST,
+      port: Number.parseInt(process.env.REDIS_CODE_PORT),
+      db: Number.parseInt(process.env.REDIS_CODE_DB),
+      username: process.env.REDIS_CODE_USERNAME,
+      password: process.env.REDIS_CODE_PASSWORD,
+    }),
   }
 })

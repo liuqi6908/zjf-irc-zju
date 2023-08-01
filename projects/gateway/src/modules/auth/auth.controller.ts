@@ -6,6 +6,7 @@ import { Body, Controller, Post, Req } from '@nestjs/common'
 import { JwtAuthService } from '../jwt-auth/jwt-auth.service'
 import { emailAccountAtLeastOne } from '../../utils/validator/account-phone-at-least-one'
 import { AuthService } from './auth.service'
+import { RegisterBodyDto } from './dto/register.body.dto'
 import { LoginSuccessResDto } from './dto/login-success.res.dto'
 import { LoginByPasswordBodyDto } from './dto/login-by-password.body.dto'
 
@@ -25,7 +26,12 @@ export class AuthController {
     return await this._authSrv.loginByPassword(body)
   }
 
-  // @ApiOperation({ summary: '注册' })
+  @ApiOperation({ summary: '注册' })
+  public async register(
+    @Body() body: RegisterBodyDto,
+  ) {
+    // return await this._authSrv.register()
+  }
 
   @ApiOperation({ summary: '登出' })
   @IsLogin()

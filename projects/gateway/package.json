@@ -32,6 +32,7 @@
     "@nestjs/platform-fastify": "^10.1.2",
     "@nestjs/serve-static": "^4.0.0",
     "@nestjs/swagger": "^7.1.2",
+    "@nestjs/throttler": "^4.2.1",
     "@nestjs/typeorm": "^10.0.0",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",

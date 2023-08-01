@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:client": "pnpm --filter client dev",
     "dev:server": "pnpm --filter server start:dev",
-    "dev:admin": "pnpm --filter admin dev"
+    "dev:admin": "pnpm --filter admin dev",
+    "lint-staged": "lint-staged"
   },
   "keywords": [],
   "author": "",

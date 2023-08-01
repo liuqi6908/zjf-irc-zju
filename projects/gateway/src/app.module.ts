@@ -1,11 +1,12 @@
 import { join } from 'node:path'
-import { APP_INTERCEPTOR } from '@nestjs/core'
 import { validatePath } from '@catsjuice/utils'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Module, RequestMethod } from '@nestjs/common'
 import { ServeStaticModule } from '@nestjs/serve-static'
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
 import type { TypeOrmModuleOptions } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import type { MiddlewareConsumer, NestModule } from '@nestjs/common'
 
 import allConfig from './config'
@@ -30,6 +31,7 @@ import { PermissionModule } from './modules/permission/permission.module'
     RedisModule,
     EmailModule,
     PermissionModule,
+    ThrottlerModule.forRoot({ ttl: 60, limit: 30 }),
 
     // External Modules
     ConfigModule.forRoot({
@@ -58,10 +60,8 @@ import { PermissionModule } from './modules/permission/permission.module'
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ResponseInterceptor,
-    },
+    { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],
 })
 export class AppModule implements NestModule {
