@@ -13,6 +13,9 @@ importers:
       '@catsjuice/utils':
         specifier: ^0.1.7
         version: registry.npmmirror.com/@catsjuice/utils@0.1.7
+      '@nestjs/common':
+        specifier: ^10.1.2
+        version: registry.npmmirror.com/@nestjs/common@10.1.2(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
       concurrently:
         specifier: ^8.0.1
         version: registry.npmmirror.com/concurrently@8.0.1
@@ -12028,7 +12031,7 @@ packages:
     name: html5parser
     version: 2.0.2
     dependencies:
-      tslib: registry.npmmirror.com/tslib@2.6.0
+      tslib: registry.npmmirror.com/tslib@2.6.1
     dev: true
 
   registry.npmmirror.com/htmlparser2@8.0.2:
@@ -16610,7 +16613,7 @@ packages:
     name: rxjs
     version: 7.8.1
     dependencies:
-      tslib: registry.npmmirror.com/tslib@2.6.0
+      tslib: registry.npmmirror.com/tslib@2.6.1
 
   registry.npmmirror.com/safe-array-concat@1.0.0:
     resolution: {integrity: sha512-9dVEFruWIsnie89yym+xWTAYASdpw3CJV7Li/6zBewGf9z2i1j31rP6jnY0pHEO4QZh6N0K11bFjWmdR8UGdPQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/safe-array-concat/-/safe-array-concat-1.0.0.tgz}
@@ -17618,7 +17621,7 @@ packages:
     engines: {node: ^14.18.0 || >=16.0.0}
     dependencies:
       '@pkgr/utils': registry.npmmirror.com/@pkgr/utils@2.4.2
-      tslib: registry.npmmirror.com/tslib@2.6.0
+      tslib: registry.npmmirror.com/tslib@2.6.1
     dev: true
 
   registry.npmmirror.com/tapable@2.2.1:
@@ -18106,6 +18109,7 @@ packages:
     resolution: {integrity: sha512-7At1WUettjcSRHXCyYtTselblcHl9PJFFVKiCAy/bY97+BPZXSQ2wbq0P9s8tK2G7dFQfNnlJnPAiArVBVBsfA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tslib/-/tslib-2.6.0.tgz}
     name: tslib
     version: 2.6.0
+    dev: false
 
   registry.npmmirror.com/tslib@2.6.1:
     resolution: {integrity: sha512-t0hLfiEKfMUoqhG+U1oid7Pva4bbDPHYfJNiB7BiIjRkj1pyC++4N3huJfqY6aRH6VTB0rvtzQwjM4K6qpfOig==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/tslib/-/tslib-2.6.1.tgz}

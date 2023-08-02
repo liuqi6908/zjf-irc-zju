@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@catsjuice/utils": "^0.1.7",
+    "@nestjs/common": "^10.1.2",
     "concurrently": "^8.0.1",
     "nodemon": "^2.0.22",
     "rimraf": "^5.0.0"
