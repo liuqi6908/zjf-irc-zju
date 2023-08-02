@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZJF-IRC</title>
+  <script src="https://unpkg.com/dockbar@latest/dockbar.iife.js"></script>
 
   <style>
     :root {
@@ -15,12 +16,22 @@
     }
 
     @media (prefers-color-scheme: dark) {
-      html,body {
+
+      html,
+      body {
         background: #222;
       }
+
       * {
         color: white;
       }
+    }
+
+    a,
+    a:visited,
+    a:active,
+    a:hover {
+      color: unset;
     }
 
     html,
@@ -51,6 +62,10 @@
       position: relative;
       -webkit-perspective: 200px;
       perspective: 200px;
+      transition: all 0.2s ease;
+    }
+    .raster-item:hover {
+      margin-top: -120px;
     }
 
     .raster-item::after,
@@ -82,25 +97,31 @@
 </head>
 
 <body>
-  <div id="raster"></div>
+  <div id="raster" data-cursor="text"></div>
 
-  <p style="text-align-last: justify; width: 300px">
-    <span>Z</span>
-    <span>J</span>
-    <span>F</span>
-    <span>-</span>
-    <span>I</span>
-    <span>R</span>
-    <span>C</span>
-    <span>&nbsp;</span>
-    <span>S</span>
-    <span>E</span>
-    <span>R</span>
-    <span>V</span>
-    <span>I</span>
-    <span>C</span>
-    <span>E</span>
-  </p>
+  <div data-cursor="text">
+    <dock-wrapper size="20">
+      <dock-item>Z</dock-item>
+      <dock-item>J</dock-item>
+      <dock-item>F</dock-item>
+      <dock-item>-</dock-item>
+      <dock-item>I</dock-item>
+      <dock-item>R</dock-item>
+      <dock-item>C</dock-item>
+      <dock-item>&nbsp;</dock-item>
+      <dock-item>S</dock-item>
+      <dock-item>E</dock-item>
+      <dock-item>R</dock-item>
+      <dock-item>V</dock-item>
+      <dock-item>I</dock-item>
+      <dock-item>C</dock-item>
+      <dock-item>E</dock-item>
+    </dock-wrapper>
+  </div>
+
+  <div data-cursor="block" style="padding: 4px 8px; letter-spacing: 2px;">
+    <a href="./docs">API DOCS</a>
+  </div>
 
   <script>
     const count = 50
@@ -137,6 +158,22 @@
     setInterval(() => {
       r.forEach((_, index) => r[index] = Math.random() * 10)
     }, 5000)
+  </script>
+
+  <script type="module">
+    import cursor from "https://unpkg.com/ipad-cursor@latest"
+    cursor.initCursor({
+      normalStyle: {
+        background: '#00000010',
+        border: '1px solid #00000040'
+      },
+      blockStyle: {
+        background: '#00000010'
+      },
+      textStyle: {
+        background: 'currentColor',
+      }
+    })
   </script>
 </body>
 
