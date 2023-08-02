@@ -3,6 +3,8 @@ const router = useRouter()
 
 const drawer = ref(false)
 const qrCodeshow = ref(false)
+const isLogin = ref(false)
+
 const questionLink = ref('')
 const routerLink = ref('')
 
@@ -74,9 +76,10 @@ function toQuestionLink(item: any) {
             <!-- <Icon text-grey-8 icon="mdi-light:home" /> -->
           </div>
 
-          <div>
-            <Btn label="申请使用" transparent />
-            <span text-primary-1>登录/注册</span>
+          <div flex flex-row items-center>
+            <Btn label="申请使用" transparent m-r-2 />
+            <!-- <span text-primary-1>登录/注册</span> -->
+            <Avatar :visitor="isLogin ? false : true" cursor-pointer @click="isLogin ? router.push({ path: '/userCenter' }) : router.push({ path: '/login' })" />
           </div>
         </q-toolbar>
       </q-header>
@@ -92,7 +95,6 @@ function toQuestionLink(item: any) {
         <q-toolbar q-none p-0 flex="~ items-center justify-end">
           <div
             class="nav-Br my-1"
-
             h-8 w-6 flex-center cursor-pointer bg-white
             @click="drawer = !drawer"
           >

@@ -10,7 +10,7 @@ const deprecated = computed(() => decryptPasswordInHttp(encrypted.value))
 </script>
 
 <template>
-  <div full />
+  <div full bg-grey-2 />
 </template>
 
 <route lang="yaml">

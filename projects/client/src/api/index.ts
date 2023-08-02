@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Dialog } from 'quasar'
+import { Dialog, Notify } from 'quasar'
 import { ctx } from '../modules/ctx'
 
 const ErrorCode = {
@@ -11,13 +11,12 @@ const ErrorCode = {
 }
 
 const $http = axios.create({
-//   baseURL: import.meta.env.VITE_API_BASE,
+  baseURL: import.meta.env.VITE_API_BASE,
 })
 
 $http.interceptors.request.use((config) => {
   // if (token && !config.headers.Authorization)
   //   config.headers.Authorization = `Bearer ${token.value}`
-
   const baseURLWhiteList = ['http', '//']
   if (
     config.url
@@ -53,9 +52,20 @@ $http.interceptors.response.use(
     return response
   },
   (error) => {
+    const errorDetailList = error.response.data.detail
+    errorDetailList.forEach(detail =>
+      showNotify(detail.message),
+    )
     return Promise.reject(error)
   },
 )
+
+function showNotify(massage: string) {
+  Notify.create({
+    type: 'danger',
+    message: massage,
+  })
+}
 
 /**
  * 显示跳转登录

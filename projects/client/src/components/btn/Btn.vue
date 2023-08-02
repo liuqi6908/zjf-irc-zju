@@ -1,5 +1,7 @@
 <script setup lang="ts">
-interface Props {
+import type { QBtnGroupProps } from 'quasar'
+
+interface Props extends QBtnGroupProps {
   label?: string
   transparent?: boolean
   outline?: boolean
@@ -7,7 +9,9 @@ interface Props {
   bgColor?: string
   /** 字体颜色 */
   color?: string
+  disable?: boolean
 }
+
 const props = withDefaults(defineProps<Props>(), {
   bgColor: 'primary',
   color: 'white',
@@ -18,10 +22,21 @@ const btnClass = computed(() => {
   else
     return `text-${props.bgColor}`
 })
+
+const finalProps = computed(() => ({ props }))
 </script>
 
 <template>
-  <q-btn :flat="transparent === true" :label="label" :outline="outline === true" :class="btnClass">
+  <q-btn
+    v-bind="finalProps"
+    :flat="transparent === true"
+    :label="label"
+    :outline="outline === true"
+    :class="btnClass"
+    unelevated
+    :disable="disable"
+    rounded-2
+  >
     <div v-if="transparent" class="translucent-mask" :class="`bg-${bgColor}`" />
   </q-btn>
 </template>
@@ -31,12 +46,12 @@ const btnClass = computed(() => {
     border-radius:inherit;
 }
 .translucent-mask {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0.12;
-            border-radius:inherit;
-        }
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0.12;
+    border-radius:inherit;
+}
 </style>

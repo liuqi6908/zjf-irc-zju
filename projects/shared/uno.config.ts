@@ -13,6 +13,8 @@ export default defineConfig({
   shortcuts: [
     ['full', 'w-full h-full'],
     ['flex-center', 'flex items-center justify-center'],
+    ['hTitle-4', 'font-600 text-5'],
+    ['subTitle-1', 'font-600 text-4 text-grey-8']
   ],
   rules: [
     // [/^h-([\.\d]+)$/, ([_, num]) => ({ height: `${num+1}rem` })],
@@ -49,5 +51,15 @@ export default defineConfig({
       alert: { success: '#F5F7FA', error: '#F44336', warning: '#FFBA2F' },
       opacity: { primary: 'rgba(48, 123, 246, 0.12)' }
     },
+    breakpoints: {
+      'xs': '320px',
+      'sm': '640px',
+      'lg': '1024px',
+      'xl': '1280px',
+    },
+    round:{
+      btn:'8px',
+      card:'12px'
+    }
   },
 })
