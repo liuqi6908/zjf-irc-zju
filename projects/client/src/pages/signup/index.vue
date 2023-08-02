@@ -38,15 +38,13 @@ const disable = computed(() => verifyAccept(acceptObj))
 
 <template>
   <div>
-    <div m-b-5>
-      <span>用户名称</span>
-      <UserCodeInput
-        v-model:userCode="userName"
-        user-type="user"
-        :rules="[(val:string) => usernameRules(val)]"
-        @update:accept="(val) => acceptObj.username = val"
-      />
-    </div>
+    <span>用户名称</span>
+    <UserCodeInput
+      v-model:userCode="userName"
+      user-type="user"
+      :rules="[(val:string) => usernameRules(val)]"
+      @update:accept="(val) => acceptObj.username = val"
+    />
 
     <div m-b-5>
       <span>密码</span>
