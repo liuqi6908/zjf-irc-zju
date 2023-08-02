@@ -35,7 +35,7 @@ import { PermissionModule } from './modules/permission/permission.module'
 
     // External Modules
     ConfigModule.forRoot({
-      envFilePath: ['.env.local', '.env.dev', '.env.production', '.env'],
+      envFilePath: ['.env.local', '.env.dev', '.env.staging', '.env.production', '.env'],
       isGlobal: true,
       cache: true,
       load: [...allConfig],
