@@ -6,8 +6,9 @@ const $http = axios.create({
 })
 
 $http.interceptors.request.use((config) => {
-  // if (token && !config.headers.Authorization)
-  //   config.headers.Authorization = `Bearer ${token.value}`
+  const token = localStorage.getItem('auth_token')
+  if (token && !config.headers.Authorization)
+    config.headers.Authorization = `Bearer ${token}`
   const baseURLWhiteList = ['http', '//']
   if (
     config.url

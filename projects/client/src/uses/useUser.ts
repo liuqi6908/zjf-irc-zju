@@ -1,6 +1,7 @@
 import { useStorage } from '@vueuse/core'
 import { encryptPasswordInHttp } from 'zjf-utils'
 import { login } from '~/api/auth/login'
+import { logout } from '~/api/auth/logout'
 import { register } from '~/api/auth/register'
 
 const authToken = useStorage('auth_token', '')
@@ -31,8 +32,17 @@ export function useUser($router = useRouter()) {
       await useLogin(password, account, email)
   }
 
+  const useLogout = async () => {
+    const res = await logout()
+    if (!res)
+      return
+    authToken.value = null
+    $router.replace({ path: '/login' })
+  }
+
   return {
     useRegister,
     useLogin,
+    useLogout,
   }
 }
