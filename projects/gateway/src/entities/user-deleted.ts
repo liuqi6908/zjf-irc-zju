@@ -24,7 +24,7 @@ export class UserDeleted extends CreatedAt implements IUserDeleted {
   user: User
 
   @Column()
-  phoneNumber: string
+  account: string
 
   @Column({ nullable: true })
   email?: string

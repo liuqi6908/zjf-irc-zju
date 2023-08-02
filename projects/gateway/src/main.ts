@@ -27,6 +27,7 @@ async function bootstrap() {
   const packageJson = await require(path.join(__dirname, '../package.json'))
   const cfgSrv = app.get(ConfigService)
   const globalPrefix = validatePath(cfgSrv.get('SERVER_BASE_PATH') || '/')
+  await app.setGlobalPrefix(globalPrefix)
 
   // Register Swagger
   if (parseBoolRaw(cfgSrv.get('SWAGGER_ENABLED')))

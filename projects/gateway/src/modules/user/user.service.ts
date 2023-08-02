@@ -1,8 +1,13 @@
+import { ErrorCode } from 'zjf-types'
 import { User } from 'src/entities/user'
 import { Injectable } from '@nestjs/common'
 import { objectKeys } from '@catsjuice/utils'
+import { ConfigService } from '@nestjs/config'
 import { mergeDeep } from 'src/utils/mergeDeep'
+import type { OnModuleInit } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { responseError } from 'src/utils/response'
+import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { encryptPassword } from 'src/utils/encrypt/encrypt-password'
 
 import type {
@@ -12,19 +17,52 @@ import type {
 } from 'typeorm'
 import {
   In,
+  Not,
   Repository,
 } from 'typeorm'
+import type { SysAdmin } from '../../config/_sa.config'
 
 const defaultQueryUserOptions = {
-  where: { isDeleted: false },
+  where: { isDeleted: false, isSysAdmin: false },
 }
 
 @Injectable()
-export class UserService {
+export class UserService implements OnModuleInit {
   constructor(
     @InjectRepository(User)
     private readonly _userRepo: Repository<User>,
+    private readonly _cfgSrv: ConfigService,
   ) {}
+
+  onModuleInit() {
+    this.initSysAdmin()
+  }
+
+  public async initSysAdmin() {
+    const superAdminList = this._cfgSrv.get<SysAdmin[]>('sa.list')
+    // 删除无效的超级管理员
+    await this._userRepo.delete({
+      isSysAdmin: true,
+      account: Not(In(superAdminList.map(sa => sa.account))),
+    })
+
+    // 添加新的超级管理员
+    for (const sa of superAdminList) {
+      try {
+        await this._userRepo.save({
+          account: sa.account,
+          password: await encryptPassword(sa.password),
+          isSysAdmin: true,
+        })
+      }
+      catch (err) {
+        await this._userRepo.update({ account: sa.account }, {
+          password: await encryptPassword(sa.password),
+          isSysAdmin: true,
+        })
+      }
+    }
+  }
 
   /**
    * 查找指定 id 的用户
@@ -33,9 +71,7 @@ export class UserService {
    * @returns
    */
   public async findById(id: string, options?: FindManyOptions<User>) {
-    const defaultOptions: FindOneOptions<User> = {
-      ...defaultQueryUserOptions,
-    }
+    const defaultOptions: FindOneOptions<User> = {}
     const requiredOptions: FindOneOptions<User> = {
       where: { id },
     }
@@ -84,12 +120,25 @@ export class UserService {
    * @returns
    */
   public async insertUser(user: Partial<User>) {
-    return await this._userRepo.save(
-      await this._userRepo.create({
-        ...user,
-        password: await encryptPassword(user.password),
-      }),
-    )
+    try {
+      return await this._userRepo.save(
+        await this._userRepo.create({
+          ...user,
+          password: await encryptPassword(user.password),
+        }),
+      )
+    }
+    catch (err) {
+      const error = parseSqlError(err)
+      if (error === SqlError.DUPLICATE_ENTRY) {
+        const value = err.message.match(/Duplicate entry\s+'(.*?)'/)?.[1]
+        if (value === user.account)
+          responseError(ErrorCode.USER_ACCOUNT_REGISTERED)
+        else if (value === user.email)
+          responseError(ErrorCode.USER_EMAIL_REGISTERED)
+      }
+      throw err
+    }
   }
 
   /**
@@ -100,7 +149,7 @@ export class UserService {
   public async deleteUser(where: FindOptionsWhere<User>) {
     await this._userRepo.update(where, {
       isDeleted: true,
-      phone: null,
+      account: null,
       email: null,
     })
   }

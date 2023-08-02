@@ -1,11 +1,12 @@
 import { join } from 'node:path'
-import { APP_INTERCEPTOR } from '@nestjs/core'
 import { validatePath } from '@catsjuice/utils'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Module, RequestMethod } from '@nestjs/common'
 import { ServeStaticModule } from '@nestjs/serve-static'
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
 import type { TypeOrmModuleOptions } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import type { MiddlewareConsumer, NestModule } from '@nestjs/common'
 
 import allConfig from './config'
@@ -14,20 +15,27 @@ import { AppService } from './app.service'
 import { AppController } from './app.controller'
 import { UserModule } from './modules/user/user.module'
 import { AuthModule } from './modules/auth/auth.module'
+import { RoleModule } from './modules/role/role.module'
 import { RedisModule } from './modules/redis/redis.module'
+import { EmailModule } from './modules/email/email.module'
 import { AuthMiddleware } from './middleware/auth.middleware'
 import { ResponseInterceptor } from './interceptors/response.interceptor'
+import { PermissionModule } from './modules/permission/permission.module'
 
 @Module({
   imports: [
     // Internal Modules
     UserModule,
     AuthModule,
+    RoleModule,
     RedisModule,
+    EmailModule,
+    PermissionModule,
+    ThrottlerModule.forRoot({ ttl: 60, limit: 30 }),
 
     // External Modules
     ConfigModule.forRoot({
-      envFilePath: ['.env.local', '.env.dev', '.env.production', '.env'],
+      envFilePath: ['.env.local', '.env.dev', '.env.staging', '.env.production', '.env'],
       isGlobal: true,
       cache: true,
       load: [...allConfig],
@@ -52,10 +60,8 @@ import { ResponseInterceptor } from './interceptors/response.interceptor'
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ResponseInterceptor,
-    },
+    { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],
 })
 export class AppModule implements NestModule {

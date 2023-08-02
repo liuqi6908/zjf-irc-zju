@@ -21,9 +21,9 @@ export class RedisService {
       _client.connect()
       this._clients.set(key, _client as any)
       this.logger.log('New Redis connection created: ', key)
-      return _client
+      return _client as RedisClientType
     }
-    return client as any
+    return client
   }
 
   public async disposeAllConnection() {

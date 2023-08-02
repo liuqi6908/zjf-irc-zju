@@ -1,9 +1,10 @@
 import type { IUser } from 'zjf-types'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 
 import { BaseTimeStamp } from './_timestamp'
 import { UserDeleted } from './user-deleted'
+import { Role } from './role'
 
 @Entity()
 export class User extends BaseTimeStamp implements IUser {
@@ -15,18 +16,18 @@ export class User extends BaseTimeStamp implements IUser {
   id: string
 
   @ApiProperty({
-    description: '手机号码',
-    example: '15829296464',
+    description: '账号',
+    example: 'catsjuice',
     uniqueItems: true,
   })
   @Column({ unique: true })
-  phone: string
+  account: string
 
   @ApiPropertyOptional({
     description: '邮箱',
     example: 'somebody@gmail.com',
   })
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   email?: string
 
   // @ApiProperty({ description: '密码（加密后）' })
@@ -44,6 +45,16 @@ export class User extends BaseTimeStamp implements IUser {
   @Column({ select: false, default: false })
   isDeleted?: boolean
 
+  @Column({ select: false, default: false })
+  isSysAdmin: boolean
+
   @OneToOne(() => UserDeleted, deleted => deleted.user)
-  deletedRecord: UserDeleted
+  deletedRecord?: UserDeleted
+
+  @ManyToOne(() => Role, role => role.users, { onDelete: 'SET NULL' })
+  @JoinColumn()
+  role?: Role
+
+  @Column({ nullable: true })
+  roleName?: string
 }

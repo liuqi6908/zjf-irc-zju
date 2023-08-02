@@ -1,8 +1,11 @@
 export enum PermissionType {
 
   // ---------------- 超级管理员 -------------------
-  /** 完整的访问权限 */
-  ROOT = 'root',
+  // /** 
+  //  * 完整的访问权限 
+  //  * @deprecated 只能使用最细粒度的权限
+  //  **/
+  // ROOT = 'root',
 
   // ------------------- 账户 ---------------------
   /** 创建账户 */
@@ -16,7 +19,7 @@ export enum PermissionType {
 }
 
 export const permissionDescriptions: Record<PermissionType, string> = {
-  [PermissionType.ROOT]: '完整的访问权限',
+  // [PermissionType.ROOT]: '完整的访问权限',
   [PermissionType.ACCOUNT_CREATE]: '创建账号',
   [PermissionType.ACCOUNT_DELETE]: '删除账号',
   [PermissionType.ACCOUNT_UPDATE]: '更新账号信息',

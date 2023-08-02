@@ -1,12 +1,12 @@
-import { ConfigService } from '@nestjs/config';
-import { INestApplication } from '@nestjs/common';
+import { validatePath } from '@catsjuice/utils'
+import type { ConfigService } from '@nestjs/config'
+import type { INestApplication } from '@nestjs/common'
+import type { SwaggerCustomOptions } from '@nestjs/swagger'
 
 import {
-  SwaggerModule,
   DocumentBuilder,
-  SwaggerCustomOptions,
-} from '@nestjs/swagger';
-import { validatePath } from '@catsjuice/utils';
+  SwaggerModule,
+} from '@nestjs/swagger'
 
 /**
  * 注册
@@ -24,9 +24,9 @@ export default async function registerSwagger(
     .setDescription(cfgSrv.get('SWAGGER_DESC'))
     .addServer('/')
     .addServer(cfgSrv.get('SWAGGER_SERVER_HOST'))
-    .build();
-  const cssUrl = validatePath(globalPrefix + '/assets/swagger.css');
-  const jsRaw = validatePath(globalPrefix + '/assets/swagger.js');
+    .build()
+  const cssUrl = validatePath(`${globalPrefix}/assets/swagger.css`)
+  const jsRaw = validatePath(`${globalPrefix}/assets/swagger.js`)
   // const faviconUrl = validatePath(globalPrefix + '/assets/swagger-favicon.ico');
   const opt: SwaggerCustomOptions = {
     swaggerOptions: {
@@ -44,7 +44,7 @@ export default async function registerSwagger(
     // customfavIcon: faviconUrl,
     useGlobalPrefix: true,
     customSiteTitle: cfgSrv.get('SWAGGER_TITLE'),
-  };
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup(cfgSrv.get('SWAGGER_PATH'), app, document, opt);
+  }
+  const document = SwaggerModule.createDocument(app, swaggerConfig)
+  SwaggerModule.setup(cfgSrv.get('SWAGGER_PATH'), app, document, opt)
 }
