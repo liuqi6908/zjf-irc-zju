@@ -1,0 +1,11 @@
+{
+  "apps": [
+    {
+      "name": "zjf-service-staging",
+      "script": "./dist/main.js",
+      "watch": false,
+      "exec_mode": "cluster",
+      "max_memory_restart": "1024M"
+    }
+  ]
+}
