@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import { useUser } from '~/uses/useUser'
+
 // const { $post } = useRequest()
 
 const password = ref('')
 const userCode = ref('')
 
-// onMounted(async () => {
-//   const res = await register('test', 'test', 'test', 'test', 'test')
-// })
+const { useLogin } = useUser()
 </script>
 
 <template>
@@ -24,7 +24,7 @@ const userCode = ref('')
 
     <div h-20 />
 
-    <Btn label="登录" />
+    <Btn label="登录" @click="useLogin(password, userCode)" />
 
     <div m-t-5 flex-center text-grey-5>
       没有账号？

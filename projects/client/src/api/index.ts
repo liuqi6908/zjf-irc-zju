@@ -1,14 +1,5 @@
 import axios from 'axios'
-import { Dialog, Notify } from 'quasar'
-import { ctx } from '../modules/ctx'
-
-const ErrorCode = {
-  LOGIN_REQUIRED: 1001,
-  LOGIN_EXPIRED: 1002,
-  TOKEN_FAILED: 1003,
-  TOKEN_INVALID: 1004,
-  PERMISSION_DENIED: 1005,
-}
+import { Notify } from 'quasar'
 
 const $http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE,
@@ -33,29 +24,36 @@ $http.interceptors.request.use((config) => {
 
 $http.interceptors.response.use(
   (response) => {
-    if (
-      [
-        ErrorCode.LOGIN_EXPIRED,
-        ErrorCode.LOGIN_REQUIRED,
-        ErrorCode.PERMISSION_DENIED,
-        ErrorCode.TOKEN_FAILED,
-        ErrorCode.TOKEN_INVALID,
-      ].includes(response.data.status)
-    ) {
-      showRedirectLoginBox()
-      const newResponse = {
-        ...response,
-        data: { ...response.data, status: 0 },
-      }
-      return newResponse
-    }
-    return response
+    // if (
+    //   [
+    //     ErrorCode.LOGIN_EXPIRED,
+    //     ErrorCode.LOGIN_REQUIRED,
+    //     ErrorCode.PERMISSION_DENIED,
+    //     ErrorCode.TOKEN_FAILED,
+    //     ErrorCode.TOKEN_INVALID,
+    //   ].includes(response.data.status)
+    // ) {
+    //   showRedirectLoginBox()
+    //   const newResponse = {
+    //     ...response,
+    //     data: { ...response.data, status: 0 },
+    //   }
+    //   return newResponse
+    // }
+
+    return response.data
   },
   (error) => {
     const errorDetailList = error.response.data.detail
-    errorDetailList.forEach(detail =>
-      showNotify(detail.message),
-    )
+    if (Array.isArray(errorDetailList) && errorDetailList) {
+      errorDetailList.forEach(detail =>
+        showNotify(detail.message),
+      )
+    }
+    else {
+      showNotify(error.response.data.message)
+    }
+
     return Promise.reject(error)
   },
 )
@@ -71,23 +69,23 @@ function showNotify(massage: string) {
  * 显示跳转登录
  * @returns
  */
-function showRedirectLoginBox() {
-  Dialog.create({
-    title: '是否前往登录',
-    message: '此操作需要登录后使用，是否立即前往登录',
-    cancel: '暂不登录',
-    ok: '立即前往登录',
-    class: 'style-1',
-  })
-    .onOk(() => {
-      ctx.router?.push({
-        name: 'Login',
-        query: {
-          redirect: ctx.router?.currentRoute?.value?.fullPath,
-        },
-      })
-    })
-    .onCancel(() => {})
-}
+// function showRedirectLoginBox() {
+//   Dialog.create({
+//     title: '是否前往登录',
+//     message: '此操作需要登录后使用，是否立即前往登录',
+//     cancel: '暂不登录',
+//     ok: '立即前往登录',
+//     class: 'style-1',
+//   })
+//     .onOk(() => {
+//       ctx.router?.push({
+//         name: 'Login',
+//         query: {
+//           redirect: ctx.router?.currentRoute?.value?.fullPath,
+//         },
+//       })
+//     })
+//     .onCancel(() => {})
+// }
 
 export default $http
