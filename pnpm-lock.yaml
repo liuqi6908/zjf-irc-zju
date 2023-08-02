@@ -263,6 +263,9 @@ importers:
       vue-router:
         specifier: ^4.2.4
         version: registry.npmmirror.com/vue-router@4.2.4(vue@3.3.4)
+      zjf-types:
+        specifier: workspace:^
+        version: link:../../packages/zjf-types
       zjf-utils:
         specifier: workspace:^
         version: link:../../packages/zjf-utils
@@ -13198,10 +13201,10 @@ packages:
       eslint: registry.npmmirror.com/eslint@8.45.0
       eslint-plugin-es-x: registry.npmmirror.com/eslint-plugin-es-x@7.1.0(eslint@8.45.0)
       ignore: registry.npmmirror.com/ignore@5.2.4
-      is-core-module: 2.12.1
-      minimatch: 3.1.2
-      resolve: 1.22.2
-      semver: 7.5.4
+      is-core-module: registry.npmmirror.com/is-core-module@2.12.1
+      minimatch: registry.npmmirror.com/minimatch@3.1.2
+      resolve: registry.npmmirror.com/resolve@1.22.2
+      semver: registry.npmmirror.com/semver@7.5.4
     dev: true
 
   registry.npmmirror.com/eslint-plugin-no-only-tests@3.1.0:
@@ -13397,7 +13400,7 @@ packages:
     peerDependencies:
       eslint: '>=6.0.0'
     dependencies:
-      debug: registry.npmmirror.com/debug@4.3.4(supports-color@8.1.1)
+      debug: 4.3.4(supports-color@8.1.1)
       eslint: registry.npmmirror.com/eslint@8.44.0
       lodash: registry.npmmirror.com/lodash@4.17.21
       natural-compare: registry.npmmirror.com/natural-compare@1.4.0

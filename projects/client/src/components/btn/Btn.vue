@@ -1,5 +1,7 @@
 <script setup lang="ts">
-interface Props {
+import type { QBtnGroupProps } from 'quasar'
+
+interface Props extends QBtnGroupProps {
   label?: string
   transparent?: boolean
   outline?: boolean
@@ -9,6 +11,7 @@ interface Props {
   color?: string
   disable?: boolean
 }
+
 const props = withDefaults(defineProps<Props>(), {
   bgColor: 'primary',
   color: 'white',
@@ -19,10 +22,13 @@ const btnClass = computed(() => {
   else
     return `text-${props.bgColor}`
 })
+
+const finalProps = computed(() => ({ props }))
 </script>
 
 <template>
   <q-btn
+    v-bind="finalProps"
     :flat="transparent === true"
     :label="label"
     :outline="outline === true"

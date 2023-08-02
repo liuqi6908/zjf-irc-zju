@@ -21,6 +21,7 @@ watch(() => props.userCode, () => {
 <template>
   <q-input
     ref="inputRef"
+    dense
     :model-value="userCode"
     input-class="rounded-8"
     outlined

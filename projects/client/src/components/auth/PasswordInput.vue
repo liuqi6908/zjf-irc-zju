@@ -26,6 +26,7 @@ watch(() => props.password, () => {
     :rules="rules"
     :model-value="password"
     outlined
+    dense
     :type="isPwd ? 'password' : 'text'"
     label="请输入密码"
     @update:model-value="(v: string) => $emit('update:password', v)"

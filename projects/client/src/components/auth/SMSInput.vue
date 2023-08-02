@@ -32,16 +32,18 @@ watch(() => props.smsCode, () => {
 <template>
   <q-input
     ref="inputRef"
+    dense
     label="请输入验证码"
     :model-value="smsCode"
     outlined
+    lazy-rules="ondemand"
     @update:model-value="(v: string) => $emit('update:smsCode', v)"
   >
     <template #append>
-      <div v-if="wait">
+      <div v-if="wait" text-4>
         {{ wait }}
       </div>
-      <Btn v-else label="发送验证码" transparent @click="getCode" />
+      <Btn v-else dense label="发送验证码" transparent @click="getCode" />
     </template>
   </q-input>
 </template>

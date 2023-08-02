@@ -9,7 +9,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     Avatar: typeof import('./components/avatar/Avatar.vue')['default']
     Btn: typeof import('./components/btn/Btn.vue')['default']
-    BtnItem: typeof import('./components/btn/BtnItem.vue')['default']
     DisplayCard: typeof import('./components/card/DisplayCard.vue')['default']
     NavItemSection: typeof import('./components/nav/NavItemSection.vue')['default']
     PasswordInput: typeof import('./components/auth/PasswordInput.vue')['default']

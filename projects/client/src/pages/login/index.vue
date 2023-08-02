@@ -1,6 +1,12 @@
 <script setup lang="ts">
+// const { $post } = useRequest()
+
 const password = ref('')
 const userCode = ref('')
+
+// onMounted(async () => {
+//   const res = await register('test', 'test', 'test', 'test', 'test')
+// })
 </script>
 
 <template>
@@ -8,6 +14,7 @@ const userCode = ref('')
     <span m-b-4 font-500 text-grey-8>账号</span>
     <UserCodeInput
       v-model:userCode="userCode"
+      label="请输入账号"
     />
 
     <span m-b-4 m-t-4 font-500 text-grey-8>

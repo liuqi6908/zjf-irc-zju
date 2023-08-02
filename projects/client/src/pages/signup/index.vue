@@ -15,8 +15,8 @@ const acceptObj = reactive({
   sms: false,
 })
 
-function phoneRules(val: string) {
-  return (/^1[34516789]\d{9}$/.test(val)) || '请输入合法手机号'
+function emailRules(val: string) {
+  return (/^1[34516789]\d{9}$/.test(val)) || '请输入合法邮箱'
 }
 function usernameRules(val: string) {
   return val.length > 0 || '用户名不能为空'
@@ -37,8 +37,8 @@ const disable = computed(() => verifyAccept(acceptObj))
 </script>
 
 <template>
-  <div>
-    <span>用户名称</span>
+  <div flex="~ col">
+    <span mb-1 font-500 text-grey-8>用户名称</span>
     <UserCodeInput
       v-model:userCode="userName"
       user-type="user"
@@ -46,12 +46,12 @@ const disable = computed(() => verifyAccept(acceptObj))
       @update:accept="(val) => acceptObj.username = val"
     />
 
-    <div m-b-5>
-      <span>密码</span>
+    <div m-b-5 flex flex-col>
+      <span mb-1 font-500 text-grey-8>密码</span>
       <PasswordInput v-model:password="password" />
     </div>
 
-    <span>确认密码</span>
+    <span mb-1 font-500 text-grey-8>确认密码</span>
     <PasswordInput
       v-model:password="repeatPassword"
       reactive-rules
@@ -59,16 +59,16 @@ const disable = computed(() => verifyAccept(acceptObj))
       @update:accept="(val) => acceptObj.repeatPassword = val"
     />
 
-    <span>手机号码</span>
+    <span mb-1 font-500 text-grey-8>邮箱</span>
     <UserCodeInput
       ref="repeatPasswordInput"
       v-model:userCode="phone"
-      :rules="[(val:string) => phoneRules(val)]"
+      :rules="[(val:string) => emailRules(val)]"
       user-type="phone"
       @update:accept="(val) => acceptObj.phone = val"
     />
 
-    <span>短信验证</span>
+    <span mb-1 font-500 text-grey-8>短信验证</span>
     <SMSInput
       v-model:smsCode="smsCode"
       :rules="[(val:string) => smsCodeRule(val)]"
@@ -76,7 +76,7 @@ const disable = computed(() => verifyAccept(acceptObj))
       @update:accept="(val) => acceptObj.sms = val"
     />
 
-    <Btn m-t-10 w-full label="注册" :disable="disable" />
+    <Btn mt-5 w-full label="注册" :disable="disable" />
   </div>
 </template>
 
