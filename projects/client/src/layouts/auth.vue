@@ -34,7 +34,7 @@
         <img h-18 w-18 src="../assets/layout/cloud.svg">
         <span text-5 font-600 text-grey-8>智能云科研平台</span>
       </header>
-      <div class="input_group" m-t-10>
+      <div class="input_group">
         <RouterView />
       </div>
     </q-card>

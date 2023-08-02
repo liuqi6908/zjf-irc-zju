@@ -13,7 +13,7 @@ export default defineConfig({
   shortcuts: [
     ['full', 'w-full h-full'],
     ['flex-center', 'flex items-center justify-center'],
-    ['hTitle-4', 'font-600 text-5 text-grey-8'],
+    ['hTitle-4', 'font-600 text-5'],
     ['subTitle-1', 'font-600 text-4 text-grey-8']
   ],
   rules: [

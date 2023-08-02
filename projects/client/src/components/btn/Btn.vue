@@ -7,6 +7,7 @@ interface Props {
   bgColor?: string
   /** 字体颜色 */
   color?: string
+  disable?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   bgColor: 'primary',
@@ -21,7 +22,15 @@ const btnClass = computed(() => {
 </script>
 
 <template>
-  <q-btn :flat="transparent === true" :label="label" :outline="outline === true" :class="btnClass" unelevated rounded-2>
+  <q-btn
+    :flat="transparent === true"
+    :label="label"
+    :outline="outline === true"
+    :class="btnClass"
+    unelevated
+    :disable="disable"
+    rounded-2
+  >
     <div v-if="transparent" class="translucent-mask" :class="`bg-${bgColor}`" />
   </q-btn>
 </template>

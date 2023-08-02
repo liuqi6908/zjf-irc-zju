@@ -1,17 +1,29 @@
 <script setup lang="ts">
-defineProps<Props>()
-defineEmits(['update:password'])
+const props = defineProps<Props>()
+const emits = defineEmits(['update:password', 'update:accept'])
+
 const isPwd = ref(true)
+const inputRef = ref(null)
 
 interface Props {
   password: string
-  /** 是否开启合法校验 */
-  verify?: boolean
+  rules?: Array
+  reactiveRules?: boolean
 }
+
+watch(() => props.password, () => {
+  if (inputRef.value) {
+    const validate = inputRef.value.validate(props.password)
+    emits('update:accept', validate)
+  }
+})
 </script>
 
 <template>
   <q-input
+    ref="inputRef"
+    :reactive-rules="reactiveRules"
+    :rules="rules"
     :model-value="password"
     outlined
     :type="isPwd ? 'password' : 'text'"
