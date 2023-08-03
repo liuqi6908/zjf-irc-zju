@@ -35,6 +35,12 @@ export enum ErrorCode {
   USER_EMAIL_NOT_REGISTERED = 400004,
   /** 用户已存在 */
   USER_EXISTED = 400005,
+
+  // 身份验证相关 
+  /** 驳回原因必填 */
+  VERIFICATION_REJECT_REASON_REQUIRED = 500001,
+  /** 已存在待处理的身份验证 */
+  VERIFICATION_PENDING_EXISTS = 500002,
 }
 
 export type ErrorMessageCollection = Partial<

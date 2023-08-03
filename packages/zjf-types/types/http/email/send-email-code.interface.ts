@@ -1,5 +1,6 @@
-import { ICodeActionDto, IEmailDto } from '../../dto';
 import { IBasicResponse } from '../basic.interface';
+import { IEmailDto } from '../../dto/email.interface';
+import { ICodeActionDto } from '../../dto/code-action.interface';
 
 export interface ISendEmailCodeBodyDto extends IEmailDto, ICodeActionDto {}
 

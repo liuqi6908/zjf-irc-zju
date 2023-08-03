@@ -1,6 +1,8 @@
-import { IPermission, IRole } from "./entities";
 import { objectKeys } from '@catsjuice/utils';
-import { PermissionType, permissionDescriptions } from "./permission";
+
+import { IRole } from "./entities/role.interface";
+import { IPermission } from "./entities/permission.interface";
+import { PermissionType, permissionDescriptions } from "./permission.enum";
 
 const allPermissionNames = objectKeys(permissionDescriptions) as PermissionType[]
 

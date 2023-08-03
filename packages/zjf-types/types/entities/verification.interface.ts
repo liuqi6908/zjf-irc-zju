@@ -1,5 +1,5 @@
 import { IUser } from './user.interface';
-import { VerificationIdentify, VerificationStatus } from '../verification';
+import { VerificationIdentify, VerificationStatus } from '../verification.enum';
 import { ICreatedAt, IUpdatedAt } from './_timestamp.interface';
 
 
@@ -45,4 +45,7 @@ export interface IVerificationHistory extends ICreatedAt, IUpdatedAt {
 
   /** 认证状态 */
   status: VerificationStatus;
+
+  /** 驳回原因（仅当状态为驳回时存在）*/
+  rejectReason?: string;
 }
