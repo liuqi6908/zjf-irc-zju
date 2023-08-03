@@ -202,4 +202,8 @@ export class UserService implements OnModuleInit {
   public qb(alias = 'u') {
     return this._userRepo.createQueryBuilder(alias)
   }
+
+  public repo() {
+    return this._userRepo
+  }
 }

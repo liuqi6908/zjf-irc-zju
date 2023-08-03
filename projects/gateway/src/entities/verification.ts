@@ -24,7 +24,7 @@ export class VerificationHistory extends BaseTimeStamp implements IVerificationH
   @Column({ type: 'simple-array' })
   attachments: string[]
 
-  @ApiProperty({ description: '创建者的用户信息' })
+  @ApiProperty({ description: '创建者的用户信息', type: () => User })
   @ManyToOne(() => User, user => user.founderVerifications)
   @JoinColumn()
   founder: User
@@ -33,7 +33,7 @@ export class VerificationHistory extends BaseTimeStamp implements IVerificationH
   @Column()
   founderId: User['id']
 
-  @ApiPropertyOptional({ description: '处理者的用户信息' })
+  @ApiPropertyOptional({ description: '处理者的用户信息', type: () => User })
   @ManyToOne(() => User, user => user.handlerVerifications)
   @JoinColumn()
   handler?: User
@@ -42,15 +42,19 @@ export class VerificationHistory extends BaseTimeStamp implements IVerificationH
   @Column({ nullable: true })
   handlerId?: User['id']
 
-  @ApiPropertyOptional({ description: '当前激活的用户信息' })
+  @ApiPropertyOptional({ description: '当前激活的用户信息', type: () => User })
   @OneToOne(() => User, user => user.verification)
   user?: User
 
   @ApiProperty({ description: '处理时间： 通过/驳回/取消' })
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamp' })
   handledAt?: Date
 
   @ApiProperty({ description: '认证状态', default: VerificationStatus.PENDING })
   @Column({ type: 'enum', enum: VerificationStatus, default: VerificationStatus.PENDING })
   status: VerificationStatus
+
+  @ApiPropertyOptional({ description: '驳回原因' })
+  @Column({ nullable: true })
+  rejectReason?: string
 }
