@@ -10,11 +10,12 @@ export function getErrorMessage(code: ErrorCode) {
 /**
  * 给客户端返回指定的错误
  * @param code
- * @param detail
+ * @param _detail
  */
-export function responseError<T = any>(errorCode: ErrorCode, detail?: T) {
+export function responseError<T = any>(errorCode: ErrorCode, _detail?: T) {
   const errorMessage = getErrorMessage(errorCode)
   const message = errorMessage.message
+  const detail = _detail ?? errorMessage.detail
   throw new HttpException(
     { status: errorCode, detail, message },
     errorMessage.httpStatus,

@@ -12,17 +12,20 @@
     }
   },
   "scripts": {
-    "dev": "concurrently \"pnpm run dev:esm\" \"pnpm run dev:cjs\"",
+    "dev": "concurrently \"pnpm run dev:esm\" \"pnpm run dev:cjs\" \"auto-export\"",
     "dev:esm": "rimraf dist/esm/**/* && tsc -w -p \"tsconfig.json\"",
     "dev:cjs": "rimraf dist/cjs/**/* && tsc -w -p \"tsconfig.cjs.json\"",
     "build": "pnpm run build:esm && pnpm run build:cjs",
     "build:esm": "rimraf dist/esm/**/* && tsc -p \"tsconfig.json\"",
-    "build:cjs": "rimraf dist/cjs/**/* && tsc -p \"tsconfig.cjs.json\""
+    "build:cjs": "rimraf dist/cjs/**/* && tsc -p \"tsconfig.cjs.json\"",
+    "generate:export": "node ./scripts/auto-export.mjs",
+    "auto-export": "nodemon --watch \"types/**/*\" --exec \"pnpm run generate:export\""
   },
   "devDependencies": {
     "@catsjuice/utils": "^0.1.7",
     "@nestjs/common": "^10.1.2",
     "concurrently": "^8.0.1",
+    "glob": "^10.3.3",
     "nodemon": "^2.0.22",
     "rimraf": "^5.0.0"
   }

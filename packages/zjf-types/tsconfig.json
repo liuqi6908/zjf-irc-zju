@@ -92,5 +92,8 @@
   },
   "include": [
     "index.ts"
+  ],
+  "exclude": [
+    "scripts"
   ]
 }

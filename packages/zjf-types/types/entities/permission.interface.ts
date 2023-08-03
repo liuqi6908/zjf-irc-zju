@@ -1,4 +1,4 @@
-import { PermissionType } from "../permission";
+import { PermissionType } from "../permission.enum";
 import { IRole } from "./role.interface";
 
 /**

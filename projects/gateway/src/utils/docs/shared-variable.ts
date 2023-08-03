@@ -8,7 +8,7 @@ export function sharedVariableMarkdown(
   return (
     wrap(`${name}可从${from}中获取`)
     + wrap('```ts')
-    + wrap(`import { ${variableName} } from '${from}';`)
+    + wrap(`import { ${variableName} } from '${from}'`)
     + wrap('```')
   )
 }

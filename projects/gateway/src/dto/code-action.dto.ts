@@ -10,7 +10,7 @@ export class CodeActionDto implements ICodeActionDto {
   @decorate(ApiProperty({
     description: `发送验证码的目的
     \n${objectEntries(codeActionDescriptions).map(([key, value]) => `- \`${key}\`: ${value}`).join('\n')}
-    ${sharedVariableMarkdown('CodeAction', undefined, 'action枚举值')}`,
+    ${sharedVariableMarkdown('CodeAction', 'zjf-types', 'action枚举值')}`,
     enum: CodeAction,
     example: CodeAction.REGISTER,
   }))
