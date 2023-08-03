@@ -6,7 +6,7 @@ interface Props {
   iconSize?: number
 }
 const props = withDefaults(defineProps<Props>(), {
-  iconSize: 24,
+  iconSize: 18,
 })
 
 // function getImageUrl(url: string) {

@@ -6,10 +6,12 @@ interface Props extends QBtnGroupProps {
   transparent?: boolean
   outline?: boolean
   icon?: string
+  iconColor?: string
   bgColor?: string
   /** 字体颜色 */
   color?: string
   disable?: boolean
+  flat?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -17,7 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
   color: 'white',
 })
 const btnClass = computed(() => {
-  if (!props.transparent && !props.outline)
+  if (!props.transparent && !props.outline && !props.flat)
     return [`text-${props.color}`, `bg-${props.bgColor}`]
   else
     return `text-${props.bgColor}`
@@ -29,7 +31,7 @@ const finalProps = computed(() => ({ props }))
 <template>
   <q-btn
     v-bind="finalProps"
-    :flat="transparent === true"
+    :flat="flat || transparent === true"
     :label="label"
     :outline="outline === true"
     :class="btnClass"
@@ -38,6 +40,9 @@ const finalProps = computed(() => ({ props }))
     rounded-2
   >
     <div v-if="transparent" class="translucent-mask" :class="`bg-${bgColor}`" />
+    <template v-if="icon">
+      <div :class="[icon, ...btnClass]" h-6 w-6 />
+    </template>
   </q-btn>
 </template>
 

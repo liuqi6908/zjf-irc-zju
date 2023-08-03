@@ -56,6 +56,13 @@ watch(() => props.smsCode, () => {
   </q-input>
 </template>
 
-<style lang="">
-
+<style lang="scss" scoped>
+.q-field :deep(.q-field__inner){
+    .q-field__control {
+      border-radius: 8px !important;
+    }
+    .q-field__control:before{
+      border: 1px solid var(--grey-3, #D4DDEA); ;
+    }
+}
 </style>

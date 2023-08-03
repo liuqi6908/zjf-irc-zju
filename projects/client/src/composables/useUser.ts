@@ -42,13 +42,12 @@ export function useUser($router = useRouter()) {
     if (!res)
       return
     authToken.value = null
-    $router.replace({ path: '/login' })
+    $router.replace({ path: 'auth/login' })
   }
 
   const useGetProfile = async (relation?: string) => {
     const res = await getProfile(relation)
     if (res)
-
       userInfo.value = res
   }
 

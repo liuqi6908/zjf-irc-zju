@@ -1,13 +1,14 @@
 <script setup lang="ts">
 interface Props {
   nickname?: string
-  avatar?: string
+  avatarUrl?: string
   size?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
   size: 30,
 })
+
 defineEmits(['update:route'])
 
 const dropDown = ref(false)
@@ -22,18 +23,23 @@ function subStr(name: string) {
 function avatarBehavior() {
   dropDown.value = !dropDown.value
 }
+
+function getImageUrl(url: string) {
+  return new URL(`${url}`, import.meta.url).href
+}
 </script>
 
 <template>
   <div />
   <div
-
     :style="{ width: `${size}px`, height: `${size}px` }"
-
     flex-center cursor-pointer border-size-1.5 b-primary-1 rounded-full text-primary-1
-    @click="avatarBehavior()"
+    @click="avatarBehavior(), $emit('update:route')"
   >
-    <div v-if="avatar" />
+    <div
+      v-if="avatarUrl" overflow-hidden
+      :style="{ width: `${size}px`, height: `${size}px`, background: `${getImageUrl(avatarUrl)} cover` }"
+    />
     <span v-else-if="nickname">
       {{ subStr(nickname) }}
     </span>

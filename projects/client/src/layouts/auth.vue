@@ -30,13 +30,7 @@
 
     <!-- auth card  -->
     <q-card flex="~ col" style="width: 30%;" min-w-sm rounded-4 p-10>
-      <header flex="~ flex col items-center justify-center">
-        <img h-18 w-18 src="../assets/layout/cloud.svg">
-        <span text-5 font-600 text-grey-8>智能云科研平台</span>
-      </header>
-      <div class="input_group">
-        <RouterView />
-      </div>
+      <RouterView />
     </q-card>
   </div>
 </template>

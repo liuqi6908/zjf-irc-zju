@@ -61,6 +61,8 @@ function toQuestionLink(item: any) {
     qrCodeshow.value = false
 }
 
+const isToken = computed(() => localStorage.getItem('auth_token'))
+
 onMounted(() => {
   useGetProfile()
 })
@@ -75,7 +77,7 @@ onMounted(() => {
       <q-header bg-white>
         <q-toolbar flex="~ row justify-between">
           <div mx-8 my-4 flex="~ row">
-            <img mr-2 src="../assets/layout/cloud.svg">
+            <img mr-2 h-6 src="../assets/layout/cloud.png">
             <span text-xl font-600 text-grey-8>
               智能云科研平台
             </span>
@@ -85,7 +87,9 @@ onMounted(() => {
           <div flex flex-row items-center>
             <Btn label="申请使用" transparent m-r-2 />
             <Avatar
-              @update:route="val => val ? router.push({ path: '/userCenter' }) : router.push({ path: '/login' })"
+              :avatar-url="userInfo?.avatar"
+              :nickname="userInfo?.nickname"
+              @update:route="isToken ? router.push({ path: 'auth/userCenter' }) : router.push({ path: 'auth/login' })"
             />
           </div>
         </q-toolbar>

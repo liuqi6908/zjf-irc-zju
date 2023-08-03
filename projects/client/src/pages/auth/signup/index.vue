@@ -4,7 +4,8 @@ import { CodeAction } from 'zjf-types'
 
 // import { register } from '~/api/auth/register'
 // import { login } from '~/api/auth/login'
-import { useUser } from '~/composables/useUser'
+import { computed, reactive, ref } from 'vue'
+import { useUser } from '../../../composables/useUser'
 
 const password = ref<string>('')
 const email = ref<string>('')
@@ -53,6 +54,10 @@ const disable = computed(() => verifyAccept(acceptObj))
 
 <template>
   <div flex="~ col">
+    <header flex="~ flex col items-center justify-center">
+      <img h-10 src="../../../assets/layout/cloud.png">
+      <span text-5 font-600 text-grey-8>智能云科研平台</span>
+    </header>
     <span mb-1 font-500 text-grey-8>用户名称</span>
     <UserCodeInput
       v-model:userCode="userName"
