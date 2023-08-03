@@ -4,7 +4,7 @@ import { CodeAction } from 'zjf-types'
 
 // import { register } from '~/api/auth/register'
 // import { login } from '~/api/auth/login'
-import { useUser } from '~/uses/useUser'
+import { useUser } from '~/composables/useUser'
 
 const password = ref<string>('')
 const email = ref<string>('')
@@ -46,10 +46,7 @@ function verifyAccept(obj: any) {
 }
 
 async function signUp() {
-  // console.log('注册所需信息', userName.value, email.value, password.value, bizId.value, smsCode.value)
   useRegister(userName.value, email.value, password.value, bizId.value, smsCode.value)
-
-  // 注册失败
 }
 const disable = computed(() => verifyAccept(acceptObj))
 </script>

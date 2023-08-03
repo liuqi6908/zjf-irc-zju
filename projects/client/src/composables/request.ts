@@ -69,5 +69,5 @@ export function useRequest() {
     return response.data
   }
 
-  return { $get, $post, $put }
+  return { $get, $post, $put, cache }
 }

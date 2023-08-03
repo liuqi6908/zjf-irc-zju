@@ -1,14 +1,17 @@
 import axios from 'axios'
 import { Notify } from 'quasar'
 
+const $router = useRouter()
 const $http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE,
+  // headers: { 'Access-Control-Allow-Origin': '*' },
 })
 
 $http.interceptors.request.use((config) => {
   const token = localStorage.getItem('auth_token')
   if (token && !config.headers.Authorization)
-    config.headers.Authorization = `Bearer ${token}`
+    config.headers.Authorization = token ? `Bearer ${token?.trim()}` : ''
+
   const baseURLWhiteList = ['http', '//']
   if (
     config.url
@@ -45,7 +48,18 @@ $http.interceptors.response.use(
     return response.data
   },
   (error) => {
+    if (!error.response)
+      return
     const errorDetailList = error.response.data.detail
+
+    /** 判断是否登录 */
+    if (error.response.status === 401) {
+      showNotify('登录过期，请重新登录')
+      $router.replace({ path: '/login' })
+      localStorage.removeItem('auth_token')
+      return Promise.reject(error)
+    }
+
     if (Array.isArray(errorDetailList) && errorDetailList) {
       errorDetailList.forEach(detail =>
         showNotify(detail.message),

@@ -3,10 +3,12 @@ const router = useRouter()
 
 const drawer = ref(false)
 const qrCodeshow = ref(false)
-const isLogin = ref(false)
 
 const questionLink = ref('')
 const routerLink = ref('')
+
+/** hooks */
+const { userInfo, useGetProfile } = useUser()
 
 const link = computed({
   get: () => { return router.currentRoute.value.name as string },
@@ -58,6 +60,10 @@ function toQuestionLink(item: any) {
   else
     qrCodeshow.value = false
 }
+
+onMounted(() => {
+  useGetProfile()
+})
 </script>
 
 <template>
@@ -78,8 +84,9 @@ function toQuestionLink(item: any) {
 
           <div flex flex-row items-center>
             <Btn label="申请使用" transparent m-r-2 />
-            <!-- <span text-primary-1>登录/注册</span> -->
-            <Avatar :visitor="isLogin ? false : true" cursor-pointer @click="isLogin ? router.push({ path: '/userCenter' }) : router.push({ path: '/login' })" />
+            <Avatar
+              @update:route="val => val ? router.push({ path: '/userCenter' }) : router.push({ path: '/login' })"
+            />
           </div>
         </q-toolbar>
       </q-header>
