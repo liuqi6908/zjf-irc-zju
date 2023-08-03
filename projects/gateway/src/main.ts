@@ -4,8 +4,8 @@ import compression from '@fastify/compress'
 import { ConfigService } from '@nestjs/config'
 import { validatePath } from '@catsjuice/utils'
 import { Logger, ValidationPipe } from '@nestjs/common'
-
 import type { NestFastifyApplication } from '@nestjs/platform-fastify'
+
 import {
   FastifyAdapter,
 } from '@nestjs/platform-fastify'

@@ -173,7 +173,7 @@ export class UserService implements OnModuleInit {
    * @param newPassword
    */
   public async updateUserPassword(
-    where: FindOptionsWhere<User> | string | number | User,
+    where: FindOptionsWhere<User> | string | number,
     newPassword: string,
   ) {
     await this._userRepo.update(where, {
@@ -187,7 +187,7 @@ export class UserService implements OnModuleInit {
    * @param newBasicInfo
    */
   public async updateUserBasicInfo(
-    where: FindOptionsWhere<User> | string | number | User,
+    where: FindOptionsWhere<User> | string | number,
     newBasicInfo: Partial<User>,
   ) {
     const allowedKeys: (keyof User)[] = ['avatar', 'nickname']

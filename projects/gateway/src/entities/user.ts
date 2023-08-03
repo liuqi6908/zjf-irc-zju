@@ -1,10 +1,11 @@
 import type { IUser } from 'zjf-types'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 
+import { Role } from './role'
 import { BaseTimeStamp } from './_timestamp'
 import { UserDeleted } from './user-deleted'
-import { Role } from './role'
+import { VerificationHistory } from './verification'
 
 @Entity()
 export class User extends BaseTimeStamp implements IUser {
@@ -57,4 +58,17 @@ export class User extends BaseTimeStamp implements IUser {
 
   @Column({ nullable: true })
   roleName?: string
+
+  @OneToOne(() => VerificationHistory, vh => vh.user)
+  @JoinColumn()
+  verification?: VerificationHistory
+
+  @Column({ nullable: true })
+  verificationId?: VerificationHistory['id']
+
+  @OneToMany(() => VerificationHistory, vh => vh.founder)
+  founderVerifications?: VerificationHistory[]
+
+  @OneToMany(() => VerificationHistory, vh => vh.handler)
+  handlerVerifications?: VerificationHistory[]
 }

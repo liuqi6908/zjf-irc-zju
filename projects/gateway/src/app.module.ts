@@ -21,6 +21,7 @@ import { EmailModule } from './modules/email/email.module'
 import { AuthMiddleware } from './middleware/auth.middleware'
 import { ResponseInterceptor } from './interceptors/response.interceptor'
 import { PermissionModule } from './modules/permission/permission.module'
+import { VerificationModule } from './modules/verification/verification.module'
 
 @Module({
   imports: [
@@ -31,9 +32,10 @@ import { PermissionModule } from './modules/permission/permission.module'
     RedisModule,
     EmailModule,
     PermissionModule,
-    ThrottlerModule.forRoot({ ttl: 60, limit: 30 }),
+    VerificationModule,
 
     // External Modules
+    ThrottlerModule.forRoot({ ttl: 60, limit: 30 }),
     ConfigModule.forRoot({
       envFilePath: ['.env.local', '.env.dev', '.env.staging', '.env.production', '.env'],
       isGlobal: true,
