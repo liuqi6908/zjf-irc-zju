@@ -10,12 +10,17 @@ declare module 'vue' {
     Avatar: typeof import('./components/avatar/Avatar.vue')['default']
     Btn: typeof import('./components/btn/Btn.vue')['default']
     DisplayCard: typeof import('./components/card/DisplayCard.vue')['default']
+    NavItem: typeof import('./components/nav/NavItem.vue')['default']
     NavItemSection: typeof import('./components/nav/NavItemSection.vue')['default']
     PasswordInput: typeof import('./components/auth/PasswordInput.vue')['default']
+    RectAngleCardSection: typeof import('./components/dialog/RectAngleCardSection.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    RTangleCardSection: typeof import('./components/dialog/RTangleCardSection.vue')['default']
     SMSInput: typeof import('./components/auth/SMSInput.vue')['default']
+    TangleCardSection: typeof import('./components/dialog/TangleCardSection.vue')['default']
     Tree: typeof import('./components/tree/Tree.vue')['default']
     UserCodeInput: typeof import('./components/auth/UserCodeInput.vue')['default']
+    ZDialog: typeof import('./components/dialog/ZDialog.vue')['default']
   }
 }

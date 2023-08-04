@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { Notify } from 'quasar'
 
-const $router = useRouter()
+// import router from '@/router/index'
+
 const $http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE,
   // headers: { 'Access-Control-Allow-Origin': '*' },
@@ -55,7 +56,7 @@ $http.interceptors.response.use(
     /** 判断是否登录 */
     if (error.response.status === 401) {
       showNotify('登录过期，请重新登录')
-      $router.replace({ path: 'auth/login' })
+      // ctx.router?.replace({ path: 'auth/login' })
       localStorage.removeItem('auth_token')
       return Promise.reject(error)
     }

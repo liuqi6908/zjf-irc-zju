@@ -30,7 +30,6 @@ function getImageUrl(url: string) {
 </script>
 
 <template>
-  <div />
   <div
     :style="{ width: `${size}px`, height: `${size}px` }"
     flex-center cursor-pointer border-size-1.5 b-primary-1 rounded-full text-primary-1
@@ -45,13 +44,6 @@ function getImageUrl(url: string) {
     </span>
     <div v-else i-mingcute:user-2-fill />
   </div>
-<!--
-  <Btn
-    v-if="authToken"
-    label="退出登录"
-    transparent clickable right-0 top-16
-    @click="useLogout()"
-  /> -->
 </template>
 
 <style lang="scss">
