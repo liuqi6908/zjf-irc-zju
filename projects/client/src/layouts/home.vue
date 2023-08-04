@@ -6,6 +6,7 @@ const router = useRouter()
 const drawer = ref(false)
 const qrCodeshow = ref(false)
 const qandShow = ref(false)
+const userDropdown = ref(false)
 
 const questionLinkId = ref('')
 const routerLink = ref('')
@@ -23,28 +24,28 @@ const navList: Array<ItemList> = [
   {
     id: 'home',
     name: '首页',
-    icon: ' <div  i-mingcute:home-4-line  style="width:24px;height:24px"/>',
+    icon: ' i-mingcute:home-4-line',
     // authority: '',
   },
   {
     id: 'buyData',
     name: '已购数据资源',
-    icon: '<div i-mingcute:shopping-bag-1-line style="width:24px;height:24px"/ >',
+    icon: 'i-mingcute:shopping-bag-1-line',
   },
   {
     id: 'selfData',
     name: '自建数据库',
-    icon: '<div i-mingcute:folder-2-line style="width:24px;height:24px"/>',
+    icon: 'i-mingcute:folder-2-line',
   },
   {
     id: 'publicData',
     name: '公共数据资源',
-    icon: '<div i-mingcute:chart-bar-line style="width:24px;height:24px"/>',
+    icon: 'i-mingcute:chart-bar-line',
   },
   {
     id: 'preData',
     name: '预购数据资源',
-    icon: '<div i-mingcute:shopping-cart-1-line style="width:24px;height:24px"/ >',
+    icon: 'i-mingcute:shopping-cart-1-line',
   },
 ]
 
@@ -63,14 +64,14 @@ const userList: Array<ItemList> = [
     id: 'userCunt',
     clickEvent: () => router.push({ path: '/userCenter' }),
   },
-  { id: 'adminQRCode', name: '退出登录', back: true, clickEvent: useLogout },
+  { id: 'adminQRCode', name: '退出登录', back: true, clickEvent: () => useLogout() },
 ]
 function toquestionLinkId(id: any) {
   questionLinkId.value = id
   if (id === 'adminQRCode')
     qrCodeshow.value = !qrCodeshow.value
   else if (id === 'QandA')
-    qandShow.value = !qandShow.value
+    qandShow.value = true
 }
 
 const isToken = computed(() => localStorage.getItem('auth_token'))
@@ -101,9 +102,9 @@ onMounted(() => {
             <Avatar
               :avatar-url="userInfo?.avatar"
               :nickname="userInfo?.nickname"
-              @update:route="router.push({ path: 'auth/login' })"
+              @update:route="isToken ? (userDropdown = !userDropdown) : router.push({ path: 'auth/login' })"
             />
-            <q-list v-if="isToken" absolute right-3 top-16 border-rd-2 bg-grey-1 p-2>
+            <q-list v-if="userDropdown" absolute right-3 top-16 border-rd-2 bg-grey-1 p-2>
               <NavItem
                 v-for="u in userList"
                 :id="u.id"
@@ -142,15 +143,14 @@ onMounted(() => {
               :key="item.id"
               :to="item.id"
             >
-              <q-item
+              <NavItem
+                :id="item.id"
                 v-ripple
-                :active="link === item.id"
-                active-class="bg-primary-1 text-white"
-                clickable border-rd-2 text-grey-5
-                @click="() => link = item.id"
-              >
-                <NavItemSection :icon="item.icon" :name="item.name" />
-              </q-item>
+                :name="item.name"
+                :icon="item.icon"
+                :click-id="link"
+                @update:id="(val) => link = val"
+              />
             </RouterLink>
           </q-list>
           <div class="col-grow" />
@@ -206,8 +206,5 @@ onMounted(() => {
 <style lang="scss" scoped>
 .nav-Br {
   border-radius:0.5rem 0 0 0.5rem ;
-}
-.opacity-primary-1 {
-  background-color: rgba(48, 123, 246, 0.12);
 }
 </style>

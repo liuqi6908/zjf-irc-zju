@@ -12,7 +12,7 @@ interface Props extends QBtnGroupProps {
   color?: string
   disable?: boolean
   flat?: boolean
-  vClosePopup?: boolean
+  closePopup?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -33,7 +33,7 @@ const finalProps = computed(() => ({ props }))
 
 <template>
   <q-btn
-    v-close-popup="vClosePopup"
+    v-close-popup="closePopup || false"
     v-bind="finalProps"
     :flat="flat || transparent === true"
     :label="label"
