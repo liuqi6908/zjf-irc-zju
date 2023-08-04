@@ -24,7 +24,7 @@ export class PaginationDto implements IPaginationDto {
   pageSize?: number
 }
 
-export class IPaginatedResData<T> {
+export class PaginatedResData<T> {
   @decorate(ApiPropertyOptional({ description: '页码' }))
   page: number
 

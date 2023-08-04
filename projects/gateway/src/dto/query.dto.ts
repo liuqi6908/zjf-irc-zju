@@ -1,8 +1,10 @@
-import type { IQueryConfig, IQuerySort } from 'zjf-types'
 import { decorate } from 'ts-mixer'
+import type { IQueryConfig, IQueryResDto, IQuerySort } from 'zjf-types'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { sharedVariableMarkdown } from 'src/utils/docs/shared-variable'
-import { PaginationDto } from './pagination.dto'
+
+import { PaginatedResData, PaginationDto } from './pagination.dto'
+import { SuccessDto } from './success.dto'
 
 class QueryFilter {
   @ApiProperty({ description: '字段名' })
@@ -44,4 +46,16 @@ export class QueryDto<T> implements IQueryConfig<T> {
     description: '关联组合，已定义类型，请直接使用 RelationSet 类型' + `\n${sharedVariableMarkdown('RelationSet', 'zjf-types', '类型定义')}`,
   }))
   relations?: Record<string, any>
+}
+
+export class QueryResDto<T> extends SuccessDto<PaginatedResData<T>> implements IQueryResDto<T> {
+  @decorate(ApiProperty({
+    type: () => PaginatedResData,
+    description: `这是通用的分页查询返回，返回的结构为统一的分页结果类型，请直接使用 \`zjf-types\` 中定义的类型来做类型约束\n${
+      sharedVariableMarkdown('IPaginatedResData', 'zjf-types', '响应结果类型定义')
+    }\n或者使用整个响应的类型定义${
+      sharedVariableMarkdown('IQueryResDto', 'zjf-types', '响应结果类型定义')
+    }`,
+  }))
+  data: PaginatedResData<T>
 }

@@ -2,7 +2,7 @@ import type { Repository } from 'typeorm'
 import { clamp, objectKeys } from '@catsjuice/utils'
 import type { IQueryConfig } from 'zjf-types'
 import { PAGINATION_SIZE_DFT, PAGINATION_SIZE_MAX } from 'zjf-types'
-import type { IPaginatedResData } from 'src/dto/pagination.dto'
+import type { PaginatedResData } from 'src/dto/pagination.dto'
 import { responseParamsError } from './response/validate-exception-factory'
 
 function walk(node: Record<string, any>, cb: (key: string, value: boolean, path: string[]) => void, path = []) {
@@ -110,7 +110,7 @@ export function getQueryQB<Entity>(
 export async function getQuery<Entity>(
   repo: Repository<Entity>,
   config: IQueryConfig<Entity>,
-): Promise<IPaginatedResData<Entity>> {
+): Promise<PaginatedResData<Entity>> {
   const { page, pageSize, qb } = getQueryQB(repo, config)
   const [data, total] = await qb.getManyAndCount()
   return {

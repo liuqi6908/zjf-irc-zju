@@ -1,17 +1,19 @@
+import { getQuery } from 'src/utils/query'
 import { IsLogin } from 'src/guards/login.guard'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { HasPermission } from 'src/guards/permission.guard'
+import { VerificationIdDto } from 'src/dto/id/verification.dto'
+import type { VerificationHistory } from 'src/entities/verification'
 import { ErrorCode, PermissionType, VerificationStatus } from 'zjf-types'
-import { Body, Controller, Delete, Get, Post, Put, Req } from '@nestjs/common'
 import { VerificationExists } from 'src/guards/verification-exists.guard'
 import { ApiErrorResponse, ApiSuccessResponse, responseError } from 'src/utils/response'
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req } from '@nestjs/common'
 
-import type { VerificationHistory } from 'src/entities/verification'
-import { getQuery } from 'src/utils/query'
-import { HasPermission } from 'src/guards/permission.guard'
-import { QueryDto } from '../../dto/query.dto'
+import { QueryDto, QueryResDto } from '../../dto/query.dto'
 import { VerificationService } from './verification.service'
 import { VerificationResDto } from './dto/verification.res.dto'
 import { CreateVerificationBodyDto } from './dto/create-verification.body.dto'
+import { RejectVerificationBodyDto } from './dto/reject-verification.body.dto'
 
 @ApiTags('Verification | 身份审核')
 @Controller('verification')
@@ -44,13 +46,26 @@ export class VerificationController {
     return this._verificationSrv.getLatestVerificationByFounderId(user.id)
   }
 
-  @ApiOperation({ summary: '取消一个认证申请（仅当该申请待处理时有效）' })
+  @ApiOperation({ summary: '查询所有用户的认证申请' })
+  @ApiSuccessResponse(QueryResDto)
+  @HasPermission([PermissionType.VERIFICATION_LIST_ALL])
+  @Post('query')
+  public async queryAllVerifications(
+    @Body() body: QueryDto<VerificationHistory>,
+  ) {
+    return await getQuery(this._verificationSrv.repo(), body)
+  }
+
+  @ApiOperation({ summary: '取消自己的一个认证申请（仅当该申请待处理时有效）' })
   @ApiSuccessResponse(VerificationResDto)
   @ApiErrorResponse(ErrorCode.PERMISSION_DENIED)
   @VerificationExists()
   @IsLogin()
   @Delete('cancel/:verificationId')
-  public async cancelVerification(@Req() req: FastifyRequest) {
+  public async cancelVerification(
+    @Param() _: VerificationIdDto,
+    @Req() req: FastifyRequest,
+  ) {
     const verification = req.verificationExistsGuardVerification!
     if (verification.status !== VerificationStatus.PENDING)
       responseError(ErrorCode.VERIFICATION_NOT_PENDING)
@@ -63,13 +78,16 @@ export class VerificationController {
     )
   }
 
-  @ApiOperation({ summary: '重置一个认证申请（仅当该申请已通过时有效）' })
+  @ApiOperation({ summary: '重置自己的一个认证申请（仅当该申请已通过时有效）' })
   @ApiSuccessResponse(VerificationResDto)
   @ApiErrorResponse(ErrorCode.PERMISSION_DENIED)
   @VerificationExists()
   @IsLogin()
   @Delete('reset/:verificationId')
-  public async resetVerification(@Req() req: FastifyRequest) {
+  public async resetVerification(
+    @Param() _: VerificationIdDto,
+    @Req() req: FastifyRequest,
+  ) {
     const verification = req.verificationExistsGuardVerification!
     if (verification.status !== VerificationStatus.APPROVED)
       responseError(ErrorCode.VERIFICATION_NOT_APPROVED)
@@ -80,12 +98,45 @@ export class VerificationController {
     )
   }
 
-  @ApiOperation({ summary: '查询所有的认证申请' })
-  @HasPermission([PermissionType.VERIFICATION_LIST_ALL])
-  @Post('query')
-  public async queryAllVerifications(
-    @Body() body: QueryDto<VerificationHistory>,
+  @ApiOperation({ summary: '通过一个认证申请' })
+  @ApiErrorResponse(ErrorCode.VERIFICATION_NOT_PENDING)
+  @VerificationExists()
+  @HasPermission([PermissionType.VERIFICATION_APPROVE])
+  @Patch('approve/:verificationId')
+  public async approveVerification(
+    @Param() _: VerificationIdDto,
+    @Req() req: FastifyRequest,
   ) {
-    return await getQuery(this._verificationSrv.repo(), body)
+    const verification = req.verificationExistsGuardVerification!
+    const user = req.raw.user!
+    if (verification.status !== VerificationStatus.PENDING)
+      responseError(ErrorCode.VERIFICATION_NOT_PENDING)
+    return await this._verificationSrv.updateVerificationStatus(
+      verification,
+      user,
+      VerificationStatus.APPROVED,
+    )
+  }
+
+  @ApiOperation({ summary: '驳回一个认证申请' })
+  @ApiErrorResponse(ErrorCode.VERIFICATION_NOT_PENDING, ErrorCode.VERIFICATION_REJECT_REASON_REQUIRED)
+  @VerificationExists()
+  @HasPermission([PermissionType.VERIFICATION_REJECT])
+  @Patch('reject/:verificationId')
+  public async rejectVerification(
+    @Param() _: VerificationIdDto,
+    @Req() req: FastifyRequest,
+    @Body() body: RejectVerificationBodyDto,
+  ) {
+    const verification = req.verificationExistsGuardVerification!
+    const user = req.raw.user!
+    if (verification.status !== VerificationStatus.PENDING)
+      responseError(ErrorCode.VERIFICATION_NOT_PENDING)
+    return await this._verificationSrv.updateVerificationStatus(
+      verification,
+      user,
+      VerificationStatus.REJECTED,
+      body.reason,
+    )
   }
 }

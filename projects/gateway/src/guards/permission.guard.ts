@@ -6,7 +6,7 @@ import type { CanActivate, ExecutionContext } from '@nestjs/common'
 import { ApiErrorResponse, responseError } from 'src/utils/response'
 import { Injectable, Logger, SetMetadata, UseGuards, applyDecorators } from '@nestjs/common'
 
-import { LoginGuard } from './login.guard'
+import { IsLogin, LoginGuard } from './login.guard'
 
 type PermissionRelation = 'OR' | 'AND'
 
@@ -70,6 +70,7 @@ export function HasPermission(
   relation: PermissionRelation = 'OR',
 ) {
   return applyDecorators(
+    IsLogin(),
     UseGuards(PermissionGuard),
     SetMetadata('permissions', permissions),
     SetMetadata('relation', relation),

@@ -33,7 +33,9 @@ export * from './types/http/user/user-profile.interface'
 export * from './types/http/user/get-profile-own.interface'
 export * from './types/http/email/send-email-code.interface'
 export * from './types/http/auth/login-by-password.interface'
+export * from './types/http/verification/reject-verification.interface'
 export * from './types/http/verification/create-verification.interface'
 
 // Constants
 export * from './types/constants/pagination.constant'
+export * from './types/constants/verification.constant'
