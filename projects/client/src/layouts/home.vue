@@ -63,7 +63,7 @@ const userList: Array<ItemList> = [
     id: 'userCunt',
     clickEvent: () => router.push({ path: '/userCenter' }),
   },
-  { id: 'adminQRCode', name: '退出登录', back: true, clickEvent: userEvent() },
+  { id: 'adminQRCode', name: '退出登录', back: true, clickEvent: useLogout },
 ]
 function toquestionLinkId(id: any) {
   questionLinkId.value = id
@@ -71,11 +71,6 @@ function toquestionLinkId(id: any) {
     qrCodeshow.value = !qrCodeshow.value
   else if (id === 'QandA')
     qandShow.value = !qandShow.value
-}
-
-function userEvent() {
-  useLogout()
-  router.push({ path: '/auth/login' })
 }
 
 const isToken = computed(() => localStorage.getItem('auth_token'))
@@ -139,7 +134,7 @@ onMounted(() => {
             <q-icon :name="`fas fa-chevron-${drawer ? 'right' : 'left'}`" size="0.25rem" text-grey-5 />
           </div>
         </q-toolbar>
-        <div class="col-grow q-px-md" flex flex-col>
+        <div class="q-px-md col-grow" flex flex-col>
           <!-- menu -->
           <q-list>
             <RouterLink
