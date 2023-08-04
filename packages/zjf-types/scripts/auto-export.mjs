@@ -7,6 +7,7 @@ const INDEX = path.join(ROOT_DIR, 'index.ts')
 
 const interfaces = await glob('./types/**/*.interface.ts', {cwd: process.cwd()})
 const enums = await glob('./types/**/*.enum.ts', {cwd: process.cwd()})
+const constants = await glob('./types/**/*.constant.ts', {cwd: process.cwd()})
 
 
 function exportCode(p) {
@@ -27,14 +28,22 @@ function sort(a, b) {
 
 const enumImports = enums.filter(filter).map(exportCode).sort(sort)
 const interfaceImports = interfaces.filter(filter).map(exportCode).sort(sort)
+const constantImports = constants.filter(filter).map(exportCode).sort(sort)
 
 const imports = [
-  "/** This file is auto generated, do not modify directly. */",
+  "/** ",
+  " * This file is auto generated, do not modify directly.",
+  " * @author CatsJuice",
+  " */",
+  "",
   "// Enums",
   ...enumImports, 
   "", 
   "// Interfaces",
-  ...interfaceImports
+  ...interfaceImports,
+  "",
+  "// Constants",
+  ...constantImports,
 ]
 
 fs.writeFileSync(INDEX, imports.join('\n'))

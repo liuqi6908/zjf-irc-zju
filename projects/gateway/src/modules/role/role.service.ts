@@ -25,4 +25,12 @@ export class RoleService implements OnModuleInit {
     // 将所有超级管理员的角色设置为 root
     await this._userSrv.repo().update({ isSysAdmin: true }, { roleName: 'root' })
   }
+
+  qb(alias = 'r') {
+    return this._roleRepo.createQueryBuilder(alias)
+  }
+
+  repo() {
+    return this._roleRepo
+  }
 }

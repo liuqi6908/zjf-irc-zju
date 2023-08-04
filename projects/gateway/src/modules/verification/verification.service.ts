@@ -46,6 +46,7 @@ export class VerificationService {
       if (count > 1)
         throw new Error(String(ErrorCode.VERIFICATION_PENDING_EXISTS))
 
+      await qr.commitTransaction()
       return vh
     }
     catch (err) {

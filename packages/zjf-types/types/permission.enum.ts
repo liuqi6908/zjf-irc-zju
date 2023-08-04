@@ -18,6 +18,8 @@ export enum PermissionType {
   ACCOUNT_QUERY = 'account:query',
 
   // ------------------ 身份验证 ---------------------
+  /** 查看所有的身份验证申请 */
+  VERIFICATION_LIST_ALL = 'verification:list-all',
   /** 通过身份验证 */
   VERIFICATION_APPROVE = 'verification:approve',
   /** 驳回身份验证 */
@@ -31,6 +33,7 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.ACCOUNT_UPDATE]: '更新账号信息',
   [PermissionType.ACCOUNT_QUERY]: '查询账户（条件查找用户列表，获取用户信息）',
 
-  [PermissionType.VERIFICATION_APPROVE]: '通过身份验证',
-  [PermissionType.VERIFICATION_REJECT]: '驳回身份验证',
+  [PermissionType.VERIFICATION_LIST_ALL]: '查看所有的身份验证申请',
+  [PermissionType.VERIFICATION_APPROVE]: '通过身份验证申请',
+  [PermissionType.VERIFICATION_REJECT]: '驳回身份验证申请',
 }
