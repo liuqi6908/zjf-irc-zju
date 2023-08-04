@@ -11,6 +11,7 @@ import { JwtAuthService } from '../jwt-auth/jwt-auth.service'
 
 import type { LoginByPasswordBodyDto } from './dto/login-by-password.body.dto'
 import type { RegisterBodyDto } from './dto/register.body.dto'
+import type { LoginByEmailCodeBodyDto } from './dto/login-by-email-code.body.dto'
 
 @Injectable()
 export class AuthService {
@@ -48,6 +49,31 @@ export class AuthService {
 
     if (!correct)
       responseError(ErrorCode.AUTH_PASSWORD_NOT_MATCHED)
+
+    // 签发 access_token
+    const sign = await this._jwtAuthSrv.signLoginAuthToken(user)
+    return { sign, user: objectOmit(user, ['password']) }
+  }
+
+  /**
+   * 通过邮箱验证码登录
+   * @param body
+   * @returns
+   */
+  public async loginByEmailCode(body: LoginByEmailCodeBodyDto) {
+    const { email, bizId, code } = body
+    const correct = await this._codeSrv.verifyCode(bizId, [email, CodeAction.LOGIN, code])
+    if (!correct)
+      responseError(ErrorCode.AUTH_CODE_NOT_MATCHED)
+
+    const user = await this._userSrv.repo().findOne({ where: { email } })
+    if (!user) {
+      /** __EDGE_CASE__ */
+      // 用户能够发送验证码到邮箱，说明用户已经注册了，但是在这里却找不到用户
+      // 这种情况只能是发送验证码 -> 登录期间账号被删除了
+      // 一般不会发生这一情况
+      responseError(ErrorCode.AUTH_EMAIL_NOT_REGISTERED)
+    }
 
     // 签发 access_token
     const sign = await this._jwtAuthSrv.signLoginAuthToken(user)

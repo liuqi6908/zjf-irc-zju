@@ -10,6 +10,7 @@ import { AuthService } from './auth.service'
 import { RegisterBodyDto } from './dto/register.body.dto'
 import { LoginSuccessResDto } from './dto/login-success.res.dto'
 import { LoginByPasswordBodyDto } from './dto/login-by-password.body.dto'
+import { LoginByEmailCodeBodyDto } from './dto/login-by-email-code.body.dto'
 
 @ApiTags('Auth | 身份验证')
 @Controller('auth')
@@ -19,12 +20,19 @@ export class AuthController {
     private readonly _jwtAuthSrv: JwtAuthService,
   ) {}
 
-  @ApiSuccessResponse(LoginSuccessResDto)
   @ApiOperation({ summary: '通过 账号/邮箱 + 密码 登录' })
+  @ApiSuccessResponse(LoginSuccessResDto)
   @Post('login/password')
   public async loginByPassword(@Body() body: LoginByPasswordBodyDto) {
     emailAccountAtLeastOne(body)
     return await this._authSrv.loginByPassword(body)
+  }
+
+  @ApiOperation({ summary: '通过邮箱 + 验证码 登录' })
+  @ApiSuccessResponse(LoginSuccessResDto)
+  @Post('login/email/code')
+  public async loginByEmailCode(@Body() body: LoginByEmailCodeBodyDto) {
+    return await this._authSrv.loginByEmailCode(body)
   }
 
   @ApiOperation({ summary: '注册（邮箱+验证码）' })

@@ -12,7 +12,7 @@
     }
   },
   "scripts": {
-    "dev": "concurrently \"pnpm run dev:esm\" \"pnpm run dev:cjs\" \"pnpm run auto-export\"",
+    "dev": "concurrently \"pnpm run auto-export\" \"pnpm run dev:esm\" \"pnpm run dev:cjs\"",
     "dev:esm": "rimraf dist/esm/**/* && tsc -w -p \"tsconfig.json\"",
     "dev:cjs": "rimraf dist/cjs/**/* && tsc -w -p \"tsconfig.cjs.json\"",
     "build": "pnpm run build:esm && pnpm run build:cjs",
