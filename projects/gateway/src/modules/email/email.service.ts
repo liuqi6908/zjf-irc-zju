@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config'
 import type { OnModuleInit } from '@nestjs/common'
 
 import { CodeService } from '../code/code.service'
+import type { LoginByEmailLinkDto } from '../auth/dto/login-by-email-link.body.dto'
 import type { SendEmailCodeBodyDto } from './dto/send-email-code.body.dto'
 
 @Injectable()
@@ -36,5 +37,15 @@ export class EmailService implements OnModuleInit {
       html,
     }).catch(console.error)
     return { bizId }
+  }
+
+  public async sendMagicLink(body: LoginByEmailLinkDto, token: string) {
+    const href = `${body.redirect}${body.redirect.includes('?') ? '&' : '?'}${body.queryName || 'token'}=${token}`
+    this.resend.emails.send({
+      from: 'CatsJuice <catsjuice@oooo.so>',
+      to: [body.email],
+      subject: 'ZJF Login',
+      html: `<a href="${href}">Click here to Login</a>, or copy this link to your browser: ${href}`,
+    })
   }
 }

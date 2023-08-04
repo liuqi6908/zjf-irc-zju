@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common'
+import { objectOmit } from '@catsjuice/utils'
 import { CodeAction, ErrorCode } from 'zjf-types'
 import { responseError } from 'src/utils/response'
+import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { comparePassword } from 'src/utils/encrypt/encrypt-password'
 
-import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
-import { objectOmit } from '@catsjuice/utils'
 import { UserService } from '../user/user.service'
 import { CodeService } from '../code/code.service'
+import { EmailService } from '../email/email.service'
 import { JwtAuthService } from '../jwt-auth/jwt-auth.service'
 
 import type { LoginByPasswordBodyDto } from './dto/login-by-password.body.dto'
 import type { RegisterBodyDto } from './dto/register.body.dto'
 import type { LoginByEmailCodeBodyDto } from './dto/login-by-email-code.body.dto'
+import type { LoginByEmailLinkDto } from './dto/login-by-email-link.body.dto'
 
 @Injectable()
 export class AuthService {
@@ -19,6 +21,7 @@ export class AuthService {
     private readonly _userSrv: UserService,
     private readonly _jwtAuthSrv: JwtAuthService,
     private readonly _codeSrv: CodeService,
+    private readonly _emailSrv: EmailService,
   ) {}
 
   /**
@@ -78,6 +81,19 @@ export class AuthService {
     // 签发 access_token
     const sign = await this._jwtAuthSrv.signLoginAuthToken(user)
     return { sign, user: objectOmit(user, ['password']) }
+  }
+
+  /**
+   * 通过邮箱链接登录
+   * @param body
+   */
+  public async loginByEmailLink(body: LoginByEmailLinkDto) {
+    const { email } = body
+    const user = await this._userSrv.repo().findOne({ where: { email } })
+    if (!user)
+      responseError(ErrorCode.AUTH_EMAIL_NOT_REGISTERED)
+    const sign = await this._jwtAuthSrv.signLoginAuthToken(user)
+    await this._emailSrv.sendMagicLink(body, sign.access_token)
   }
 
   /**

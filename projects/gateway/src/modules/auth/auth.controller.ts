@@ -1,4 +1,5 @@
 import { ErrorCode } from 'zjf-types'
+import { Throttle } from '@nestjs/throttler'
 import { IsLogin } from 'src/guards/login.guard'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Body, Controller, Post, Put, Req } from '@nestjs/common'
@@ -9,6 +10,7 @@ import { JwtAuthService } from '../jwt-auth/jwt-auth.service'
 import { AuthService } from './auth.service'
 import { RegisterBodyDto } from './dto/register.body.dto'
 import { LoginSuccessResDto } from './dto/login-success.res.dto'
+import { LoginByEmailLinkDto } from './dto/login-by-email-link.body.dto'
 import { LoginByPasswordBodyDto } from './dto/login-by-password.body.dto'
 import { LoginByEmailCodeBodyDto } from './dto/login-by-email-code.body.dto'
 
@@ -33,6 +35,13 @@ export class AuthController {
   @Post('login/email/code')
   public async loginByEmailCode(@Body() body: LoginByEmailCodeBodyDto) {
     return await this._authSrv.loginByEmailCode(body)
+  }
+
+  @Throttle(1, 30)
+  @ApiOperation({ summary: '通过邮箱魔法链接登录（半分钟内只能发送一次）' })
+  @Post('login/email/link')
+  public async loginByEmailLink(@Body() body: LoginByEmailLinkDto) {
+    return await this._authSrv.loginByEmailLink(body)
   }
 
   @ApiOperation({ summary: '注册（邮箱+验证码）' })
