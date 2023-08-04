@@ -1,12 +1,17 @@
 <script setup lang="ts">
+import type { ItemList } from '~/components/nav/NavItem.vue'
+
 const router = useRouter()
 
 const drawer = ref(false)
 const qrCodeshow = ref(false)
-const isLogin = ref(false)
+const qandShow = ref(false)
 
-const questionLink = ref('')
+const questionLinkId = ref('')
 const routerLink = ref('')
+
+/** hooks */
+const { userInfo, useGetProfile, useLogout } = useUser()
 
 const link = computed({
   get: () => { return router.currentRoute.value.name as string },
@@ -14,12 +19,12 @@ const link = computed({
     routerLink.value = val
   },
 })
-const navList = [
+const navList: Array<ItemList> = [
   {
     id: 'home',
     name: '首页',
     icon: ' <div  i-mingcute:home-4-line  style="width:24px;height:24px"/>',
-    authority: '',
+    // authority: '',
   },
   {
     id: 'buyData',
@@ -43,21 +48,41 @@ const navList = [
   },
 ]
 
-const question = [
+const question: Array<ItemList> = [
   {
     icon: '<div i-mingcute:question-line style="width:24px;height:24px"/>',
     name: '常见问题解答(Q&A)',
     id: 'QandA',
   },
-  { icon: '<div i-mingcute:user-setting-line style="width:24px;height:24px"/>', id: 'adminQRCode', name: '管理员二维码', back: 'fas fa-chevron-right' },
+  { icon: '<div i-mingcute:user-setting-line style="width:24px;height:24px"/>', id: 'adminQRCode', name: '管理员二维码', back: true },
 ]
-function toQuestionLink(item: any) {
-  questionLink.value = item.id
-  if (item.id === 'adminQRCode')
+
+const userList: Array<ItemList> = [
+  {
+    name: '用户中心',
+    id: 'userCunt',
+    clickEvent: () => router.push({ path: '/userCenter' }),
+  },
+  { id: 'adminQRCode', name: '退出登录', back: true, clickEvent: userEvent() },
+]
+function toquestionLinkId(id: any) {
+  questionLinkId.value = id
+  if (id === 'adminQRCode')
     qrCodeshow.value = !qrCodeshow.value
-  else
-    qrCodeshow.value = false
+  else if (id === 'QandA')
+    qandShow.value = !qandShow.value
 }
+
+function userEvent() {
+  useLogout()
+  router.push({ path: '/auth/login' })
+}
+
+const isToken = computed(() => localStorage.getItem('auth_token'))
+
+onMounted(() => {
+  useGetProfile()
+})
 </script>
 
 <template>
@@ -69,7 +94,7 @@ function toQuestionLink(item: any) {
       <q-header bg-white>
         <q-toolbar flex="~ row justify-between">
           <div mx-8 my-4 flex="~ row">
-            <img mr-2 src="../assets/layout/cloud.svg">
+            <img mr-2 h-6 src="../assets/layout/cloud.png">
             <span text-xl font-600 text-grey-8>
               智能云科研平台
             </span>
@@ -78,8 +103,21 @@ function toQuestionLink(item: any) {
 
           <div flex flex-row items-center>
             <Btn label="申请使用" transparent m-r-2 />
-            <!-- <span text-primary-1>登录/注册</span> -->
-            <Avatar :visitor="isLogin ? false : true" cursor-pointer @click="isLogin ? router.push({ path: '/userCenter' }) : router.push({ path: '/login' })" />
+            <Avatar
+              :avatar-url="userInfo?.avatar"
+              :nickname="userInfo?.nickname"
+              @update:route="router.push({ path: 'auth/login' })"
+            />
+            <q-list v-if="isToken" absolute right-3 top-16 border-rd-2 bg-grey-1 p-2>
+              <NavItem
+                v-for="u in userList"
+                :id="u.id"
+                :key="u.id"
+                :click-event="u.clickEvent"
+                :back="u.back"
+                :name="u.name"
+              />
+            </q-list>
           </div>
         </q-toolbar>
       </q-header>
@@ -101,7 +139,7 @@ function toQuestionLink(item: any) {
             <q-icon :name="`fas fa-chevron-${drawer ? 'right' : 'left'}`" size="0.25rem" text-grey-5 />
           </div>
         </q-toolbar>
-        <div class="q-px-md col-grow" flex flex-col>
+        <div class="col-grow q-px-md" flex flex-col>
           <!-- menu -->
           <q-list>
             <RouterLink
@@ -123,16 +161,16 @@ function toQuestionLink(item: any) {
           <div class="col-grow" />
           <!-- question -->
           <q-list>
-            <q-item
+            <NavItem
               v-for="item in question"
+              :id="item.id"
               :key="item.id"
-              :active="questionLink === item.id"
-              active-class="text-primary-1 opacity-primary-1"
-              clickable border-rd-2 text-grey-5
-              @click="toQuestionLink(item)"
-            >
-              <NavItemSection :icon="item.icon" :name="item.name" :back="item.back" />
-            </q-item>
+              :name="item.name"
+              :icon="item.icon"
+              :back="item.back"
+              :click-id="questionLinkId"
+              @update:id="(val) => toquestionLinkId(val)"
+            />
           </q-list>
 
           <q-item :class="drawer ? '' : 'bg-white'" m-y flex flex-col items-center border-rd-2 p-4 font-500 text-grey-8>
@@ -157,6 +195,12 @@ function toQuestionLink(item: any) {
 
       <q-page-container bg-grey-2>
         <q-page>
+          <ZDialog
+            v-model="qandShow"
+            title="常见问题解答(Q&A)"
+          >
+            <!-- <RectAngleCardSection title="国外，境外手机号注册" content="sdkhasgdjhasd<br/>skdhgakhjdkjh" /> -->
+          </ZDialog>
           <RouterView />
         </q-page>
       </q-page-container>

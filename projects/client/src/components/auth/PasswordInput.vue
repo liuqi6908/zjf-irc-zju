@@ -7,13 +7,13 @@ const inputRef = ref(null)
 
 interface Props {
   password: string
-  rules?: Array
+  rules?: Array<any>
   reactiveRules?: boolean
 }
 
 watch(() => props.password, () => {
   if (inputRef.value) {
-    const validate = inputRef.value.validate(props.password)
+    const validate = inputRef.value?.validate(props.password)
     emits('update:accept', validate)
   }
 })
@@ -33,14 +33,22 @@ watch(() => props.password, () => {
   >
     <template #append>
       <div
-        :class="isPwd ? 'i-mingcute:eye-close-fill' : 'i-mingcute:eye-2-fill' "
-        cursor-pointer
+
+        :class="isPwd ? 'i-mingcute:eye-close-line' : 'i-mingcute:eye-2-line' "
+        cursor-pointer text-grey-5
         @click="isPwd = !isPwd"
       />
     </template>
   </q-input>
 </template>
 
-<style lang="">
-
+<style lang="scss" scoped>
+.q-field :deep(.q-field__inner){
+    .q-field__control {
+      border-radius: 8px !important;
+    }
+    .q-field__control:before{
+      border: 1px solid var(--grey-3, #D4DDEA); ;
+    }
+}
 </style>

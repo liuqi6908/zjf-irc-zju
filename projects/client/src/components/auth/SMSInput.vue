@@ -1,18 +1,26 @@
 <script lang="ts" setup>
+import type { CodeAction } from 'zjf-types'
+import { smsCodeByEmail } from '~/api/auth/email/smsCodeByEmail'
+
 const props = defineProps<Props>()
-const emits = defineEmits(['update:smsCode', 'update:accept'])
+const emits = defineEmits(['update:smsCode', 'update:accept', 'update:bizId'])
 
 interface Props {
   smsCode: string
-  phone: string
+  email: string
+  action: CodeAction.REGISTER | CodeAction.LOGIN | CodeAction.CHANGE_PASSWORD
 }
 const wait = ref(0)
-const isSent = ref(false)
+
 const inputRef = ref(null)
 
-let timer
+let timer: any
 
-function getCode() {
+async function getCode() {
+  const res = await smsCodeByEmail(props.email, props.action)
+  if (!res)
+    return
+  emits('update:bizId', res.bizId)
   wait.value = 60
   timer = setInterval(() => {
     wait.value--
@@ -23,7 +31,7 @@ function getCode() {
 
 watch(() => props.smsCode, () => {
   if (inputRef.value) {
-    const validate = inputRef.value.validate(props.smsCode)
+    const validate = inputRef.value?.validate(props.smsCode)
     emits('update:accept', validate)
   }
 })
@@ -48,6 +56,13 @@ watch(() => props.smsCode, () => {
   </q-input>
 </template>
 
-<style lang="">
-
+<style lang="scss" scoped>
+.q-field :deep(.q-field__inner){
+    .q-field__control {
+      border-radius: 8px !important;
+    }
+    .q-field__control:before{
+      border: 1px solid var(--grey-3, #D4DDEA); ;
+    }
+}
 </style>

@@ -5,7 +5,7 @@ const emits = defineEmits(['update:userCode', 'update:accept'])
 interface Props {
   userCode: string
   accept?: boolean
-  rule?: Array
+  rule?: Array<any>
 }
 
 const inputRef = ref(null)
@@ -26,11 +26,17 @@ watch(() => props.userCode, () => {
     input-class="rounded-8"
     outlined
     :rules="rule"
-    @input="setModelValue(value)"
-    @update:model-value="(v: string) => $emit('update:userCode', v)"
+    @update:model-value="(v) => $emit('update:userCode', v)"
   />
 </template>
 
-<style lang="">
-
+<style lang="scss" scoped>
+.q-field :deep(.q-field__inner){
+    .q-field__control {
+      border-radius: 8px !important;
+    }
+    .q-field__control:before{
+      border: 1px solid var(--grey-3, #D4DDEA); ;
+    }
+}
 </style>

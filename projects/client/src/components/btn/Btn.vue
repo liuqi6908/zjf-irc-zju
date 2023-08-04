@@ -6,10 +6,13 @@ interface Props extends QBtnGroupProps {
   transparent?: boolean
   outline?: boolean
   icon?: string
+  iconColor?: string
   bgColor?: string
   /** 字体颜色 */
   color?: string
   disable?: boolean
+  flat?: boolean
+  vClosePopup?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -17,6 +20,8 @@ const props = withDefaults(defineProps<Props>(), {
   color: 'white',
 })
 const btnClass = computed(() => {
+  if (props.icon)
+    return 'text-grey-5'
   if (!props.transparent && !props.outline)
     return [`text-${props.color}`, `bg-${props.bgColor}`]
   else
@@ -28,8 +33,9 @@ const finalProps = computed(() => ({ props }))
 
 <template>
   <q-btn
+    v-close-popup="vClosePopup"
     v-bind="finalProps"
-    :flat="transparent === true"
+    :flat="flat || transparent === true"
     :label="label"
     :outline="outline === true"
     :class="btnClass"
@@ -38,6 +44,9 @@ const finalProps = computed(() => ({ props }))
     rounded-2
   >
     <div v-if="transparent" class="translucent-mask" :class="`bg-${bgColor}`" />
+    <template v-if="icon">
+      <div :class="[icon, ...btnClass]" h-4 w-4 />
+    </template>
   </q-btn>
 </template>
 
