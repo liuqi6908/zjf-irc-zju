@@ -129,7 +129,7 @@ export class UserController {
     if (!correct)
       responseError(ErrorCode.AUTH_PASSWORD_NOT_MATCHED)
     await this._userSrv.updateUserPassword({ id: user.id }, body.newPassword)
-    // 登录当前用户的所有登录
+    // 登出当前用户的所有登录会话
     this._authSrv.logoutUser(user.id)
     return true
   }

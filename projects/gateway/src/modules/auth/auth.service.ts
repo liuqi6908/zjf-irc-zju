@@ -1,10 +1,11 @@
-import { MoreThan, Repository } from 'typeorm'
+import { Cron } from '@nestjs/schedule'
 import { Login } from 'src/entities/login'
 import { objectOmit } from '@catsjuice/utils'
 import type { User } from 'src/entities/user'
 import { CodeAction, ErrorCode } from 'zjf-types'
 import { responseError } from 'src/utils/response'
 import { InjectRepository } from '@nestjs/typeorm'
+import { LessThan, MoreThan, Repository } from 'typeorm'
 import { Inject, Injectable, forwardRef } from '@nestjs/common'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { comparePassword } from 'src/utils/encrypt/encrypt-password'
@@ -32,6 +33,13 @@ export class AuthService {
     @InjectRepository(Login)
     private readonly _loginRepo: Repository<Login>,
   ) {}
+
+  @Cron('*/30 * * * * *')
+  public async clearExpiredLogin() {
+    await this._loginRepo.delete({
+      expireAt: LessThan(new Date()),
+    })
+  }
 
   /**
    * 通过账号密码登录，校验并签发 access_token
