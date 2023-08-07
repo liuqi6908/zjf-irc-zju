@@ -65,9 +65,7 @@ export class AuthService {
    */
   public async loginByEmailCode(body: LoginByEmailCodeBodyDto) {
     const { email, bizId, code } = body
-    const correct = await this._codeSrv.verifyCode(bizId, [email, CodeAction.LOGIN, code])
-    if (!correct)
-      responseError(ErrorCode.AUTH_CODE_NOT_MATCHED)
+    await this._codeSrv.verifyWithError(bizId, [email, CodeAction.LOGIN, code])
 
     const user = await this._userSrv.repo().findOne({ where: { email } })
     if (!user) {
@@ -111,9 +109,7 @@ export class AuthService {
     // 校验验证码
     const { bizId, code, ...userInfo } = body
     const { email } = userInfo
-    const correct = await this._codeSrv.verifyCode(bizId, [email, CodeAction.REGISTER, code])
-    if (!correct)
-      responseError(ErrorCode.AUTH_CODE_NOT_MATCHED)
+    await this._codeSrv.verifyWithError(bizId, [email, CodeAction.REGISTER, code])
 
     // 创建用户
     try {

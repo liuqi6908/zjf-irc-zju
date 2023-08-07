@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import type { CodeAction } from 'zjf-types'
+import { type CodeAction, ErrorCode } from 'zjf-types'
 import { ConfigService } from '@nestjs/config'
 import { randomString } from '@catsjuice/utils'
 
+import { responseError } from 'src/utils/response'
 import { RedisService } from '../redis/redis.service'
 
 @Injectable()
@@ -14,7 +15,7 @@ export class CodeService {
 
   /**
    * 创建一个验证码并存入 redis
-   * @param platformId
+   * @param platformId 目前只能是 email， 后续可能是 phone
    * @param action
    * @param expireInMinutes
    * @returns
@@ -57,5 +58,12 @@ export class CodeService {
     if (deleteAfterVerify)
       client.del(bizId)
     return true
+  }
+
+  public async verifyWithError(...args: Parameters<typeof this.verifyCode>) {
+    const res = await this.verifyCode(...args)
+    if (!res)
+      responseError(ErrorCode.AUTH_CODE_NOT_MATCHED)
+    return res
   }
 }

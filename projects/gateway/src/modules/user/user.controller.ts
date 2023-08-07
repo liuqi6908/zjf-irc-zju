@@ -1,24 +1,32 @@
 import { objectOmit } from '@catsjuice/utils'
 import type { User } from 'src/entities/user'
 import { IsLogin } from 'src/guards/login.guard'
+import { CodeAction, ErrorCode } from 'zjf-types'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { ApiSuccessResponse } from 'src/utils/response'
-import { Body, Controller, Get, Put, Query, Req } from '@nestjs/common'
+import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
+import { EmailCodeVerify } from 'src/guards/email-code-verify.guard'
+import { ApiSuccessResponse, responseError } from 'src/utils/response'
+import { UniversalOperationResDto } from 'src/dto/universal-operation.dto'
+import { responseParamsError } from 'src/utils/response/validate-exception-factory'
+import { Body, Controller, Delete, Get, Patch, Put, Query, Req } from '@nestjs/common'
 import { emailAccountAtLeastOne } from 'src/utils/validator/account-phone-at-least-one'
 
-import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
-import { responseParamsError } from 'src/utils/response/validate-exception-factory'
+import { CodeService } from '../code/code.service'
 import { UserService } from './user.service'
 import { UserProfileResponseDto } from './dto/user.res.dto'
 import { CreateUserResDto } from './dto/create-user.res.dto'
 import { CreateUserBodyDto } from './dto/create-user.body.dto'
 import { GetProfileOwnQueryDto } from './dto/get-profile-own.query.dto'
+import { UpdateEmailOwnBodyDto } from './dto/update-email-own.body.dto'
+import { UnbindEmailOwnBodyDto } from './dto/unbind-email-own.body.dto'
+import { UpdateProfileOwnBodyDto } from './dto/update-profile-own.body.dto'
 
 @ApiTags('User | 用户')
 @Controller('user')
 export class UserController {
   constructor(
     private readonly _userSrv: UserService,
+    private readonly _codeSrv: CodeService,
   ) {}
 
   @ApiOperation({ summary: '创建一个新用户' })
@@ -60,5 +68,47 @@ export class UserController {
 
       throw err
     }
+  }
+
+  @ApiOperation({ summary: '修改基本信息' })
+  @ApiSuccessResponse(UniversalOperationResDto)
+  @IsLogin()
+  @Patch('own/profile')
+  public async updateOwnProfile(
+    @Body() body: UpdateProfileOwnBodyDto,
+    @Req() req: FastifyRequest,
+  ) {
+    return await this._userSrv.updateUserBasicInfo(
+      { id: req.raw?.user?.id },
+      body,
+    )
+  }
+
+  @ApiOperation({ summary: '解绑邮箱' })
+  @IsLogin()
+  @EmailCodeVerify(CodeAction.UNBIND_EMAIL)
+  @Delete('own/email')
+  public async unbindOwnEmail(
+    @Body() body: UnbindEmailOwnBodyDto,
+    @Req() req: FastifyRequest,
+  ) {
+    const user = req.raw.user!
+    const userEmail = user.email
+    if (userEmail !== body.email)
+      responseError(ErrorCode.USER_EMAIL_NOT_MATCHED)
+    await this._userSrv.repo().update({ id: user.id }, { email: null })
+    return true
+  }
+
+  @ApiOperation({ summary: '修改邮箱，简单处理，只要用户处于登录状态就可以修改邮箱，不需要校验原邮箱的权限，发送验证码到新的邮箱地址之后即可' })
+  @EmailCodeVerify(CodeAction.BIND_EMAIL)
+  @IsLogin()
+  @Patch('own/email')
+  public async updateOwnEmail(
+    @Body() body: UpdateEmailOwnBodyDto,
+    @Req() req: FastifyRequest,
+  ) {
+    const user = req.raw.user!
+    return await this._userSrv.updateUserEmail(user.id, body.email)
   }
 }

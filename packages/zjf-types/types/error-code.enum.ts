@@ -21,6 +21,10 @@ export enum ErrorCode {
   AUTH_ACCOUNT_NOT_REGISTERED = 200007,
   /** 验证码错误 */
   AUTH_CODE_NOT_MATCHED = 200008,
+  /** 邮箱已注册 */
+  AUTH_EMAIL_REGISTERED = 200009,
+  /** 账号已注册 */
+  AUTH_ACCOUNT_REGISTERED = 200010,
 
   // 权限相关错误
   PERMISSION_DENIED = 300001,
@@ -35,6 +39,12 @@ export enum ErrorCode {
   USER_EMAIL_NOT_REGISTERED = 400004,
   /** 用户已存在 */
   USER_EXISTED = 400005,
+  /** 用户未绑定邮箱 */
+  USER_EMAIL_NOT_EXISTS = 400006,
+  /** 用户邮箱已存在 */
+  USER_EMAIL_EXISTS = 400007,
+  /** 用户邮箱不匹配 */
+  USER_EMAIL_NOT_MATCHED = 400008,
 
   // 身份验证相关 
   /** 驳回原因必填 */
