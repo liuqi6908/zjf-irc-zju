@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm'
+import { MoreThan, Repository } from 'typeorm'
 import { Login } from 'src/entities/login'
 import { objectOmit } from '@catsjuice/utils'
 import type { User } from 'src/entities/user'
@@ -22,10 +22,11 @@ import type { LoginByEmailLinkDto } from './dto/login-by-email-link.body.dto'
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly _userSrv: UserService,
     private readonly _codeSrv: CodeService,
     private readonly _emailSrv: EmailService,
 
+    @Inject(forwardRef(() => UserService))
+    private readonly _userSrv: UserService,
     @Inject(forwardRef(() => JwtAuthService))
     private readonly _jwtAuthSrv: JwtAuthService,
     @InjectRepository(Login)
@@ -108,6 +109,20 @@ export class AuthService {
   public async signLoginTicket(user: Partial<User>) {
     const sign = await this._jwtAuthSrv.signLoginAuthToken(user)
     return { sign, user: objectOmit(user, ['password']) }
+  }
+
+  /**
+   * 将指定用户所有的会话都登出
+   * @param userId
+   */
+  public async logoutUser(userId: string) {
+    const logins = await this._loginRepo.find({
+      where: { userId, expireAt: MoreThan(new Date()) },
+    })
+    for (const login of logins) {
+      await this._jwtAuthSrv.destroyLoginAuthToken(login.token)
+      await this._loginRepo.remove(login)
+    }
   }
 
   /**

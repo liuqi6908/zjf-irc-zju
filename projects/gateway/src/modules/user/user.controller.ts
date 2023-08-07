@@ -8,11 +8,12 @@ import { EmailCodeVerify } from 'src/guards/email-code-verify.guard'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { UniversalOperationResDto } from 'src/dto/universal-operation.dto'
 import { responseParamsError } from 'src/utils/response/validate-exception-factory'
-import { Body, Controller, Delete, Get, Patch, Put, Query, Req } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Patch, Put, Query, Req, forwardRef } from '@nestjs/common'
 import { emailAccountAtLeastOne } from 'src/utils/validator/account-phone-at-least-one'
 
 import { Throttle } from '@nestjs/throttler'
 import { comparePassword } from 'src/utils/encrypt/encrypt-password'
+import { AuthService } from '../auth/auth.service'
 import { UserService } from './user.service'
 import { UserProfileResponseDto } from './dto/user.res.dto'
 import { CreateUserResDto } from './dto/create-user.res.dto'
@@ -28,6 +29,8 @@ import { UpdatePasswordByOldBodyDto } from './dto/update-pswd-by-old.body.dto'
 export class UserController {
   constructor(
     private readonly _userSrv: UserService,
+    @Inject(forwardRef(() => AuthService))
+    private readonly _authSrv: AuthService,
   ) {}
 
   @ApiOperation({ summary: '创建一个新用户' })
@@ -126,7 +129,8 @@ export class UserController {
     if (!correct)
       responseError(ErrorCode.AUTH_PASSWORD_NOT_MATCHED)
     await this._userSrv.updateUserPassword({ id: user.id }, body.newPassword)
-    // 登出
+    // 登录当前用户的所有登录
+    this._authSrv.logoutUser(user.id)
     return true
   }
 }

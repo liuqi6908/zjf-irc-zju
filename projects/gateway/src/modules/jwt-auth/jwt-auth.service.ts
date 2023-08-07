@@ -30,7 +30,10 @@ export class JwtAuthService {
   public async signLoginAuthToken(user: Partial<User>) {
     const expiresIn = this._cfgSrv.get<number>('jwt.loginAuthExpireInSeconds')
     const secret = this._cfgSrv.get<string>('jwt.loginAuthSecret')
-    const signObj = objectPick(user, ['id', 'account', 'email', 'nickname'], true)
+    const signObj = {
+      ...objectPick(user, ['id', 'account', 'email', 'nickname'], true),
+      timestamp: Date.now(),
+    }
     const access_token = this._jwtSrv.sign(signObj, { secret, expiresIn })
     const client = await this._redisSrv.getClient(RedisType.AUTH_JWT)
     client.setEx(access_token, expiresIn, `${expiresIn}`)

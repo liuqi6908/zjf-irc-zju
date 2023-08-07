@@ -12,7 +12,8 @@ import { AuthService } from './auth.service'
 @Module({
   imports: [
     TypeOrmModule.forFeature([Login]),
-    UserModule, CodeModule, EmailModule,
+    CodeModule, EmailModule,
+    forwardRef(() => UserModule),
     forwardRef(() => JwtAuthModule),
   ],
   controllers: [AuthController],
