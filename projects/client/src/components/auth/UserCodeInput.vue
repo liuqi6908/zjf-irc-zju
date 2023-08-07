@@ -6,6 +6,7 @@ interface Props {
   userCode: string
   accept?: boolean
   rule?: Array<any>
+  disable?: boolean
 }
 
 const inputRef = ref(null)
@@ -21,10 +22,11 @@ watch(() => props.userCode, () => {
 <template>
   <q-input
     ref="inputRef"
-
+    :disable="disable"
     :model-value="userCode"
-    input-class="rounded-8"
-    outlined dense
+    :bg-color="disable ? 'grey-3' : ''"
+    outlined
+    dense
     :rules="rule"
     @update:model-value="(v) => $emit('update:userCode', v)"
   />

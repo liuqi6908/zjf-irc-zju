@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     Avatar: typeof import('./components/avatar/Avatar.vue')['default']
     Btn: typeof import('./components/btn/Btn.vue')['default']
+    ChangeInput: typeof import('./components/user/ChangeInput.vue')['default']
     DisplayCard: typeof import('./components/card/DisplayCard.vue')['default']
     NavItem: typeof import('./components/nav/NavItem.vue')['default']
     NavItemSection: typeof import('./components/nav/NavItemSection.vue')['default']
@@ -22,6 +23,7 @@ declare module 'vue' {
     TangleCardSection: typeof import('./components/dialog/TangleCardSection.vue')['default']
     Tree: typeof import('./components/tree/Tree.vue')['default']
     UserCodeInput: typeof import('./components/auth/UserCodeInput.vue')['default']
+    UserInput: typeof import('./components/user/userInput.vue')['default']
     ZDialog: typeof import('./components/dialog/ZDialog.vue')['default']
     ZSelect: typeof import('./components/select/ZSelect.vue')['default']
   }

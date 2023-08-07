@@ -62,7 +62,7 @@ const userList: Array<ItemList> = [
   {
     name: '用户中心',
     id: 'userCunt',
-    clickEvent: () => router.push({ path: '/userCenter' }),
+    clickEvent: () => router.replace({ path: '/userCenter' }),
   },
   { id: 'adminQRCode', name: '退出登录', back: true, clickEvent: () => useLogout() },
 ]
@@ -74,7 +74,7 @@ function toquestionLinkId(id: any) {
     qandShow.value = true
 }
 
-const isToken = computed(() => localStorage.getItem('auth_token'))
+const isToken = computed(() => localStorage.getItem(AUTH_TOKEN_KEY))
 
 onMounted(() => {
   useGetProfile()
@@ -102,7 +102,7 @@ onMounted(() => {
             <Avatar
               :avatar-url="userInfo?.avatar"
               :nickname="userInfo?.nickname"
-              @update:route="isToken ? (userDropdown = !userDropdown) : router.push({ path: 'auth/login' })"
+              @update:route="isToken ? (userDropdown = !userDropdown) : router.replace({ path: '/auth/login' })"
             />
             <q-list v-if="userDropdown" absolute right-3 top-16 border-rd-2 bg-grey-1 p-2>
               <NavItem

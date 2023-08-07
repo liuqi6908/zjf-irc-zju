@@ -69,5 +69,16 @@ export function useRequest() {
     return response.data
   }
 
-  return { $get, $post, $put, cache }
+  async function $patch<T = any>(url: string, data: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
+    const cacheKey = url + JSON.stringify(data) + JSON.stringify(config)
+    if (useCache && cache.has(cacheKey))
+      return cache.get(cacheKey)
+    const { signal, abortController } = newController()
+    const response = await $http.patch(url, data, { signal, ...(config || {}) })
+    requestControllers.delete(abortController)
+    useCache && cache.set(cacheKey, response.data)
+    return response.data
+  }
+
+  return { $get, $post, $put, $patch, cache }
 }

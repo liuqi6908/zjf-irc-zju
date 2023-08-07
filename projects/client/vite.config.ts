@@ -72,6 +72,8 @@ export default ({ mode }: any) => {
         dirs: [
           'src/composables',
           'src/stores',
+          'src/constants',
+          'src/views',
         ],
         vueTemplate: true,
       }),

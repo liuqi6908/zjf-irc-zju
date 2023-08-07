@@ -22,12 +22,12 @@ const clickId = ref('authentication')
 
 <template>
   <HomeLayout>
-    <div full bg-grey-2 p-8>
+    <div flex="~ col" class="fit" bg-grey-2 p-8>
       <header border-b-1 pb-6 text-5 font-600 text-grey-8 flex="~ row justify-start">
         用户中心
       </header>
 
-      <div flex="~ row" flat mt-8 rounded-3 bg-grey-1 p-6>
+      <div flex="~ row" class="col-grow" flat mt-8 rounded-3 bg-grey-1 p-6>
         <div border-r-1 border-grey-3 pr-6>
           <router-link
             v-for="u in userList"

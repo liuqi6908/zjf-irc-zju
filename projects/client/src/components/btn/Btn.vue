@@ -13,6 +13,7 @@ interface Props extends QBtnGroupProps {
   disable?: boolean
   flat?: boolean
   closePopup?: boolean
+  dense?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -41,6 +42,7 @@ const finalProps = computed(() => ({ props }))
     :class="btnClass"
     unelevated
     :disable="disable"
+    :dense="dense"
     rounded-2
   >
     <div v-if="transparent" class="translucent-mask" :class="`bg-${bgColor}`" />

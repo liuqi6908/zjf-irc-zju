@@ -4,19 +4,19 @@ import { CodeAction } from 'zjf-types'
 
 import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUser } from '../../../composables/useUser'
+
+import { Notify } from 'quasar'
+import { changePasswordBySms } from '~/api/auth/user/changePasswordBySms'
 
 const password = ref<string>('')
 const email = ref<string>('')
 const bizId = ref('')
 const repeatPassword = ref ('')
-const userName = ref('')
 const smsCode = ref('')
 
 // const $route = useRoute()
 // const $router = useRouter()
 
-const { useRegister } = useUser()
 const router = useRouter()
 
 /** 需要校验的input */
@@ -41,8 +41,12 @@ function verifyAccept(obj: any) {
   return Object.values(obj).includes(false)
 }
 
-async function signUp() {
-  useRegister(userName.value, email.value, password.value, bizId.value, smsCode.value)
+async function finish() {
+  const res = await changePasswordBySms(email.value, password.value, bizId.value, smsCode.value)
+  if (!res)
+    return
+  Notify.create({ type: 'success', message: '修改密码完成' })
+  router.replace('/auth/login')
 }
 
 const disable = computed(() => verifyAccept(acceptObj))
@@ -90,7 +94,7 @@ const disable = computed(() => verifyAccept(acceptObj))
       @update:accept="(val) => acceptObj.repeatPassword = val"
     />
 
-    <Btn mt-5 w-full label="完成" :disable="disable" @click="signUp" />
+    <Btn mt-5 w-full label="完成" :disable="disable" @click="finish" />
   </div>
 </template>
 
