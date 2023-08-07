@@ -471,6 +471,9 @@ importers:
       class-validator:
         specifier: ^0.14.0
         version: registry.npmmirror.com/class-validator@0.14.0
+      cron:
+        specifier: ^2.4.0
+        version: registry.npmmirror.com/cron@2.4.0
       lodash:
         specifier: ^4.17.21
         version: registry.npmmirror.com/lodash@4.17.21
@@ -10572,7 +10575,7 @@ packages:
       ignore: registry.npmmirror.com/ignore@5.2.4
       is-core-module: registry.npmmirror.com/is-core-module@2.12.1
       minimatch: registry.npmmirror.com/minimatch@3.1.2
-      resolve: registry.npmmirror.com/resolve@1.22.2
+      resolve: registry.npmmirror.com/resolve@1.22.3
       semver: registry.npmmirror.com/semver@7.5.4
     dev: true
 
