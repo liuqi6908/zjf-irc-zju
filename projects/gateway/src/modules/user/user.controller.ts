@@ -11,7 +11,8 @@ import { responseParamsError } from 'src/utils/response/validate-exception-facto
 import { Body, Controller, Delete, Get, Patch, Put, Query, Req } from '@nestjs/common'
 import { emailAccountAtLeastOne } from 'src/utils/validator/account-phone-at-least-one'
 
-import { CodeService } from '../code/code.service'
+import { Throttle } from '@nestjs/throttler'
+import { comparePassword } from 'src/utils/encrypt/encrypt-password'
 import { UserService } from './user.service'
 import { UserProfileResponseDto } from './dto/user.res.dto'
 import { CreateUserResDto } from './dto/create-user.res.dto'
@@ -20,13 +21,13 @@ import { GetProfileOwnQueryDto } from './dto/get-profile-own.query.dto'
 import { UpdateEmailOwnBodyDto } from './dto/update-email-own.body.dto'
 import { UnbindEmailOwnBodyDto } from './dto/unbind-email-own.body.dto'
 import { UpdateProfileOwnBodyDto } from './dto/update-profile-own.body.dto'
+import { UpdatePasswordByOldBodyDto } from './dto/update-pswd-by-old.body.dto'
 
 @ApiTags('User | 用户')
 @Controller('user')
 export class UserController {
   constructor(
     private readonly _userSrv: UserService,
-    private readonly _codeSrv: CodeService,
   ) {}
 
   @ApiOperation({ summary: '创建一个新用户' })
@@ -110,5 +111,22 @@ export class UserController {
   ) {
     const user = req.raw.user!
     return await this._userSrv.updateUserEmail(user.id, body.email)
+  }
+
+  @Throttle(1, 10)
+  @ApiOperation({ summary: '通过原密码修改密码（需要登录）' })
+  @IsLogin()
+  @Patch('own/password/old')
+  public async updateOwnPasswordByOldPassword(
+    @Body() body: UpdatePasswordByOldBodyDto,
+    @Req() req: FastifyRequest,
+  ) {
+    const user = req.raw.user!
+    const correct = await comparePassword(body.oldPassword, user.password)
+    if (!correct)
+      responseError(ErrorCode.AUTH_PASSWORD_NOT_MATCHED)
+    await this._userSrv.updateUserPassword({ id: user.id }, body.newPassword)
+    // 登出
+    return true
   }
 }

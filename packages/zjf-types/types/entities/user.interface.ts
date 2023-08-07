@@ -1,10 +1,11 @@
 import { IRole } from './role.interface';
+import { ILogin } from './login.interface';
 import { IAccountDto } from '../dto/account.interface';
 import { IPasswordDto } from '../dto/password.interface';
 import { IEmailOptionalDto } from '../dto/email.interface';
 import { ICreatedAt, IUpdatedAt } from "./_timestamp.interface";
-import { INicknameOptionalDto } from '../dto/nickname.interface';
 import { IVerificationHistory } from './verification.interface';
+import { INicknameOptionalDto } from '../dto/nickname.interface';
 
 export interface IUser extends 
   ICreatedAt, 
@@ -40,6 +41,10 @@ export interface IUser extends
 
   /** 创建的认证信息 */
   founderVerifications?: IVerificationHistory[];
+
   /** 处理的认证信息 */
   handlerVerifications?: IVerificationHistory[];
+
+  /** 当前激活的所有的登录信息 */
+  logins?: ILogin[]
 }

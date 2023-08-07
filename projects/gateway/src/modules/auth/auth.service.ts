@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common'
+import { Repository } from 'typeorm'
+import { Login } from 'src/entities/login'
 import { objectOmit } from '@catsjuice/utils'
+import type { User } from 'src/entities/user'
 import { CodeAction, ErrorCode } from 'zjf-types'
 import { responseError } from 'src/utils/response'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Inject, Injectable, forwardRef } from '@nestjs/common'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { comparePassword } from 'src/utils/encrypt/encrypt-password'
 
@@ -19,9 +23,13 @@ import type { LoginByEmailLinkDto } from './dto/login-by-email-link.body.dto'
 export class AuthService {
   constructor(
     private readonly _userSrv: UserService,
-    private readonly _jwtAuthSrv: JwtAuthService,
     private readonly _codeSrv: CodeService,
     private readonly _emailSrv: EmailService,
+
+    @Inject(forwardRef(() => JwtAuthService))
+    private readonly _jwtAuthSrv: JwtAuthService,
+    @InjectRepository(Login)
+    private readonly _loginRepo: Repository<Login>,
   ) {}
 
   /**
@@ -54,8 +62,7 @@ export class AuthService {
       responseError(ErrorCode.AUTH_PASSWORD_NOT_MATCHED)
 
     // 签发 access_token
-    const sign = await this._jwtAuthSrv.signLoginAuthToken(user)
-    return { sign, user: objectOmit(user, ['password']) }
+    return await this.signLoginTicket(user)
   }
 
   /**
@@ -77,8 +84,7 @@ export class AuthService {
     }
 
     // 签发 access_token
-    const sign = await this._jwtAuthSrv.signLoginAuthToken(user)
-    return { sign, user: objectOmit(user, ['password']) }
+    return await this.signLoginTicket(user)
   }
 
   /**
@@ -90,8 +96,18 @@ export class AuthService {
     const user = await this._userSrv.repo().findOne({ where: { email } })
     if (!user)
       responseError(ErrorCode.AUTH_EMAIL_NOT_REGISTERED)
-    const sign = await this._jwtAuthSrv.signLoginAuthToken(user)
+    const { sign } = await this.signLoginTicket(user)
     await this._emailSrv.sendMagicLink(body, sign.access_token)
+  }
+
+  /**
+   * 签发登录凭证
+   * @param user
+   * @returns
+   */
+  public async signLoginTicket(user: Partial<User>) {
+    const sign = await this._jwtAuthSrv.signLoginAuthToken(user)
+    return { sign, user: objectOmit(user, ['password']) }
   }
 
   /**
@@ -123,5 +139,13 @@ export class AuthService {
         responseError(ErrorCode.USER_EXISTED, '邮箱或账号已被注册')
       throw e
     }
+  }
+
+  public loginRepo() {
+    return this._loginRepo
+  }
+
+  public loginQB(alias = 'l') {
+    return this._loginRepo.createQueryBuilder(alias)
   }
 }

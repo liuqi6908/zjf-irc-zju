@@ -6,6 +6,7 @@ import { Role } from './role'
 import { BaseTimeStamp } from './_timestamp'
 import { UserDeleted } from './user-deleted'
 import { VerificationHistory } from './verification'
+import { Login } from './login'
 
 @Entity()
 export class User extends BaseTimeStamp implements IUser {
@@ -71,4 +72,7 @@ export class User extends BaseTimeStamp implements IUser {
 
   @OneToMany(() => VerificationHistory, vh => vh.handler)
   handlerVerifications?: VerificationHistory[]
+
+  @OneToMany(() => Login, login => login.user, { cascade: true })
+  logins?: Login[]
 }
