@@ -1,13 +1,14 @@
 import { Reflector } from '@nestjs/core'
-import { Injectable, SetMetadata, UseGuards, applyDecorators } from '@nestjs/common'
-import { ApiErrorResponse, responseError } from 'src/utils/response'
 import { UserService } from 'src/modules/user/user.service'
+import { getReflectorValue } from 'src/utils/reflector-value'
 import type { CanActivate, ExecutionContext } from '@nestjs/common'
+import { ApiErrorResponse, responseError } from 'src/utils/response'
 import { CodeAction, ErrorCode, codeActionDescriptions } from 'zjf-types'
 import { responseParamsError } from 'src/utils/response/validate-exception-factory'
+import { Injectable, SetMetadata, UseGuards, applyDecorators } from '@nestjs/common'
 
 @Injectable()
-export class EmailCodeGuard implements CanActivate {
+export class EmailCodeSendableGuard implements CanActivate {
   constructor(
     public readonly reflector: Reflector,
     public readonly userSrv: UserService,
@@ -19,16 +20,26 @@ export class EmailCodeGuard implements CanActivate {
     const registerRequiredActions = [
       CodeAction.LOGIN,
       CodeAction.CHANGE_PASSWORD,
+      CodeAction.UNBIND_EMAIL,
     ]
 
     const notRegisterRequiredActions = [
       CodeAction.REGISTER,
+      CodeAction.BIND_EMAIL,
     ]
 
-    const actionIn = this.reflector.get<string>('actionIn', context.getHandler()) || 'body'
-    const actionKey = this.reflector.get<string>('actionKey', context.getHandler()) || 'action'
-    const emailIn = this.reflector.get<string>('emailIn', context.getHandler()) || 'body'
-    const emailKey = this.reflector.get<string>('emailKey', context.getHandler()) || 'email'
+    const emailExistsRequiredActions = [
+      CodeAction.UNBIND_EMAIL,
+    ]
+    const emailNotExistsRequiredActions = [
+      // TODO: 目前，允许用户在存在邮箱的情况下，绑定新邮箱，但是不允许用户在不存在邮箱的情况下，解绑邮箱
+      // CodeAction.BIND_EMAIL
+    ]
+
+    const actionIn = getReflectorValue(this.reflector, context, 'actionIn', 'body')
+    const actionKey = getReflectorValue(this.reflector, context, 'actionKey', 'action')
+    const emailIn = getReflectorValue(this.reflector, context, 'emailIn', 'body')
+    const emailKey = getReflectorValue(this.reflector, context, 'emailKey', 'email')
 
     const email = req?.[emailIn]?.[emailKey]
     const action = req?.[actionIn]?.[actionKey]
@@ -64,6 +75,15 @@ export class EmailCodeGuard implements CanActivate {
     if (notRegisterRequiredActions.includes(action) && user)
       responseError(ErrorCode.USER_EMAIL_REGISTERED)
 
+    if (user && emailExistsRequiredActions.includes(action) && !user.email)
+      responseError(ErrorCode.USER_EMAIL_NOT_EXISTS)
+
+    if (user && emailNotExistsRequiredActions.includes(action) && user.email)
+      responseError(ErrorCode.USER_EMAIL_EXISTS)
+
+    if (action === CodeAction.UNBIND_EMAIL && user?.email !== email)
+      responseError(ErrorCode.USER_EMAIL_NOT_MATCHED)
+
     return true
   }
 }
@@ -74,12 +94,12 @@ export class EmailCodeGuard implements CanActivate {
  * @param email
  * @returns
  */
-export function EmailCodeVerify(
+export function EmailCodeSendable(
   action?: { in?: 'body' | 'query'; key?: string },
   email?: { in?: 'body' | 'query'; key?: string },
 ) {
   return applyDecorators(
-    UseGuards(EmailCodeGuard),
+    UseGuards(EmailCodeSendableGuard),
     SetMetadata('actionIn', action?.in),
     SetMetadata('actionKey', action?.key),
     SetMetadata('emailIn', email?.in),

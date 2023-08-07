@@ -22,6 +22,18 @@ const _userErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.BAD_REQUEST,
     message: '用户已存在',
   },
+  [ErrorCode.USER_EMAIL_NOT_EXISTS]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '用户未绑定邮箱',
+  },
+  [ErrorCode.USER_EMAIL_EXISTS]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '用户邮箱已存在',
+  },
+  [ErrorCode.USER_EMAIL_NOT_MATCHED]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '用户邮箱不匹配',
+  },
 }
 
 export default _userErrors

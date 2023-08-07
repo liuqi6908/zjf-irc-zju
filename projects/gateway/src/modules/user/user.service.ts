@@ -1,7 +1,7 @@
 import { ErrorCode } from 'zjf-types'
 import { User } from 'src/entities/user'
 import { Injectable } from '@nestjs/common'
-import { objectKeys } from '@catsjuice/utils'
+import { objectPick } from '@catsjuice/utils'
 import { ConfigService } from '@nestjs/config'
 import { mergeDeep } from 'src/utils/mergeDeep'
 import type { OnModuleInit } from '@nestjs/common'
@@ -162,9 +162,22 @@ export class UserService implements OnModuleInit {
     throw new Error('Not implemented')
   }
 
-  // TODO: 更新用户邮箱
-  public async updateUserEmail() {
-    throw new Error('Not implemented')
+  /**
+   * 更新指定用户的邮箱
+   * @param id
+   * @param newEmail
+   * @returns
+   */
+  public async updateUserEmail(id: User['id'], newEmail: string) {
+    try {
+      await this._userRepo.update({ id }, { email: newEmail })
+      return true
+    }
+    catch (err) {
+      const sqlError = parseSqlError(err)
+      if (sqlError === SqlError.DUPLICATE_ENTRY)
+        responseError(ErrorCode.AUTH_EMAIL_REGISTERED)
+    }
   }
 
   /**
@@ -191,12 +204,9 @@ export class UserService implements OnModuleInit {
     newBasicInfo: Partial<User>,
   ) {
     const allowedKeys: (keyof User)[] = ['avatar', 'nickname']
-    const filteredBasicInfo = objectKeys(newBasicInfo).reduce((acc, key) => {
-      if (!allowedKeys.includes(key as keyof User))
-        return acc
-      return { ...acc, [key]: newBasicInfo[key] }
-    }, {} as Partial<User>)
-    await this._userRepo.update(where, filteredBasicInfo)
+    const filteredBasicInfo = objectPick(newBasicInfo, allowedKeys, true)
+    const updateRes = await this._userRepo.update(where, filteredBasicInfo)
+    return updateRes.affected > 0
   }
 
   public qb(alias = 'u') {

@@ -2,7 +2,7 @@ import { Throttle } from '@nestjs/throttler'
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { ApiSuccessResponse } from 'src/utils/response'
-import { EmailCodeVerify } from 'src/guards/email-code.guard'
+import { EmailCodeSendable } from 'src/guards/email-code-sendable.guard'
 
 import { EmailService } from './email.service'
 import { SendEmailCodeResDto } from './dto/send-email-code.res.dto'
@@ -15,10 +15,10 @@ export class EmailController {
     private readonly _emailSrv: EmailService,
   ) {}
 
-  @Throttle(1, 60)
+  @Throttle(1, 10)
   @ApiOperation({ summary: '发送验证码' })
   @ApiSuccessResponse(SendEmailCodeResDto)
-  @EmailCodeVerify()
+  @EmailCodeSendable()
   @Post('code')
   public async sendCode(@Body() body: SendEmailCodeBodyDto) {
     return await this._emailSrv.sendCode(body)

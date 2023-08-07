@@ -14,7 +14,7 @@ import {
   decryptPasswordInHttp,
 } from 'zjf-utils'
 
-function PasswordDecorator(isOptional = false) {
+export function PasswordDecorator(isOptional = false) {
   return GenerateParamsDecorator(
     [
       ApiProperty({

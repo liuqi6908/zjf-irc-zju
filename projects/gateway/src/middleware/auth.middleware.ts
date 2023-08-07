@@ -4,6 +4,8 @@ import { Injectable, Logger } from '@nestjs/common'
 
 import type { User } from 'src/entities/user'
 import { UserService } from 'src/modules/user/user.service'
+import { AuthService } from 'src/modules/auth/auth.service'
+import { md5 } from 'src/utils/encrypt/md5'
 import { JwtAuthService } from '../modules/jwt-auth/jwt-auth.service'
 
 @Injectable()
@@ -44,6 +46,7 @@ export class AuthMiddleware implements NestMiddleware {
     req.token = access_token
     const _jwtAuthSrv = this._modRef.get(JwtAuthService, { strict: false })
     const _userSrv = this._modRef.get(UserService, { strict: false })
+    const _authSrv = this._modRef.get(AuthService, { strict: false })
     let info, user: User
 
     try {
@@ -55,7 +58,7 @@ export class AuthMiddleware implements NestMiddleware {
     }
     try {
       const userId = info?.id
-      user = await _userSrv.qb().where('id = :id', { id: userId }).getOne()
+      user = await _userSrv.qb().where('id = :id', { id: userId }).addSelect('u.password').getOne()
     }
     catch (err) {
       this.logger.error('获取用户信息时出现错误', err)
@@ -70,6 +73,9 @@ export class AuthMiddleware implements NestMiddleware {
     // 比较数据库内的用户手机号与 access_token 解析的手机号是否一致
     if (info?.account && info?.account === user.account) {
       req.user = user
+
+      // 更新用户的最后活跃时间
+      _authSrv.loginRepo().update({ id: md5(access_token) }, { lastActiveAt: new Date() })
     }
     else {
       // 如果手机号不一致，判定用户已更新了手机号，旧的登录授权 token 全部销毁

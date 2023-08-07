@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import type { MiddlewareConsumer, NestModule } from '@nestjs/common'
 
+import { ScheduleModule } from '@nestjs/schedule'
 import allConfig from './config'
 
 import { AppService } from './app.service'
@@ -35,6 +36,7 @@ import { VerificationModule } from './modules/verification/verification.module'
     VerificationModule,
 
     // External Modules
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot({ ttl: 60, limit: 30 }),
     ConfigModule.forRoot({
       envFilePath: ['.env.local', '.env.dev', '.env.staging', '.env.production', '.env'],

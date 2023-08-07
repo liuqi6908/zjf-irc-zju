@@ -1,4 +1,6 @@
-import { Module } from '@nestjs/common'
+import { Module, forwardRef } from '@nestjs/common'
+import { Login } from 'src/entities/login'
+import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { UserModule } from '../user/user.module'
 import { CodeModule } from '../code/code.module'
@@ -8,7 +10,12 @@ import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
 
 @Module({
-  imports: [UserModule, JwtAuthModule, CodeModule, EmailModule],
+  imports: [
+    TypeOrmModule.forFeature([Login]),
+    CodeModule, EmailModule,
+    forwardRef(() => UserModule),
+    forwardRef(() => JwtAuthModule),
+  ],
   controllers: [AuthController],
   providers: [AuthService],
   exports: [AuthService],
