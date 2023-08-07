@@ -21,10 +21,10 @@ watch(() => props.userCode, () => {
 <template>
   <q-input
     ref="inputRef"
-    dense
+
     :model-value="userCode"
     input-class="rounded-8"
-    outlined
+    outlined dense
     :rules="rule"
     @update:model-value="(v) => $emit('update:userCode', v)"
   />

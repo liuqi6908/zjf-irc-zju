@@ -9,6 +9,7 @@ export interface ItemList {
   clickId?: string
   clickEvent?: (() => void)
   transparent?: boolean
+  closePopup?: boolean
 }
 const props = withDefaults(defineProps<ItemList>(), {
   iconSize: 24,
@@ -26,6 +27,7 @@ function click() {
 
 <template>
   <q-item
+    v-close-popup="closePopup || false"
     clickable
     border-rd-2
     text-grey-5

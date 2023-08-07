@@ -18,9 +18,11 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     RTangleCardSection: typeof import('./components/dialog/RTangleCardSection.vue')['default']
     SMSInput: typeof import('./components/auth/SMSInput.vue')['default']
+    Tabs: typeof import('./components/tabs/Tabs.vue')['default']
     TangleCardSection: typeof import('./components/dialog/TangleCardSection.vue')['default']
     Tree: typeof import('./components/tree/Tree.vue')['default']
     UserCodeInput: typeof import('./components/auth/UserCodeInput.vue')['default']
     ZDialog: typeof import('./components/dialog/ZDialog.vue')['default']
+    ZSelect: typeof import('./components/select/ZSelect.vue')['default']
   }
 }
