@@ -23,6 +23,7 @@ import { UpdateEmailOwnBodyDto } from './dto/update-email-own.body.dto'
 import { UnbindEmailOwnBodyDto } from './dto/unbind-email-own.body.dto'
 import { UpdateProfileOwnBodyDto } from './dto/update-profile-own.body.dto'
 import { UpdatePasswordByOldBodyDto } from './dto/update-pswd-by-old.body.dto'
+import { UpdatePasswordByCodeBodyDto } from './dto/update-pswd-by-code.body.dto'
 
 @ApiTags('User | 用户')
 @Controller('user')
@@ -89,6 +90,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '解绑邮箱' })
+  @ApiSuccessResponse(UniversalOperationResDto)
   @IsLogin()
   @EmailCodeVerify(CodeAction.UNBIND_EMAIL)
   @Delete('own/email')
@@ -106,6 +108,7 @@ export class UserController {
 
   @ApiOperation({ summary: '修改邮箱，简单处理，只要用户处于登录状态就可以修改邮箱，不需要校验原邮箱的权限，发送验证码到新的邮箱地址之后即可' })
   @EmailCodeVerify(CodeAction.BIND_EMAIL)
+  @ApiSuccessResponse(UniversalOperationResDto)
   @IsLogin()
   @Patch('own/email')
   public async updateOwnEmail(
@@ -118,6 +121,7 @@ export class UserController {
 
   @Throttle(1, 10)
   @ApiOperation({ summary: '通过原密码修改密码（需要登录）' })
+  @ApiSuccessResponse(UniversalOperationResDto)
   @IsLogin()
   @Patch('own/password/old')
   public async updateOwnPasswordByOldPassword(
@@ -129,6 +133,21 @@ export class UserController {
     if (!correct)
       responseError(ErrorCode.AUTH_PASSWORD_NOT_MATCHED)
     await this._userSrv.updateUserPassword({ id: user.id }, body.newPassword)
+    // 登出当前用户的所有登录会话
+    this._authSrv.logoutUser(user.id)
+    return true
+  }
+
+  @ApiOperation({ summary: '通过邮箱验证码修改密码（不需要登录）' })
+  @ApiSuccessResponse(UniversalOperationResDto)
+  @EmailCodeVerify(CodeAction.CHANGE_PASSWORD)
+  @Patch('own/password/code')
+  public async updateOwnPasswordByCode(@Body() body: UpdatePasswordByCodeBodyDto) {
+    const { email, password } = body
+    const user = await this._userSrv.repo().findOne({ where: { email } })
+    if (!user)
+      responseError(ErrorCode.AUTH_EMAIL_NOT_REGISTERED)
+    await this._userSrv.updateUserPassword({ id: user.id }, password)
     // 登出当前用户的所有登录会话
     this._authSrv.logoutUser(user.id)
     return true
