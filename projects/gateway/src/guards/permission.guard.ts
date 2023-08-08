@@ -65,6 +65,12 @@ export class PermissionGuard extends LoginGuard implements CanActivate {
   }
 }
 
+/**
+ *
+ * @param permissions 如果为空数组，则表示不需要权限，但是需要登录，会在用户信息上添加 `role` 字段
+ * @param relation
+ * @returns
+ */
 export function HasPermission(
   permissions: PermissionType[] = [],
   relation: PermissionRelation = 'OR',

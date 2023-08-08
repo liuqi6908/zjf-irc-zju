@@ -20,6 +20,8 @@ export enum PermissionType {
   // ------------------ 身份验证 ---------------------
   /** 查看所有的身份验证申请 */
   VERIFICATION_LIST_ALL = 'verification:list-all',
+  /** 查看上传的附件 */
+  VERIFICATION_CAT_ATTACHMENT = 'verification:cat-attachment',
   /** 通过身份验证 */
   VERIFICATION_APPROVE = 'verification:approve',
   /** 驳回身份验证 */
@@ -34,6 +36,7 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.ACCOUNT_QUERY]: '查询账户（条件查找用户列表，获取用户信息）',
 
   [PermissionType.VERIFICATION_LIST_ALL]: '查看所有的身份验证申请',
+  [PermissionType.VERIFICATION_CAT_ATTACHMENT]: '查看上传的附件',
   [PermissionType.VERIFICATION_APPROVE]: '通过身份验证申请',
   [PermissionType.VERIFICATION_REJECT]: '驳回身份验证申请',
 }

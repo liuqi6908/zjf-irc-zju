@@ -1,6 +1,7 @@
 import { join } from 'node:path'
 import { validatePath } from '@catsjuice/utils'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { ScheduleModule } from '@nestjs/schedule'
 import { Module, RequestMethod } from '@nestjs/common'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
@@ -9,7 +10,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import type { MiddlewareConsumer, NestModule } from '@nestjs/common'
 
-import { ScheduleModule } from '@nestjs/schedule'
 import allConfig from './config'
 
 import { AppService } from './app.service'
@@ -17,6 +17,7 @@ import { AppController } from './app.controller'
 import { UserModule } from './modules/user/user.module'
 import { AuthModule } from './modules/auth/auth.module'
 import { RoleModule } from './modules/role/role.module'
+import { FileModule } from './modules/file/file.module'
 import { RedisModule } from './modules/redis/redis.module'
 import { EmailModule } from './modules/email/email.module'
 import { AuthMiddleware } from './middleware/auth.middleware'
@@ -30,6 +31,7 @@ import { VerificationModule } from './modules/verification/verification.module'
     UserModule,
     AuthModule,
     RoleModule,
+    FileModule,
     RedisModule,
     EmailModule,
     PermissionModule,

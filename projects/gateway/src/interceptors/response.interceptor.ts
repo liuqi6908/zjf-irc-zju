@@ -17,7 +17,12 @@ export class ResponseInterceptor implements NestInterceptor {
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
-      map(data => responseSuccess(data)),
+      map((data) => {
+        const req: FastifyRequest = context.switchToHttp().getRequest()
+        if (req.url.match(/\/file\//) && req.method === 'GET')
+          return data
+        return responseSuccess(data)
+      }),
       catchError(async (err) => {
         throw err
       }),

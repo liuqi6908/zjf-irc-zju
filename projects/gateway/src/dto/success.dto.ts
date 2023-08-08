@@ -22,3 +22,8 @@ export class SuccessDto<T = any> implements IBasicResponse<T> {
   })
   data: T
 }
+
+export class SuccessStringDto extends SuccessDto<string> implements IBasicResponse<string> {
+  @ApiProperty({ description: '纯文本信息' })
+  data: string
+}

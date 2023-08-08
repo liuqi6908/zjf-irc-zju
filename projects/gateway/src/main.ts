@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config'
 import { validatePath } from '@catsjuice/utils'
 import { Logger, ValidationPipe } from '@nestjs/common'
 import type { NestFastifyApplication } from '@nestjs/platform-fastify'
+import fmp from '@fastify/multipart'
 
 import {
   FastifyAdapter,
@@ -35,6 +36,7 @@ async function bootstrap() {
 
   /** 启用 压缩 */
   app.register(compression)
+  app.register(fmp, { attachFieldsToBody: true })
 
   /** 启用 validation */
   app.useGlobalPipes(
