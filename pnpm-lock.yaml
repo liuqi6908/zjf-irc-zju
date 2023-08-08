@@ -97,6 +97,12 @@ importers:
       vue-router:
         specifier: ^4.2.4
         version: registry.npmmirror.com/vue-router@4.2.4(vue@3.3.4)
+      zjf-types:
+        specifier: workspace:*
+        version: link:../../packages/zjf-types
+      zjf-utils:
+        specifier: workspace:*
+        version: link:../../packages/zjf-utils
     devDependencies:
       '@antfu/eslint-config':
         specifier: ^0.39.7

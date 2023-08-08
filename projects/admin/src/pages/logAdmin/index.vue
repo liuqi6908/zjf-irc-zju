@@ -1,11 +1,11 @@
 <script setup lang="ts">
-defineOptions({
-  name: 'IndexPage',
-})
+
 </script>
 
-<template>
-  <div />
+<template lang="">
+  <div>
+    日志管理
+  </div>
 </template>
 
 <route lang="yaml">

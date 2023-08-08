@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Notify } from 'quasar'
+import { AUTH_TOKEN_KEY } from 'shared/constants'
 
 // import router from '@/router/index'
 
