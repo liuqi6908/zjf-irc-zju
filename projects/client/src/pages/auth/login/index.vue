@@ -4,7 +4,6 @@ import { validateEmail, validatePassword } from 'zjf-utils'
 import { useUser } from '../../../composables/useUser'
 
 // const { $post } = useRequest()
-
 const password = ref('')
 const userCode = ref('')
 const acceptObj = reactive({

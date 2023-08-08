@@ -6,8 +6,14 @@ import { login } from '~/api/auth/login'
 import { logout } from '~/api/auth/logout'
 import { register } from '~/api/auth/register'
 
-const authToken = useStorage('auth_token', '')
+const authToken = useStorage(AUTH_TOKEN_KEY, '')
 const userInfo = ref<IUser>()
+
+// const quey: IQueryDto<IVerificationHistory> = {
+//   relations: {
+//     user: true,
+//   },
+// }
 
 export function useUser($router = useRouter()) {
   /** 登录 */
@@ -42,10 +48,11 @@ export function useUser($router = useRouter()) {
     if (!res)
       return
     authToken.value = null
-    $router.replace({ path: 'auth/login' })
+    $router.replace({ path: '/auth/login' })
   }
 
-  const useGetProfile = async (relation?: string) => {
+  /** 默认查询当前用户的认证信息 */
+  const useGetProfile = async (relation = 'role.permissions,verification') => {
     const res = await getProfile(relation)
     if (res)
       userInfo.value = res

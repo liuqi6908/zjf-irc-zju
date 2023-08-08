@@ -1,9 +1,14 @@
+<script setup lang="ts">
+
+</script>
+
 <template>
-  <div full />
+  <div>
+    我的云桌面
+  </div>
 </template>
 
 <route lang="yaml">
-redirect: /userCenter/authentication
 meta:
   layout: userCenter
 </route>

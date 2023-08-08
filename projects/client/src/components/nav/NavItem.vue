@@ -8,9 +8,11 @@ export interface ItemList {
   iconSize?: number
   clickId?: string
   clickEvent?: (() => void)
+  transparent?: boolean
+  closePopup?: boolean
 }
 const props = withDefaults(defineProps<ItemList>(), {
-  iconSize: 18,
+  iconSize: 24,
   backIcon: 'i-mingcute:right-line',
 })
 const emits = defineEmits(['update:id'])
@@ -25,10 +27,11 @@ function click() {
 
 <template>
   <q-item
+    v-close-popup="closePopup || false"
     clickable
     border-rd-2
     text-grey-5
-    active-class="text-primary-1 opacity-primary-1"
+    :active-class="transparent ? 'text-primary-1 opacity-primary-1' : 'text-grey-1 bg-primary-1'"
     :active="clickId === id"
     @click="click()"
   >
@@ -37,5 +40,7 @@ function click() {
 </template>
 
 <style lang="scss" scoped>
-
+.opacity-primary-1 {
+  background-color: rgba(48, 123, 246, 0.12);
+}
 </style>

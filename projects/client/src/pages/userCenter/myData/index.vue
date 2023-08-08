@@ -1,9 +1,14 @@
+<script>
+
+</script>
+
 <template>
-  <div full />
+  <div>
+    我的数据
+  </div>
 </template>
 
 <route lang="yaml">
-redirect: /userCenter/authentication
 meta:
   layout: userCenter
 </route>

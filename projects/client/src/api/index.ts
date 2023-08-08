@@ -9,7 +9,7 @@ const $http = axios.create({
 })
 
 $http.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token')
+  const token = localStorage.getItem(AUTH_TOKEN_KEY)
   if (token && !config.headers.Authorization)
     config.headers.Authorization = token ? `Bearer ${token?.trim()}` : ''
 
@@ -57,7 +57,7 @@ $http.interceptors.response.use(
     if (error.response.status === 401) {
       showNotify('登录过期，请重新登录')
       // ctx.router?.replace({ path: 'auth/login' })
-      localStorage.removeItem('auth_token')
+      localStorage.removeItem(AUTH_TOKEN_KEY)
       return Promise.reject(error)
     }
 

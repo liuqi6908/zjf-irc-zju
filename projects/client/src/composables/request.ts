@@ -35,13 +35,14 @@ export function useRequest() {
   //     return { loading, data: promise }
   //   }
 
-  async function $get<T = any>(url: string, options?: AxiosRequestConfig, useCache = false): Promise<T> {
+  async function $get<T = any>(url: string, data: any, options?: AxiosRequestConfig, useCache = false): Promise<T> {
     const cacheKey = url + JSON.stringify(options)
     if (useCache && cache.has(cacheKey))
       return cache.get(cacheKey)
 
     const { signal, abortController } = newController()
-    const response = await $http.get(url, { signal, ...(options || {}) })
+    const queryParams = new URLSearchParams(data)
+    const response = await $http.get(`${url}?${queryParams.toString()}`, { signal, ...(options || {}) })
     requestControllers.delete(abortController)
     useCache && cache.set(cacheKey, response.data)
     return response.data
@@ -69,5 +70,16 @@ export function useRequest() {
     return response.data
   }
 
-  return { $get, $post, $put, cache }
+  async function $patch<T = any>(url: string, data: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
+    const cacheKey = url + JSON.stringify(data) + JSON.stringify(config)
+    if (useCache && cache.has(cacheKey))
+      return cache.get(cacheKey)
+    const { signal, abortController } = newController()
+    const response = await $http.patch(url, data, { signal, ...(config || {}) })
+    requestControllers.delete(abortController)
+    useCache && cache.set(cacheKey, response.data)
+    return response.data
+  }
+
+  return { $get, $post, $put, $patch, cache }
 }
