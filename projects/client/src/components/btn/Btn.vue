@@ -49,6 +49,9 @@ const finalProps = computed(() => ({ props }))
     <template v-if="icon">
       <div :class="[icon, ...btnClass]" h-4 w-4 />
     </template>
+    <div absolute>
+      <slot />
+    </div>
   </q-btn>
 </template>
 

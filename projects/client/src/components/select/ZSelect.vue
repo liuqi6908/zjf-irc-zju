@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 interface Props {
   modelValue: any
-  options: Array<any>
+  options: Array<{ label: string; id: string }>
   label?: string
 }
 defineProps<Props>()
@@ -10,7 +10,6 @@ defineEmits(['update:modelValue'])
 
 <template>
   <q-select
-
     outlined dense text-grey-4
     dropdown-icon="fa fa-chevron-down"
     :label="label"
@@ -22,7 +21,7 @@ defineEmits(['update:modelValue'])
     <template #option="scope">
       <q-item rounded-2 v-bind="scope.itemProps">
         <q-item-section>
-          {{ scope.opt }}
+          {{ scope.opt.label }}
         </q-item-section>
       </q-item>
     </template>

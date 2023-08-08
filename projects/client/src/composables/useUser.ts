@@ -51,7 +51,8 @@ export function useUser($router = useRouter()) {
     $router.replace({ path: '/auth/login' })
   }
 
-  const useGetProfile = async (relation?: string) => {
+  /** 默认查询当前用户的认证信息 */
+  const useGetProfile = async (relation = 'role.permissions,verification') => {
     const res = await getProfile(relation)
     if (res)
       userInfo.value = res

@@ -1,25 +1,41 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 
-const inputVal = ref('disable')
+import { VerificationIdentify } from 'zjf-types'
+import type { ICreateVerificationBodyDto } from 'zjf-types'
+import { Notify } from 'quasar'
+import { useUser } from '../../../composables/useUser'
+import { requestVerification } from '../../../api/auth/verification/requestVerification'
+
+const { useGetProfile, userInfo } = useUser()
+
+const showVeri = ref(false)
+const files = ref<Array<File>>()
+const myFileInput = ref(null)
+
+// if (!userInfo.value)
+//   useGetProfile()
 
 const baseInfoList = reactive([
   {
     label: '昵称',
     disable: true,
+    id: 'nickname',
     caption: '',
-    inputVal: '',
+    inputVal: userInfo.value && userInfo.value.nickname,
   },
   {
     label: '邮箱',
     disable: true,
-    inputVal: '',
+    id: 'email',
+    inputVal: userInfo.value && userInfo.value.email,
   },
 ])
 
 const authInfoList = reactive([
   {
     label: '学校',
+    id: 'school',
     disable: true,
     caption: '',
     inputVal: '',
@@ -30,27 +46,96 @@ const authInfoList = reactive([
     inputVal: '',
   },
   {
-    label: '学校',
+    label: '学号/工号',
     disable: true,
     caption: '',
     inputVal: '',
   },
   {
-    label: '学院',
+    label: '真实姓名',
     disable: true,
     inputVal: '',
   }, {
-    label: '学校',
+    label: '身份证',
     disable: true,
     caption: '',
     inputVal: '',
   },
   {
-    label: '学院',
+    label: '用户类型',
     disable: true,
     inputVal: '',
   },
 ])
+
+const transformedArray = Object.values(VerificationIdentify).map(value => ({
+  id: value,
+  label: getLabel(value),
+}))
+
+// TODO:改为教师和学生两个身份认证
+function getLabel(value) {
+  switch (value) {
+    case VerificationIdentify.INTERNAL_RESEARCHER:
+      return '校内研究人员'
+    case VerificationIdentify.EXTERNAL_RESEARCHER:
+      return '校外研究人员'
+    case VerificationIdentify.INTERNAL_STUDENT:
+      return '校内学生'
+    case VerificationIdentify.EXTERNAL_STUDENT:
+      return '校外学生'
+    case VerificationIdentify.INTERNAL_TEACHER:
+      return '校内教师'
+    case VerificationIdentify.EXTERNAL_TEACHER:
+      return '校外教师'
+    default:
+      return value
+  }
+}
+
+const verifiInfo = reactive<ICreateVerificationBodyDto>({
+  name: '',
+  identify: VerificationIdentify.EXTERNAL_RESEARCHER,
+  attachments: [],
+})
+
+function getFile() {
+  if (myFileInput.value)
+    myFileInput.value.$el.click()
+}
+
+async function confirm() {
+  const paramse = {
+    name: verifiInfo.name,
+    identify: verifiInfo.identify.id,
+    attachments: verifiInfo.attachments,
+  }
+  const res = await requestVerification(paramse)
+  if (!res) {
+    Notify.create({
+      type: 'negative',
+      message: '认证失败',
+    })
+  }
+}
+function onRejected(rejectedEntries: Array<any>) {
+  rejectedEntries.forEach((reject) => {
+    Notify.create({
+      type: 'negative',
+      message: `${reject.failedPropValidation}`,
+    })
+  })
+}
+
+onMounted(async () => {
+  if (!userInfo.value) {
+    await useGetProfile()
+    baseInfoList.forEach((item) => {
+      if (userInfo.value[item.id])
+        item.inputVal = userInfo.value[item.id]
+    })
+  }
+})
 </script>
 
 <template>
@@ -61,13 +146,14 @@ const authInfoList = reactive([
         基础信息
       </header>
 
+      <!-- TODO:修改基本信息的交互 -->
       <div flex="~ row gap-10">
         <ChangeInput
           v-for="b in baseInfoList"
           :key="b.label"
           v-model="b.inputVal"
           class="col-grow"
-          label="邮箱"
+          :label="b.label"
           :is-edit="b.disable"
           @update:is-edit="(val) => b.disable = val"
         />
@@ -97,9 +183,50 @@ const authInfoList = reactive([
     </div>
 
     <div>
-      已认证/未认证
-      <Btn label="认证" />
+      <div v-if="userInfo && userInfo.verification">
+        已认证
+      </div>
+      <Btn v-else label="认证" @click="showVeri = true" />
     </div>
+
+    <ZDialog v-model="showVeri" :confirm-event="confirm" footer title="需要完善信息并且通过审核">
+      <div mb-2 mt-6>
+        <span text-alert-error>*</span> <span font-500 text-grey-8> 姓名</span>
+      </div>
+      <UserCodeInput v-model:user-code="verifiInfo.name" label="请输入您的真实姓名" />
+
+      <div mb-2 mt-6>
+        <span text-alert-error>*</span> <span font-500 text-grey-8>身份 </span>
+      </div>
+      <ZSelect v-model="verifiInfo.identify" :options="transformedArray" />
+
+      <div mb-2 mt-6 flex="~ row justify-between items-center">
+        <div> <span text-alert-error>*</span> <span font-500 text-grey-8>上传资料</span></div>
+
+        <div class="q-gutter-md" style="max-width: 300px">
+          <q-file
+            ref="myFileInput"
+            v-model="files"
+            accept=".jpg, image/*"
+
+            max-files="8"
+            append multiple
+            style="display:none"
+            type="file"
+            label="Standard"
+            max-file-size="1048576"
+            @rejected="onRejected"
+          />
+          <Btn transparent label="选择图片（最多8张）" @click="getFile" />
+        </div>
+      </div>
+      <div v-for="f in files" :key="f.__key" ml-4 flex flex-row items-center>
+        <div i-mingcute:file-line text-grey-5 />
+        <div ml-1 text-grey-8>
+          {{ f.name }}
+        </div>
+      </div>
+    </ZDialog>
   </div>
 </template>
 
