@@ -27,7 +27,7 @@ const navList = [
   {
     id: 'userAdmin',
     name: '用户管理',
-    icon: 'i-mingcute:folder-2-line',
+    icon: 'i-mingcute:user-setting-line',
   },
   {
     id: 'dataAdmin',
@@ -41,8 +41,25 @@ const navList = [
   },
   {
     id: 'uploadDetail',
-    name: '上传说明',
+    name: '数据上传说明',
+    icon: 'i-mingcute:file-upload-line',
+  },
+
+  {
+    id: 'authorityAdmin',
+    name: '权限管理',
     icon: 'i-mingcute:shopping-cart-1-line',
+  },
+
+  {
+    id: 'desktopAdmin',
+    name: '桌面管理',
+    icon: 'i-mingcute:cloud-line',
+  },
+  {
+    id: 'adminClient',
+    name: '管理员分配',
+    icon: 'i-mingcute:user-add-2-fill',
   },
 ]
 </script>

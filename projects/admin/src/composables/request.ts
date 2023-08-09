@@ -70,7 +70,7 @@ export function useRequest() {
     return response.data
   }
 
-  async function $patch<T = any>(url: string, data: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
+  async function $patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
     const cacheKey = url + JSON.stringify(data) + JSON.stringify(config)
     if (useCache && cache.has(cacheKey))
       return cache.get(cacheKey)
@@ -80,6 +80,16 @@ export function useRequest() {
     useCache && cache.set(cacheKey, response.data)
     return response.data
   }
+  async function $delete<T = any>(url: string, data?: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
+    const cacheKey = url + JSON.stringify(data) + JSON.stringify(config)
+    if (useCache && cache.has(cacheKey))
+      return cache.get(cacheKey)
+    const { abortController } = newController()
+    const response = await $http.delete(url, data)
+    requestControllers.delete(abortController)
+    useCache && cache.set(cacheKey, response.data)
+    return response.data
+  }
 
-  return { $get, $post, $put, $patch, cache }
+  return { $get, $post, $put, $patch, $delete, cache }
 }

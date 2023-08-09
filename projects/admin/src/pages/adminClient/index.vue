@@ -1,15 +1,10 @@
 <script setup lang="ts">
-const query = computed(() => {
-})
 
-onMounted(async () => {
-
-})
 </script>
 
-<template>
+<template lang="">
   <div>
-    首页管理
+    管理员分配
   </div>
 </template>
 
