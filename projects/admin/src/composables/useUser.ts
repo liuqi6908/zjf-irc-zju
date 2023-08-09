@@ -2,9 +2,9 @@ import { useStorage } from '@vueuse/core'
 import type { IUser } from 'zjf-types'
 import { encryptPasswordInHttp } from 'zjf-utils'
 import { AUTH_TOKEN_KEY } from 'shared/constants'
-import { getProfile } from '~/api/auth/getProfile'
+
 import { login } from '~/api/auth/login'
-import { logout } from '~/api/auth/logout'
+
 import { register } from '~/api/auth/register'
 
 const authToken = useStorage(AUTH_TOKEN_KEY, '')
@@ -44,27 +44,10 @@ export function useUser($router = useRouter()) {
       await useLogin({ password, account, email })
   }
 
-  const useLogout = async () => {
-    const res = await logout()
-    if (!res)
-      return
-    authToken.value = null
-    $router.replace({ path: '/auth/login' })
-  }
-
-  /** 默认查询当前用户的认证信息 */
-  const useGetProfile = async (relation = 'role.permissions,verification') => {
-    const res = await getProfile(relation)
-    if (res)
-      userInfo.value = res
-  }
-
   return {
     useRegister,
     useLogin,
-    useLogout,
     userInfo,
     authToken,
-    useGetProfile,
   }
 }

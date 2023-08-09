@@ -35,19 +35,20 @@ export function useRequest() {
   //     return { loading, data: promise }
   //   }
 
-  async function $get(url: string, options?: AxiosRequestConfig, useCache = false) {
+  async function $get<T = any>(url: string, data: any, options?: AxiosRequestConfig, useCache = false): Promise<T> {
     const cacheKey = url + JSON.stringify(options)
     if (useCache && cache.has(cacheKey))
       return cache.get(cacheKey)
 
     const { signal, abortController } = newController()
-    const response = await $http.get(url, { signal, ...(options || {}) })
+    const queryParams = new URLSearchParams(data)
+    const response = await $http.get(`${url}?${queryParams.toString()}`, { signal, ...(options || {}) })
     requestControllers.delete(abortController)
     useCache && cache.set(cacheKey, response.data)
     return response.data
   }
 
-  async function $post(url: string, data: any, config?: AxiosRequestConfig, useCache = false) {
+  async function $post<T = any>(url: string, data: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
     const cacheKey = url + JSON.stringify(data) + JSON.stringify(config)
     if (useCache && cache.has(cacheKey))
       return cache.get(cacheKey)
@@ -58,5 +59,37 @@ export function useRequest() {
     return response.data
   }
 
-  return { $get, $post }
+  async function $put<T = any>(url: string, data: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
+    const cacheKey = url + JSON.stringify(data) + JSON.stringify(config)
+    if (useCache && cache.has(cacheKey))
+      return cache.get(cacheKey)
+    const { signal, abortController } = newController()
+    const response = await $http.put(url, data, { signal, ...(config || {}) })
+    requestControllers.delete(abortController)
+    useCache && cache.set(cacheKey, response.data)
+    return response.data
+  }
+
+  async function $patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
+    const cacheKey = url + JSON.stringify(data) + JSON.stringify(config)
+    if (useCache && cache.has(cacheKey))
+      return cache.get(cacheKey)
+    const { signal, abortController } = newController()
+    const response = await $http.patch(url, data, { signal, ...(config || {}) })
+    requestControllers.delete(abortController)
+    useCache && cache.set(cacheKey, response.data)
+    return response.data
+  }
+  async function $delete<T = any>(url: string, data?: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
+    const cacheKey = url + JSON.stringify(data) + JSON.stringify(config)
+    if (useCache && cache.has(cacheKey))
+      return cache.get(cacheKey)
+    const { abortController } = newController()
+    const response = await $http.delete(url, data)
+    requestControllers.delete(abortController)
+    useCache && cache.set(cacheKey, response.data)
+    return response.data
+  }
+
+  return { $get, $post, $put, $patch, $delete, cache }
 }

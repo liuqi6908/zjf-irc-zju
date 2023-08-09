@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { AUTH_TOKEN_KEY } from 'shared/constants'
 import type { ItemList } from '~/components/nav/NavItem.vue'
 
 const router = useRouter()
@@ -135,7 +136,7 @@ onMounted(() => {
             <q-icon :name="`fas fa-chevron-${drawer ? 'right' : 'left'}`" size="0.25rem" text-grey-5 />
           </div>
         </q-toolbar>
-        <div class="col-grow q-px-md" flex flex-col>
+        <div class="q-px-md col-grow" flex flex-col>
           <!-- menu -->
           <q-list>
             <RouterLink

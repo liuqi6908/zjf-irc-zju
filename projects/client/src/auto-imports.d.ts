@@ -301,7 +301,6 @@ declare global {
 import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface ComponentCustomProperties {
-    readonly AUTH_TOKEN_KEY: UnwrapRef<typeof import('./constants/token.constant')['AUTH_TOKEN_KEY']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
@@ -590,7 +589,6 @@ declare module 'vue' {
 }
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
-    readonly AUTH_TOKEN_KEY: UnwrapRef<typeof import('./constants/token.constant')['AUTH_TOKEN_KEY']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>

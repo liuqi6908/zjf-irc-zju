@@ -1,11 +1,16 @@
 <script setup lang="ts">
-defineOptions({
-  name: 'IndexPage',
+const query = computed(() => {
+})
+
+onMounted(async () => {
+
 })
 </script>
 
 <template>
-  <div />
+  <div>
+    首页管理
+  </div>
 </template>
 
 <route lang="yaml">

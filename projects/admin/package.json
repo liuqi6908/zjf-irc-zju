@@ -19,11 +19,14 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.5",
+    "@types/lodash": "^4.14.196",
     "@unhead/vue": "^1.1.30",
     "@unocss/reset": "^0.53.5",
     "@vueuse/core": "^10.2.1",
     "@vueuse/head": "^1.1.26",
     "axios": "^1.4.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
     "nprogress": "^0.2.0",
     "pinia": "^2.1.4",
     "quasar": "^2.12.3",
@@ -31,7 +34,9 @@
     "vue": "^3.3.4",
     "vue-demi": "^0.14.5",
     "vue-i18n": "^9.2.2",
-    "vue-router": "^4.2.4"
+    "vue-router": "^4.2.4",
+    "zjf-types": "workspace:*",
+    "zjf-utils": "workspace:*"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.7",
