@@ -5,7 +5,9 @@ import { VerificationIdentify } from 'zjf-types'
 import type { ICreateVerificationBodyDto } from 'zjf-types'
 import { Notify } from 'quasar'
 import { useUser } from '../../../composables/useUser'
-import { requestVerification } from '../../../api/auth/verification/requestVerification'
+
+import { uploadVerifyFile } from '~/api/file/uploadVerifyFile'
+import { requestVerification } from '~/api/auth/verification/requestVerification'
 
 const { useGetProfile, userInfo } = useUser()
 
@@ -99,25 +101,39 @@ const verifiInfo = reactive<ICreateVerificationBodyDto>({
   attachments: [],
 })
 
-function getFile() {
+function pickImg() {
   if (myFileInput.value)
     myFileInput.value.$el.click()
 }
 
+async function fetchUploadFile(files?: File[]) {
+  if (!files?.length)
+    return
+  for (const file of files) {
+    const { name } = file
+
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const res = await uploadVerifyFile(name, formData)
+    if (!res)
+      return
+    verifiInfo.attachments.push(res)
+  }
+}
+
 async function confirm() {
+  await fetchUploadFile(files.value)
+
   const paramse = {
     name: verifiInfo.name,
     identify: verifiInfo.identify.id,
     attachments: verifiInfo.attachments,
   }
+  // 请求认证
   const res = await requestVerification(paramse)
-  if (!res) {
-    Notify.create({
-      type: 'negative',
-      message: '认证失败',
-    })
-  }
 }
+
 function onRejected(rejectedEntries: Array<any>) {
   rejectedEntries.forEach((reject) => {
     Notify.create({
@@ -208,7 +224,6 @@ onMounted(async () => {
             ref="myFileInput"
             v-model="files"
             accept=".jpg, image/*"
-
             max-files="8"
             append multiple
             style="display:none"
@@ -217,7 +232,7 @@ onMounted(async () => {
             max-file-size="1048576"
             @rejected="onRejected"
           />
-          <Btn transparent label="选择图片（最多8张）" @click="getFile" />
+          <Btn transparent label="选择图片（最多8张）" @click="pickImg" />
         </div>
       </div>
       <div v-for="f in files" :key="f.__key" ml-4 flex flex-row items-center>

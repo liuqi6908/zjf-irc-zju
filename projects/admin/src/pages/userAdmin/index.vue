@@ -67,11 +67,8 @@ function handleField(tab: string) {
   if (tab === VerificationStatus.PENDING)
     return '确认/驳回'
 
-  else if (tab === VerificationStatus.APPROVED)
+  else if (tab === VerificationStatus.APPROVED || VerificationStatus.REJECTED)
     return '重置'
-
-  else if (tab === VerificationStatus.REJECTED)
-    return '确认'
 }
 
 watch(tab, async () => {
@@ -100,6 +97,7 @@ watch(tab, async () => {
       attachments: data.attachments,
       handle: handleField(tab.value),
       id: data.id,
+      founderId: data.founderId,
     })
   })
   changeTab(tab.value)
@@ -129,7 +127,7 @@ watch(tab, async () => {
     <q-tab-panels v-model="tab" animated bg-grey-2>
       <q-tab-panel :name="tab">
         <KeepAlive>
-          <Verify :rows="findCurrentTab(tab)?.rows" />
+          <Verify :rows="findCurrentTab(tab)?.rows" :current-tab="tab" />
         </KeepAlive>
       </q-tab-panel>
     </q-tab-panels>
