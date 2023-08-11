@@ -14,6 +14,7 @@ import allConfig from './config'
 
 import { AppService } from './app.service'
 import { AppController } from './app.controller'
+import { CmsModule } from './modules/cms/cms.module'
 import { UserModule } from './modules/user/user.module'
 import { AuthModule } from './modules/auth/auth.module'
 import { RoleModule } from './modules/role/role.module'
@@ -28,6 +29,7 @@ import { VerificationModule } from './modules/verification/verification.module'
 @Module({
   imports: [
     // Internal Modules
+    CmsModule,
     UserModule,
     AuthModule,
     RoleModule,
