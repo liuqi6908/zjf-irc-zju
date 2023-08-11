@@ -7,10 +7,21 @@ export interface IVerificationHistory extends ICreatedAt, IUpdatedAt {
   /** 认证记录的唯一标识 */
   id: string;
   
-
   // 基础信息
   /** 真实姓名 */
   name: string;
+
+  /** 学校名称 */
+  school: string;
+
+  /** 学院名称 */
+  college: string;
+
+  /** 学号或工号 */
+  number: string;
+
+  /** 身份证号码 */
+  idCard: string;
 
   /** 身份 */
   identify: VerificationIdentify;
@@ -38,11 +49,9 @@ export interface IVerificationHistory extends ICreatedAt, IUpdatedAt {
   /** 当前激活的用户 id */
   userId?: IUser['id'];
 
-
   /** 处理时间： 通过/驳回/取消 */
   handledAt?: Date;
   
-
   /** 认证状态 */
   status: VerificationStatus;
 

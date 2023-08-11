@@ -16,8 +16,24 @@ export class VerificationHistory extends BaseTimeStamp implements IVerificationH
   @Column()
   name: string
 
+  @ApiProperty({ description: '学校' })
+  @Column()
+  school: string
+
+  @ApiProperty({ description: '学院' })
+  @Column()
+  college: string
+
+  @ApiProperty({ description: '学号或工号' })
+  @Column()
+  number: string
+
+  @ApiProperty({ description: '身份证号码' })
+  @Column()
+  idCard: string
+
   @ApiProperty({ description: '身份' })
-  @Column({ type: 'enum', enum: VerificationIdentify })
+  @Column({ type: 'enum', enum: VerificationIdentify, nullable: true })
   identify: VerificationIdentify
 
   @ApiProperty({ description: '上传的附件列表，oss 相对地址列表' })

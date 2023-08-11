@@ -6,7 +6,9 @@ import { responseError } from 'src/utils/response'
 import { ErrorCode, VerificationStatus } from 'zjf-types'
 import { VerificationHistory } from 'src/entities/verification'
 
+import { objectPick } from '@catsjuice/utils'
 import { UserService } from '../user/user.service'
+import type { CreateVerificationBodyDto } from './dto/create-verification.body.dto'
 
 @Injectable()
 export class VerificationService {
@@ -24,15 +26,18 @@ export class VerificationService {
    */
   public async createVerification(
     founder: User | User['id'],
-    verificationBasicInfo: Pick<VerificationHistory, 'name' | 'identify' | 'attachments'>,
+    verificationBasicInfo: CreateVerificationBodyDto,
   ) {
     const qr = await this._vhRepo.manager.connection.createQueryRunner()
     await qr.connect()
     await qr.startTransaction()
     try {
+      const info = objectPick(verificationBasicInfo, [
+        'attachments', 'college', 'idCard', 'identify', 'name', 'number', 'school',
+      ])
       const vh = this._vhRepo.create({
+        ...info,
         founderId: typeof founder === 'string' ? founder : founder.id,
-        ...verificationBasicInfo,
       })
       await qr.manager.save(vh)
 
