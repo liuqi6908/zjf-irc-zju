@@ -26,6 +26,14 @@ export enum PermissionType {
   VERIFICATION_APPROVE = 'verification:approve',
   /** 驳回身份验证 */
   VERIFICATION_REJECT = 'verification:reject',
+
+  // ------------------ 内容管理 ---------------------
+  /** 创建内容 */
+  CMS_CREATE = 'cms:create',
+  /** 更新内容 */
+  CMS_UPDATE = 'cms:update',
+  /** 删除内容 */
+  CMS_DELETE = 'cms:delete',
 }
 
 export const permissionDescriptions: Record<PermissionType, string> = {
@@ -39,4 +47,8 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.VERIFICATION_CAT_ATTACHMENT]: '查看上传的附件',
   [PermissionType.VERIFICATION_APPROVE]: '通过身份验证申请',
   [PermissionType.VERIFICATION_REJECT]: '驳回身份验证申请',
+
+  [PermissionType.CMS_CREATE]: '创建内容',
+  [PermissionType.CMS_UPDATE]: '更新内容',
+  [PermissionType.CMS_DELETE]: '删除内容',
 }
