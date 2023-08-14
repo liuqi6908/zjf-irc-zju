@@ -8,7 +8,8 @@ export const install: UserModule = ({ isClient, router }) => {
       const isAuthenticated = localStorage.getItem(AUTH_TOKEN_KEY)
       // if (to.path !== from.path)
       //   NProgress.start()
-      if (!isAuthenticated && to.name !== 'auth-login')
+      const authPath = !(to.name)?.toString()?.includes('auth')
+      if (!isAuthenticated && authPath)
         return { name: 'auth-login' }
     })
     router.afterEach(() => {
