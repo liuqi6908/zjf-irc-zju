@@ -51,6 +51,7 @@ export * from './types/http/auth/login-by-email-code.interface'
 export * from './types/http/file/get-verify-attachment.interface'
 export * from './types/http/verification/reject-verification.interface'
 export * from './types/http/verification/create-verification.interface'
+export * from './types/entities/cms.interface'
 
 // Constants
 export * from './types/constants/pagination.constant'

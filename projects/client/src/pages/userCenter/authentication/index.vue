@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 
-import { VerificationIdentify } from 'zjf-types'
+import { VerificationIdentify, verificationIdentifyDescriptions } from 'zjf-types'
 import type { ICreateVerificationBodyDto } from 'zjf-types'
 import { Notify } from 'quasar'
 import { useUser } from '../../../composables/useUser'
@@ -70,34 +70,16 @@ const authInfoList = reactive([
   },
 ])
 
-const transformedArray = Object.values(VerificationIdentify).map(value => ({
-  id: value,
-  label: getLabel(value),
-}))
-
-// TODO:改为教师和学生两个身份认证
-function getLabel(value) {
-  switch (value) {
-    case VerificationIdentify.INTERNAL_RESEARCHER:
-      return '校内研究人员'
-    case VerificationIdentify.EXTERNAL_RESEARCHER:
-      return '校外研究人员'
-    case VerificationIdentify.INTERNAL_STUDENT:
-      return '校内学生'
-    case VerificationIdentify.EXTERNAL_STUDENT:
-      return '校外学生'
-    case VerificationIdentify.INTERNAL_TEACHER:
-      return '校内教师'
-    case VerificationIdentify.EXTERNAL_TEACHER:
-      return '校外教师'
-    default:
-      return value
-  }
+function transformedArray(): { name: string; label: string }[] {
+  return Object.keys(VerificationIdentify).map(key => ({
+    name: VerificationIdentify[key as keyof typeof VerificationIdentify],
+    label: verificationIdentifyDescriptions[VerificationIdentify[key as keyof typeof VerificationIdentify]],
+  }))
 }
 
 const verifiInfo = reactive<ICreateVerificationBodyDto>({
   name: '',
-  identify: VerificationIdentify.EXTERNAL_RESEARCHER,
+  identify: VerificationIdentify.TEACHER,
   attachments: [],
 })
 
@@ -214,8 +196,7 @@ onMounted(async () => {
       <div mb-2 mt-6>
         <span text-alert-error>*</span> <span font-500 text-grey-8>身份 </span>
       </div>
-      <ZSelect v-model="verifiInfo.identify" :options="transformedArray" />
-
+      <ZSelect v-model="verifiInfo.identify" :options="transformedArray()" />
       <div mb-2 mt-6 flex="~ row justify-between items-center">
         <div> <span text-alert-error>*</span> <span font-500 text-grey-8>上传资料</span></div>
 

@@ -12,6 +12,9 @@
   "devDependencies": {
     "@vueuse/core": "^10.2.1",
     "unocss": "^0.53.5",
-    "vue": "^3.3.4"
+    "vue": "^3.3.4",
+    "@quasar/extras": "^1.16.5",
+    "quasar": "^2.12.3",
+    "@iconify-json/carbon": "^1.1.18"
   }
 }

@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Btn: typeof import('./components/btn/Btn.vue')['default']
+    EditableGrid: typeof import('./components/table/EditableGrid.vue')['default']
     NavItem: typeof import('./components/nav/NavItem.vue')['default']
     NavItemSection: typeof import('./components/nav/NavItemSection.vue')['default']
     PasswordInput: typeof import('./components/auth/PasswordInput.vue')['default']
@@ -18,6 +19,7 @@ declare module 'vue' {
     TheCounter: typeof import('./components/TheCounter.vue')['default']
     TheFooter: typeof import('./components/TheFooter.vue')['default']
     TheInput: typeof import('./components/TheInput.vue')['default']
+    UploadFile: typeof import('./components/table/UploadFile.vue')['default']
     UserCodeInput: typeof import('./components/auth/UserCodeInput.vue')['default']
   }
 }

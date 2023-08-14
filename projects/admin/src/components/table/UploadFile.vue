@@ -1,0 +1,44 @@
+<script lang="ts" setup>
+import { getPublicFileUrl, putPublicFile } from '~/api/file/handlePublicFile'
+
+interface Props {
+  urlImg: string
+}
+defineProps<Props>()
+const emits = defineEmits(['update:urlImg'])
+
+const imgFile = ref(null)
+
+async function uploadFile(file: File) {
+  const fromData = new FormData()
+  fromData.append('file', file)
+  const res = await putPublicFile('cms', file.name, fromData)
+  if (res && file.name && fromData) {
+    const url = getPublicFileUrl('cms', file.name) || ''
+    emits('update:urlImg', url)
+  }
+}
+</script>
+
+<template>
+  <div flex="~ row gap-2">
+    <q-img style="width: 150px" :src="urlImg" />
+    <div class="q-gutter-md" style="max-width: 300px">
+      <q-file
+        color="lime-11" bg-color="primary"
+        label="上传图片"
+        accept=".jpg, image/*"
+        filled
+        dense
+        borderless
+        max-w-20
+        :model-value="imgFile"
+        @update:model-value="(val) => uploadFile(val)"
+      />
+    </div>
+  </div>
+</template>
+
+<style lang="">
+
+</style>
