@@ -1,52 +1,43 @@
 <script setup lang="ts">
-interface NameType {
-  title: string
-  imgUpload: string
-  content: string
-}
+import UploadFile from './UploadFile.vue'
+
+export type ColNameType = typeof columnsconfig[number]['name']
 
 interface Props {
-  /** 表单需要编辑的内容 */
-  colNames: Array<keyof NameType>
+  /** 需要编辑的项目 */
+  colNames: Array<ColNameType>
+  /** 当前组件的中文名称 */
+  componentName: string
+  rows: Array<any>
 }
-defineProps<Props>()
+const props = defineProps<Props>()
+const emits = defineEmits(['update:rows', 'save'])
 
-const columns = [
+const baseCol = ref([])
+const rowsRef = ref()
+
+const columnsconfig = [
   {
     name: 'title',
-    required: true,
     label: '输入标题',
     align: 'left',
     field: 'title',
-    format: val => `${val}`,
-    sortable: true,
   },
-  { name: 'content', align: 'left', label: '编辑内容', field: 'content', sortable: true },
-  { name: 'uploadImg', label: '上传图片', align: 'left', field: 'uploadImg', sortable: true },
-  { name: 'delete', label: '删除', align: 'left', field: 'delete', sortable: true },
+  { name: 'content', align: 'left', label: '编辑内容', field: 'content' },
+  { name: 'uploadImg', label: '上传图片', align: 'left', field: 'uploadImg' },
+  { name: 'delete', label: '删除', align: 'left', field: 'delete' },
 ]
 
-const rows = reactive([
-  {
-    title: 'Frozen Yogurt',
-    content: 159,
-    uploadImg: 6.0,
-    delete: 16546,
-  },
-  {
-    title: '13244',
-    content: 159,
-    uploadImg: 6.0,
-    delete: 16546,
-  },
-])
-
 function addRow() {
-
+  const res = {}
+  for (const key of props.colNames)
+    res[key] = null
+  rowsRef.value.push(res)
+  emits('update:rows', rowsRef.value)
 }
 
-function deleteRow(target: any) {
-  const targetIndex = rows.findIndex((row) => {
+function deleteRow(target: string[]) {
+  const targetIndex = props.rows.findIndex((row) => {
     for (const key in target) {
       if (target[key] !== row[key])
         return false
@@ -55,8 +46,23 @@ function deleteRow(target: any) {
   })
 
   if (targetIndex !== -1)
-    rows.splice(targetIndex, 1)
+    rowsRef.value.splice(targetIndex, 1)
+  emits('update:rows', rowsRef.value)
 }
+
+watch(() => props.rows, () => {
+  if (props.rows.length)
+    rowsRef.value = props.rows
+})
+
+watch(() => props.colNames, () => {
+  for (const col in props.colNames) {
+    const obj = columnsconfig.find(i => i.name === props.colNames[col])
+    if (!obj)
+      return
+    baseCol.value.push(obj)
+  }
+}, { immediate: true })
 </script>
 
 <template>
@@ -65,11 +71,12 @@ function deleteRow(target: any) {
       class="q-pa-md"
       flat bordered
       :rows="rows"
-      :columns="columns"
+      :columns="baseCol"
       row-key="name"
+      wrap-cells
     >
       <template #top>
-        <q-btn color="primary" label="增加一项" @click="addRow" />
+        <q-btn color="primary" :label="`增加一个${componentName}项`" @click="addRow" />
       </template>
 
       <template #body="props">
@@ -79,15 +86,26 @@ function deleteRow(target: any) {
           </q-td>
 
           <q-td key="content" :props="props">
-            <q-input v-model="props.row.content" color="green" />
+            <div max-w-40 break-words>
+              {{ props.row.content }}
+            </div>
+            <q-popup-edit
+              v-slot="scope"
+              v-model="props.row.content"
+              buttons
+            >
+              <q-input
+                v-model="scope.value"
+                type="textarea"
+                autofocus
+                counter
+                @keyup.enter.stop
+              />
+            </q-popup-edit>
           </q-td>
 
           <q-td key="uploadImg" :props="props">
-            <q-uploader
-              url="http://localhost:4444/fileuploader/upload"
-              label="Upload"
-              style="max-width: 300px"
-            />
+            <UploadFile v-model:urlImg="props.row.uploadImg" />
           </q-td>
           <q-td key="delete" :props="props">
             <q-btn flat @click="deleteRow(props.row)">
@@ -99,7 +117,7 @@ function deleteRow(target: any) {
 
       <template #bottom>
         <div w-full flex="~ row justify-end">
-          <q-btn color="secondary" label="保存编辑内容" />
+          <q-btn color="secondary" label="保存编辑内容" @click="$emit('save')" />
         </div>
       </template>
     </q-table>

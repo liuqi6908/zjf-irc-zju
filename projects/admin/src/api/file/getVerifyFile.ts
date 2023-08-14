@@ -10,6 +10,6 @@ export function getVerifyFileUrl(userId: string, filename: string, token = token
 }
 
 export function getVerifyFile(userId: string, filename: string) {
-  const res = $get(`file/private/verify/${userId}/${filename}`, 'response')
+  const res = $get(`file/private/verify/${userId}/${filename}`)
   return res
 }

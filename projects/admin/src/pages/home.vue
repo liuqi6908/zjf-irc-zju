@@ -2,39 +2,56 @@
 import type { Carousel } from 'shared/component/HomeCarousel.vue'
 import HomeCarousel from 'shared/component/HomeCarousel.vue'
 
-import type { CMSJSON } from 'zjf-types'
+import _ from 'lodash'
+import { Notify } from 'quasar'
+import { getCms } from '~/api/cms/getCms'
+import { upsertCms } from '~/api/cms/upsertCms'
 
-const imgFiles = ref([])
-const requsetJSON = ref<CMSJSON<Carousel>>({
-  id: 'home-carousel',
-  list: [{
-    img: 'https://cdn.quasar.dev/img/mountains.jpg',
-    title: 'title1',
-    content: 'cotent内容内内容',
-    name: 'silder1',
-  },
-  {
-    img: 'https://cdn.quasar.dev/img/parallax1.jpg',
-    title: 'title2',
-    content: 'cotent内容内内容',
-    name: 'silder2',
-  },
-  {
-    img: 'https://cdn.quasar.dev/img/parallax2.jpg',
-    content: 'cotent内容内内容',
-    title: 'title3',
-    name: 'silder3',
-  }],
+const rows = ref<Array<any>>([])
+
+const rowsJson = computed<Carousel[]>(() => {
+  const json = [] as Carousel[]
+  const cloneRow = _.cloneDeep(rows.value)
+  if (cloneRow) {
+    cloneRow.forEach((item, index) => {
+      json.push({
+        name: `silder${index}`,
+        content: item.content,
+        title: item.title,
+        img: item.uploadImg,
+      })
+    })
+  }
+
+  return json
 })
-const col = ['img', 'title', 'content', 'name']
+
+// 按从左到右的顺序
+const col = ['title', 'content', 'uploadImg', 'delete']
+
+async function saveRows() {
+  const res = await upsertCms<Carousel>('homeCarousel', rows.value)
+  if (res) {
+    Notify.create({
+      type: 'success',
+      message: '保存成功',
+    })
+  }
+}
+
+onMounted(async () => {
+  const res = await getCms('homeCarousel')
+  if (res)
+    rows.value = res.json
+})
 </script>
 
 <template>
   <div p-xl>
-    <EditableGrid :row-name="[]" />
+    <EditableGrid v-model:rows="rows" :col-names="col" component-name="轮播图" @save="saveRows" />
 
     <span>预览界面</span>
-    <HomeCarousel :list="requsetJSON.list" />
+    <HomeCarousel :list="rowsJson" />
   </div>
 </template>
 

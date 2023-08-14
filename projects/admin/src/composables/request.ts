@@ -29,20 +29,26 @@ export function useRequest() {
       abort(controller)
   }
 
+  function queryParamsUrl(url: string, query: any) {
+    const queryParams = new URLSearchParams(query)
+    return `${url}?${queryParams.toString()}`
+  }
   //   function loadingWrapper<T>(promise: Promise<T>) {
   //     const loading = ref(true)
   //     promise.finally(() => loading.value = false)
   //     return { loading, data: promise }
   //   }
 
-  async function $get<T = any>(url: string, data: any, options?: AxiosRequestConfig, useCache = false): Promise<T> {
+  async function $get<T = any>(url: string, data?: any, query?: any, options?: AxiosRequestConfig, useCache = false): Promise<T> {
     const cacheKey = url + JSON.stringify(options)
     if (useCache && cache.has(cacheKey))
       return cache.get(cacheKey)
 
     const { signal, abortController } = newController()
-    const queryParams = new URLSearchParams(data)
-    const response = await $http.get(`${url}?${queryParams.toString()}`, { signal, ...(options || {}) })
+    if (query)
+      url = queryParamsUrl(url, query)
+
+    const response = await $http.get(url, { signal, ...(options || {}) })
     requestControllers.delete(abortController)
     useCache && cache.set(cacheKey, response.data)
     return response.data
@@ -59,11 +65,14 @@ export function useRequest() {
     return response.data
   }
 
-  async function $put<T = any>(url: string, data: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
+  async function $put<T = any>(url: string, data: any, query?: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
     const cacheKey = url + JSON.stringify(data) + JSON.stringify(config)
     if (useCache && cache.has(cacheKey))
       return cache.get(cacheKey)
     const { signal, abortController } = newController()
+    if (query)
+      url = queryParamsUrl(url, query)
+
     const response = await $http.put(url, data, { signal, ...(config || {}) })
     requestControllers.delete(abortController)
     useCache && cache.set(cacheKey, response.data)
@@ -91,5 +100,5 @@ export function useRequest() {
     return response.data
   }
 
-  return { $get, $post, $put, $patch, $delete, cache }
+  return { $get, $post, $put, $patch, $delete, cache, queryParamsUrl }
 }
