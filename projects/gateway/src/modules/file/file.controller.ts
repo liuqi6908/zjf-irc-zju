@@ -5,23 +5,12 @@ import { ErrorCode, PermissionType } from 'zjf-types'
 import { SuccessStringDto } from 'src/dto/success.dto'
 import { HasPermission } from 'src/guards/permission.guard'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
-import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { Body, Controller, Get, Param, Put, Req, StreamableFile, applyDecorators } from '@nestjs/common'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Get, Param, Put, Query, Req, Res, StreamableFile } from '@nestjs/common'
 
+import { ApiFormData } from '../../decorators/api/api-form-data'
 import { FileService } from './file.service'
 import { GetVerifyAttachmentParamDto } from './dto/get-verify-attachment.param.dto'
-
-function ApiFormData(key = 'file') {
-  return applyDecorators(
-    ApiConsumes('multipart/form-data'),
-    ApiBody({
-      schema: {
-        type: 'object',
-        properties: { [key]: { type: 'string', format: 'binary' } },
-      },
-    }),
-  )
-}
 
 @ApiTags('File | 文件服务')
 @Controller('file')
@@ -32,23 +21,26 @@ export class FileController {
 
   @ApiOperation({ summary: '上传公共文件' })
   @ApiFormData()
-  @Put('public/:path')
+  @Put('public')
   public async uploadPublicFile(
-    @Param() param: FilePathDto,
+    @Query() query: FilePathDto,
     @Body() body: any,
   ) {
-    await this._fileSrv.upload(
-      'pub',
-      param.path,
-      await body?.file?.toBuffer(),
-    )
-    return param.path
+    await this._fileSrv.upload('pub', query.path, await body?.file?.toBuffer())
+    return query.path
   }
 
   @ApiOperation({ summary: '获取（下载）公共文件' })
-  @Get('public/:path')
-  public async getFile(@Param() param: FilePathDto): Promise<StreamableFile> {
-    const file = await this._fileSrv.download('pub', param.path)
+  @Get('public')
+  public async getFile(
+    @Query() query: FilePathDto,
+    @Res({ passthrough: true }) res: any,
+  ): Promise<StreamableFile> {
+    const file = await this._fileSrv.download('pub', query.path)
+    const filename = query.path.split('/').pop()
+    const ext = filename.split('.').pop()
+    res.header('Content-Disposition', `attachment; filename=${filename}`)
+    res.header('Content-Type', `application/${ext}`)
     return new StreamableFile(file)
   }
 
