@@ -24,9 +24,7 @@ watch(() => props.userCode, () => {
     ref="inputRef"
     :disable="disable"
     :model-value="userCode"
-    :bg-color="disable ? 'grey-3' : ''"
-    outlined
-    dense
+    outlined dense dark
     :rules="rule"
     @update:model-value="(v) => $emit('update:userCode', v)"
   />
@@ -35,10 +33,7 @@ watch(() => props.userCode, () => {
 <style lang="scss" scoped>
 .q-field :deep(.q-field__inner){
     .q-field__control {
-      border-radius: 8px !important;
-    }
-    .q-field__control:before{
-      border: 1px solid var(--grey-3, #D4DDEA); ;
+      border-radius: 0px !important;
     }
 }
 </style>

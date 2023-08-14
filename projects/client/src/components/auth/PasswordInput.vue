@@ -27,15 +27,15 @@ watch(() => props.password, () => {
     :model-value="password"
     outlined
     dense
+    dark
     :type="isPwd ? 'password' : 'text'"
     label="请输入密码"
     @update:model-value="(v: string) => $emit('update:password', v)"
   >
     <template #append>
       <div
-
         :class="isPwd ? 'i-mingcute:eye-close-line' : 'i-mingcute:eye-2-line' "
-        cursor-pointer text-grey-5
+        cursor-pointer
         @click="isPwd = !isPwd"
       />
     </template>
@@ -45,10 +45,7 @@ watch(() => props.password, () => {
 <style lang="scss" scoped>
 .q-field :deep(.q-field__inner){
     .q-field__control {
-      border-radius: 8px !important;
-    }
-    .q-field__control:before{
-      border: 1px solid var(--grey-3, #D4DDEA); ;
+      border-radius: 0px !important;
     }
 }
 </style>

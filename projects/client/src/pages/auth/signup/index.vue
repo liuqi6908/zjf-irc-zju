@@ -55,10 +55,9 @@ const disable = computed(() => verifyAccept(acceptObj))
 <template>
   <div flex="~ col">
     <header flex="~ flex col items-center justify-center">
-      <img h-10 src="../../../assets/layout/cloud.png">
-      <span text-5 font-600 text-grey-8>智能云科研平台</span>
+      <span text-7 font-600 text-grey-1>注册</span>
     </header>
-    <span mb-1 font-500 text-grey-8>用户名称</span>
+    <span mb-1 font-500 text-grey-1>用户名称</span>
     <UserCodeInput
       v-model:userCode="userName"
       user-type="user"
@@ -67,11 +66,11 @@ const disable = computed(() => verifyAccept(acceptObj))
     />
 
     <div m-b-5 flex flex-col>
-      <span mb-1 font-500 text-grey-8>密码</span>
+      <span mb-1 font-500 text-grey-1>密码</span>
       <PasswordInput v-model:password="password" />
     </div>
 
-    <span mb-1 font-500 text-grey-8>确认密码</span>
+    <span mb-1 font-500 text-grey-1>确认密码</span>
     <PasswordInput
       v-model:password="repeatPassword"
       reactive-rules
@@ -79,7 +78,7 @@ const disable = computed(() => verifyAccept(acceptObj))
       @update:accept="(val) => acceptObj.repeatPassword = val"
     />
 
-    <span mb-1 font-500 text-grey-8>邮箱</span>
+    <span mb-1 font-500 text-grey-1>邮箱</span>
     <UserCodeInput
       ref="repeatPasswordInput"
       v-model:userCode="email"
@@ -87,7 +86,7 @@ const disable = computed(() => verifyAccept(acceptObj))
       user-type="email"
       @update:accept="(val) => acceptObj.email = val"
     />
-    <span mb-1 font-500 text-grey-8>短信验证</span>
+    <span mb-1 font-500 text-grey-1>短信验证</span>
     <SMSInput
       v-model:smsCode="smsCode"
       :action="CodeAction.REGISTER"
