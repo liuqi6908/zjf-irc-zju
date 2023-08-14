@@ -36,7 +36,13 @@ async function bootstrap() {
 
   /** 启用 压缩 */
   app.register(compression)
-  app.register(fmp, { attachFieldsToBody: true })
+  /** 文件 */
+  app.register(fmp, {
+    attachFieldsToBody: true,
+    limits: {
+      fileSize: 100 * 1024 * 1024,
+    },
+  })
 
   /** 启用 validation */
   app.useGlobalPipes(

@@ -29,6 +29,7 @@
   "author": "CatsJuice",
   "sideEffect": false,
   "devDependencies": {
+    "@types/blueimp-md5": "^2.18.0",
     "@types/node": "18.16.18",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "concurrently": "^8.0.1",
@@ -36,5 +37,8 @@
     "nodemon": "^2.0.22",
     "rimraf": "^5.0.0",
     "vitepress": "1.0.0-alpha.75"
+  },
+  "dependencies": {
+    "blueimp-md5": "^2.19.0"
   }
 }

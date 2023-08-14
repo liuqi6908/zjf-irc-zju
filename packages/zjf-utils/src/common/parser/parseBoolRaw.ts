@@ -8,8 +8,9 @@
  */
 export function parseBoolRaw(
   /** 要转换的值 */
-  src: string
+  src: string | boolean,
 ) {
+  if (src === true || src === false) return src;
   const truly = ["true", "yes", "1", "TRUE", "YES", "True", "Yes"];
   const falsy = ["false", "no", "0", "FALSE", "NO", "False", "No"];
   return truly.includes(src) ? true : falsy.includes(src) ? false : undefined;

@@ -72,9 +72,11 @@ export class PermissionGuard extends LoginGuard implements CanActivate {
  * @returns
  */
 export function HasPermission(
-  permissions: PermissionType[] = [],
+  permissions: PermissionType[] | PermissionType = [],
   relation: PermissionRelation = 'OR',
 ) {
+  if (!Array.isArray(permissions))
+    permissions = [permissions]
   return applyDecorators(
     IsLogin(),
     UseGuards(PermissionGuard),

@@ -19,6 +19,7 @@ import { UserModule } from './modules/user/user.module'
 import { AuthModule } from './modules/auth/auth.module'
 import { RoleModule } from './modules/role/role.module'
 import { FileModule } from './modules/file/file.module'
+import { DataModule } from './modules/data/data.module'
 import { RedisModule } from './modules/redis/redis.module'
 import { EmailModule } from './modules/email/email.module'
 import { AuthMiddleware } from './middleware/auth.middleware'
@@ -34,6 +35,7 @@ import { VerificationModule } from './modules/verification/verification.module'
     AuthModule,
     RoleModule,
     FileModule,
+    DataModule,
     RedisModule,
     EmailModule,
     PermissionModule,

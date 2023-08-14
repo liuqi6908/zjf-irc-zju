@@ -34,6 +34,10 @@ export enum PermissionType {
   CMS_UPDATE = 'cms:update',
   /** 删除内容 */
   CMS_DELETE = 'cms:delete',
+
+  // ------------------ 数据管理 ---------------------
+  /** 上传中间表 */
+  DATA_UPLOAD = 'data:upload',
 }
 
 export const permissionDescriptions: Record<PermissionType, string> = {
@@ -51,4 +55,6 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.CMS_CREATE]: '创建内容',
   [PermissionType.CMS_UPDATE]: '更新内容',
   [PermissionType.CMS_DELETE]: '删除内容',
+
+  [PermissionType.DATA_UPLOAD]: '上传中间表',
 }
