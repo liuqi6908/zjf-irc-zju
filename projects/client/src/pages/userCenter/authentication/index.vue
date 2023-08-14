@@ -14,6 +14,7 @@ const { useGetProfile, userInfo } = useUser()
 const showVeri = ref(false)
 const files = ref<Array<File>>()
 const myFileInput = ref(null)
+const identify = ref<{ label: string; id: VerificationIdentify }>({ label: '', id: VerificationIdentify.TEACHER })
 
 // if (!userInfo.value)
 //   useGetProfile()
@@ -70,17 +71,21 @@ const authInfoList = reactive([
   },
 ])
 
-function transformedArray(): { name: string; label: string }[] {
+function transformedArray(): { label: string; id: string }[] {
   return Object.keys(VerificationIdentify).map(key => ({
-    name: VerificationIdentify[key as keyof typeof VerificationIdentify],
+    id: VerificationIdentify[key as keyof typeof VerificationIdentify],
     label: verificationIdentifyDescriptions[VerificationIdentify[key as keyof typeof VerificationIdentify]],
   }))
 }
 
 const verifiInfo = reactive<ICreateVerificationBodyDto>({
   name: '',
-  identify: VerificationIdentify.TEACHER,
+  identify: identify.value.id,
   attachments: [],
+  school: '',
+  college: '',
+  number: '',
+  idCard: '',
 })
 
 function pickImg() {
@@ -106,14 +111,8 @@ async function fetchUploadFile(files?: File[]) {
 
 async function confirm() {
   await fetchUploadFile(files.value)
-
-  const paramse = {
-    name: verifiInfo.name,
-    identify: verifiInfo.identify.id,
-    attachments: verifiInfo.attachments,
-  }
   // 请求认证
-  const res = await requestVerification(paramse)
+  const res = await requestVerification(verifiInfo)
 }
 
 function onRejected(rejectedEntries: Array<any>) {
@@ -196,7 +195,8 @@ onMounted(async () => {
       <div mb-2 mt-6>
         <span text-alert-error>*</span> <span font-500 text-grey-8>身份 </span>
       </div>
-      <ZSelect v-model="verifiInfo.identify" :options="transformedArray()" />
+      <ZSelect v-model="identify" :options="transformedArray()" />
+
       <div mb-2 mt-6 flex="~ row justify-between items-center">
         <div> <span text-alert-error>*</span> <span font-500 text-grey-8>上传资料</span></div>
 
