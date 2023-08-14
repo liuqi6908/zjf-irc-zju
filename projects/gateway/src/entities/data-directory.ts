@@ -44,6 +44,10 @@ export class DataDirectory implements IDataDirectory {
   @Column()
   order?: number
 
+  @ApiProperty({ description: '引用规范' })
+  @Column()
+  reference?: string
+
   @OneToMany(() => DataField, field => field.directory, {
     onDelete: 'CASCADE',
   })

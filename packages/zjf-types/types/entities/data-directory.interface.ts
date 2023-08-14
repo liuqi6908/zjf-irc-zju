@@ -10,6 +10,8 @@ export interface IDataDirectory {
   parentId?: string;
   /** 排序 */
   order?: number;
+  /** 引用规范信息 */
+  reference?: string;
 
 
   //  ------- 以下信息为了方便数据处理而添加的字段  -------  //
