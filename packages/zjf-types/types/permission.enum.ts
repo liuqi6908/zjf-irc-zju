@@ -38,6 +38,10 @@ export enum PermissionType {
   // ------------------ 数据管理 ---------------------
   /** 上传中间表 */
   DATA_UPLOAD = 'data:upload',
+  /** 上传数据库介绍 */
+  DATA_UPLOAD_INTRO = 'data:upload-intro',
+  /** 编辑数据引用规范 */
+  DATA_EDIT_REFERENCE = 'data:edit-reference',
 }
 
 export const permissionDescriptions: Record<PermissionType, string> = {
@@ -57,4 +61,6 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.CMS_DELETE]: '删除内容',
 
   [PermissionType.DATA_UPLOAD]: '上传中间表',
+  [PermissionType.DATA_UPLOAD_INTRO]: '上传数据库介绍',
+  [PermissionType.DATA_EDIT_REFERENCE]: '编辑数据引用规范',
 }

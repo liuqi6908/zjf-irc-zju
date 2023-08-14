@@ -57,6 +57,10 @@ export enum ErrorCode {
   VERIFICATION_NOT_PENDING = 500004,
   /** 认证申请不是通过状态 */
   VERIFICATION_NOT_APPROVED = 500005,
+
+  // 文件相关错误
+  /** 文件类型不允许 */ 
+  FILE_TYPE_NOT_ALLOWED = 600001,
 }
 
 export type ErrorMessageCollection = Partial<

@@ -154,7 +154,6 @@ export class UserService implements OnModuleInit {
     })
   }
 
-  // TODO: 更新用户手机号
   /**
    * 更新指定用户的手机号
    */

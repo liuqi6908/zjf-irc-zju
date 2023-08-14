@@ -11,6 +11,7 @@ import { Body, Controller, Get, Param, Put, Query, Req, Res, StreamableFile } fr
 import { ApiFormData } from '../../decorators/api/api-form-data'
 import { FileService } from './file.service'
 import { GetVerifyAttachmentParamDto } from './dto/get-verify-attachment.param.dto'
+import { UploadDataIntroParamDto } from './dto/upload-data-intro.param.dto'
 
 @ApiTags('File | 文件服务')
 @Controller('file')
@@ -84,6 +85,45 @@ export class FileController {
       responseError(ErrorCode.PERMISSION_DENIED)
 
     const path = `verify/${param.userId}/${param.filename}`
+    return new StreamableFile(await this._fileSrv.download('pri', path))
+  }
+
+  @ApiOperation({
+    summary: '上传数据库介绍',
+    description: '文件名为: `DATABASE_ENG` + `.doc`, 该信息在数据库中不再记录',
+  })
+  @HasPermission(PermissionType.DATA_UPLOAD_INTRO)
+  @ApiSuccessResponse(SuccessStringDto)
+  @ApiFormData()
+  @Put('private/db/:dataRootId/:filename')
+  public async uploadDbIntro(
+    @Param() param: UploadDataIntroParamDto,
+    @Body() body: any,
+  ) {
+    const buffer = await body?.file?.toBuffer()
+    const filename = param.filename
+    const arr = filename.split('.')
+    const ext = arr.pop()
+    const allowedExt = ['doc', 'docx', 'pdf']
+    if (!allowedExt.includes(ext))
+      responseError(ErrorCode.FILE_TYPE_NOT_ALLOWED)
+    const name = arr.join('.')
+    const saveFilename = `${name}.${ext}`
+    const path = `db/intro/${param.dataRootId}/${saveFilename}`
+    await this._fileSrv.upload('pri', path, buffer)
+    return saveFilename
+  }
+
+  // TODO: 数据使用权限校验
+  @ApiOperation({
+    summary: '获取（下载）指定数据根目录的数据库介绍',
+    description: '文件名为: `DATABASE_ENG` + `.doc`, 该信息在数据库中不再记录',
+  })
+  @Get('private/db/:dataRootId/:filename')
+  public async getDbIntro(
+    @Param() param: UploadDataIntroParamDto,
+  ): Promise<StreamableFile> {
+    const path = `db/intro/${param.dataRootId}/${param.filename}`
     return new StreamableFile(await this._fileSrv.download('pri', path))
   }
 }

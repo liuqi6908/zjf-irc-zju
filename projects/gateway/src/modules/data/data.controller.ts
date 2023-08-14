@@ -60,7 +60,7 @@ export class DataController {
     }
   }
 
-  // TODO: 权限校验
+  // TODO: 数据使用权限校验
   @ApiOperation({ summary: '获取指定分类的数据' })
   @ApiSuccessResponse(GetDataListResDto)
   @Get('list/:dataRootId')
