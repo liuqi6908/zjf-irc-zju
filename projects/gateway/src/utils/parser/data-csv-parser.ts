@@ -42,9 +42,10 @@ export function dataCsvParser(arr: Array<{
     } = el
 
     if (!databases[DATABASE_ENG]) {
-      databases[DATABASE_ENG] = {}
+      const id = md5(DATABASE_ENG)
+      databases[DATABASE_ENG] = { id }
       nodes.push({
-        id: md5(DATABASE_ENG),
+        id,
         nameEN: DATABASE_ENG,
         nameZH: DATABASE,
         level: 1,
@@ -58,7 +59,7 @@ export function dataCsvParser(arr: Array<{
 
     if (!bDatabase[B_DATABASE_ENG]) {
       const id = md5(DATABASE_ENG + B_DATABASE_ENG)
-      bDatabase[B_DATABASE_ENG] = {}
+      bDatabase[B_DATABASE_ENG] = { id }
       nodes.push({
         id,
         nameEN: B_DATABASE_ENG,
@@ -74,7 +75,7 @@ export function dataCsvParser(arr: Array<{
 
     if (!part[PART_ENG]) {
       const id = md5(DATABASE_ENG + B_DATABASE_ENG + PART_ENG)
-      part[PART_ENG] = {}
+      part[PART_ENG] = { id }
       nodes.push({
         id,
         nameEN: PART_ENG,
