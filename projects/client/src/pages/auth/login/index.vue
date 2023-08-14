@@ -24,15 +24,14 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
 
 <template>
   <div w-full flex="~ col">
-    <header flex="~ flex col items-center justify-center">
-      <img h-10 src="../../../assets/layout/cloud.png">
-      <span text-5 font-600 text-grey-8>智能云科研平台</span>
+    <header flex="~ flex col items-center justify-center" mb-12>
+      <span text-7 font-600 text-grey-1>登录</span>
     </header>
-    <span m-b-1 font-500 text-grey-8>账号</span>
+    <span m-b-1 font-500 text-grey-1>账号</span>
     <UserCodeInput
       v-model:userCode="userCode"
     />
-    <span m-b-1 m-t-4 font-500 text-grey-8>
+    <span m-b-1 m-t-4 font-500 text-grey-1>
       密码
     </span>
     <PasswordInput
@@ -42,7 +41,7 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
       @update:accept="(val) => acceptObj.password = val"
     />
 
-    <RouterLink text-3 text-grey-5 :to="{ path: 'forgetPassword' }">
+    <RouterLink text-3 text-grey-1 :to="{ path: 'forgetPassword' }">
       忘记密码?
     </RouterLink>
 
@@ -50,9 +49,9 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
 
     <Btn :disable="disable" label="登录" @click="useLogin(logArg)" />
 
-    <div m-t-5 flex-center text-grey-5>
+    <div m-t-5 flex-center text-grey-3>
       没有账号？
-      <RouterLink text-primary-1 :to="{ path: 'signup' }">
+      <RouterLink text-grey-1 :to="{ path: 'signup' }">
         立即注册
       </RouterLink>
     </div>

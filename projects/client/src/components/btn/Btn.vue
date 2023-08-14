@@ -17,8 +17,8 @@ interface Props extends QBtnGroupProps {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  bgColor: 'primary',
-  color: 'white',
+  bgColor: 'white',
+  color: 'primary-1',
 })
 const btnClass = computed(() => {
   if (props.icon)
@@ -43,7 +43,7 @@ const finalProps = computed(() => ({ props }))
     unelevated
     :disable="disable"
     :dense="dense"
-    rounded-2
+    rounded-0
   >
     <div v-if="transparent" class="translucent-mask" :class="`bg-${bgColor}`" />
     <template v-if="icon">

@@ -44,6 +44,7 @@ watch(() => props.smsCode, () => {
     label="请输入验证码"
     :model-value="smsCode"
     outlined
+    dark
     lazy-rules="ondemand"
     @update:model-value="(v: string) => $emit('update:smsCode', v)"
   >
@@ -59,10 +60,7 @@ watch(() => props.smsCode, () => {
 <style lang="scss" scoped>
 .q-field :deep(.q-field__inner){
     .q-field__control {
-      border-radius: 8px !important;
-    }
-    .q-field__control:before{
-      border: 1px solid var(--grey-3, #D4DDEA); ;
+      border-radius: 0px !important;
     }
 }
 </style>

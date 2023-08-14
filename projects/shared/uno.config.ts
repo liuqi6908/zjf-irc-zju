@@ -46,7 +46,7 @@ export default defineConfig({
   safelist: 'prose m-auto text-left'.split(' '),
   theme: {
     colors: {
-      primary: { 1: '#307BF6', 2: '#0057B2', 3: '#D1E8FD' },
+      primary: { 1: '#025CB9', 2: '#0057B2', 3: '#D1E8FD' },
       grey: { 1: '#FFFFFF', 2: '#F5F7FA', 3: '#D4DDEA', 4: '#A6B1C2', 5: '#6E7686', 6: '#575E6A', 7: '#373C48', 8: '#292D36' },
       alert: { success: '#22B07D', error: '#F44336', warning: '#FFBA2F' },
       opacity: { primary: 'rgba(48, 123, 246, 0.12)' }
