@@ -10,7 +10,7 @@ const acceptObj = reactive({
   password: false,
 })
 
-const { useLogin, userInfo } = useUser()
+const { useLogin } = useUser()
 
 function passwordRule(val: string) {
   return validatePassword(val) || true
@@ -47,7 +47,9 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
 
     <div h-20 />
 
-    <Btn :disable="disable" label="登录" @click="useLogin(logArg)" />
+    <client-only>
+      <Btn :disable="disable" label="登录" @click="useLogin(logArg)" />
+    </client-only>
 
     <div m-t-5 flex-center text-grey-3>
       没有账号？
