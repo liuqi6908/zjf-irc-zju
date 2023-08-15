@@ -7,7 +7,7 @@ import { DataDirectory } from 'src/entities/data-directory'
 import { DataService } from './data.service'
 import { DataController } from './data.controller'
 import { DataPermissionService } from './data-permission/data-permission.service'
-import { DataPermissionController } from './data-permission/data-permission.controller';
+import { DataPermissionController } from './data-permission/data-permission.controller'
 
 @Module({
   imports: [
@@ -19,6 +19,6 @@ import { DataPermissionController } from './data-permission/data-permission.cont
   ],
   providers: [DataService, DataPermissionService],
   controllers: [DataController, DataPermissionController],
-  exports: [DataService],
+  exports: [DataService, DataPermissionService],
 })
 export class DataModule {}

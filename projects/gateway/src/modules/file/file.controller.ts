@@ -3,21 +3,23 @@ import { FilenameDto } from 'src/dto/filename.dto'
 import { FilePathDto } from 'src/dto/file-path.dto'
 import { ErrorCode, PermissionType } from 'zjf-types'
 import { SuccessStringDto } from 'src/dto/success.dto'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { HasPermission } from 'src/guards/permission.guard'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Body, Controller, Get, Param, Put, Query, Req, Res, StreamableFile } from '@nestjs/common'
 
 import { ApiFormData } from '../../decorators/api/api-form-data'
+import { DataPermissionService, visitorRole } from '../data/data-permission/data-permission.service'
 import { FileService } from './file.service'
-import { GetVerifyAttachmentParamDto } from './dto/get-verify-attachment.param.dto'
 import { UploadDataIntroParamDto } from './dto/upload-data-intro.param.dto'
+import { GetVerifyAttachmentParamDto } from './dto/get-verify-attachment.param.dto'
 
 @ApiTags('File | 文件服务')
 @Controller('file')
 export class FileController {
   constructor(
     private readonly _fileSrv: FileService,
+    private readonly _dataPSrv: DataPermissionService,
   ) {}
 
   @ApiOperation({ summary: '上传公共文件' })
@@ -114,16 +116,38 @@ export class FileController {
     return saveFilename
   }
 
-  // TODO: 数据使用权限校验
   @ApiOperation({
     summary: '获取（下载）指定数据根目录的数据库介绍',
     description: '文件名为: `DATABASE_ENG` + `.doc`, 该信息在数据库中不再记录',
   })
+  @HasPermission([], undefined, false)
   @Get('private/db/:dataRootId/:filename')
   public async getDbIntro(
     @Param() param: UploadDataIntroParamDto,
+    @Req() req: FastifyRequest,
   ): Promise<StreamableFile> {
+    const user = req.raw.user
+    const permissions = user?.role?.permissions || []
+    const dataRoleName = user?.dataRoleName || visitorRole.name
+    const allowed = permissions.some(p => p.name === PermissionType.DATA_QUERY_ALL)
+    || (await this._dataPSrv.dataRoleRepo().findOne({
+      where: { name: dataRoleName },
+    })).viewDirectories.some(p => p.rootId === param.dataRootId)
+
+    if (!allowed)
+      responseError(ErrorCode.PERMISSION_DENIED)
+
     const path = `db/intro/${param.dataRootId}/${param.filename}`
     return new StreamableFile(await this._fileSrv.download('pri', path))
+  }
+
+  @ApiOperation({
+    summary: '数据下载',
+    description: '返回一个数据下载的链接，这个链接仅在内网可用',
+  })
+  @HasPermission([], undefined, false)
+  @Get('download/')
+  public async getDownloadUrl() {
+    throw new Error('Not implemented')
   }
 }
