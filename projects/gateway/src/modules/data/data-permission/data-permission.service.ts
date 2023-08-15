@@ -65,4 +65,12 @@ export class DataPermissionService implements OnModuleInit {
 
     return saveInfo
   }
+
+  dataRoleQB(alias = 'dr') {
+    return this._dataRoleRepo.createQueryBuilder(alias)
+  }
+
+  dataRoleRepo() {
+    return this._dataRoleRepo
+  }
 }

@@ -1,7 +1,7 @@
 import { PermissionType } from 'zjf-types'
 import { HasPermission } from 'src/guards/permission.guard'
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
-import { Body, Controller, Delete, Param, Post } from '@nestjs/common'
+import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common'
 
 import { DataPermissionService } from './data-permission.service'
 import { UpsertDataRoleBodyDto } from './dto/upsert-data-role.body.dto'
@@ -16,7 +16,7 @@ export class DataPermissionController {
     description: '数据角色名称为唯一标识，如果数据角色名称存在，则会更新角色信息',
   })
   @HasPermission([PermissionType.DATA_PERMISSION_CREATE, PermissionType.DATA_PERMISSION_UPDATE], 'AND')
-  @Post('upsert/data-role')
+  @Post('data-role/upsert')
   public async createRole(@Body() body: UpsertDataRoleBodyDto) {
     return await this._dataPSrv.upsertDataRole(body)
   }
@@ -30,5 +30,19 @@ export class DataPermissionController {
   @Delete('data-role/:dataRoleName')
   public async deleteRole(@Param('dataRoleName') dataRoleName: string) {
     return await this._dataPSrv.deleteRole(dataRoleName)
+  }
+
+  @ApiOperation({ summary: '列出所有数据下载角色' })
+  @HasPermission(PermissionType.DATA_PERMISSION_QUERY)
+  @ApiQuery({ name: 'permission', description: '是否关联查询所有的权限列表，传入任意值即可' })
+  @Get('data-role/list')
+  public async listDataRole(
+    @Query('permission') permission: any,
+  ) {
+    return await this._dataPSrv.dataRoleRepo().find({
+      relations: permission
+        ? { downloadDirectories: true, viewDirectories: true }
+        : {},
+    })
   }
 }
