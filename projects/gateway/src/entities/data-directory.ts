@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 import type { IDataDirectory } from 'zjf-types'
-import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
 
+import { DataRole } from './data-role'
 import { DataField } from './data-field'
 
 @Entity()
@@ -19,13 +20,18 @@ export class DataDirectory implements IDataDirectory {
   @Column()
   nameEN: string
 
+  @ApiProperty({ description: '父目录', type: () => DataDirectory })
   @ManyToOne(() => DataDirectory, directory => directory.children, {
     // 不创建外键约束，以方便删除和创建
     // createForeignKeyConstraints: false,
+    onDelete: 'CASCADE',
   })
   parent?: DataDirectory
 
-  @OneToMany(() => DataDirectory, directory => directory.parent)
+  @ApiProperty({ type: () => [DataDirectory], description: '子目录' })
+  @OneToMany(() => DataDirectory, directory => directory.parent, {
+    onDelete: 'CASCADE',
+  })
   children?: DataDirectory[]
 
   @ApiProperty({ description: '所属的目录 id' })
@@ -45,11 +51,23 @@ export class DataDirectory implements IDataDirectory {
   order?: number
 
   @ApiProperty({ description: '引用规范' })
-  @Column()
+  @Column({ nullable: true })
   reference?: string
 
   @OneToMany(() => DataField, field => field.directory, {
     onDelete: 'CASCADE',
   })
   fields?: DataField[]
+
+  @ApiProperty({ description: '拥有查看权限的数据角色列表' })
+  @ManyToMany(() => DataRole, role => role.viewDirectories, {
+    createForeignKeyConstraints: false,
+  })
+  viewDataRoles?: DataRole[]
+
+  @ApiProperty({ description: '拥有下载权限的数据角色列表' })
+  @ManyToMany(() => DataRole, role => role.downloadDirectories, {
+    createForeignKeyConstraints: false,
+  })
+  downloadDataRoles?: DataRole[]
 }

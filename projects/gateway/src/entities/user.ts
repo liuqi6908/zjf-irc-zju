@@ -7,6 +7,7 @@ import { BaseTimeStamp } from './_timestamp'
 import { UserDeleted } from './user-deleted'
 import { VerificationHistory } from './verification'
 import { Login } from './login'
+import { DataRole } from './data-role'
 
 @Entity()
 export class User extends BaseTimeStamp implements IUser {
@@ -56,6 +57,13 @@ export class User extends BaseTimeStamp implements IUser {
   @ManyToOne(() => Role, role => role.users, { onDelete: 'SET NULL' })
   @JoinColumn()
   role?: Role
+
+  @ManyToOne(() => DataRole, dataRole => dataRole.users)
+  @JoinColumn()
+  dataRole?: DataRole
+
+  @Column({ nullable: true })
+  dataRoleName?: string
 
   @Column({ nullable: true })
   roleName?: string

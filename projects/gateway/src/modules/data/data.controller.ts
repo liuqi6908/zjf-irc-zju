@@ -1,20 +1,22 @@
 import * as Papa from 'papaparse'
-import { IsNull, Not } from 'typeorm'
+import type { FindOptionsWhere } from 'typeorm'
+import { In, IsNull, Not } from 'typeorm'
 import { PermissionType } from 'zjf-types'
+import { objectKeys } from '@catsjuice/utils'
 import { batchSave } from 'src/utils/db/batch-save'
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
 import { ApiSuccessResponse } from 'src/utils/response'
 import { DataRootIdDto } from 'src/dto/id/data-root.dto'
 import { HasPermission } from 'src/guards/permission.guard'
 import { ApiFormData } from 'src/decorators/api/api-form-data'
 import { dataCsvParser } from 'src/utils/parser/data-csv-parser'
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
 import { Body, Controller, Get, Logger, Param, Patch, Put, Query } from '@nestjs/common'
 
-import { objectKeys } from '@catsjuice/utils'
+import type { DataDirectory } from 'src/entities/data-directory'
 import { DataService } from './data.service'
 import { GetDataListResDto } from './dto/get-data-list.res.dto'
-import { UploadDirectoryQueryDto } from './dto/upload-directory.query.dto'
 import { UpdateReferenceBodyDto } from './dto/update-reference.body.dto'
+import { UploadDirectoryQueryDto } from './dto/upload-directory.query.dto'
 
 @ApiTags('Data | 数据服务')
 @Controller('data')
@@ -38,14 +40,23 @@ export class DataController {
 
     const { nodes, fields } = dataCsvParser(csv, param.dataRootId)
 
-    const logger = console;
+    const _ = console
+    const logger = {
+      log: (...msgs: any[]) => _.log('[上传中间表]', ...msgs),
+      error: _.error,
+    };
 
     (async () => {
+      const newIds = nodes.map(node => node.id)
       if (query.clear) {
-        await this._dataSrv.dirRepo().delete({
+        const where: FindOptionsWhere<DataDirectory> = {
           rootId: param.dataRootId,
           parentId: Not(IsNull()),
-        })
+          id: Not(In(newIds)),
+        }
+        const deleteCount = await this._dataSrv.dirRepo().count({ where })
+        logger.log(`clear ${deleteCount} rows`)
+        await this._dataSrv.dirRepo().delete(where)
         logger.log('clear success')
       }
       Promise.all([

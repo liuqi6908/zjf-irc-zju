@@ -35,13 +35,23 @@ export enum PermissionType {
   /** 删除内容 */
   CMS_DELETE = 'cms:delete',
 
-  // ------------------ 数据管理 ---------------------
+  // ------------------ 数据管理-资源 ---------------------
   /** 上传中间表 */
   DATA_UPLOAD = 'data:upload',
   /** 上传数据库介绍 */
   DATA_UPLOAD_INTRO = 'data:upload-intro',
   /** 编辑数据引用规范 */
   DATA_EDIT_REFERENCE = 'data:edit-reference',
+
+  // ------------------ 数据管理-权限 ---------------------
+  /** 创建数据角色 */
+  DATA_PERMISSION_CREATE = 'data-permission:create',
+  /** 更新数据角色 */
+  DATA_PERMISSION_UPDATE = 'data-permission:update',
+  /** 删除数据角色 */
+  DATA_PERMISSION_DELETE = 'data-permission:delete',
+  /** 查询数据角色 */
+  DATA_PERMISSION_QUERY = 'data-permission:query',
 }
 
 export const permissionDescriptions: Record<PermissionType, string> = {
@@ -63,4 +73,9 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.DATA_UPLOAD]: '上传中间表',
   [PermissionType.DATA_UPLOAD_INTRO]: '上传数据库介绍',
   [PermissionType.DATA_EDIT_REFERENCE]: '编辑数据引用规范',
+
+  [PermissionType.DATA_PERMISSION_CREATE]: '创建数据角色',
+  [PermissionType.DATA_PERMISSION_UPDATE]: '更新数据角色',
+  [PermissionType.DATA_PERMISSION_DELETE]: '删除数据角色',
+  [PermissionType.DATA_PERMISSION_QUERY]: '查询数据角色',
 }

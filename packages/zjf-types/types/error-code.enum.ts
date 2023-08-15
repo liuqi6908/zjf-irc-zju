@@ -61,6 +61,11 @@ export enum ErrorCode {
   // 文件相关错误
   /** 文件类型不允许 */ 
   FILE_TYPE_NOT_ALLOWED = 600001,
+
+
+  // 数据相关错误
+  /** 禁止删除访客角色 */
+  DATA_PERMISSION_DELETE_VISITOR = 700001,
 }
 
 export type ErrorMessageCollection = Partial<

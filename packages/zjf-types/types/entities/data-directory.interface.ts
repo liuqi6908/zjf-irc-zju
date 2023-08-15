@@ -1,3 +1,5 @@
+import { IDataRole } from "./data-role.interface";
+
 /** 数据目录 */
 export interface IDataDirectory {
   /** 目录的唯一标识 */
@@ -12,6 +14,12 @@ export interface IDataDirectory {
   order?: number;
   /** 引用规范信息 */
   reference?: string;
+  /** 子目录列表 */
+  children?: IDataDirectory[];
+  /** 拥有查看权限的数据角色列表 */
+  viewDataRoles?: IDataRole[];
+  /** 拥有下载权限的数据角色列表 */
+  downloadDataRoles?: IDataRole[];
 
 
   //  ------- 以下信息为了方便数据处理而添加的字段  -------  //

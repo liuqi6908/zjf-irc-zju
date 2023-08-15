@@ -6,6 +6,7 @@ import { IEmailOptionalDto } from '../dto/email.interface';
 import { ICreatedAt, IUpdatedAt } from "./_timestamp.interface";
 import { IVerificationHistory } from './verification.interface';
 import { INicknameOptionalDto } from '../dto/nickname.interface';
+import { IDataRole } from './data-role.interface';
 
 export interface IUser extends 
   ICreatedAt, 
@@ -29,6 +30,12 @@ export interface IUser extends
 
   /** 用户的角色信息 */
   role?: IRole;
+
+  /** 用户的数据下载角色信息 */
+  dataRole?: IDataRole;
+
+  /** 角色名称（角色信息外键） */
+  dataRoleName?: IDataRole['name']
 
   /** 角色名称（角色信息外键） */
   roleName?: string;
