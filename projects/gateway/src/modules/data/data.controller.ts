@@ -10,19 +10,23 @@ import { HasPermission } from 'src/guards/permission.guard'
 import { ApiFormData } from 'src/decorators/api/api-form-data'
 import { dataCsvParser } from 'src/utils/parser/data-csv-parser'
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
-import { Body, Controller, Get, Logger, Param, Patch, Put, Query } from '@nestjs/common'
+import { Body, Controller, Get, Logger, Param, Patch, Put, Query, Req } from '@nestjs/common'
 
 import type { DataDirectory } from 'src/entities/data-directory'
+import { createDataDirectoryTree } from 'src/utils/data-directory-tree'
 import { DataService } from './data.service'
 import { GetDataListResDto } from './dto/get-data-list.res.dto'
 import { UpdateReferenceBodyDto } from './dto/update-reference.body.dto'
 import { UploadDirectoryQueryDto } from './dto/upload-directory.query.dto'
+import { DataPermissionService, visitorRole } from './data-permission/data-permission.service'
 
 @ApiTags('Data | 数据服务')
 @Controller('data')
 export class DataController {
   private readonly _logger = new Logger(DataController.name)
-  constructor(private readonly _dataSrv: DataService) {}
+  constructor(
+    private readonly _dataSrv: DataService,
+    private readonly _dataPSrv: DataPermissionService) {}
 
   @ApiOperation({ summary: '上传中间表' })
   @HasPermission(PermissionType.DATA_UPLOAD)
@@ -73,23 +77,64 @@ export class DataController {
     }
   }
 
-  // TODO: 数据使用权限校验
+  @ApiOperation({ summary: '获取所有的根节点（最大的分类）数据' })
+  @ApiSuccessResponse(GetDataListResDto)
+  @HasPermission([], undefined, false)
+  @Get('list/root')
+  public async getRoots(@Req() req: FastifyRequest) {
+    const user = req.raw.user
+    const roots = await this._dataSrv.dirRepo().find({
+      where: { parentId: IsNull() },
+    })
+    const dataRoleName = user?.dataRoleName || visitorRole.name
+    const permissions = user?.role?.permissions || []
+    const allowedScopes = permissions.some(p => p.name === PermissionType.DATA_QUERY_ALL)
+      ? roots.map(r => r.id)
+      : (await this._dataPSrv.dataRoleRepo()
+          .findOne({
+            where: { name: dataRoleName },
+            relations: { viewDirectories: true },
+          })
+        )
+          .viewDirectories
+          .map(d => d.rootId)
+    return createDataDirectoryTree(roots, allowedScopes)
+  }
+
   @ApiOperation({ summary: '获取指定分类的数据' })
   @ApiSuccessResponse(GetDataListResDto)
+  @HasPermission([], undefined, false)
   @Get('list/:dataRootId')
   public async getListOfDataRoot(
     @Param() param: DataRootIdDto,
+    @Req() req: FastifyRequest,
   ) {
+    const user = req.raw.user
+
     const data = await this._dataSrv.dirRepo().find({
       where: { rootId: param.dataRootId },
     })
-    return data.map((row) => {
+    const nodes = data.map((row) => {
       objectKeys(row).forEach((key) => {
         if (row[key] === null || row[key] === undefined)
           delete row[key]
       })
       return row
     })
+
+    const dataRoleName = user?.dataRoleName || visitorRole.name
+    const permissions = user?.role?.permissions || []
+    const allowedScopes = permissions.some(p => p.name === PermissionType.DATA_QUERY_ALL)
+      ? [param.dataRootId]
+      : (await this._dataPSrv.dataRoleRepo()
+          .findOne({
+            where: { name: dataRoleName },
+            relations: { viewDirectories: true },
+          })
+        )
+          .viewDirectories
+          .map(d => d.id)
+    return createDataDirectoryTree(nodes, allowedScopes)
   }
 
   @ApiOperation({ summary: '更新引用规范' })

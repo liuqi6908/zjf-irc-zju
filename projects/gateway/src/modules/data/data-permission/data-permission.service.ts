@@ -10,7 +10,7 @@ import { DataService } from '../data.service'
 
 import type { UpsertDataRoleBodyDto } from './dto/upsert-data-role.body.dto'
 
-const visitorRole: DataRole = {
+export const visitorRole: DataRole = {
   name: '访客',
   description: '未登录的用户',
 }

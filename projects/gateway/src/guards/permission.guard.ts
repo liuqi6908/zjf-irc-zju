@@ -6,7 +6,7 @@ import type { CanActivate, ExecutionContext } from '@nestjs/common'
 import { ApiErrorResponse, responseError } from 'src/utils/response'
 import { Injectable, Logger, SetMetadata, UseGuards, applyDecorators } from '@nestjs/common'
 
-import { IsLogin, LoginGuard } from './login.guard'
+import { IsLoginApis, LoginGuard } from './login.guard'
 
 type PermissionRelation = 'OR' | 'AND'
 
@@ -22,7 +22,17 @@ export class PermissionGuard extends LoginGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: FastifyRequest = context.switchToHttp().getRequest()
-    await super.canActivate(context)
+    const loginRequired = getReflectorValue<boolean>(
+      this.reflector,
+      context,
+      'loginRequired',
+      true,
+    )
+
+    const login = await super.canActivate(context)
+
+    if (!login && loginRequired)
+      responseError(ErrorCode.AUTH_LOGIN_REQUIRED)
 
     const user = req.raw.user
     const requiredPermissions = getReflectorValue<PermissionType[]>(
@@ -38,7 +48,7 @@ export class PermissionGuard extends LoginGuard implements CanActivate {
       'OR',
     )
 
-    const role = user.roleName
+    const role = user?.roleName
       ? await this.roleSrv.repo().findOne({
         where: { name: user.roleName },
         relations: { permissions: true },
@@ -46,7 +56,7 @@ export class PermissionGuard extends LoginGuard implements CanActivate {
       : null
 
     // save roles
-    req.raw.user.role = role
+    req.raw.user && (req.raw.user.role = role)
 
     if (!requiredPermissions.length)
       return true
@@ -74,14 +84,16 @@ export class PermissionGuard extends LoginGuard implements CanActivate {
 export function HasPermission(
   permissions: PermissionType[] | PermissionType = [],
   relation: PermissionRelation = 'OR',
+  loginRequired = true,
 ) {
   if (!Array.isArray(permissions))
     permissions = [permissions]
   return applyDecorators(
-    IsLogin(),
+    IsLoginApis(),
     UseGuards(PermissionGuard),
     SetMetadata('permissions', permissions),
     SetMetadata('relation', relation),
+    SetMetadata('loginRequired', loginRequired),
     ApiErrorResponse(ErrorCode.PERMISSION_DENIED),
   )
 }

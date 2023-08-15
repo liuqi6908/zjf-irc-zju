@@ -7,6 +7,6 @@ export function getReflectorValue<T>(
   key: string,
   defaultValue: T) {
   return reflector.get<T>(key, context.getHandler())
-    || reflector.get<T>(key, context.getClass())
-    || defaultValue
+    ?? reflector.get<T>(key, context.getClass())
+    ?? defaultValue
 }
