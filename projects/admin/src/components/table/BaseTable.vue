@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { QTableProps } from 'quasar'
 
-export type HeaderSlot = 'addBtn'
+export type OperationType = 'addRows' | 'search'
 
 interface Props {
   rows: Array<any>
-  col: QTableProps['columns']
-  header?: Array<HeaderSlot>
+  cols: QTableProps['columns']
+  operation?: Array<OperationType>
 }
 const props = defineProps<Props>()
 const emits = defineEmits(['update:rows'])
@@ -14,10 +14,10 @@ const emits = defineEmits(['update:rows'])
 const rowsRef = ref<Array<any>>([])
 
 function addRow() {
-  if (!props.col?.length)
+  if (!props.cols?.length)
     return
   const res = {} as any
-  for (const obj of props.col)
+  for (const obj of props.cols)
     res[`${obj.name}`] = null
 
   rowsRef.value.push(res)
@@ -52,13 +52,23 @@ defineExpose({
 </script>
 
 <template>
-  <q-table :rows="rows" :columns="col">
-    <template #top>
-      <q-btn v-if="header?.includes('addBtn')" label="增加一项" push color="primary-1" @click="addRow" />
+  <q-table :rows="rows" :columns="cols">
+    <template #top-left>
+      <div w-full flex="~ row justify-between">
+        <q-btn v-if="operation?.includes('addRows')" label="增加一项" push color="primary-1" @click="addRow" />
+      </div>
     </template>
+    <template #top-right>
+      <!-- <q-input v-if="operation?.includes('search')" borderless dense debounce="300" placeholder="搜索">
+        <template #append>
+          <div i-mingcute:search-2-line />
+        </template>
+      </q-input> -->
+    </template>
+
     <template #body="props">
       <q-tr :props="props">
-        <q-td v-for="c in col" :key="c.name">
+        <q-td v-for="c in cols" :key="c.name">
           <slot :props="props" :col="c.name" />
         </q-td>
       </q-tr>

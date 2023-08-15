@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { QTableProps } from 'quasar'
 
-export interface TabList {
+export interface TabItem {
   label: string
   /** tab名称 */
   id: string
@@ -14,7 +14,7 @@ export interface TabList {
 }
 interface Props {
   modelValue: string
-  tabList: TabList[]
+  tabList: TabItem[]
 }
 const props = defineProps<Props>()
 const emits = defineEmits(['update:modelValue', 'update:currTabObj'])

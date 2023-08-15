@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { QTree, useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
-import type { HeaderSlot } from '~/components/table/BaseTable.vue'
+import type { OperationType } from '~/components/table/BaseTable.vue'
 
 interface Props {
   rows: Array<any>
   col: QTableProps['columns']
-  /** tree节点 */
+  /** tree节点（权限选择） */
   treeNode: QTree['nodes']
-  header?: Array<HeaderSlot>
+  /** select options（角色列表） */
+  selectList: Array<{ label: string; value: string }>
+  operation?: Array<OperationType>
 }
 defineProps<Props>()
 defineEmits(['update:rows', 'update:save'])
@@ -57,8 +59,8 @@ function check(rowItem: any) {
     ref="baseTableRef"
     v-slot="{ props, col }"
     :rows="rows"
-    :col="col"
-    :header="header"
+    :cols="col"
+    :operation="operation"
     @update:rows="(val) => $emit('update:rows', val)"
   >
     <q-input v-if="input.includes(col)" v-model="props.row[`${col}`]" label="可编辑" />
@@ -72,26 +74,27 @@ function check(rowItem: any) {
       default-expand-all
     />
 
-    <div v-else-if="col === 'operation'" flex="~ row justify-start">
-      <q-btn color="primary-1" label="保存" mr-2 @click="$emit('update:save', props.row)" />
-      <q-btn color="red" label="删除">
-        <q-popup-proxy>
-          <q-banner flex="~ row">
-            <div text-grey-5>
-              确认删除？
-            </div>
-            <q-btn dense mr-3 color="teal" label="确认" @click="deleteRowItem(props.row)" />
-            <q-btn v-close-popup color="red" dense label="取消" />
-          </q-banner>
-        </q-popup-proxy>
-      </q-btn>
-    </div>
+    <BtnGroup
+      v-else-if="col === 'operation'"
+      :types="['delete', 'save']"
+      @update:save="$emit('update:save', props.row)"
+      @update:delete="deleteRowItem(props.row)"
+    />
+    <BtnGroup
+      v-else-if="col === 'saveRows'"
+      :types="['save']"
+      @update:save="$emit('update:save', props.row)"
+    />
 
     <div v-else-if="dialog.includes(col)" flex="~ row">
       <q-btn flat label="查看" text-primary-1 @click="check(props.row[`${col}`])" />
     </div>
 
-    <q-select v-else-if="select.includes(col)" v-model="props.row[`${col}`]" />
+    <q-select
+      v-else-if="select.includes(col)"
+      v-model="props.row[`${col}`]"
+      :options="selectList"
+    />
 
     <div v-else flex="~ row">
       {{ props.row[`${col}`] }}
