@@ -7,7 +7,9 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    BaseTable: typeof import('./components/table/BaseTable.vue')['default']
     Btn: typeof import('./components/btn/Btn.vue')['default']
+    BtnGroup: typeof import('./components/btn/BtnGroup.vue')['default']
     EditableGrid: typeof import('./components/table/EditableGrid.vue')['default']
     NavItem: typeof import('./components/nav/NavItem.vue')['default']
     NavItemSection: typeof import('./components/nav/NavItemSection.vue')['default']
@@ -16,6 +18,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SMSInput: typeof import('./components/auth/SMSInput.vue')['default']
+    TabContent: typeof import('./components/tabTable/TabContent.vue')['default']
     TheCounter: typeof import('./components/TheCounter.vue')['default']
     TheFooter: typeof import('./components/TheFooter.vue')['default']
     TheInput: typeof import('./components/TheInput.vue')['default']
