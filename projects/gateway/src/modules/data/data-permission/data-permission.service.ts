@@ -1,15 +1,17 @@
-import { In, Repository } from 'typeorm'
 import { ErrorCode } from 'zjf-types'
+import { In, Repository } from 'typeorm'
 import { Injectable } from '@nestjs/common'
 import { DataRole } from 'src/entities/data-role'
 import type { OnModuleInit } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { responseError } from 'src/utils/response'
+
 import { DataService } from '../data.service'
+
 import type { UpsertDataRoleBodyDto } from './dto/upsert-data-role.body.dto'
 
 const visitorRole: DataRole = {
-  name: '游客',
+  name: '访客',
   description: '未登录的用户',
 }
 

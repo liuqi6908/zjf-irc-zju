@@ -1,9 +1,11 @@
 import { PermissionType } from 'zjf-types'
+import { ApiSuccessResponse } from 'src/utils/response'
 import { HasPermission } from 'src/guards/permission.guard'
 import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common'
 
 import { DataPermissionService } from './data-permission.service'
+import { DataRoleDetailResDto } from './dto/data-role-detail.res.dto'
 import { UpsertDataRoleBodyDto } from './dto/upsert-data-role.body.dto'
 
 @ApiTags('DataPermission | 数据权限管理')
@@ -43,6 +45,17 @@ export class DataPermissionController {
       relations: permission
         ? { downloadDirectories: true, viewDirectories: true }
         : {},
+    })
+  }
+
+  @ApiOperation({ summary: '查询指定的数据下载角色详情' })
+  @ApiSuccessResponse(DataRoleDetailResDto)
+  @HasPermission(PermissionType.DATA_PERMISSION_QUERY)
+  @Get('data-role/:dataRoleName')
+  public async getDataRole(@Param('dataRoleName') dataRoleName: string) {
+    return await this._dataPSrv.dataRoleRepo().findOne({
+      where: { name: dataRoleName },
+      relations: { downloadDirectories: true, viewDirectories: true },
     })
   }
 }
