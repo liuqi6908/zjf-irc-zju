@@ -1,3 +1,4 @@
+import { objectOmit } from '@catsjuice/utils'
 import type { DataDirectory } from 'src/entities/data-directory'
 
 export function createDataDirectoryTree(
@@ -45,5 +46,15 @@ export function createDataDirectoryTree(
     })
   }
 
-  return filterTree(tree)
+  function sortAndMap(list: DataDirectory[]) {
+    return list.sort((a, b) => a.order - b.order).map((node) => {
+      const children = node.children
+      return {
+        ...objectOmit(node, ['children', 'path', 'rootId', 'order', 'level', 'parentId']),
+        children: children ? sortAndMap(children) : undefined,
+      }
+    })
+  }
+
+  return sortAndMap(filterTree(tree))
 }
