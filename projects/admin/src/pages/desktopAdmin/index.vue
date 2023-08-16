@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import type { TabItem } from '~/components/tabTable/TabContent.vue'
+import type { TabItem } from 'shared/component/base/tab/Tabs.vue'
+import Tabs from 'shared/component/base/tab/Tabs.vue'
+
 import DesktopAdminTable from '~/view/desktopAdmin/DesktopAdminTable.vue'
 
 const requestingTable = {
@@ -46,14 +48,14 @@ function sortByTime() {
 </script>
 
 <template>
-  <TabContent v-model="tab" :tab-list="tabList" @update:curr-tab-obj="(val) => currentTab = val">
+  <Tabs v-model="tab" :tab-list="tabList" @update:curr-tab-obj="(val) => currentTab = val">
     <!-- {{ currentTab?.tableData }} -->
     <DesktopAdminTable
       v-if="currentTab?.tableData"
       v-model:rows="currentTab.tableData.row"
       :cols="currentTab?.tableData?.col"
     />
-  </TabContent>
+  </Tabs>
 </template>
 
 <route lang="yaml">

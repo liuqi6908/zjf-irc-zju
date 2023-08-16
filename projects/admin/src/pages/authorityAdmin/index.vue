@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { QTree } from 'quasar'
-import type { TabItem } from '~/components/tabTable/TabContent.vue'
+import type { TabItem } from 'shared/component/base/tab/Tabs.vue'
+import Tabs from 'shared/component/base/tab/Tabs.vue'
 import AuthAdminTable from '~/view/authorityAdmin/AuthAdminTable.vue'
 
 const settingTable = {
@@ -82,7 +83,7 @@ const tab = ref(tabList[0].id)
 </script>
 
 <template>
-  <TabContent v-model="tab" :tab-list="tabList" @update:curr-tab-obj="(val) => currentTab = val">
+  <Tabs v-model="tab" :tab-list="tabList" @update:curr-tab-obj="(val) => currentTab = val">
     <AuthAdminTable
       v-if="currentTab?.tableData"
       v-model:rows="currentTab.tableData.row"
@@ -91,7 +92,7 @@ const tab = ref(tabList[0].id)
       :tree-node="verifyTree"
       :select-list="roleNames"
     />
-  </TabContent>
+  </Tabs>
 </template>
 
 <route lang="yaml">

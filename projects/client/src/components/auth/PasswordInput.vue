@@ -34,7 +34,7 @@ watch(() => props.password, () => {
   >
     <template #append>
       <div
-        :class="isPwd ? 'i-mingcute:eye-close-line' : 'i-mingcute:eye-2-line' "
+        :class="isPwd ? 'i-material-symbols:visibility-off-outline' : 'i-material-symbols:visibility-outline' "
         cursor-pointer
         @click="isPwd = !isPwd"
       />
@@ -43,9 +43,18 @@ watch(() => props.password, () => {
 </template>
 
 <style lang="scss" scoped>
+$error-color:#FF8080;
+
 .q-field :deep(.q-field__inner){
     .q-field__control {
       border-radius: 0px !important;
     }
+    .q-field__bottom .q-field__messages{
+      color: $error-color  !important;
+      color: $error-color !important
+    }
+}
+.q-input :deep(.text-negative) {
+      color: $error-color !important
 }
 </style>

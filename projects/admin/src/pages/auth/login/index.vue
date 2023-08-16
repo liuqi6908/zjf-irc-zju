@@ -2,7 +2,6 @@
 import { computed, reactive, ref } from 'vue'
 import { validateEmail, validatePassword } from 'zjf-utils'
 import { useUser } from '../../../composables/useUser'
-import Btn from '~/components/btn/Btn.vue'
 
 // const { $post } = useRequest()
 const password = ref('')
@@ -47,8 +46,9 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
     </RouterLink>
 
     <div h-20 />
-
-    <Btn :disable="disable" label="登录" @click="useLogin(logArg)" />
+    <client-only>
+      <Btn :disable="disable" label="登录" @click="useLogin(logArg)" />
+    </client-only>
 
     <div m-t-5 flex-center text-grey-5>
       没有账号？
