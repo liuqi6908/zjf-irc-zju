@@ -97,7 +97,7 @@ const disable = computed(() => verifyAccept(acceptObj))
     />
 
     <client-only>
-      <Btn mt-5 w-full label="注册" :disable="disable" @click="signUp" />
+      <Btn color="primary-1" bg-color="grey-1" mt-5 w-full label="注册" :disable="disable" @click="signUp" />
     </client-only>
   </div>
 </template>

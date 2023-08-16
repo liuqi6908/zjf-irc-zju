@@ -48,7 +48,7 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
     <div h-20 />
 
     <client-only>
-      <Btn :disable="disable" label="登录" @click="useLogin(logArg)" />
+      <Btn color="primary-1" bg-color="grey-1" :disable="disable" label="登录" @click="useLogin(logArg)" />
     </client-only>
 
     <div m-t-5 flex-center text-grey-3>
