@@ -17,13 +17,9 @@ declare module 'vue' {
     RectAngleCardSection: typeof import('./components/dialog/RectAngleCardSection.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    RTangleCardSection: typeof import('./components/dialog/RTangleCardSection.vue')['default']
     SMSInput: typeof import('./components/auth/SMSInput.vue')['default']
-    Tabs: typeof import('./components/tabs/Tabs.vue')['default']
-    TangleCardSection: typeof import('./components/dialog/TangleCardSection.vue')['default']
     Tree: typeof import('./components/tree/Tree.vue')['default']
     UserCodeInput: typeof import('./components/auth/UserCodeInput.vue')['default']
-    UserInput: typeof import('./components/user/userInput.vue')['default']
     ZDialog: typeof import('./components/dialog/ZDialog.vue')['default']
     ZSelect: typeof import('./components/select/ZSelect.vue')['default']
   }
