@@ -70,4 +70,7 @@ export class DataDirectory implements IDataDirectory {
     createForeignKeyConstraints: false,
   })
   downloadDataRoles?: DataRole[]
+
+  @Column({ type: 'simple-array', nullable: true })
+  path?: string[]
 }

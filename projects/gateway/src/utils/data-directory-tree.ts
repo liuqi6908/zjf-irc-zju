@@ -1,4 +1,4 @@
-import { objectOmit } from '@catsjuice/utils'
+import { objectKeys, objectOmit } from '@catsjuice/utils'
 import type { DataDirectory } from 'src/entities/data-directory'
 
 export function createDataDirectoryTree(
@@ -38,21 +38,34 @@ export function createDataDirectoryTree(
 
   // scope 为树节点的 id，将树中不在 scope （及其子节点）中的节点删除
   function filterTree(tree: DataDirectory[]) {
+    if (!tree?.length)
+      return undefined
+
     return tree.filter((node) => {
       if (scope.includes(node.id))
         return true
       node.children = filterTree(node.children)
-      return node.children.length > 0
+      return node.children && node.children.length > 0
     })
   }
 
   function sortAndMap(list: DataDirectory[]) {
     return list.sort((a, b) => a.order - b.order).map((node) => {
       const children = node.children
-      return {
-        ...objectOmit(node, ['children', 'path', 'rootId', 'order', 'level', 'parentId']),
-        children: children ? sortAndMap(children) : undefined,
+      const info = {
+        ...objectOmit(
+          node,
+          ['children', 'path', 'rootId', 'order', 'level', 'parentId'],
+        ),
+        children: children && children.length ? sortAndMap(children) : undefined,
       }
+
+      objectKeys(info).forEach((key) => {
+        if (!info[key])
+          delete info[key]
+      })
+
+      return info
     })
   }
 

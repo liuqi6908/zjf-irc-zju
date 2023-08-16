@@ -52,6 +52,7 @@ export function dataCsvParser(arr: Array<{
         order: Number(ORDER_COLUMN),
         parentId: rootId,
         rootId,
+        path: [rootId, id],
       })
     }
 
@@ -68,6 +69,7 @@ export function dataCsvParser(arr: Array<{
         order: Number(ORDER_COLUMN),
         parentId: databases[DATABASE_ENG].id,
         rootId,
+        path: [rootId, databases[DATABASE_ENG].id, id],
       })
     }
 
@@ -84,6 +86,7 @@ export function dataCsvParser(arr: Array<{
         order: Number(ORDER_COLUMN),
         parentId: bDatabase[B_DATABASE_ENG].id,
         rootId,
+        path: [rootId, databases[DATABASE_ENG].id, bDatabase[B_DATABASE_ENG].id, id],
       })
     }
 
@@ -101,6 +104,7 @@ export function dataCsvParser(arr: Array<{
         order: Number(ORDER_COLUMN),
         parentId: part[PART_ENG].id,
         rootId,
+        path: [rootId, databases[DATABASE_ENG].id, bDatabase[B_DATABASE_ENG].id, part[PART_ENG].id, id],
       })
     }
 

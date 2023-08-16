@@ -8,6 +8,9 @@ interface ExtendRequest extends Request {
 
   /** 身份认证申请是否存在的守卫中已校验的信息 */
   verificationExistsGuardVerification?:  import('../entities/verification.ts').Verification
+
+  /** 当前用户的数据下载角色信息，请确保调用了守卫，没有登录会获取游客角色 */
+  dataRole?: "*" | import('../entities/data-role.ts').DataRole
 }
 
 declare interface FastifyRequest extends ExtendRequest {

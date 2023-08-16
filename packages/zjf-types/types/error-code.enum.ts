@@ -66,6 +66,7 @@ export enum ErrorCode {
   // 数据相关错误
   /** 禁止删除访客角色 */
   DATA_PERMISSION_DELETE_VISITOR = 700001,
+  DATA_DIRECTORY_NOT_FOUND = 700002,
 }
 
 export type ErrorMessageCollection = Partial<

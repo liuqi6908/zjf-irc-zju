@@ -34,7 +34,6 @@ export class PermissionGuard extends LoginGuard implements CanActivate {
     if (!login && loginRequired)
       responseError(ErrorCode.AUTH_LOGIN_REQUIRED)
 
-    const user = req.raw.user
     const requiredPermissions = getReflectorValue<PermissionType[]>(
       this.reflector,
       context,
@@ -47,6 +46,16 @@ export class PermissionGuard extends LoginGuard implements CanActivate {
       'relation',
       'OR',
     )
+
+    return await this.validatePermission(req, requiredPermissions, permissionsRelation)
+  }
+
+  async validatePermission(
+    req: FastifyRequest,
+    requiredPermissions: PermissionType[],
+    permissionsRelation: PermissionRelation,
+  ) {
+    const user = req.raw.user
 
     const role = user?.roleName
       ? await this.roleSrv.repo().findOne({

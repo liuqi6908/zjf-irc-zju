@@ -1,10 +1,9 @@
 import * as Papa from 'papaparse'
 import type { FindOptionsWhere } from 'typeorm'
 import { In, IsNull, Not } from 'typeorm'
-import { PermissionType } from 'zjf-types'
-import { objectKeys } from '@catsjuice/utils'
+import { ErrorCode, PermissionType } from 'zjf-types'
 import { batchSave } from 'src/utils/db/batch-save'
-import { ApiSuccessResponse } from 'src/utils/response'
+import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { DataRootIdDto } from 'src/dto/id/data-root.dto'
 import { HasPermission } from 'src/guards/permission.guard'
 import { ApiFormData } from 'src/decorators/api/api-form-data'
@@ -14,11 +13,13 @@ import { Body, Controller, Get, Logger, Param, Patch, Put, Query, Req } from '@n
 
 import type { DataDirectory } from 'src/entities/data-directory'
 import { createDataDirectoryTree } from 'src/utils/data-directory-tree'
+import { DataRoleCheck } from 'src/guards/data-role-permission.guard'
 import { DataService } from './data.service'
 import { GetDataListResDto } from './dto/get-data-list.res.dto'
 import { UpdateReferenceBodyDto } from './dto/update-reference.body.dto'
 import { UploadDirectoryQueryDto } from './dto/upload-directory.query.dto'
-import { DataPermissionService, visitorRole } from './data-permission/data-permission.service'
+import { DataPermissionService } from './data-permission/data-permission.service'
+import { GetDataFieldListResDto } from './dto/get-field-list.res.dto'
 
 @ApiTags('Data | 数据服务')
 @Controller('data')
@@ -79,74 +80,74 @@ export class DataController {
 
   @ApiOperation({ summary: '获取所有的根节点（最大的分类）数据' })
   @ApiSuccessResponse(GetDataListResDto)
-  @HasPermission([], undefined, false)
+  @DataRoleCheck('viewDirectories')
   @Get('list/root')
   public async getRoots(@Req() req: FastifyRequest) {
-    const user = req.raw.user
     const roots = await this._dataSrv.dirRepo().find({
       where: { parentId: IsNull() },
     })
-    const dataRoleName = user?.dataRoleName || visitorRole.name
-    const permissions = user?.role?.permissions || []
-    const allowedScopes = permissions.some(p => p.name === PermissionType.DATA_QUERY_ALL)
+    const dataRole = req.dataRole
+    const allowedScopes = dataRole === '*'
       ? roots.map(r => r.id)
-      : (await this._dataPSrv.dataRoleRepo()
-          .findOne({
-            where: { name: dataRoleName },
-            relations: { viewDirectories: true },
-          })
-        )
-          .viewDirectories
-          .map(d => d.rootId)
+      : dataRole
+        .viewDirectories
+        .map(d => d.rootId)
     return createDataDirectoryTree(roots, allowedScopes)
   }
 
   @ApiOperation({ summary: '获取指定分类的数据' })
   @ApiSuccessResponse(GetDataListResDto)
-  @HasPermission([], undefined, false)
+  @DataRoleCheck('viewDirectories')
   @Get('list/:dataRootId')
   public async getListOfDataRoot(
     @Param() param: DataRootIdDto,
     @Req() req: FastifyRequest,
   ) {
-    const user = req.raw.user
-
-    const data = await this._dataSrv.dirRepo().find({
+    const dataRole = req.dataRole
+    const nodes = await this._dataSrv.dirRepo().find({
       where: { rootId: param.dataRootId },
     })
-    const nodes = data.map((row) => {
-      objectKeys(row).forEach((key) => {
-        if (row[key] === null || row[key] === undefined)
-          delete row[key]
-      })
-      return row
-    })
 
-    const dataRoleName = user?.dataRoleName || visitorRole.name
-    const permissions = user?.role?.permissions || []
-    const allowedScopes = permissions.some(p => p.name === PermissionType.DATA_QUERY_ALL)
+    const allowedScopes = dataRole === '*'
       ? [param.dataRootId]
-      : (await this._dataPSrv.dataRoleRepo()
-          .findOne({
-            where: { name: dataRoleName },
-            relations: { viewDirectories: true },
-          })
-        )
-          .viewDirectories
-          .map(d => d.id)
+      : dataRole
+        .viewDirectories
+        .map(d => d.id)
     return createDataDirectoryTree(nodes, allowedScopes)
   }
 
   @ApiOperation({ summary: '更新引用规范' })
+  @HasPermission(PermissionType.DATA_PERMISSION_UPDATE_REFERENCE)
   @ApiParam({ name: 'dataDirectoryId', description: '数据目录的唯一标识' })
   @Patch('reference/:dataDirectoryId')
   public async updateReference(
     @Param('dataDirectoryId') dataDirectoryId: string,
     @Body() body: UpdateReferenceBodyDto,
   ) {
-    await this._dataSrv.dirRepo().update(dataDirectoryId, {
-      reference: body.reference,
-    })
+    await this._dataSrv.dirRepo().update(dataDirectoryId, { reference: body.reference })
     return true
+  }
+
+  @ApiOperation({ summary: '获取指定表格的字段说明' })
+  @ApiSuccessResponse(GetDataFieldListResDto)
+  @ApiParam({ name: 'dataDirectoryId', description: '数据目录的唯一标识（目前仅 level4 表格可用）' })
+  @DataRoleCheck('viewDirectories')
+  @Get('fields/:dataDirectoryId')
+  public async getFields(
+    @Param('dataDirectoryId') dataDirectoryId: string,
+    @Req() req: FastifyRequest,
+  ) {
+    const dataRole = req.dataRole
+    const directory = await this._dataSrv.dirRepo().findOne({ where: { id: dataDirectoryId } })
+    if (!directory)
+      responseError(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
+
+    const allowed = dataRole === '*' || dataRole.viewDirectories.some(d => directory.path.includes(d.id))
+    if (!allowed)
+      responseError(ErrorCode.PERMISSION_DENIED)
+
+    return await this._dataSrv.fieldRepo().find({
+      where: { directoryId: dataDirectoryId },
+    })
   }
 }
