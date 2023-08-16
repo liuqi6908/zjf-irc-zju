@@ -22,7 +22,7 @@ export default ({ mode }: any) => {
     ...loadEnv(mode, process.cwd()),
     VITE_MODE: mode,
   }
-
+  // Object.assign(process.env, loadEnv(mode, process.cwd()))
   return defineConfig({
     base: process.env.VITE_BASE,
     server: {
@@ -72,6 +72,8 @@ export default ({ mode }: any) => {
         dirs: [
           'src/composables',
           'src/stores',
+          'src/constants',
+          'src/views',
         ],
         vueTemplate: true,
       }),

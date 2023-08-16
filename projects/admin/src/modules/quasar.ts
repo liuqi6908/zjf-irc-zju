@@ -9,7 +9,9 @@ import '@quasar/extras/fontawesome-v6/fontawesome-v6.css'
 // Import Quasar css
 import 'quasar/src/css/index.sass'
 
-export const install: UserModule = ({ app }) => {
+export const install: UserModule = ({ app, isClient }) => {
+  if (!isClient)
+    return
   app.use(Quasar, {
     plugins: {
       Notify,

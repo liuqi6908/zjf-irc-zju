@@ -93,8 +93,9 @@ const disable = computed(() => verifyAccept(acceptObj))
       :rules="[(val:string) => passwordRule(val)]"
       @update:accept="(val) => acceptObj.repeatPassword = val"
     />
-
-    <Btn mt-5 w-full label="完成" :disable="disable" @click="finish" />
+    <client-only>
+      <Btn mt-5 w-full label="完成" :disable="disable" @click="finish" />
+    </client-only>
   </div>
 </template>
 
