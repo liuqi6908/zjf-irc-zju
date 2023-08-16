@@ -52,15 +52,27 @@ watch(() => props.smsCode, () => {
       <div v-if="wait" text-4>
         {{ wait }}
       </div>
-      <Btn v-else dense label="发送验证码" transparent @click="getCode" />
+      <Btn v-else bg-color="grey-1" dense label="发送验证码" transparent @click="getCode" />
+    </template>
+    <template #error>
+      <span> error </span>
     </template>
   </q-input>
 </template>
 
 <style lang="scss" scoped>
+$error-color:#FF8080;
+
 .q-field :deep(.q-field__inner){
     .q-field__control {
       border-radius: 0px !important;
     }
+    .q-field__bottom .q-field__messages{
+      color: $error-color  !important;
+      color: $error-color !important
+    }
+}
+.q-input :deep(.text-negative) {
+      color: $error-color !important
 }
 </style>

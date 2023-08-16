@@ -47,7 +47,7 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
 
     <div h-20 />
 
-    <Btn :disable="disable" label="登录" @click="useLogin(logArg)" />
+    <Btn bg-color="grey-1" color="primary-1" :disable="disable" label="登录" @click="useLogin(logArg)" />
 
     <div m-t-5 flex-center text-grey-3>
       没有账号？

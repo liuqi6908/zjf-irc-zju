@@ -17,8 +17,8 @@ interface Props extends QBtnGroupProps {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  bgColor: 'white',
-  color: 'primary-1',
+  bgColor: 'primary-1',
+  color: 'grey-1',
 })
 const btnClass = computed(() => {
   if (props.icon)

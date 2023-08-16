@@ -96,7 +96,7 @@ const disable = computed(() => verifyAccept(acceptObj))
       @update:accept="(val) => acceptObj.sms = val"
     />
 
-    <Btn mt-5 w-full label="注册" :disable="disable" @click="signUp" />
+    <Btn bg-color="grey-1" color="primary-1" mt-5 w-full label="注册" :disable="disable" @click="signUp" />
   </div>
 </template>
 
