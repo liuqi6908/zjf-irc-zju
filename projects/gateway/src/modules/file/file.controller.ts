@@ -133,36 +133,4 @@ export class FileController {
     const path = `db/intro/${param.dataRootId}/${param.filename}`
     return new StreamableFile(await this._fileSrv.download('pri', path))
   }
-
-  // @ApiOperation({ summary: '数据预览' })
-  // @DataRoleCheck('viewDirectories')
-  // @Get('data/preview/:dataDirectoryId')
-  // public async getDataPreview(
-  //   @Param('dataDirectoryId') dataDirectoryId: string,
-  //   @Req() req: FastifyRequest,
-  // ) {
-  //   const dataRole = req.dataRole
-  //   const dataDirectory = await this._dataSrv.dirRepo().findOne({ where: { id: dataDirectoryId } })
-  //   const dataRootId = dataDirectory?.rootId
-  //   if (!dataDirectory)
-  //     responseError(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
-  //   if (dataDirectory.level !== 4)
-  //     responseError(ErrorCode.DATA_TABLE_MANIPULATE_ONLY)
-  //   const allowed = dataRole === '*' || dataRole.viewDirectories.some(p => dataDirectory.path.includes(p.id))
-  //   if (!allowed)
-  //     responseError(ErrorCode.PERMISSION_DENIED)
-  //   const tableEn = dataDirectory.nameEN
-  //   const buff = await this._fileSrv.download('data', `preview/${dataRootId}/${tableEn}.csv`)
-  //   return Papa.parse(buff.toString(), { header: true }).data
-  // }
-
-  // @ApiOperation({
-  //   summary: '数据下载',
-  //   description: '返回一个数据下载的链接，这个链接仅在内网可用',
-  // })
-  // @Get('data/download/link')
-  // @DataRoleCheck('downloadDirectories')
-  // public async getDownloadUrl() {
-  //   throw new Error('Not implemented')
-  // }
 }

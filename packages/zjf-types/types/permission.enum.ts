@@ -16,6 +16,10 @@ export enum PermissionType {
   ACCOUNT_UPDATE = 'account:update',
   /** 查询账户（条件查找用户列表，获取用户信息） */
   ACCOUNT_QUERY = 'account:query',
+  /** 更新指定用户的角色 */
+  ACCOUNT_UPDATE_ROLE = 'account:update-role',
+  /** 更新指定用户的数据角色 */
+  ACCOUNT_UPDATE_DATA_ROLE = 'account:update-data-role',
 
   // ------------------ 身份验证 ---------------------
   /** 查看所有的身份验证申请 */
@@ -64,6 +68,8 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.ACCOUNT_DELETE]: '删除账号',
   [PermissionType.ACCOUNT_UPDATE]: '更新账号信息',
   [PermissionType.ACCOUNT_QUERY]: '查询账户（条件查找用户列表，获取用户信息）',
+  [PermissionType.ACCOUNT_UPDATE_ROLE]: '更新指定用户的角色',
+  [PermissionType.ACCOUNT_UPDATE_DATA_ROLE]: '更新指定用户的数据角色',
 
   [PermissionType.VERIFICATION_LIST_ALL]: '查看所有的身份验证申请',
   [PermissionType.VERIFICATION_CAT_ATTACHMENT]: '查看上传的附件',
