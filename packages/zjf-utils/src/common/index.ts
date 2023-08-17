@@ -7,3 +7,4 @@ export * from "./validator"
 export * from "./pick"
 export * from "./enum-markdown"
 export * from "./md5"
+export * from './fileToFormdata'
