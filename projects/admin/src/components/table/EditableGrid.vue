@@ -14,7 +14,7 @@ const props = defineProps<Props>()
 const emits = defineEmits(['update:rows', 'save'])
 
 const baseCol = ref([])
-const rowsRef = ref()
+const rowsRef = ref([])
 
 const columnsconfig = [
   {
@@ -29,7 +29,7 @@ const columnsconfig = [
 ]
 
 function addRow() {
-  const res = {}
+  const res = {} as any
   for (const key of props.colNames)
     res[key] = null
   rowsRef.value.push(res)
