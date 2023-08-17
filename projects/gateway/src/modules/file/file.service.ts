@@ -1,6 +1,8 @@
 import * as Minio from 'minio'
+import { ErrorCode } from 'zjf-types'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { responseError } from 'src/utils/response'
 import type { MinioConfig } from 'src/config/_minio.config'
 import { responseParamsError } from 'src/utils/response/validate-exception-factory'
 
@@ -49,6 +51,29 @@ export class FileService {
 
   public async download(bucket: keyof MinioConfig['bucket'], path: string) {
     const client = this.getClient()
-    return await client.getObject(this._cfg.bucket[bucket], path)
+    try {
+      return await client.getObject(this._cfg.bucket[bucket], path)
+    }
+    catch (err) {
+      if (err.message.match(/The specified key does not exist/))
+        responseError(ErrorCode.FILE_NOT_FOUND)
+    }
+  }
+
+  public async signUrl(bucket: keyof MinioConfig['bucket'], path: string, expires = 60 * 10) {
+    // 如果是下载数据，仅允许签发内网链接
+    const client = this.getClient(bucket === 'data')
+
+    // 检查文件是否存在
+    try {
+      await client.statObject(this._cfg.bucket[bucket], path)
+    }
+    catch (err) {
+      if (err.message.match(/Not Found/))
+        responseError(ErrorCode.FILE_NOT_FOUND)
+    }
+
+    // 签发链接
+    return await client.presignedGetObject(this._cfg.bucket[bucket], path, expires)
   }
 }

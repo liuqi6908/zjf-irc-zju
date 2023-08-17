@@ -10,6 +10,10 @@ const _dataErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.NOT_FOUND,
     message: '所查询的资源已被移除',
   },
+  [ErrorCode.DATA_TABLE_MANIPULATE_ONLY]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '只能操作表格数据',
+  },
 }
 
 export default _dataErrors

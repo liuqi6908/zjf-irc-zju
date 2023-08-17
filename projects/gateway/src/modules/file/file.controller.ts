@@ -5,11 +5,11 @@ import { ErrorCode, PermissionType } from 'zjf-types'
 import { SuccessStringDto } from 'src/dto/success.dto'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { HasPermission } from 'src/guards/permission.guard'
+import { DataRoleCheck } from 'src/guards/data-role-permission.guard'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { Body, Controller, Get, Param, Put, Query, Req, Res, StreamableFile } from '@nestjs/common'
 
 import { ApiFormData } from '../../decorators/api/api-form-data'
-import { DataPermissionService, visitorRole } from '../data/data-permission/data-permission.service'
 import { FileService } from './file.service'
 import { UploadDataIntroParamDto } from './dto/upload-data-intro.param.dto'
 import { GetVerifyAttachmentParamDto } from './dto/get-verify-attachment.param.dto'
@@ -17,10 +17,7 @@ import { GetVerifyAttachmentParamDto } from './dto/get-verify-attachment.param.d
 @ApiTags('File | 文件服务')
 @Controller('file')
 export class FileController {
-  constructor(
-    private readonly _fileSrv: FileService,
-    private readonly _dataPSrv: DataPermissionService,
-  ) {}
+  constructor(private readonly _fileSrv: FileService) {}
 
   @ApiOperation({ summary: '上传公共文件' })
   @ApiFormData()
@@ -120,19 +117,15 @@ export class FileController {
     summary: '获取（下载）指定数据根目录的数据库介绍',
     description: '文件名为: `DATABASE_ENG` + `.doc`, 该信息在数据库中不再记录',
   })
-  @HasPermission([], undefined, false)
+  @DataRoleCheck('viewDirectories')
   @Get('private/db/:dataRootId/:filename')
   public async getDbIntro(
     @Param() param: UploadDataIntroParamDto,
     @Req() req: FastifyRequest,
   ): Promise<StreamableFile> {
-    const user = req.raw.user
-    const permissions = user?.role?.permissions || []
-    const dataRoleName = user?.dataRoleName || visitorRole.name
-    const allowed = permissions.some(p => p.name === PermissionType.DATA_QUERY_ALL)
-    || (await this._dataPSrv.dataRoleRepo().findOne({
-      where: { name: dataRoleName },
-    })).viewDirectories.some(p => p.rootId === param.dataRootId)
+    const dataRole = req.dataRole
+
+    const allowed = dataRole === '*' || dataRole.viewDirectories.some(p => p.rootId === param.dataRootId)
 
     if (!allowed)
       responseError(ErrorCode.PERMISSION_DENIED)
@@ -141,13 +134,35 @@ export class FileController {
     return new StreamableFile(await this._fileSrv.download('pri', path))
   }
 
-  @ApiOperation({
-    summary: '数据下载',
-    description: '返回一个数据下载的链接，这个链接仅在内网可用',
-  })
-  @HasPermission([], undefined, false)
-  @Get('download/')
-  public async getDownloadUrl() {
-    throw new Error('Not implemented')
-  }
+  // @ApiOperation({ summary: '数据预览' })
+  // @DataRoleCheck('viewDirectories')
+  // @Get('data/preview/:dataDirectoryId')
+  // public async getDataPreview(
+  //   @Param('dataDirectoryId') dataDirectoryId: string,
+  //   @Req() req: FastifyRequest,
+  // ) {
+  //   const dataRole = req.dataRole
+  //   const dataDirectory = await this._dataSrv.dirRepo().findOne({ where: { id: dataDirectoryId } })
+  //   const dataRootId = dataDirectory?.rootId
+  //   if (!dataDirectory)
+  //     responseError(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
+  //   if (dataDirectory.level !== 4)
+  //     responseError(ErrorCode.DATA_TABLE_MANIPULATE_ONLY)
+  //   const allowed = dataRole === '*' || dataRole.viewDirectories.some(p => dataDirectory.path.includes(p.id))
+  //   if (!allowed)
+  //     responseError(ErrorCode.PERMISSION_DENIED)
+  //   const tableEn = dataDirectory.nameEN
+  //   const buff = await this._fileSrv.download('data', `preview/${dataRootId}/${tableEn}.csv`)
+  //   return Papa.parse(buff.toString(), { header: true }).data
+  // }
+
+  // @ApiOperation({
+  //   summary: '数据下载',
+  //   description: '返回一个数据下载的链接，这个链接仅在内网可用',
+  // })
+  // @Get('data/download/link')
+  // @DataRoleCheck('downloadDirectories')
+  // public async getDownloadUrl() {
+  //   throw new Error('Not implemented')
+  // }
 }

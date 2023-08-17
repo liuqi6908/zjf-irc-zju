@@ -61,12 +61,17 @@ export enum ErrorCode {
   // 文件相关错误
   /** 文件类型不允许 */ 
   FILE_TYPE_NOT_ALLOWED = 600001,
+  /** 文件不存在 */
+  FILE_NOT_FOUND = 600002,
 
 
   // 数据相关错误
   /** 禁止删除访客角色 */
   DATA_PERMISSION_DELETE_VISITOR = 700001,
+  /** 数据目录不存在 */
   DATA_DIRECTORY_NOT_FOUND = 700002,
+  /** 仅表格可操作 */
+  DATA_TABLE_MANIPULATE_ONLY = 700003,
 }
 
 export type ErrorMessageCollection = Partial<

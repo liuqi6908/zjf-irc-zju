@@ -1,25 +1,27 @@
+import { Buffer } from 'node:buffer'
 import * as Papa from 'papaparse'
-import type { FindOptionsWhere } from 'typeorm'
 import { In, IsNull, Not } from 'typeorm'
-import { ErrorCode, PermissionType } from 'zjf-types'
+import type { FindOptionsWhere } from 'typeorm'
 import { batchSave } from 'src/utils/db/batch-save'
-import { ApiSuccessResponse, responseError } from 'src/utils/response'
+import { ErrorCode, PermissionType } from 'zjf-types'
 import { DataRootIdDto } from 'src/dto/id/data-root.dto'
 import { HasPermission } from 'src/guards/permission.guard'
 import { ApiFormData } from 'src/decorators/api/api-form-data'
 import { dataCsvParser } from 'src/utils/parser/data-csv-parser'
+import type { DataDirectory } from 'src/entities/data-directory'
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
+import { DataRoleCheck } from 'src/guards/data-role-permission.guard'
+import { ApiSuccessResponse, responseError } from 'src/utils/response'
+import { createDataDirectoryTree } from 'src/utils/data-directory-tree'
 import { Body, Controller, Get, Logger, Param, Patch, Put, Query, Req } from '@nestjs/common'
 
-import type { DataDirectory } from 'src/entities/data-directory'
-import { createDataDirectoryTree } from 'src/utils/data-directory-tree'
-import { DataRoleCheck } from 'src/guards/data-role-permission.guard'
+import { FileService } from '../file/file.service'
 import { DataService } from './data.service'
 import { GetDataListResDto } from './dto/get-data-list.res.dto'
+import { GetDataFieldListResDto } from './dto/get-field-list.res.dto'
 import { UpdateReferenceBodyDto } from './dto/update-reference.body.dto'
 import { UploadDirectoryQueryDto } from './dto/upload-directory.query.dto'
 import { DataPermissionService } from './data-permission/data-permission.service'
-import { GetDataFieldListResDto } from './dto/get-field-list.res.dto'
 
 @ApiTags('Data | 数据服务')
 @Controller('data')
@@ -27,7 +29,10 @@ export class DataController {
   private readonly _logger = new Logger(DataController.name)
   constructor(
     private readonly _dataSrv: DataService,
-    private readonly _dataPSrv: DataPermissionService) {}
+    private readonly _fileSrv: FileService,
+    private readonly _dataPSrv: DataPermissionService,
+
+  ) {}
 
   @ApiOperation({ summary: '上传中间表' })
   @HasPermission(PermissionType.DATA_UPLOAD)
@@ -149,5 +154,59 @@ export class DataController {
     return await this._dataSrv.fieldRepo().find({
       where: { directoryId: dataDirectoryId },
     })
+  }
+
+  @ApiOperation({ summary: '获取数据预览' })
+  @DataRoleCheck('viewDirectories')
+  @ApiParam({ name: 'dataDirectoryId', description: '数据目录的id（请注意，只能传表级别，其他级别没有意义，会直接报错）' })
+  @Get('preview/:dataDirectoryId')
+  public async previewData(
+    @Param('dataDirectoryId') dataDirectoryId: string,
+    @Req() req: FastifyRequest,
+  ) {
+    const dataRole = req.dataRole
+    const dataDirectory = await this._dataSrv.dirRepo().findOne({ where: { id: dataDirectoryId } })
+    const dataRootId = dataDirectory?.rootId
+    if (!dataDirectory)
+      responseError(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
+    if (dataDirectory.level !== 4)
+      responseError(ErrorCode.DATA_TABLE_MANIPULATE_ONLY)
+    const allowed = dataRole === '*' || dataRole.viewDirectories.some(p => dataDirectory.path.includes(p.id))
+    if (!allowed)
+      responseError(ErrorCode.PERMISSION_DENIED)
+    const tableEn = dataDirectory.nameEN
+    const path = `preview/${dataRootId}/${tableEn}.csv`
+    const readable = await this._fileSrv.download('data', path)
+    const buff = await new Promise<Buffer>((resolve, reject) => {
+      const chunks: Buffer[] = []
+      readable.on('data', chunk => chunks.push(chunk))
+      readable.on('end', () => resolve(Buffer.concat(chunks)))
+      readable.on('error', reject)
+    })
+
+    return Papa.parse(buff.toString(), { header: true }).data
+  }
+
+  @ApiOperation({ summary: '获取数据下载链接' })
+  @DataRoleCheck('downloadDirectories')
+  @ApiParam({ name: 'dataDirectoryId', description: '数据目录的id（请注意，只能传表级别，其他级别没有意义，会直接报错）' })
+  @Get('download/link/:dataDirectoryId')
+  public async getDownloadLink(
+    @Param('dataDirectoryId') dataDirectoryId: string,
+    @Req() req: FastifyRequest,
+  ) {
+    const dataRole = req.dataRole
+    const dataDirectory = await this._dataSrv.dirRepo().findOne({ where: { id: dataDirectoryId } })
+    const dataRootId = dataDirectory?.rootId
+    if (!dataDirectory)
+      responseError(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
+    if (dataDirectory.level !== 4)
+      responseError(ErrorCode.DATA_TABLE_MANIPULATE_ONLY)
+    const allowed = dataRole === '*' || dataRole.downloadDirectories.some(p => dataDirectory.path.includes(p.id))
+    if (!allowed)
+      responseError(ErrorCode.PERMISSION_DENIED)
+    const tableEn = dataDirectory.nameEN
+    const path = `download/${dataRootId}/${tableEn}.csv`
+    return await this._fileSrv.signUrl('data', path)
   }
 }
