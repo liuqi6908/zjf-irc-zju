@@ -11,8 +11,8 @@ import type { Log } from './log.service'
 export class LogConsumer {
   constructor(private readonly _logSrv: LogService) {}
 
-  @Process()
-  async log(job: Job<Log>) {
+  @Process('record')
+  async record(job: Job<Log>) {
     const log = job.data
     await this._logSrv.doLog(log)
   }

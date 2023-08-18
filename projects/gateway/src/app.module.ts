@@ -29,6 +29,7 @@ import { ResponseInterceptor } from './interceptors/response.interceptor'
 import { PermissionModule } from './modules/permission/permission.module'
 import { EsAnalyzerModule } from './modules/es-analyzer/es-analyzer.module'
 import { VerificationModule } from './modules/verification/verification.module'
+import { InfoMiddleware } from './middleware/info.middleware'
 
 @Module({
   imports: [
@@ -92,6 +93,10 @@ import { VerificationModule } from './modules/verification/verification.module'
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    consumer.apply(InfoMiddleware).forRoutes({
+      path: '*',
+      method: RequestMethod.ALL,
+    })
     consumer.apply(AuthMiddleware).forRoutes({
       path: '*',
       method: RequestMethod.ALL,

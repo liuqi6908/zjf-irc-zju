@@ -2,6 +2,7 @@ import { Queue } from 'bull'
 import { InjectQueue } from '@nestjs/bull'
 import { Injectable } from '@nestjs/common'
 import type { User } from 'src/entities/user'
+import { objectPick } from '@catsjuice/utils'
 import { ConfigService } from '@nestjs/config'
 import type { OnModuleInit } from '@nestjs/common'
 import type { ESConfig } from 'src/config/_es.config'
@@ -23,7 +24,7 @@ export interface Log {
   user: Partial<User>
   action: LogAction
   ip: string
-  success: boolean
+  success: number
   targetType: LogTarget
   target: {
     id: string
@@ -59,7 +60,20 @@ export class LogService implements OnModuleInit {
   }
 
   public async log(log: Log) {
-    return await this._logQueue.add('data', log)
+    const saveLog = {
+      ...log,
+      user: log.user
+        ? {
+            ...objectPick(log.user, ['id', 'email', 'nickname', 'account']),
+            verification: log.user.verification
+              ? {
+                  ...objectPick(log.user.verification, ['name', 'college', 'idCard', 'identify', 'number', 'school']),
+                }
+              : null,
+          }
+        : null,
+    }
+    return await this._logQueue.add('record', saveLog)
   }
 
   public async getLogActions() {

@@ -11,6 +11,9 @@ interface ExtendRequest extends Request {
 
   /** 当前用户的数据下载角色信息，请确保调用了守卫，没有登录会获取游客角色 */
   dataRole?: "*" | import('../entities/data-role.ts').DataRole
+
+  /** 中间件捕获的 IP 地址 */
+  ip: string
 }
 
 declare interface FastifyRequest extends ExtendRequest {

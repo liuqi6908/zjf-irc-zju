@@ -16,6 +16,8 @@ import { createDataDirectoryTree } from 'src/utils/data-directory-tree'
 import { Body, Controller, Get, Logger, Param, Patch, Put, Query, Req } from '@nestjs/common'
 
 import { FileService } from '../file/file.service'
+import { LogService } from '../log/log.service'
+import type { Log } from '../log/log.service'
 import { DataService } from './data.service'
 import { GetDataListResDto } from './dto/get-data-list.res.dto'
 import { GetDataFieldListResDto } from './dto/get-field-list.res.dto'
@@ -28,6 +30,7 @@ import { DataPermissionService } from './data-permission/data-permission.service
 export class DataController {
   private readonly _logger = new Logger(DataController.name)
   constructor(
+    private readonly _logSrv: LogService,
     private readonly _dataSrv: DataService,
     private readonly _fileSrv: FileService,
     private readonly _dataPSrv: DataPermissionService,
@@ -164,16 +167,33 @@ export class DataController {
     @Param('dataDirectoryId') dataDirectoryId: string,
     @Req() req: FastifyRequest,
   ) {
-    const dataRole = req.dataRole
     const dataDirectory = await this._dataSrv.dirRepo().findOne({ where: { id: dataDirectoryId } })
+    const log: Log = {
+      user: req.raw.user,
+      action: 'data:preview',
+      ip: req.raw.ip,
+      target: {
+        id: dataDirectoryId,
+        name: dataDirectory?.nameZH,
+      },
+      targetType: 'data',
+      success: 0,
+      time: new Date(),
+    }
+    const error = (code: ErrorCode) => {
+      this._logSrv.log(log)
+      log.success = code
+      responseError(code)
+    }
+    const dataRole = req.dataRole
     const dataRootId = dataDirectory?.rootId
     if (!dataDirectory)
-      responseError(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
+      error(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
     if (dataDirectory.level !== 4)
-      responseError(ErrorCode.DATA_TABLE_MANIPULATE_ONLY)
+      error(ErrorCode.DATA_TABLE_MANIPULATE_ONLY)
     const allowed = dataRole === '*' || dataRole.viewDirectories.some(p => dataDirectory.path.includes(p.id))
     if (!allowed)
-      responseError(ErrorCode.PERMISSION_DENIED)
+      error(ErrorCode.PERMISSION_DENIED)
     const tableEn = dataDirectory.nameEN
     const path = `preview/${dataRootId}/${tableEn}.csv`
     const readable = await this._fileSrv.download('data', path)
@@ -184,7 +204,16 @@ export class DataController {
       readable.on('error', reject)
     })
 
-    return Papa.parse(buff.toString(), { header: true }).data
+    try {
+      return Papa.parse(buff.toString(), { header: true }).data
+    }
+    catch (err) {
+      responseError(ErrorCode.COMMON_UNEXPECTED_ERROR)
+      log.success = ErrorCode.COMMON_UNEXPECTED_ERROR
+    }
+    finally {
+      this._logSrv.log(log)
+    }
   }
 
   @ApiOperation({ summary: '获取数据下载链接' })
@@ -195,18 +224,47 @@ export class DataController {
     @Param('dataDirectoryId') dataDirectoryId: string,
     @Req() req: FastifyRequest,
   ) {
-    const dataRole = req.dataRole
     const dataDirectory = await this._dataSrv.dirRepo().findOne({ where: { id: dataDirectoryId } })
+    const log: Log = {
+      user: req.raw.user,
+      action: 'data:download',
+      ip: req.raw.ip,
+      target: {
+        id: dataDirectoryId,
+        name: dataDirectory?.nameZH,
+      },
+      targetType: 'data',
+      success: 0,
+      time: new Date(),
+    }
+    const dataRole = req.dataRole
     const dataRootId = dataDirectory?.rootId
+
+    const error = (code: ErrorCode) => {
+      this._logSrv.log(log)
+      log.success = code
+      responseError(code)
+    }
+
     if (!dataDirectory)
-      responseError(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
+      error(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
     if (dataDirectory.level !== 4)
-      responseError(ErrorCode.DATA_TABLE_MANIPULATE_ONLY)
+      error(ErrorCode.DATA_TABLE_MANIPULATE_ONLY)
     const allowed = dataRole === '*' || dataRole.downloadDirectories.some(p => dataDirectory.path.includes(p.id))
     if (!allowed)
-      responseError(ErrorCode.PERMISSION_DENIED)
+      error(ErrorCode.PERMISSION_DENIED)
     const tableEn = dataDirectory.nameEN
     const path = `download/${dataRootId}/${tableEn}.csv`
-    return await this._fileSrv.signUrl('data', path)
+    this._logSrv.log(log)
+    try {
+      return await this._fileSrv.signUrl('data', path)
+    }
+    catch (err) {
+      responseError(ErrorCode.COMMON_UNEXPECTED_ERROR)
+      log.success = ErrorCode.COMMON_UNEXPECTED_ERROR
+    }
+    finally {
+      this._logSrv.log(log)
+    }
   }
 }

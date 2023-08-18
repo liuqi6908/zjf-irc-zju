@@ -12,6 +12,32 @@ export const logMapping: EsMapping = {
         nickname: {
           type: EsFieldType.TEXT,
         },
+        account: {
+          type: EsFieldType.KEYWORD,
+        },
+        verification: {
+          type: 'nested',
+          properties: {
+            name: {
+              type: EsFieldType.TEXT,
+            },
+            college: {
+              type: EsFieldType.KEYWORD,
+            },
+            idCard: {
+              type: EsFieldType.KEYWORD,
+            },
+            identify: {
+              type: EsFieldType.KEYWORD,
+            },
+            number: {
+              type: EsFieldType.KEYWORD,
+            },
+            school: {
+              type: EsFieldType.KEYWORD,
+            },
+          },
+        },
       },
     },
     action: {
@@ -20,8 +46,8 @@ export const logMapping: EsMapping = {
     ip: {
       type: EsFieldType.KEYWORD,
     },
-    success: {
-      type: EsFieldType.BOOLEAN,
+    status: {
+      type: EsFieldType.INTEGER,
     },
     targetType: {
       type: EsFieldType.KEYWORD,
