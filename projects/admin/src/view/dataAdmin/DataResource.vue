@@ -1,0 +1,199 @@
+<script lang="ts" setup>
+import { Notify } from 'quasar'
+import type { DataRoot, IDataDirectory } from 'zjf-types'
+import { getDataDescribe } from '~/api/file/dataDescribe'
+import { updateReference } from '~/api/file/updateReference'
+
+interface Reference { id: string; text: string }
+interface Describe { id: string; enName: string; file: any }
+
+interface Props {
+  midTable: File | undefined
+  dataRootId: DataRoot
+  describe?: Describe
+  dataBase?: IDataDirectory[]
+}
+const props = defineProps<Props>()
+const emits = defineEmits(['update:midTable', 'update:describe', 'update:reference'])
+
+const midTable = ref<File>()
+const refDialog = ref(false)
+const reference = reactive<Reference>({ id: '', text: '' })
+
+const mideTableCol = [
+  {
+    name: 'index',
+    label: '序号',
+    field: 'index',
+  },
+  {
+    name: 'DATABASE',
+    label: '库',
+    field: 'DATABASE',
+  },
+  {
+    name: 'DATABASE_ENG',
+    label: '库-en',
+    field: 'DATABASE_ENG',
+  },
+  {
+    name: 'B_DATABASE',
+    label: '子库',
+    field: 'B_DATABASE',
+  },
+  {
+    name: 'B_DATABASE_ENG',
+    label: '子库-en',
+    field: 'B_DATABASE_ENG',
+  },
+  {
+    name: 'PART',
+    label: '模块',
+    field: 'PART',
+  },
+  {
+    name: 'PART_ENG',
+    label: '模块-en',
+    field: 'PART_ENG',
+  },
+  {
+    name: 'TABLE',
+    label: '表',
+    field: 'TABLE',
+  },
+  {
+    name: 'TABLE_ENG',
+    label: '表-en',
+    field: 'TABLE_ENG',
+  },
+  {
+    name: 'VARIABLE',
+    label: '字段',
+    field: 'VARIABLE',
+  },
+  {
+    name: 'VARIABLE_ENG',
+    label: '字段-en',
+    field: 'VARIABLE_ENG',
+  },
+  {
+    name: 'DESCRIPTION',
+    label: '字段说明',
+    field: 'DESCRIPTION',
+  },
+]
+
+function emitDescribe(val: any, enName: string, id?: string) {
+  const desc = {} as Describe
+
+  desc.file = val
+  desc.id = id
+  desc.enName = enName
+
+  emits('update:describe', desc)
+}
+
+function editReference(id: string) {
+  refDialog.value = true
+  reference.id = id
+}
+
+async function confirmRef() {
+  refDialog.value = !refDialog.value
+  const res = await updateReference(reference.id, reference.text)
+  if (res) {
+    Notify.create({
+      message: '上传成功',
+      type: 'success',
+    })
+  }
+}
+// function emitReference(val: string, id: string) {
+//   const refer = {} as Reference
+//   refer.text = val
+//   refer.id = id
+//   emits('update:reference', refer)
+// }
+
+function downLoadDescribe(enName: string): string {
+  const filename = `${enName}.doc`
+  const res = getDataDescribe(props.dataRootId, filename)
+  return res
+}
+</script>
+
+<template>
+  <div full flex="~ col gap-7" p-10>
+    <header flex="~ row items-center gap-10">
+      <span font-600 text-grey-8 title-4>
+        上传中间表
+      </span>
+
+      <q-file
+        :model-value="midTable"
+        bg-color="primary"
+        filled
+        dense
+        accept=".csv"
+        label-color="white"
+        label="上传中间表"
+        @update:model-value="(val) => $emit('update:midTable', val)"
+      />
+    </header>
+
+    <base-table :cols="mideTableCol" :rows="[]" />
+
+    <header font-600 text-grey-8 title-4 flex="~ row justify-start">
+      数据库介绍
+    </header>
+
+    <div v-for="data in dataBase" :key="data.id" flex="~ row items-center justify-between">
+      <div font-600 text-grey-5>
+        {{ data.nameZH }}
+      </div>
+
+      <div flex="~ row justify-between gap-5">
+        <q-file
+          bg-color="primary"
+          label="上传当前数据库介绍"
+          filled dense
+          accept=".doc"
+          label-color="white"
+          :model-value="describe?.file[`${data.id}`]"
+          @update:model-value="(val) => emitDescribe(val, data.nameEN, data.rootId)"
+        />
+        <q-btn
+          color="teal" label="下载当前数据库介绍"
+          :href="downLoadDescribe(data.nameEN)"
+        />
+      </div>
+    </div>
+
+    <header font-600 text-grey-8 title-4 flex="~ row justify-start">
+      引用规范
+    </header>
+
+    <div v-for="data in dataBase" :key="data.id" col-grow min-w-2xl flex="~ row items-center justify-between">
+      <div font-600 text-grey-5>
+        {{ data.nameZH }}
+      </div>
+      <q-btn color="primary" label="编辑引用规范" @click="editReference(data.id)" />
+    </div>
+
+    <q-dialog v-model="refDialog">
+      <q-card min-w-3xl>
+        <q-card-section>
+          <q-input
+            v-model="reference.text"
+            filled
+            type="textarea"
+          />
+        </q-card-section>
+
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn flat label="确认" @click="confirmRef" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </div>
+</template>

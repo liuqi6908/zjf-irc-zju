@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import '@wangeditor/editor/dist/css/style.css'
+
 import UploadFile from './UploadFile.vue'
+import RichEdit from './RichEdit.vue'
 
 export type ColNameType = typeof columnsconfig[number]['name']
 
@@ -9,12 +12,13 @@ interface Props {
   /** 当前组件的中文名称 */
   componentName: string
   rows: Array<any>
+  loading?: false
 }
 const props = defineProps<Props>()
 const emits = defineEmits(['update:rows', 'save'])
 
 const baseCol = ref([])
-const rowsRef = ref()
+const rowsRef = ref([])
 
 const columnsconfig = [
   {
@@ -26,10 +30,22 @@ const columnsconfig = [
   { name: 'content', align: 'left', label: '编辑内容', field: 'content' },
   { name: 'uploadImg', label: '上传图片', align: 'left', field: 'uploadImg' },
   { name: 'delete', label: '删除', align: 'left', field: 'delete' },
+  {
+    name: 'sort',
+    label: '排序',
+    align: 'left',
+    field: 'sort',
+  },
+  {
+    name: 'richText',
+    label: '富文本',
+    align: 'left',
+    field: 'richText',
+  },
 ]
 
 function addRow() {
-  const res = {}
+  const res = {} as any
   for (const key of props.colNames)
     res[key] = null
   rowsRef.value.push(res)
@@ -47,6 +63,21 @@ function deleteRow(target: string[]) {
 
   if (targetIndex !== -1)
     rowsRef.value.splice(targetIndex, 1)
+  emits('update:rows', rowsRef.value)
+}
+
+function upSort(row: any, rowIndex: any) {
+  // if (rowsRef.value)
+  //   return
+  if (rowIndex === 0 && rowsRef.value.length) {
+    const temp = rowsRef.value[rowIndex]
+    rowsRef.value[0] = rowsRef.value[1]
+    rowsRef.value[1] = temp
+  }
+  else if (rowIndex > 0) {
+    rowsRef.value.splice(rowIndex, 1)
+    rowsRef.value.splice(rowIndex - 1, 0, row)
+  }
   emits('update:rows', rowsRef.value)
 }
 
@@ -69,14 +100,14 @@ watch(() => props.colNames, () => {
   <div>
     <q-table
       class="q-pa-md"
-      flat bordered
       :rows="rows"
       :columns="baseCol"
       row-key="name"
-      wrap-cells
+      flat bordered wrap-cells
+      :loading="loading"
     >
       <template #top>
-        <q-btn color="primary" :label="`增加一个${componentName}项`" @click="addRow" />
+        <q-btn v-if="colNames.includes('add')" color="primary" :label="`增加一个${componentName}项`" @click="addRow" />
       </template>
 
       <template #body="props">
@@ -112,6 +143,16 @@ watch(() => props.colNames, () => {
               <div i-mingcute:delete-2-line text-red />
             </q-btn>
           </q-td>
+
+          <q-td key="sort" :props="props">
+            <q-btn flat round>
+              <div :class="props.rowIndex ? ' i-mingcute:arrow-up-fill' : 'i-mingcute:arrow-down-fill'" @click="upSort(props.row, props.rowIndex)" />
+            </q-btn>
+          </q-td>
+
+          <q-td key="richText" :props="props">
+            <RichEdit v-model="props.row.richText" />
+          </q-td>
         </q-tr>
       </template>
 
@@ -119,6 +160,10 @@ watch(() => props.colNames, () => {
         <div w-full flex="~ row justify-end">
           <q-btn color="secondary" label="保存编辑内容" @click="$emit('save')" />
         </div>
+      </template>
+
+      <template #loading>
+        <q-inner-loading showing color="primary" />
       </template>
     </q-table>
   </div>

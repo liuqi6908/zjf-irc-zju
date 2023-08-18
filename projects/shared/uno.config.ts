@@ -12,15 +12,13 @@ import {
 export default defineConfig({
   shortcuts: [
     ['full', 'w-full h-full'],
-    ['flex-center', 'flex items-center justify-center'],
-    ['hTitle-4', 'font-600 text-5'],
-    ['subTitle-1', 'font-600 text-4 text-grey-8']
+    ['flex-center', 'flex items-center justify-center']
   ],
   rules: [
-    // [/^h-([\.\d]+)$/, ([_, num]) => ({ height: `${num+1}rem` })],
-    // [/^text-h(\d+)$/, ([_, size]) => ({
-    //   fontSize: `${32 - (size - 1) * 4}px`
-    // })],
+    [/^title-(\d+)$/, ([_, size]) => ({
+      'font-size': `${32 - (parseInt(size, 10) - 1) * 4}px`,
+      'font-weight': 600
+    })],
   ],
   presets: [
     presetUno(),

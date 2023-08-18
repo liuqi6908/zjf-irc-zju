@@ -23,7 +23,7 @@ defineProps<Props>()
 </template>
 
 <style lang="scss" scoped>
-.card-icon{
+.card-icon {
     left:calc(50% - 2.5rem);
     top:-30px;
     border-radius:50% !important;

@@ -35,7 +35,7 @@ export function useRequest() {
   //     return { loading, data: promise }
   //   }
 
-  async function $get<T = any>(url: string, data: any, options?: AxiosRequestConfig, useCache = false): Promise<T> {
+  async function $get<T = any>(url: string, data?: any, options?: AxiosRequestConfig, useCache = false): Promise<T> {
     const cacheKey = url + JSON.stringify(options)
     if (useCache && cache.has(cacheKey))
       return cache.get(cacheKey)

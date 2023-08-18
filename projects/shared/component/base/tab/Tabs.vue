@@ -8,6 +8,7 @@ export interface TabItem {
     id: string
     /** 当前tab是否已经请求数据 */
     isRequest: boolean
+    currTabObj?: any
     tableData?: {
         row: QTableProps['rows']
         col: QTableProps['columns']
@@ -21,11 +22,13 @@ interface Props {
 const props = defineProps<Props>()
 const emits = defineEmits(['update:modelValue', 'update:currTabObj'])
 
-watch(() => props.modelValue, () => {
-    const tabObj = props.tabList.find(i => i.id === props.modelValue)
-    if (tabObj)
-        emits('update:currTabObj', tabObj)
-}, { immediate: true })
+watch(() => props.modelValue,
+    () => {
+        const tabObj = props.tabList.find(i => i.id === props.modelValue)
+        if (tabObj)
+            emits('update:currTabObj', tabObj)
+    },
+    { immediate: true })
 </script>
 
 <template>
@@ -38,7 +41,7 @@ watch(() => props.modelValue, () => {
         </q-tabs>
 
         <q-tab-panels :model-value="modelValue" @update:model-value="(tab) => $emit('update:modelValue', tab)">
-            <q-tab-panel :name="modelValue">
+            <q-tab-panel p-none :name="modelValue">
                 <div>
                     <slot />
                 </div>

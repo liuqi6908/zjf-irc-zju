@@ -1,17 +1,26 @@
 <script setup lang="ts">
-import type { Carousel } from 'shared/component/HomeCarousel.vue'
-import HomeCarousel from 'shared/component/HomeCarousel.vue'
+import type { Carousel } from 'shared/component/cms/home/HomeCarousel.vue'
+import { cmsConfig } from 'shared/constants'
+
+import Tabs from 'shared/component/base/tab/Tabs.vue'
 
 import _ from 'lodash'
 import { Notify } from 'quasar'
+import EditableGrid from '~/components/table/EditableGrid.vue'
 import { getCms } from '~/api/cms/getCms'
 import { upsertCms } from '~/api/cms/upsertCms'
 
-const rows = ref<Array<any>>([])
+const homeId = ref('home')
+const currTabObj = ref()
+const tab = ref('')
+const tableLoading = ref()
 
+const tabList = computed(() => cmsConfig.find(i => i.id === homeId.value)?.children)
+
+/** 当前的组件所需要的props */
 const rowsJson = computed<Carousel[]>(() => {
   const json = [] as Carousel[]
-  const cloneRow = _.cloneDeep(rows.value)
+  const cloneRow = _.cloneDeep(currTabObj.value.rows)
   if (cloneRow) {
     cloneRow.forEach((item, index) => {
       json.push({
@@ -26,11 +35,8 @@ const rowsJson = computed<Carousel[]>(() => {
   return json
 })
 
-// 按从左到右的顺序
-const col = ['title', 'content', 'uploadImg', 'delete']
-
 async function saveRows() {
-  const res = await upsertCms<Carousel>('homeCarousel', rows.value)
+  const res = await upsertCms<Carousel>(tab.value, currTabObj.value.rows)
   if (res) {
     Notify.create({
       type: 'success',
@@ -40,18 +46,25 @@ async function saveRows() {
 }
 
 onMounted(async () => {
-  const res = await getCms('homeCarousel')
+  if (tabList.value && tabList.value?.length)
+    tab.value = tabList.value[0].id
+})
+
+watch(tab, async (newTab) => {
+  tableLoading.value = true
+  const res = await getCms(newTab)
+  tableLoading.value = false
   if (res)
-    rows.value = res.json
+    currTabObj.value.rows = res.json
 })
 </script>
 
 <template>
   <div p-xl>
-    <EditableGrid v-model:rows="rows" :col-names="col" component-name="轮播图" @save="saveRows" />
-
-    <span>预览界面</span>
-    <HomeCarousel :list="rowsJson" />
+    <Tabs v-model="tab" :tab-list="tabList" @update:curr-tab-obj="(val) => currTabObj = val">
+      <EditableGrid v-model:rows="currTabObj.rows" :loading="tableLoading" :col-names="currTabObj.col" :component-name="currTabObj.label" @save="saveRows" />
+      <component :is="currTabObj.component" :list="rowsJson" />
+    </Tabs>
   </div>
 </template>
 
