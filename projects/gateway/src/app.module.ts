@@ -10,11 +10,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import type { MiddlewareConsumer, NestModule } from '@nestjs/common'
 
+import { BullModule } from '@nestjs/bull'
 import allConfig from './config'
 
 import { AppService } from './app.service'
 import { AppController } from './app.controller'
 import { CmsModule } from './modules/cms/cms.module'
+import { LogModule } from './modules/log/log.module'
 import { UserModule } from './modules/user/user.module'
 import { AuthModule } from './modules/auth/auth.module'
 import { RoleModule } from './modules/role/role.module'
@@ -25,11 +27,13 @@ import { EmailModule } from './modules/email/email.module'
 import { AuthMiddleware } from './middleware/auth.middleware'
 import { ResponseInterceptor } from './interceptors/response.interceptor'
 import { PermissionModule } from './modules/permission/permission.module'
+import { EsAnalyzerModule } from './modules/es-analyzer/es-analyzer.module'
 import { VerificationModule } from './modules/verification/verification.module'
 
 @Module({
   imports: [
     // Internal Modules
+    LogModule,
     CmsModule,
     UserModule,
     AuthModule,
@@ -38,6 +42,7 @@ import { VerificationModule } from './modules/verification/verification.module'
     DataModule,
     RedisModule,
     EmailModule,
+    EsAnalyzerModule,
     PermissionModule,
     VerificationModule,
 
@@ -65,6 +70,17 @@ import { VerificationModule } from './modules/verification/verification.module'
           serveRoot: validatePath(_cfgSrv.get('SERVER_BASE_PATH')),
         },
       ],
+    }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (cfgSrv: ConfigService) => ({
+        redis: {
+          host: cfgSrv.get('REDIS_BULL_HOST'),
+          port: cfgSrv.get('REDIS_BULL_PORT'),
+          db: cfgSrv.get('REDIS_BULL_DB'),
+        },
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [AppController],

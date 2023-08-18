@@ -1,21 +1,21 @@
+import { getQuery } from 'src/utils/query'
+import { Throttle } from '@nestjs/throttler'
+import { QueryDto } from 'src/dto/query.dto'
 import { objectOmit } from '@catsjuice/utils'
 import type { User } from 'src/entities/user'
 import { IsLogin } from 'src/guards/login.guard'
-import { CodeAction, ErrorCode, PermissionType } from 'zjf-types'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { HasPermission } from 'src/guards/permission.guard'
+import { CodeAction, ErrorCode, PermissionType } from 'zjf-types'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { EmailCodeVerify } from 'src/guards/email-code-verify.guard'
+import { comparePassword } from 'src/utils/encrypt/encrypt-password'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { UniversalOperationResDto } from 'src/dto/universal-operation.dto'
 import { responseParamsError } from 'src/utils/response/validate-exception-factory'
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Put, Query, Req, forwardRef } from '@nestjs/common'
 import { emailAccountAtLeastOne } from 'src/utils/validator/account-phone-at-least-one'
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Put, Query, Req, forwardRef } from '@nestjs/common'
 
-import { Throttle } from '@nestjs/throttler'
-import { comparePassword } from 'src/utils/encrypt/encrypt-password'
-import { HasPermission } from 'src/guards/permission.guard'
-import { QueryDto } from 'src/dto/query.dto'
-import { getQuery } from 'src/utils/query'
 import { AuthService } from '../auth/auth.service'
 import { UserService } from './user.service'
 import { UserProfileResponseDto } from './dto/user.res.dto'
@@ -26,8 +26,8 @@ import { UpdateEmailOwnBodyDto } from './dto/update-email-own.body.dto'
 import { UnbindEmailOwnBodyDto } from './dto/unbind-email-own.body.dto'
 import { UpdateProfileOwnBodyDto } from './dto/update-profile-own.body.dto'
 import { UpdatePasswordByOldBodyDto } from './dto/update-pswd-by-old.body.dto'
-import { UpdatePasswordByCodeBodyDto } from './dto/update-pswd-by-code.body.dto'
 import { UpdateUserRoleParamDto } from './dto/role/update-user-role.param.dto'
+import { UpdatePasswordByCodeBodyDto } from './dto/update-pswd-by-code.body.dto'
 import { UpdateUserDataRoleParamDto } from './dto/role/update-user-data-role.param.dto'
 
 @ApiTags('User | 用户')
@@ -174,7 +174,7 @@ export class UserController {
       return (await this._userSrv.repo().update({ id: userId }, { roleName })).affected
     }
     catch (err) {
-      if (err.test(/FOREIGN KEY/)) {
+      if (err.message.match(/FOREIGN KEY/)) {
         responseParamsError([{
           property: 'roleName',
           constraints: {
@@ -195,7 +195,7 @@ export class UserController {
       return (await this._userSrv.repo().update({ id: userId }, { dataRoleName })).affected
     }
     catch (err) {
-      if (err.test(/FOREIGN KEY/)) {
+      if (err.message.match(/FOREIGN KEY/)) {
         responseParamsError([{
           property: 'dataRoleName',
           constraints: {
