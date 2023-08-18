@@ -115,9 +115,9 @@ async function confirmRef() {
 //   emits('update:reference', refer)
 // }
 
-function downLoadDescribe(id: DataRoot, enName: string): string {
+function downLoadDescribe(enName: string): string {
   const filename = `${enName}.doc`
-  const res = getDataDescribe(id, filename)
+  const res = getDataDescribe(props.dataRootId, filename)
   return res
 }
 </script>
@@ -164,7 +164,7 @@ function downLoadDescribe(id: DataRoot, enName: string): string {
         />
         <q-btn
           color="teal" label="下载当前数据库介绍"
-          :href="downLoadDescribe(data.rootId as DataRoot, data.nameEN)"
+          :href="downLoadDescribe(data.nameEN)"
         />
       </div>
     </div>

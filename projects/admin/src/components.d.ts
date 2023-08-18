@@ -14,6 +14,7 @@ declare module 'vue' {
     NavItem: typeof import('./components/nav/NavItem.vue')['default']
     NavItemSection: typeof import('./components/nav/NavItemSection.vue')['default']
     PasswordInput: typeof import('./components/auth/PasswordInput.vue')['default']
+    RichEdit: typeof import('./components/table/RichEdit.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SMSInput: typeof import('./components/auth/SMSInput.vue')['default']

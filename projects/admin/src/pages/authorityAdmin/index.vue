@@ -4,6 +4,7 @@ import type { TabItem } from 'shared/component/base/tab/Tabs.vue'
 import Tabs from 'shared/component/base/tab/Tabs.vue'
 import AuthAdminTable from '~/view/authorityAdmin/AuthAdminTable.vue'
 
+const { geRootData, allData } = useDataBase()
 const settingTable = {
   row: [
     {
@@ -80,6 +81,10 @@ const roleNames = [{ label: '教师', value: 'teacher' }, { label: '学生', val
 
 const currentTab = ref<TabItem>()
 const tab = ref(tabList[0].id)
+
+watch(tab, async (newTab) => {
+  await geRootData(true)
+})
 </script>
 
 <template>

@@ -13,6 +13,7 @@ import { upsertCms } from '~/api/cms/upsertCms'
 const homeId = ref('home')
 const currTabObj = ref()
 const tab = ref('')
+const tableLoading = ref()
 
 const tabList = computed(() => cmsConfig.find(i => i.id === homeId.value)?.children)
 
@@ -50,8 +51,9 @@ onMounted(async () => {
 })
 
 watch(tab, async (newTab) => {
+  tableLoading.value = true
   const res = await getCms(newTab)
-
+  tableLoading.value = false
   if (res)
     currTabObj.value.rows = res.json
 })
@@ -60,7 +62,7 @@ watch(tab, async (newTab) => {
 <template>
   <div p-xl>
     <Tabs v-model="tab" :tab-list="tabList" @update:curr-tab-obj="(val) => currTabObj = val">
-      <EditableGrid v-model:rows="currTabObj.rows" :col-names="currTabObj.col" :component-name="currTabObj.label" @save="saveRows" />
+      <EditableGrid v-model:rows="currTabObj.rows" :loading="tableLoading" :col-names="currTabObj.col" :component-name="currTabObj.label" @save="saveRows" />
       <component :is="currTabObj.component" :list="rowsJson" />
     </Tabs>
   </div>

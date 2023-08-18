@@ -14,7 +14,7 @@ async function uploadFile(file: File) {
   fromData.append('file', file)
   const res = await putPublicFile('cms', file.name, fromData)
   if (res && file.name && fromData) {
-    const url = getPublicFileUrl('cms', file.name) || ''
+    const url = await getPublicFileUrl('cms', file.name) || ''
     emits('update:urlImg', url)
   }
 }
