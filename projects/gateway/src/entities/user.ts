@@ -68,7 +68,7 @@ export class User extends BaseTimeStamp implements IUser {
   @Column({ nullable: true })
   roleName?: string
 
-  @OneToOne(() => VerificationHistory, vh => vh.user)
+  @OneToOne(() => VerificationHistory, vh => vh.user, { eager: true })
   @JoinColumn()
   verification?: VerificationHistory
 

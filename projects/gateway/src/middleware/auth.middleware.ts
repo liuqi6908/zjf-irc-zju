@@ -58,7 +58,11 @@ export class AuthMiddleware implements NestMiddleware {
     }
     try {
       const userId = info?.id
-      user = await _userSrv.qb().where('id = :id', { id: userId }).addSelect('u.password').getOne()
+      user = await _userSrv.qb()
+        .where('u.id = :id', { id: userId })
+        .leftJoinAndSelect('u.verification', 'u_v')
+        .addSelect('u.password')
+        .getOne()
     }
     catch (err) {
       this.logger.error('获取用户信息时出现错误', err)
