@@ -1,6 +1,7 @@
 import { defineAsyncComponent, markRaw } from 'vue';
 const HomeCarousel = defineAsyncComponent(() => import('../component/cms/home/HomeCarousel.vue'))
 const DataIntroduce = defineAsyncComponent(() => import('../component/cms/home/DataIntroduce.vue'))
+const Footer = defineAsyncComponent(()=>import('../component/cms/home/Footer.vue'))
 const Question = defineAsyncComponent(()=>import('../component/cms/question/Question.vue'))
 
 export const cmsConfig = [
@@ -20,12 +21,20 @@ export const cmsConfig = [
             },
             {
                 id: 'homeDataIntroduce',
-                label: '首页数据库介绍',
+                label: '数据库介绍',
                 parentId: 'home',
                 component: markRaw(DataIntroduce),
                 col: ['title', 'content'],
                 /** col对象没有add操作，rows需要加上一个空对象 */
                 rows: [{ title: null, content: null }]
+            },
+            {
+                id: 'footer',
+                label: '页脚',
+                parentId: 'footer',
+                component: markRaw(Footer),
+                col: ['title', 'content', 'uploadImg', 'delete', 'sort', 'add'],
+                rows: []
             }
         ]
     },

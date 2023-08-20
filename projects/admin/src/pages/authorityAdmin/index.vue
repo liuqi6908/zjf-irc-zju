@@ -1,19 +1,24 @@
 <script setup lang="ts">
-import type { QTree } from 'quasar'
 import type { TabItem } from 'shared/component/base/tab/Tabs.vue'
 import Tabs from 'shared/component/base/tab/Tabs.vue'
+import { Notify } from 'quasar'
+import _ from 'lodash'
 import AuthAdminTable from '~/view/authorityAdmin/AuthAdminTable.vue'
 
-const { geRootData, allData } = useDataBase()
+import { upsertDataRole } from '~/api/dataPermission/upsertDataRole'
+import { getDataRolesList } from '~/api/dataPermission/getDataRolesList'
+
+const { geRootData, fetchAllData, allData, verifyTree, loading } = useDataBase()
+
 const settingTable = {
   row: [
-    {
-      roleName: '浙大老师',
-      verify: null,
-      downLoadVerify: null,
-      operation: 'operation',
-    },
-  ],
+    // {
+    //   roleName: '浙大老师',
+    //   verify: null,
+    //   downLoadVerify: null,
+    //   operation: 'operation',
+    // },
+  ] as Array<{ rolName: string; verify: string[]; downLoadVerify: string[]; operation: any }>,
   col: [
     {
       name: 'roleName',
@@ -60,31 +65,61 @@ const tabList = reactive<TabItem[]>([
   { label: '分配角色', id: 'allocation', isRequest: false, tableData: allocation },
 ])
 
-const verifyTree = [
-  {
-    label: '数据库类型',
-    children: [
-      { label: '自建数据库' },
-      { label: '预购数据库' },
-      { label: '公共数据库' },
-      {
-        label: '已购数据库',
-        children: [
-          { label: '数字经济' },
-        ],
-      },
-    ],
-  },
-] as QTree['nodes']
-
-const roleNames = [{ label: '教师', value: 'teacher' }, { label: '学生', value: 'students' }]
-
 const currentTab = ref<TabItem>()
 const tab = ref(tabList[0].id)
 
+const roleNames = [{ label: '教师', value: 'teacher' }, { label: '学生', value: 'students' }]
+
+async function saveRole(row: any) {
+  if (tab.value === 'setting') {
+    let verifyStr: string[] = []
+    let downLoadStr: string[] = []
+    if (row.verify)
+      verifyStr = row.verify.map(item => item.id)
+
+    if (row.downLoadVerify)
+      downLoadStr = row.downLoadVerify.map(item => item.id)
+
+    const res = await upsertDataRole(row.roleName, verifyStr, downLoadStr)
+    if (res) {
+      Notify.create({
+        message: '保存成功',
+        type: 'success',
+      })
+    }
+  }
+}
+
+async function init() {
+  loading.value = true
+  const rows = await getDataRolesList()
+  if (rows) {
+    for (const row of rows) {
+      const cloneRow = _.cloneDeep(row)
+      const viewArr = cloneRow.viewDirectories.map(i => i.id)
+      const downloadArr = cloneRow.downloadDirectories.map(i => i.id)
+      currentTab.value.tableData.row.push({
+        roleName: cloneRow.name,
+        verify: viewArr,
+        downLoadVerify: downloadArr,
+      })
+    }
+  }
+  loading.value = false
+}
+
 watch(tab, async (newTab) => {
-  await geRootData(true)
-})
+  const obj = tabList.find(i => i.id === newTab)
+  if (!obj)
+    return
+  if (obj.isRequest)
+    return
+  if (newTab === 'setting') {
+    fetchAllData()
+    await init()
+    obj.isRequest = true
+  }
+}, { immediate: true })
 </script>
 
 <template>
@@ -92,10 +127,12 @@ watch(tab, async (newTab) => {
     <AuthAdminTable
       v-if="currentTab?.tableData"
       v-model:rows="currentTab.tableData.row"
+      :loading="loading"
       :operation="tab === 'setting' ? ['addRows'] : undefined"
       :col="currentTab?.tableData.col"
       :tree-node="verifyTree"
       :select-list="roleNames"
+      @update:save="saveRole"
     />
   </Tabs>
 </template>
