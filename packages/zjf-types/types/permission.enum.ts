@@ -48,6 +48,12 @@ export enum PermissionType {
   DATA_EDIT_REFERENCE = 'data:edit-reference',
   /** 查询所有的数据资源 */
   DATA_QUERY_ALL = 'data:query-all',
+  /** 创建数据大类 */
+  DATA_ROOT_CREATE = 'data-root:create',
+  /** 更新数据大类 */
+  DATA_ROOT_UPDATE = 'data-root:update',
+  /** 删除数据大类 */
+  DATA_ROOT_DELETE = 'data-root:delete',
 
   // ------------------ 数据管理-权限 ---------------------
   /** 创建数据角色 */
@@ -84,6 +90,9 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.DATA_UPLOAD_INTRO]: '上传数据库介绍',
   [PermissionType.DATA_EDIT_REFERENCE]: '编辑数据引用规范',
   [PermissionType.DATA_QUERY_ALL]: '查询所有的数据资源',
+  [PermissionType.DATA_ROOT_CREATE]: '创建数据大类',
+  [PermissionType.DATA_ROOT_UPDATE]: '更新数据大类',
+  [PermissionType.DATA_ROOT_DELETE]: '删除数据大类',
 
   [PermissionType.DATA_PERMISSION_CREATE]: '创建数据角色',
   [PermissionType.DATA_PERMISSION_UPDATE]: '更新数据角色',

@@ -30,6 +30,7 @@ import { PermissionModule } from './modules/permission/permission.module'
 import { EsAnalyzerModule } from './modules/es-analyzer/es-analyzer.module'
 import { VerificationModule } from './modules/verification/verification.module'
 import { InfoMiddleware } from './middleware/info.middleware'
+import { AccessMiddleware } from './middleware/access.middleware'
 
 @Module({
   imports: [
@@ -101,5 +102,14 @@ export class AppModule implements NestModule {
       path: '*',
       method: RequestMethod.ALL,
     })
+    consumer.apply(AccessMiddleware)
+      .exclude(
+        { path: 'log/(.*)', method: RequestMethod.ALL },
+        { path: 'email/(.*)', method: RequestMethod.ALL },
+        { path: 'file/(.*)', method: RequestMethod.PUT },
+      ).forRoutes({
+        path: '*',
+        method: RequestMethod.ALL,
+      })
   }
 }

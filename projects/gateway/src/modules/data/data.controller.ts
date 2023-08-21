@@ -36,6 +36,7 @@ export class DataController {
   ) {}
 
   @ApiOperation({ summary: '创建一个根节点（数据大类）' })
+  @HasPermission(PermissionType.DATA_ROOT_CREATE)
   @Put('root')
   public async createRoot(@Body() body: CreateRootBodyDto) {
     const { nameZH } = body
@@ -53,10 +54,12 @@ export class DataController {
   }
 
   @ApiOperation({ summary: '删除指定的根节点（数据大类）' })
+  @HasPermission(PermissionType.DATA_ROOT_DELETE)
   @Delete('root/:dataRootId')
   public async deleteRoot(@Param() param: DataRootIdDto) {
     try {
       const deleteRes = await this._dataSrv.dirRepo().delete({ id: param.dataRootId })
+      this._dataSrv.cacheDir()
       return deleteRes.affected
     }
     catch (err) {
@@ -68,6 +71,7 @@ export class DataController {
   }
 
   @ApiOperation({ summary: '更新一个根节点（数据大类）的信息' })
+  @HasPermission(PermissionType.DATA_ROOT_UPDATE)
   @Patch('root/:dataRootId')
   public async updateRoot(@Body() body: CreateRootBodyDto,
   @Param() param: DataRootIdDto) {
@@ -82,7 +86,7 @@ export class DataController {
   @ApiOperation({ summary: '获取所有的根节点（数据大类）数据' })
   @ApiSuccessResponse(GetDataListResDto)
   @DataRoleCheck('viewDirectories')
-  @Get('list/root')
+  @Get('root/list')
   public async getRoots(@Req() req: FastifyRequest) {
     const roots = await this._dataSrv.dirRepo().find({
       where: { parentId: IsNull() },

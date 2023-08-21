@@ -69,22 +69,23 @@ export const logDataMapping: EsMapping = {
     status: {
       type: EsFieldType.INTEGER,
     },
-    targetType: {
-      type: EsFieldType.KEYWORD,
-    },
     target: {
       type: EsFieldType.NESTED,
       properties: {
-        id: {
+        rootId: {
           type: EsFieldType.KEYWORD,
         },
-        name: {
-          type: EsFieldType.TEXT,
-          fields: {
-            keyword: {
-              type: EsFieldType.KEYWORD,
-            },
-          },
+        dbId: {
+          type: EsFieldType.KEYWORD,
+        },
+        subDbId: {
+          type: EsFieldType.KEYWORD,
+        },
+        moduleId: {
+          type: EsFieldType.KEYWORD,
+        },
+        tableId: {
+          type: EsFieldType.KEYWORD,
         },
       },
     },

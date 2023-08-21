@@ -65,9 +65,33 @@ export const dimensions: LogDimension[] = [
     field: 'ip',
   },
   {
-    id: 'D_TARGET',
-    name: '按操作对象统计',
+    id: 'D_ROOT',
+    name: '按数据大类统计',
     type: 'keyword',
-    field: 'target.name.keyword',
+    field: 'target.rootId',
+  },
+  {
+    id: 'D_DB',
+    name: '按数据库统计',
+    type: 'keyword',
+    field: 'target.dbId',
+  },
+  {
+    id: 'D_SUB_DB',
+    name: '按数据子库统计',
+    type: 'keyword',
+    field: 'target.subDbId',
+  },
+  {
+    id: 'D_MODULE',
+    name: '按模块统计',
+    type: 'keyword',
+    field: 'target.module',
+  },
+  {
+    id: 'D_TABLE',
+    name: '按表统计',
+    type: 'keyword',
+    field: 'target.table',
   },
 ]
