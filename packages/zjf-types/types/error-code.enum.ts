@@ -72,6 +72,8 @@ export enum ErrorCode {
   DATA_DIRECTORY_NOT_FOUND = 700002,
   /** 仅表格可操作 */
   DATA_TABLE_MANIPULATE_ONLY = 700003,
+  /** 该大类下的数据已分配权限，无法删除，请先解绑权限 */
+  DATA_ROOT_CANNOT_DELETE_RELATED = 700004,
 }
 
 export type ErrorMessageCollection = Partial<

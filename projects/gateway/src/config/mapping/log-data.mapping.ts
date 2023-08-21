@@ -1,7 +1,7 @@
-export const logMapping: EsMapping = {
+export const logDataMapping: EsMapping = {
   properties: {
     user: {
-      type: 'nested',
+      type: EsFieldType.NESTED,
       properties: {
         id: {
           type: EsFieldType.KEYWORD,
@@ -11,18 +11,33 @@ export const logMapping: EsMapping = {
         },
         nickname: {
           type: EsFieldType.TEXT,
+          fields: {
+            keyword: {
+              type: EsFieldType.KEYWORD,
+            },
+          },
         },
         account: {
           type: EsFieldType.KEYWORD,
         },
         verification: {
-          type: 'nested',
+          type: EsFieldType.NESTED,
           properties: {
             name: {
               type: EsFieldType.TEXT,
+              fields: {
+                keyword: {
+                  type: EsFieldType.KEYWORD,
+                },
+              },
             },
             college: {
-              type: EsFieldType.KEYWORD,
+              type: EsFieldType.TEXT,
+              fields: {
+                keyword: {
+                  type: EsFieldType.KEYWORD,
+                },
+              },
             },
             idCard: {
               type: EsFieldType.KEYWORD,
@@ -34,7 +49,12 @@ export const logMapping: EsMapping = {
               type: EsFieldType.KEYWORD,
             },
             school: {
-              type: EsFieldType.KEYWORD,
+              type: EsFieldType.TEXT,
+              fields: {
+                keyword: {
+                  type: EsFieldType.KEYWORD,
+                },
+              },
             },
           },
         },
@@ -53,13 +73,18 @@ export const logMapping: EsMapping = {
       type: EsFieldType.KEYWORD,
     },
     target: {
-      type: 'nested',
+      type: EsFieldType.NESTED,
       properties: {
         id: {
           type: EsFieldType.KEYWORD,
         },
         name: {
           type: EsFieldType.TEXT,
+          fields: {
+            keyword: {
+              type: EsFieldType.KEYWORD,
+            },
+          },
         },
       },
     },

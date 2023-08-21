@@ -37,3 +37,23 @@ export class PaginatedResData<T> {
   @decorate(ApiPropertyOptional({ description: '数据' }))
   data: T[]
 }
+
+export class EsPaginationDto {
+  @decorate(
+    ApiPropertyOptional({
+      description: '当前页码',
+      default: 1,
+      type: () => Number,
+    }),
+  )
+  page: number
+
+  @decorate(
+    ApiPropertyOptional({
+      description: '每页显示的数量',
+      default: PAGINATION_SIZE_DFT,
+      type: () => Number,
+    }),
+  )
+  pageSize: number
+}

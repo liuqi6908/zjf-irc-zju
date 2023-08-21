@@ -14,6 +14,10 @@ const _dataErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.BAD_REQUEST,
     message: '只能操作表格数据',
   },
+  [ErrorCode.DATA_ROOT_CANNOT_DELETE_RELATED]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '该大类下的数据已分配权限，无法删除，请先解绑权限',
+  },
 }
 
 export default _dataErrors

@@ -2,40 +2,99 @@ import { Buffer } from 'node:buffer'
 import * as Papa from 'papaparse'
 import { In, IsNull, Not } from 'typeorm'
 import type { FindOptionsWhere } from 'typeorm'
+import { randomString } from '@catsjuice/utils'
 import { batchSave } from 'src/utils/db/batch-save'
 import { ErrorCode, PermissionType } from 'zjf-types'
 import { DataRootIdDto } from 'src/dto/id/data-root.dto'
 import { HasPermission } from 'src/guards/permission.guard'
+import { DataDirectory } from 'src/entities/data-directory'
 import { ApiFormData } from 'src/decorators/api/api-form-data'
 import { dataCsvParser } from 'src/utils/parser/data-csv-parser'
-import type { DataDirectory } from 'src/entities/data-directory'
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
+import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { DataRoleCheck } from 'src/guards/data-role-permission.guard'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { createDataDirectoryTree } from 'src/utils/data-directory-tree'
-import { Body, Controller, Get, Logger, Param, Patch, Put, Query, Req } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Logger, Param, Patch, Put, Query, Req } from '@nestjs/common'
 
+import { md5 } from '../../utils/encrypt/md5'
 import { FileService } from '../file/file.service'
-import { LogService } from '../log/log.service'
-import type { Log } from '../log/log.service'
 import { DataService } from './data.service'
+import { CreateRootBodyDto } from './dto/create-root.body.dto'
 import { GetDataListResDto } from './dto/get-data-list.res.dto'
 import { GetDataFieldListResDto } from './dto/get-field-list.res.dto'
 import { UpdateReferenceBodyDto } from './dto/update-reference.body.dto'
 import { UploadDirectoryQueryDto } from './dto/upload-directory.query.dto'
-import { DataPermissionService } from './data-permission/data-permission.service'
 
 @ApiTags('Data | 数据服务')
 @Controller('data')
 export class DataController {
   private readonly _logger = new Logger(DataController.name)
   constructor(
-    private readonly _logSrv: LogService,
     private readonly _dataSrv: DataService,
     private readonly _fileSrv: FileService,
-    private readonly _dataPSrv: DataPermissionService,
-
   ) {}
+
+  @ApiOperation({ summary: '创建一个根节点（数据大类）' })
+  @Put('root')
+  public async createRoot(@Body() body: CreateRootBodyDto) {
+    const { nameZH } = body
+    const nameEN = md5(randomString(8, 16, '!@$#%^&*()_+-='))
+    const root = new DataDirectory()
+    root.nameZH = nameZH
+    root.nameEN = nameEN
+    root.level = 0
+    root.order = 0
+    root.id = nameEN
+    root.rootId = nameEN
+    await this._dataSrv.dirRepo().save(root)
+    this._dataSrv.cacheDir()
+    return root
+  }
+
+  @ApiOperation({ summary: '删除指定的根节点（数据大类）' })
+  @Delete('root/:dataRootId')
+  public async deleteRoot(@Param() param: DataRootIdDto) {
+    try {
+      const deleteRes = await this._dataSrv.dirRepo().delete({ id: param.dataRootId })
+      return deleteRes.affected
+    }
+    catch (err) {
+      const sqlErr = parseSqlError(err)
+      if (sqlErr === SqlError.FOREIGN_KEY_CONSTRAINT_FAILS)
+        responseError(ErrorCode.DATA_ROOT_CANNOT_DELETE_RELATED)
+      responseError(ErrorCode.COMMON_UNEXPECTED_ERROR)
+    }
+  }
+
+  @ApiOperation({ summary: '更新一个根节点（数据大类）的信息' })
+  @Patch('root/:dataRootId')
+  public async updateRoot(@Body() body: CreateRootBodyDto,
+  @Param() param: DataRootIdDto) {
+    const updateRes = await this._dataSrv.dirRepo().update(
+      { id: param.dataRootId },
+      { nameZH: body.nameZH },
+    )
+    this._dataSrv.cacheDir()
+    return updateRes.affected
+  }
+
+  @ApiOperation({ summary: '获取所有的根节点（数据大类）数据' })
+  @ApiSuccessResponse(GetDataListResDto)
+  @DataRoleCheck('viewDirectories')
+  @Get('list/root')
+  public async getRoots(@Req() req: FastifyRequest) {
+    const roots = await this._dataSrv.dirRepo().find({
+      where: { parentId: IsNull() },
+    })
+    const dataRole = req.dataRole
+    const allowedScopes = dataRole === '*'
+      ? roots.map(r => r.id)
+      : dataRole
+        .viewDirectories
+        .map(d => d.rootId)
+    return createDataDirectoryTree(roots, allowedScopes)
+  }
 
   @ApiOperation({ summary: '上传中间表' })
   @HasPermission(PermissionType.DATA_UPLOAD)
@@ -76,7 +135,10 @@ export class DataController {
         batchSave(this._dataSrv.dirRepo(), nodes),
         batchSave(this._dataSrv.fieldRepo(), fields),
       ])
-        .then(() => logger.log('upload success'))
+        .then(() => {
+          logger.log('upload success')
+          this._dataSrv.cacheDir()
+        })
         .catch(logger.error)
     })()
 
@@ -84,23 +146,6 @@ export class DataController {
       nodes: nodes.length,
       fields: fields.length,
     }
-  }
-
-  @ApiOperation({ summary: '获取所有的根节点（最大的分类）数据' })
-  @ApiSuccessResponse(GetDataListResDto)
-  @DataRoleCheck('viewDirectories')
-  @Get('list/root')
-  public async getRoots(@Req() req: FastifyRequest) {
-    const roots = await this._dataSrv.dirRepo().find({
-      where: { parentId: IsNull() },
-    })
-    const dataRole = req.dataRole
-    const allowedScopes = dataRole === '*'
-      ? roots.map(r => r.id)
-      : dataRole
-        .viewDirectories
-        .map(d => d.rootId)
-    return createDataDirectoryTree(roots, allowedScopes)
   }
 
   @ApiOperation({ summary: '获取指定分类的数据' })
@@ -168,32 +213,25 @@ export class DataController {
     @Req() req: FastifyRequest,
   ) {
     const dataDirectory = await this._dataSrv.dirRepo().findOne({ where: { id: dataDirectoryId } })
-    const log: Log = {
-      user: req.raw.user,
-      action: 'data:preview',
-      ip: req.raw.ip,
-      target: {
-        id: dataDirectoryId,
-        name: dataDirectory?.nameZH,
-      },
-      targetType: 'data',
-      success: 0,
-      time: new Date(),
-    }
-    const error = (code: ErrorCode) => {
-      this._logSrv.log(log)
-      log.success = code
-      responseError(code)
+    const response = (code?: ErrorCode) => {
+      this._dataSrv.saveLog({
+        dataDirectory,
+        action: 'data:preview',
+        status: code || 0,
+        user: req.raw.user,
+        ip: req.raw.ip,
+      })
+      code && responseError(code)
     }
     const dataRole = req.dataRole
     const dataRootId = dataDirectory?.rootId
     if (!dataDirectory)
-      error(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
+      response(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
     if (dataDirectory.level !== 4)
-      error(ErrorCode.DATA_TABLE_MANIPULATE_ONLY)
+      response(ErrorCode.DATA_TABLE_MANIPULATE_ONLY)
     const allowed = dataRole === '*' || dataRole.viewDirectories.some(p => dataDirectory.path.includes(p.id))
     if (!allowed)
-      error(ErrorCode.PERMISSION_DENIED)
+      response(ErrorCode.PERMISSION_DENIED)
     const tableEn = dataDirectory.nameEN
     const path = `preview/${dataRootId}/${tableEn}.csv`
     const readable = await this._fileSrv.download('data', path)
@@ -205,14 +243,12 @@ export class DataController {
     })
 
     try {
-      return Papa.parse(buff.toString(), { header: true }).data
+      const data = Papa.parse(buff.toString(), { header: true }).data
+      response()
+      return data
     }
     catch (err) {
-      responseError(ErrorCode.COMMON_UNEXPECTED_ERROR)
-      log.success = ErrorCode.COMMON_UNEXPECTED_ERROR
-    }
-    finally {
-      this._logSrv.log(log)
+      response(ErrorCode.COMMON_UNEXPECTED_ERROR)
     }
   }
 
@@ -225,46 +261,36 @@ export class DataController {
     @Req() req: FastifyRequest,
   ) {
     const dataDirectory = await this._dataSrv.dirRepo().findOne({ where: { id: dataDirectoryId } })
-    const log: Log = {
-      user: req.raw.user,
-      action: 'data:download',
-      ip: req.raw.ip,
-      target: {
-        id: dataDirectoryId,
-        name: dataDirectory?.nameZH,
-      },
-      targetType: 'data',
-      success: 0,
-      time: new Date(),
-    }
     const dataRole = req.dataRole
     const dataRootId = dataDirectory?.rootId
 
-    const error = (code: ErrorCode) => {
-      this._logSrv.log(log)
-      log.success = code
-      responseError(code)
+    const response = (code?: ErrorCode) => {
+      this._dataSrv.saveLog({
+        dataDirectory,
+        action: 'data:download',
+        status: code || 0,
+        user: req.raw.user,
+        ip: req.raw.ip,
+      })
+      code && responseError(code)
     }
 
     if (!dataDirectory)
-      error(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
+      response(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
     if (dataDirectory.level !== 4)
-      error(ErrorCode.DATA_TABLE_MANIPULATE_ONLY)
+      response(ErrorCode.DATA_TABLE_MANIPULATE_ONLY)
     const allowed = dataRole === '*' || dataRole.downloadDirectories.some(p => dataDirectory.path.includes(p.id))
     if (!allowed)
-      error(ErrorCode.PERMISSION_DENIED)
+      response(ErrorCode.PERMISSION_DENIED)
     const tableEn = dataDirectory.nameEN
     const path = `download/${dataRootId}/${tableEn}.csv`
-    this._logSrv.log(log)
     try {
-      return await this._fileSrv.signUrl('data', path)
+      const url = await this._fileSrv.signUrl('data', path)
+      response()
+      return url
     }
     catch (err) {
-      responseError(ErrorCode.COMMON_UNEXPECTED_ERROR)
-      log.success = ErrorCode.COMMON_UNEXPECTED_ERROR
-    }
-    finally {
-      this._logSrv.log(log)
+      response(ErrorCode.COMMON_UNEXPECTED_ERROR)
     }
   }
 }

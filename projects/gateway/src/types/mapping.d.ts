@@ -1,4 +1,4 @@
-declare enum EsFieldType {
+const enum EsFieldType {
   TEXT = 'text',
   KEYWORD = 'keyword',
   DOUBLE = 'double',

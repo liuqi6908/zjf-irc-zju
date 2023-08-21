@@ -34,5 +34,12 @@ export default registerAs('redis', () => {
       username: process.env.REDIS_CODE_USERNAME,
       password: process.env.REDIS_CODE_PASSWORD,
     }),
+    [RedisType.DATA_DIR_CACHE]: getUrl({
+      host: process.env.REDIS_DATA_DIR_HOST,
+      port: Number.parseInt(process.env.REDIS_DATA_DIR_PORT),
+      db: Number.parseInt(process.env.REDIS_DATA_DIR_DB),
+      username: process.env.REDIS_DATA_DIR_USERNAME,
+      password: process.env.REDIS_DATA_DIR_PASSWORD,
+    }),
   }
 })
