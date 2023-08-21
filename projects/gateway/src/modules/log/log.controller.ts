@@ -69,8 +69,8 @@ export class LogController {
   @ApiOperation({ summary: '日志聚合分析' })
   @Post('data/agg')
   public async agg(@Body() body: AggLogBodyDto) {
-    const { dimension, dsl } = body
-    return await this._logSrv.agg(dimension, dsl)
+    const { dimension, dsl, size } = body
+    return await this._logSrv.agg(dimension, dsl, size)
   }
 
   @ApiOperation({ summary: '获取最近 7 天的访问量' })

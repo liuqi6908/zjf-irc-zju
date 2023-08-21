@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { DataField } from 'src/entities/data-field'
 import { DataDirectory } from 'src/entities/data-directory'
 
+import { ModuleRef } from '@nestjs/core'
 import { LogService } from '../log/log.service'
 import { RedisService } from '../redis/redis.service'
 
@@ -21,7 +22,7 @@ export class DataService implements OnModuleInit {
     private readonly _dataFieldRepo: Repository<DataField>,
 
     private readonly _redisSrv: RedisService,
-    private readonly _logSrv: LogService,
+    private readonly _modRef: ModuleRef,
   ) {}
 
   async onModuleInit() {
@@ -71,7 +72,7 @@ export class DataService implements OnModuleInit {
     },
   ) {
     // 非表格的下载/预览。不记录
-    if (options.dataDirectory.level !== 4)
+    if (options.dataDirectory?.level !== 4)
       return
 
     const tableId = options.dataDirectory.id
@@ -80,8 +81,10 @@ export class DataService implements OnModuleInit {
     const dbId = (await this.getDirCache(subDbId))?.parentId
     const rootId = options.dataDirectory.rootId
 
+    const { dataDirectory, ...logOptions } = options
+
     const log: DataLog = {
-      ...options,
+      ...logOptions,
       target: {
         tableId,
         moduleId,
@@ -91,7 +94,8 @@ export class DataService implements OnModuleInit {
       },
       time: new Date(),
     }
-    this._logSrv.log(log)
+    const logSrv = this._modRef.get(LogService, { strict: false })
+    logSrv.log(log)
   }
 
   dirQB(alias = 'dd') {

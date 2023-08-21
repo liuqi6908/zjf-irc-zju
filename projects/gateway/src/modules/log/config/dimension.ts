@@ -2,6 +2,8 @@ export type LogDimension = {
   id: string
   name?: string
   field: string
+  infoMapType?: string
+  missing?: string
 } & ({
   type: 'keyword'
 } | {
@@ -53,10 +55,18 @@ export const dimensions: LogDimension[] = [
     field: 'time',
   },
   {
+    id: 'D_ACTION',
+    name: '按操作统计',
+    type: 'keyword',
+    field: 'action',
+  },
+  {
     id: 'D_USER',
     name: '按用户统计',
     type: 'keyword',
     field: 'user.id',
+    missing: '访客',
+    infoMapType: 'user',
   },
   {
     id: 'D_IP',
@@ -69,29 +79,34 @@ export const dimensions: LogDimension[] = [
     name: '按数据大类统计',
     type: 'keyword',
     field: 'target.rootId',
+    infoMapType: 'dataDirectory',
   },
   {
     id: 'D_DB',
     name: '按数据库统计',
     type: 'keyword',
     field: 'target.dbId',
+    infoMapType: 'dataDirectory',
   },
   {
     id: 'D_SUB_DB',
     name: '按数据子库统计',
     type: 'keyword',
     field: 'target.subDbId',
+    infoMapType: 'dataDirectory',
   },
   {
     id: 'D_MODULE',
     name: '按模块统计',
     type: 'keyword',
-    field: 'target.module',
+    field: 'target.moduleId',
+    infoMapType: 'dataDirectory',
   },
   {
     id: 'D_TABLE',
     name: '按表统计',
     type: 'keyword',
-    field: 'target.table',
+    field: 'target.tableId',
+    infoMapType: 'dataDirectory',
   },
 ]

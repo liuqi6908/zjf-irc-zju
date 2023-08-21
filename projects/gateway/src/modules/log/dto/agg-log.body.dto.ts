@@ -1,7 +1,7 @@
 import { Mixin } from 'ts-mixer'
 import { DslDto } from 'src/dto/dsl.dto'
-import { IsEnum } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { IsEnum, IsNumber, IsOptional } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { dimensions } from '../config/dimension'
 
@@ -16,4 +16,9 @@ export class AggLogBodyDto extends Mixin(DslDto) {
   })
   @IsEnum(dimensionEnum)
   dimension: string
+
+  @ApiPropertyOptional({ description: '最多取多少条' })
+  @IsNumber()
+  @IsOptional()
+  size?: number
 }

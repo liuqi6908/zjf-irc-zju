@@ -1,5 +1,7 @@
 import { Queue } from 'bull'
+import { In } from 'typeorm'
 import { ErrorCode } from 'zjf-types'
+import { ModuleRef } from '@nestjs/core'
 import { InjectQueue } from '@nestjs/bull'
 import { Injectable } from '@nestjs/common'
 import type { User } from 'src/entities/user'
@@ -9,7 +11,10 @@ import type { OnModuleInit } from '@nestjs/common'
 import { responseError } from 'src/utils/response'
 import type { ESConfig } from 'src/config/_es.config'
 import { formatTimeLabel } from 'src/utils/format-time-label'
+import type { DataDirectory } from 'src/entities/data-directory'
 
+import { UserService } from '../user/user.service'
+import { DataService } from '../data/data.service'
 import { EsAnalyzerService } from '../es-analyzer/es-analyzer.service'
 import { logDataMapping } from '../../config/mapping/log-data.mapping'
 import { dimensions } from './config/dimension'
@@ -47,6 +52,7 @@ export class LogService implements OnModuleInit {
     private readonly _logQueue: Queue,
     private readonly _cfgSrv: ConfigService,
     private readonly _esAnalyzerSrv: EsAnalyzerService,
+    private readonly _modRef: ModuleRef,
   ) {}
 
   onModuleInit() {
@@ -110,7 +116,7 @@ export class LogService implements OnModuleInit {
     return Object.entries(logTargets).map(([key, value]) => ({ key, value }))
   }
 
-  public async agg(dimensionId: string, filterDsl?: string) {
+  public async agg(dimensionId: string, filterDsl?: string, size = 10000) {
     const query = filterDsl
       ? this._esAnalyzerSrv.dsl2query(filterDsl, logDataMapping)
       : undefined
@@ -139,6 +145,7 @@ export class LogService implements OnModuleInit {
             [dimensionId]: {
               terms: {
                 field: dimension.field,
+                size,
               },
             },
           },
@@ -147,7 +154,8 @@ export class LogService implements OnModuleInit {
       else {
         aggs[dimensionId] = {
           terms: {
-            field: `${dimension.field}.keyword`,
+            field: `${dimension.field}`,
+            size,
           },
         }
       }
@@ -159,9 +167,9 @@ export class LogService implements OnModuleInit {
     if (dimension.field.includes('.'))
       aggRes = aggRes[dimensionId]
 
-    // return aggRes
+    // return aggRe
 
-    return aggRes.buckets.map((bucket) => {
+    const res = aggRes.buckets.map((bucket) => {
       if (dimension.type === 'date') {
         return {
           key: formatTimeLabel(bucket.key_as_string, dimension.interval),
@@ -176,5 +184,36 @@ export class LogService implements OnModuleInit {
       }
       return null
     })
+
+    if (dimension.infoMapType) {
+      const ids = Array.from(new Set(res.map(r => r.key)))
+      if (dimension.infoMapType === 'user') {
+        const userSrv = this._modRef.get(UserService, { strict: false })
+        const users = await userSrv.repo().find({ where: { id: In(ids) } })
+        const userIdMap = users.reduce((map, user) => {
+          map.set(user.id, user)
+          return map
+        }, new Map<string, User>())
+
+        res.forEach((r) => {
+          const user = userIdMap.get(r.key)
+          r.info = user
+        })
+      }
+      else if (dimension.infoMapType === 'dataDirectory') {
+        const dataDirSrv = this._modRef.get(DataService, { strict: false })
+        const dirs = await dataDirSrv.dirRepo().find({ where: { id: In(ids) } })
+        const dirIdMap = dirs.reduce((map, dir) => {
+          map.set(dir.id, dir)
+          return map
+        }, new Map<string, DataDirectory>())
+        res.forEach((r) => {
+          const dir = dirIdMap.get(r.key)
+          r.info = dir
+        })
+      }
+    }
+
+    return res
   }
 }
