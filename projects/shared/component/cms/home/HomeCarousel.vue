@@ -36,10 +36,12 @@ watch(() => props.list, () => {
   <div>
     <q-carousel navigation v-model="slider" arrows animated height="400px" :autoplay="autoplay"
       @mouseenter="autoplay = false" @mouseleave="autoplay = true">
-      <q-carousel-slide flex-col flex-center v-for="(l, index) in list" :key="index" :name="l.name" :img-src="l.img">
-        <div>
-          <div title-2 font-600 text-grey-1>{{ l.title }}</div>
-          <div text-grey-1>{{ l.content }}</div>
+      <q-carousel-slide pa-none  v-for="(l, index) in list" :key="index" :name="l.name" :img-src="l.img">
+        <div class="custom-caption" flex-center>
+          <div text-grey-1>
+            <div title-2 font-600 >{{ l.title }}</div>
+            <div >{{ l.content }}</div>
+          </div>
         </div>
       </q-carousel-slide>
       <template #navigation-icon="{ active, onClick }">
@@ -48,3 +50,11 @@ watch(() => props.list, () => {
     </q-carousel>
   </div>
 </template>
+<style scoped lang="scss">
+.custom-caption {
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(2, 92, 185, 0.70)
+}
+</style>

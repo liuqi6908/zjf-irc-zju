@@ -29,6 +29,7 @@ const columnsconfig = [
   },
   { name: 'content', align: 'left', label: '编辑内容', field: 'content' },
   { name: 'uploadImg', label: '上传图片', align: 'left', field: 'uploadImg' },
+  { name: 'svg', label: '上传svg', align: 'left', field: 'svg' },
   { name: 'delete', label: '删除', align: 'left', field: 'delete' },
   {
     name: 'sort',
@@ -138,6 +139,15 @@ watch(() => props.colNames, () => {
           <q-td key="uploadImg" :props="props">
             <UploadFile v-model:urlImg="props.row.uploadImg" />
           </q-td>
+
+          <q-td key="svg" :props="props">
+            <UploadFile v-model:urlImg="props.row.svg" svg />
+          </q-td>
+
+          <q-td key="richText" :props="props">
+            <RichEdit v-model="props.row.richText" />
+          </q-td>
+
           <q-td key="delete" :props="props">
             <q-btn flat @click="deleteRow(props.row)">
               <div i-mingcute:delete-2-line text-red />
@@ -148,10 +158,6 @@ watch(() => props.colNames, () => {
             <q-btn flat round>
               <div :class="props.rowIndex ? ' i-mingcute:arrow-up-fill' : 'i-mingcute:arrow-down-fill'" @click="upSort(props.row, props.rowIndex)" />
             </q-btn>
-          </q-td>
-
-          <q-td key="richText" :props="props">
-            <RichEdit v-model="props.row.richText" />
           </q-td>
         </q-tr>
       </template>

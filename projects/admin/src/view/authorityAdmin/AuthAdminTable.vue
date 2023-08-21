@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { QTree, useQuasar } from 'quasar'
+import { Notify, QTree, useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 import type { OperationType } from '~/components/table/BaseTable.vue'
+
+import { deleteRoles } from '~/api/dataPermission/delectDataRole'
 
 interface Props {
   rows: Array<any>
   col: QTableProps['columns']
   /** tree节点（权限选择） */
   treeNode: QTree['nodes']
+  loading: false
   /** select options（角色列表） */
   selectList: Array<{ label: string; value: string }>
   operation?: Array<OperationType>
@@ -32,9 +35,18 @@ const dialog = ['attachment']
 //   console.log({ rowItem })
 // }
 
-function deleteRowItem(rowItem: any) {
-  if (baseTableRef.value)
+async function deleteRowItem(rowItem: any) {
+  if (baseTableRef.value) {
     baseTableRef.value.deleteRow(rowItem)
+
+    const res = await deleteRoles(rowItem.roleName)
+    if (res) {
+      Notify.create({
+        message: '删除成功',
+        type: 'success',
+      })
+    }
+  }
 }
 
 function check(rowItem: any) {
@@ -52,6 +64,19 @@ function check(rowItem: any) {
     html: true,
   })
 }
+
+function onLazyLoad({ node, key, done, fail }) {
+  // call fail() if any error occurs
+
+  setTimeout(() => {
+    // simulate loading and setting an empty node
+    if (!node.children.length) {
+      done([])
+      return
+    }
+    done(node.children)
+  }, 1000)
+}
 </script>
 
 <template>
@@ -61,6 +86,7 @@ function check(rowItem: any) {
     :rows="rows"
     :cols="col"
     :operation="operation"
+    :loading="loading"
     @update:rows="(val) => $emit('update:rows', val)"
   >
     <q-input v-if="input.includes(col)" v-model="props.row[`${col}`]" label="可编辑" />
@@ -70,8 +96,9 @@ function check(rowItem: any) {
       v-model:ticked="props.row[`${col}`]"
       tick-strategy="leaf"
       :nodes="treeNode"
-      node-key="label"
-      default-expand-all
+      node-key="id"
+      label-key="nameZH"
+      @lazy-load="onLazyLoad"
     />
 
     <BtnGroup

@@ -38,11 +38,11 @@ function handleCreated(editor: any) {
     <Toolbar
       :editor="editorRef"
       :default-config="toolbarConfig"
-      style="border-bottom: 1px solid #ccc"
+      style="border-bottom: 1px solid #ccc;width: 500px;"
     />
     <Editor
       :model-value="modelValue"
-      style="height: 400px; overflow-y: hidden;"
+      style="height: 400px; overflow-y: hidden;width: 500px;"
       :default-config="editorConfig"
       :mode="mode"
       @update:model-value="(val) => $emit('update:modelValue', val)"

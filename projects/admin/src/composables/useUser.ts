@@ -25,9 +25,8 @@ export function useUser($router = useRouter()) {
     if (res) {
       authToken.value = res.sign.access_token
       userInfo.value = res.user
+      $router.replace({ path: '/home' })
     }
-
-    $router.replace({ path: '/home' })
   }
 
   /** 注册 */

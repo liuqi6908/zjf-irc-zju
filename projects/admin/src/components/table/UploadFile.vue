@@ -3,6 +3,7 @@ import { getPublicFileUrl, putPublicFile } from '~/api/file/handlePublicFile'
 
 interface Props {
   urlImg: string
+  svg?: boolean
 }
 defineProps<Props>()
 const emits = defineEmits(['update:urlImg'])
@@ -22,12 +23,12 @@ async function uploadFile(file: File) {
 
 <template>
   <div flex="~ row gap-2">
-    <q-img style="width: 150px" :src="urlImg" />
+    <q-img v-if="!svg" style="width: 150px" :src="urlImg" />
     <div class="q-gutter-md" style="max-width: 300px">
       <q-file
         color="lime-11" bg-color="primary"
-        label="上传图片"
-        accept=".jpg, image/*"
+        :label="svg ? '上传svg' : '上传图片'"
+        :accept="svg ? '.svg' : '.jpg, image/*'"
         filled
         dense
         borderless

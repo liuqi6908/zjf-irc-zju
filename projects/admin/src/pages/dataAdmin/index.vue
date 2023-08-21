@@ -13,6 +13,8 @@ import { getDataByRootId } from '~/api/data/getDataByRootId'
 import { uploadDataByRootId } from '~/api/data/uploadDataByRootId'
 import { uploadDataDescribe } from '~/api/file/dataDescribe'
 
+import { useDataBase } from '~/composables/useDataBase'
+
 const tabList = ref<TabItem[]>([
   {
     id: 'totalData',
@@ -44,6 +46,7 @@ const tab = ref(tabList.value[0].id)
 const currentTabObj = ref()
 const midTable = ref<File>()
 const describe = ref()
+const { fetchAllData } = useDataBase()
 
 async function uploadFile(tab: DataRoot, file: File) {
   const fromData = new FormData()
@@ -101,8 +104,8 @@ watch(describe, async (newDescribe) => {
     const res = await uploadDataDescribe(newDescribe.id, filename, formData)
     if (!res) {
       Notify.create({
-        type: 'warn',
-        message: '上传失败，请重新上传',
+        type: 'warning',
+        message: '上传失败',
       })
     }
   }

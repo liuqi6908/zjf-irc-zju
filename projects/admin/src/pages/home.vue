@@ -18,8 +18,8 @@ const tableLoading = ref()
 const tabList = computed(() => cmsConfig.find(i => i.id === homeId.value)?.children)
 
 /** 当前的组件所需要的props */
-const rowsJson = computed<Carousel[]>(() => {
-  const json = [] as Carousel[]
+const rowsJson = computed(() => {
+  const json = [] as any
   const cloneRow = _.cloneDeep(currTabObj.value.rows)
   if (cloneRow) {
     cloneRow.forEach((item, index) => {
@@ -28,6 +28,7 @@ const rowsJson = computed<Carousel[]>(() => {
         content: item.content,
         title: item.title,
         img: item.uploadImg,
+        richText: item.richText,
       })
     })
   }

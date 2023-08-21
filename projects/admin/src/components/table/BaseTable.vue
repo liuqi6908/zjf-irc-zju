@@ -7,6 +7,7 @@ interface Props {
   rows: Array<any>
   cols: QTableProps['columns']
   operation?: Array<OperationType>
+  loading?: boolean
 }
 const props = defineProps<Props>()
 const emits = defineEmits(['update:rows'])
@@ -52,7 +53,7 @@ defineExpose({
 </script>
 
 <template>
-  <q-table :rows="rows" :columns="cols">
+  <q-table :rows="rows" :columns="cols" :loading="loading">
     <template #top-left>
       <div w-full flex="~ row justify-between">
         <q-btn v-if="operation?.includes('addRows')" label="增加一项" push color="primary-1" @click="addRow" />
@@ -72,6 +73,9 @@ defineExpose({
           <slot :props="props" :col="c.name" />
         </q-td>
       </q-tr>
+    </template>
+    <template #loading>
+      <q-inner-loading showing color="primary" />
     </template>
   </q-table>
 </template>

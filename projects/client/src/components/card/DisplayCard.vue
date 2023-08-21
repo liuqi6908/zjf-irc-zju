@@ -1,31 +1,35 @@
 <script lang="ts" setup>
 interface Props {
   title: string
-  icon: string
-  article: string
+  svg: string
+  richText: string
 }
 defineProps<Props>()
+function htmlDecodeByRegExp(htmlStr: string) {
+  return htmlStr.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi, '').replace(/<[^>]+?>/g, '').replace(/\s+/g, ' ').replace(/ /g, ' ').replace(/&ldquo;/g, ' ').replace(/&rdquo;/g, ' ')
+    .replace(/&nbsp;/ig, '')
+    .replace(/>/g, ' ')
+}
 </script>
 
 <template>
-  <q-card border-rd-3 p-x-10 p-b-6 p-t-12>
-    <div class="card-icon" absolute h-14 w-14 flex-center bg-primary-1>
-      <div v-html="icon" />
+  <div border-rd-3 p-x-10 p-b-6 p-t-12 flex="~ col items-center">
+    <div class="card-icon" h-12 w-12 flex-center>
+      <div text-primary-1 v-html="svg" />
     </div>
-    <div text-5 font-600 text-grey-8>
+    <div my-3 text-5 font-600 text-grey-8>
       {{ title }}
     </div>
     <br>
     <span indent-1 text-grey-6>
-      {{ article }}
+      {{ htmlDecodeByRegExp(richText) }}
     </span>
-  </q-card>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 .card-icon {
-    left:calc(50% - 2.5rem);
-    top:-30px;
-    border-radius:50% !important;
+    background: rgba(2, 92, 185, 0.08);
+    border-radius: 50% !important;
 }
 </style>
