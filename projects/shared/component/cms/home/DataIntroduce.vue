@@ -14,7 +14,7 @@ defineProps<Props>()
     <div w-full bg-grey-1  flex-center py-20 >
         <div flex="~ row gap-20">
             <div h-60 w-80 class="introduce_bg-img" /> 
-            <div max-w-xl class="col-grow">
+            <div max-w-xl class="col-grow" v-if="list && list.length">
                 <span title-1 text-grey-8>{{ list[0].title }}</span>
                 <br/>
                 <div indent-1 text-grey-8> {{ list[0].content }} </div>

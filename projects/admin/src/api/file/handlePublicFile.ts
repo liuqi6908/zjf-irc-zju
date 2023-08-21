@@ -9,7 +9,7 @@ export function getPublicFileUrl(path: string, filename: string) {
 
     /** 当图片后缀为svg的时候直接返回svg文本 */
     if (ext === 'svg')
-      return $get('file/public', { path: `${path}/${filename}` })
+      return $get('file/public', { path: `${path}/${filename}` }, false)
 
     else
       return queryParamsUrl(`${import.meta.env.VITE_API_BASE}/file/public`, { path: `${path}/${filename}` })

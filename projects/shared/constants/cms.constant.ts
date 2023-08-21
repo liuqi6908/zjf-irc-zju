@@ -33,7 +33,7 @@ export const cmsConfig = [
                 label: '页脚',
                 parentId: 'footer',
                 component: markRaw(Footer),
-                col: ['title', 'content', 'uploadImg', 'delete', 'sort', 'add'],
+                col: ['title', 'richText','delete','add',],
                 rows: []
             }
         ]
@@ -48,7 +48,7 @@ export const cmsConfig = [
                 label: '问答',
                 parentId: 'question',
                 component: markRaw(Question), 
-                col: ['title', 'richText','add'],
+                col: ['title', 'svg','richText','add'],
                 rows: []
             }
         ]

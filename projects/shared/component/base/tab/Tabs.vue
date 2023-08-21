@@ -8,6 +8,7 @@ export interface TabItem {
     id: string
     /** 当前tab是否已经请求数据 */
     isRequest: boolean
+    to?: string
     currTabObj?: any
     tableData?: {
         row: QTableProps['rows']
@@ -33,11 +34,18 @@ watch(() => props.modelValue,
 
 <template>
     <div full>
-        <q-tabs bg-grey-2 text-primary-1 :model-value="modelValue"
+        <q-tabs bg-grey-1 text-primary-1 :model-value="modelValue"
             @update:model-value="(tab) => $emit('update:modelValue', tab)">
-            <q-tab v-for="tab in tabList" :key="tab.id" text-4 font-600 :name="tab.id">
-                {{ tab.label }}
-            </q-tab>
+            <template v-for="tab in tabList" :key="tab.id" >
+                <q-route-tab v-if="tab.to" :to="tab.to">
+                    {{ tab.label }}
+                </q-route-tab>
+
+                <q-tab v-else text-4 font-600 :name="tab.id">
+                    {{ tab.label }}
+                </q-tab>
+            </template>
+        
         </q-tabs>
 
         <q-tab-panels :model-value="modelValue" @update:model-value="(tab) => $emit('update:modelValue', tab)">
