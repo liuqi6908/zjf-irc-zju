@@ -73,22 +73,26 @@ onMounted(async () => {
   >
     <q-layout container view="lHh lpr lFf">
       <q-header bg-white>
-        <q-toolbar flex="~ row justify-between">
+        <q-toolbar flex="~ row justify-between items-center">
           <div mx-8 my-4 flex="~ row">
             <img mr-2 h-6 src="../assets/layout/cloud.png">
-            <span text-xl font-600 text-grey-8>
-              智能云科研平台
-            </span>
+            <div>
+              <span text-xl font-600 text-primary-1>
+                智能云科研平台 |
+              </span>
+              <span text-primary-1>CloudResearch</span>
+            </div>
             <!-- <Icon text-grey-8 icon="mdi-light:home" /> -->
           </div>
 
-          <div flex flex-row items-center>
+          <div flex flex-row items-center text-primary-1>
             <Avatar
               :avatar-url="userInfo?.avatar"
               :nickname="userInfo?.nickname"
               @update:route="isToken ? (userDropdown = !userDropdown) : router.replace({ path: '/auth/login' })"
             />
-            <q-list v-if="userDropdown" absolute right-3 top-20 z-999 border-rd-2 bg-grey-3 p-2>
+            {{ isToken ? '' : '登录' }}
+            <q-list v-if="userDropdown" absolute right-3 top-20 z-999 bg-grey-1 p-2 filter-drop-shadow>
               <NavItem
                 v-for="u in userList"
                 :id="u.id"

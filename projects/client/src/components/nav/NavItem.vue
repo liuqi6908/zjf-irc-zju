@@ -28,9 +28,7 @@ function click() {
 <template>
   <q-item
     v-close-popup="closePopup || false"
-    clickable
-    border-rd-2
-    text-grey-5
+    clickable text-grey-8
     :active-class="transparent ? 'text-primary-1 opacity-primary-1' : 'text-grey-1 bg-primary-1'"
     :active="clickId === id"
     @click="click()"

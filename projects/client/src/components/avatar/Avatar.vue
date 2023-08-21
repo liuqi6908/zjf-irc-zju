@@ -32,12 +32,7 @@ function getImageUrl(url: string) {
 <template>
   <div
     :style="{ width: `${size}px`, height: `${size}px` }"
-    flex-center
-    cursor-pointer
-    border-size-1.5
-    b-primary-1
-    rounded-full
-    text-primary-1
+    flex-center cursor-pointer border-size-1.5 b-primary-1 rounded-full text-primary-1
     @click="avatarBehavior(), $emit('update:route')"
   >
     <div

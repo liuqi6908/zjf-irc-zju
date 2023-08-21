@@ -23,7 +23,7 @@ async function uploadFile(file: File) {
 
 <template>
   <div flex="~ row gap-2">
-    <q-img v-if="svg" style="width: 150px" :src="urlImg" />
+    <q-img v-if="!svg" style="width: 150px" :src="urlImg" />
     <div class="q-gutter-md" style="max-width: 300px">
       <q-file
         color="lime-11" bg-color="primary"

@@ -34,7 +34,12 @@ watch(() => props.modelValue,
 
 <template>
     <div full>
-        <q-tabs bg-grey-1 text-primary-1 :model-value="modelValue"
+        <q-tabs 
+            indicator-color="tab-bottom"
+            font-600
+            bg-grey-1 
+            text-primary-1 
+            :model-value="modelValue"
             @update:model-value="(tab) => $emit('update:modelValue', tab)">
             <template v-for="tab in tabList" :key="tab.id" >
                 <q-route-tab v-if="tab.to" :to="tab.to">
@@ -57,3 +62,5 @@ watch(() => props.modelValue,
         </q-tab-panels>
     </div>
 </template>
+<style lang="scss" scoped>
+</style>
