@@ -66,6 +66,10 @@ export enum PermissionType {
   DATA_PERMISSION_QUERY = 'data-permission:query',
   /** 更新引用规范 */
   DATA_PERMISSION_UPDATE_REFERENCE = 'data-permission:update-reference',
+
+  // ------------------ 日志访问 ---------------------
+  /** 查看日志 */
+  LOG_VIEW = 'log:view',
 }
 
 export const permissionDescriptions: Record<PermissionType, string> = {
@@ -99,4 +103,6 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.DATA_PERMISSION_DELETE]: '删除数据角色',
   [PermissionType.DATA_PERMISSION_QUERY]: '查询数据角色',
   [PermissionType.DATA_PERMISSION_UPDATE_REFERENCE]: '更新引用规范',
+
+  [PermissionType.LOG_VIEW]: '查看日志',
 }
