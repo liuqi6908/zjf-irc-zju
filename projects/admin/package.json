@@ -19,7 +19,9 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.5",
+    "@rollup/plugin-commonjs": "^25.0.4",
     "@types/lodash": "^4.14.196",
+    "@types/lodash-es": "^4.17.8",
     "@unhead/vue": "^1.1.30",
     "@unocss/reset": "^0.53.5",
     "@vueuse/core": "^10.2.1",
@@ -28,6 +30,7 @@
     "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.4.0",
     "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "moment": "^2.29.4",
     "nprogress": "^0.2.0",
     "pinia": "^2.1.4",

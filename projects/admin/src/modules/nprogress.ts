@@ -1,4 +1,3 @@
-import NProgress from 'nprogress'
 import { AUTH_TOKEN_KEY } from 'shared/constants'
 import { type UserModule } from '~/types'
 
@@ -17,8 +16,8 @@ export const install: UserModule = ({ isClient, router }) => {
       if (!isAuthenticated && authPath)
         return { name: 'auth-login' }
     })
-    router.afterEach(() => {
-      NProgress.done()
-    })
+    // router.afterEach(() => {
+    //   NProgress.done()
+    // })
   }
 }

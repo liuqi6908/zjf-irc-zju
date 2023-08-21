@@ -145,7 +145,9 @@ watch(() => props.colNames, () => {
           </q-td>
 
           <q-td key="richText" :props="props">
-            <RichEdit v-model="props.row.richText" />
+            <ClientOnly>
+              <RichEdit v-model="props.row.richText" />
+            </ClientOnly>
           </q-td>
 
           <q-td key="delete" :props="props">

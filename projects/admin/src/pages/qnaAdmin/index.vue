@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Tabs from 'shared/component/base/tab/Tabs.vue'
 import { cmsConfig } from 'shared/constants'
-import _ from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { Notify } from 'quasar'
 import { getCms } from '~/api/cms/getCms'
 import EditableGrid from '~/components/table/EditableGrid.vue'
@@ -17,7 +17,7 @@ const tabList = computed(() => cmsConfig.find(i => i.id === questionId.value)?.c
 /** 当前的组件所需要的props */
 const rowsJson = computed(() => {
   const json = [] as any
-  const cloneRow = _.cloneDeep(currTabObj.value.rows)
+  const cloneRow = cloneDeep(currTabObj.value.rows)
   if (cloneRow) {
     cloneRow.forEach((item, index) => {
       json.push({

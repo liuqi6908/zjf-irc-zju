@@ -1,6 +1,6 @@
 import type { TabItem } from 'shared/component/base/tab/Tabs.vue'
 import type { DataRoot, IDataDirectory } from 'zjf-types'
-import _ from 'lodash'
+import { cloneDeep } from 'lodash-es'
 
 const { $get } = useRequest()
 const rootTabList = reactive<TabItem[]>([])
@@ -44,7 +44,7 @@ export function useDataBase() {
           return
 
         for (const dataDirectory of res) {
-          const clone = _.cloneDeep(dataDirectory)
+          const clone = cloneDeep(dataDirectory)
           clone.lazy = true
           verifyTree.value[0].children.push(clone)
         }

@@ -58,7 +58,14 @@ const userList: Array<ItemList> = [
   { id: 'adminQRCode', name: '退出登录', back: true, clickEvent: () => useLogout() },
 ]
 
-const isToken = computed(() => localStorage.getItem(AUTH_TOKEN_KEY))
+const isToken = computed(() => {
+  let tokenStr: any = null
+  if (typeof window !== 'undefined') {
+  // Perform localStorage action
+    tokenStr = localStorage.getItem(AUTH_TOKEN_KEY) || null
+  }
+  return tokenStr
+})
 
 onMounted(async () => {
   useGetProfile()

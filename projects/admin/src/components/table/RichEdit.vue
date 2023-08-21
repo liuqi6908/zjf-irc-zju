@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import * as WangEditor from '@wangeditor/editor-for-vue'
 import '@wangeditor/editor/dist/css/style.css'
 import { editorConfig } from './richConfig'
 
@@ -10,6 +10,8 @@ const props = defineProps<Props>()
 const emits = defineEmits(['update:modelValue'])
 
 const mode = ref('simple')
+
+const { Editor, Toolbar } = WangEditor
 
 const editorRef = shallowRef()
 const toolbarConfig = {}
@@ -45,7 +47,7 @@ function handleCreated(editor: any) {
       style="height: 400px; overflow-y: hidden;width: 500px;"
       :default-config="editorConfig"
       :mode="mode"
-      @update:model-value="(val) => $emit('update:modelValue', val)"
+      @update:model-value="(val:any) => $emit('update:modelValue', val)"
       @onCreated="handleCreated"
     />
   </div>

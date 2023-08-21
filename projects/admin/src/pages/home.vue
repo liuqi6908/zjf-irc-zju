@@ -4,7 +4,7 @@ import { cmsConfig } from 'shared/constants'
 
 import Tabs from 'shared/component/base/tab/Tabs.vue'
 
-import _ from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { Notify } from 'quasar'
 import EditableGrid from '~/components/table/EditableGrid.vue'
 import { getCms } from '~/api/cms/getCms'
@@ -20,7 +20,7 @@ const tabList = computed(() => cmsConfig.find(i => i.id === homeId.value)?.child
 /** 当前的组件所需要的props */
 const rowsJson = computed(() => {
   const json = [] as any
-  const cloneRow = _.cloneDeep(currTabObj.value.rows)
+  const cloneRow = cloneDeep(currTabObj.value.rows)
   if (cloneRow) {
     cloneRow.forEach((item, index) => {
       json.push({

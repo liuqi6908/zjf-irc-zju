@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import moment from 'moment'
-import _ from 'lodash'
+import { cloneDeep } from 'lodash-es'
 
 import { Notify, type QTableProps } from 'quasar'
 
@@ -82,7 +82,7 @@ function momentTime(name: string, row: string) {
 }
 
 function onRowClick(field: string, row: any) {
-  clickedRow = _.cloneDeep(row)
+  clickedRow = cloneDeep(row)
   clickedRow.attachmentsList = []
 
   if (field === 'attachments') {

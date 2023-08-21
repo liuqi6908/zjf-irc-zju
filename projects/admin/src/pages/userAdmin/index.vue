@@ -3,7 +3,7 @@ import { PAGINATION_SIZE_MAX, VerificationStatus } from 'zjf-types'
 import type { IQueryDto, IVerificationHistory } from 'zjf-types'
 import { computed, reactive, ref, watch } from 'vue'
 
-import _ from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { queryAllApply } from '../../api/verification/queryAllApply'
 import type { Rows } from '../../view/user/Verify.vue'
 import Verify from '../../view/user/Verify.vue'
@@ -41,7 +41,7 @@ const queryFormat = computed(() => {
 })
 
 function formatFilter(options: { status?: VerificationStatus }) {
-  const filterQuery = _.cloneDeep(baseQuery)
+  const filterQuery = cloneDeep(baseQuery)
   if (options.status) {
     filterQuery.filters?.push({
       field: 'status',

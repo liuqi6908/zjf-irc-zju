@@ -2,7 +2,7 @@
 import type { TabItem } from 'shared/component/base/tab/Tabs.vue'
 import Tabs from 'shared/component/base/tab/Tabs.vue'
 import { Notify } from 'quasar'
-import _ from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import AuthAdminTable from '~/view/authorityAdmin/AuthAdminTable.vue'
 
 import { upsertDataRole } from '~/api/dataPermission/upsertDataRole'
@@ -95,7 +95,7 @@ async function init() {
   const rows = await getDataRolesList()
   if (rows) {
     for (const row of rows) {
-      const cloneRow = _.cloneDeep(row)
+      const cloneRow = cloneDeep(row)
       const viewArr = cloneRow.viewDirectories.map(i => i.id)
       const downloadArr = cloneRow.downloadDirectories.map(i => i.id)
       currentTab.value.tableData.row.push({
