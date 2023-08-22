@@ -3,11 +3,14 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 
 import { Role } from './role'
+import { Login } from './login'
+import { Desktop } from './desktop'
+import { DataRole } from './data-role'
 import { BaseTimeStamp } from './_timestamp'
 import { UserDeleted } from './user-deleted'
+import { DesktopQueue } from './desktop-queue'
 import { VerificationHistory } from './verification'
-import { Login } from './login'
-import { DataRole } from './data-role'
+import { DesktopQueueHistory } from './desktop-queue-history'
 
 @Entity()
 export class User extends BaseTimeStamp implements IUser {
@@ -83,4 +86,16 @@ export class User extends BaseTimeStamp implements IUser {
 
   @OneToMany(() => Login, login => login.user, { cascade: true })
   logins?: Login[]
+
+  @ApiProperty({ description: '当前分配的云桌面信息' })
+  @OneToOne(() => Desktop, desktop => desktop.user)
+  desktop?: Desktop
+
+  @ApiProperty({ description: '当前进行中的云桌面排队/申请' })
+  @OneToOne(() => DesktopQueue, desktopQueue => desktopQueue.user)
+  desktopQueue?: DesktopQueue
+
+  @ApiProperty({ description: '已完成的云桌面使用（到期历史记录）' })
+  @OneToMany(() => DesktopQueueHistory, dqh => dqh.user)
+  desktopQueueHistory?: DesktopQueueHistory[]
 }

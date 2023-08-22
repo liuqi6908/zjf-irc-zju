@@ -1,4 +1,5 @@
 import { join } from 'node:path'
+import { BullModule } from '@nestjs/bull'
 import { validatePath } from '@catsjuice/utils'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ScheduleModule } from '@nestjs/schedule'
@@ -10,7 +11,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import type { MiddlewareConsumer, NestModule } from '@nestjs/common'
 
-import { BullModule } from '@nestjs/bull'
 import allConfig from './config'
 
 import { AppService } from './app.service'
@@ -25,12 +25,13 @@ import { DataModule } from './modules/data/data.module'
 import { RedisModule } from './modules/redis/redis.module'
 import { EmailModule } from './modules/email/email.module'
 import { AuthMiddleware } from './middleware/auth.middleware'
+import { InfoMiddleware } from './middleware/info.middleware'
+import { DesktopModule } from './modules/desktop/desktop.module'
+import { AccessMiddleware } from './middleware/access.middleware'
 import { ResponseInterceptor } from './interceptors/response.interceptor'
 import { PermissionModule } from './modules/permission/permission.module'
 import { EsAnalyzerModule } from './modules/es-analyzer/es-analyzer.module'
 import { VerificationModule } from './modules/verification/verification.module'
-import { InfoMiddleware } from './middleware/info.middleware'
-import { AccessMiddleware } from './middleware/access.middleware'
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { AccessMiddleware } from './middleware/access.middleware'
     DataModule,
     RedisModule,
     EmailModule,
+    DesktopModule,
     EsAnalyzerModule,
     PermissionModule,
     VerificationModule,

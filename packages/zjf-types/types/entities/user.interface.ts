@@ -1,12 +1,15 @@
 import { IRole } from './role.interface';
 import { ILogin } from './login.interface';
+import { IDesktop } from './desktop.interface';
+import { IDataRole } from './data-role.interface';
 import { IAccountDto } from '../dto/account.interface';
 import { IPasswordDto } from '../dto/password.interface';
+import { IDesktopQueue } from './desktop-queue.interface';
 import { IEmailOptionalDto } from '../dto/email.interface';
 import { ICreatedAt, IUpdatedAt } from "./_timestamp.interface";
 import { IVerificationHistory } from './verification.interface';
 import { INicknameOptionalDto } from '../dto/nickname.interface';
-import { IDataRole } from './data-role.interface';
+import { IDesktopQueueHistory } from './desktop-queue-history.interface';
 
 export interface IUser extends 
   ICreatedAt, 
@@ -54,4 +57,13 @@ export interface IUser extends
 
   /** 当前激活的所有的登录信息 */
   logins?: ILogin[]
+
+  /** 当前使用中的云桌面信息 */
+  desktop?: IDesktop;
+
+  /** 当前排队中的云桌面 */
+  desktopQueue?: IDesktopQueue;
+
+  /** 已结束的云桌面申请（历史记录） */
+  desktopQueueHistory?: IDesktopQueueHistory[];
 }
