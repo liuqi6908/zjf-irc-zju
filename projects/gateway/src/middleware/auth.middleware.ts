@@ -74,7 +74,7 @@ export class AuthMiddleware implements NestMiddleware {
       this.logger.error(`用户 ${user.account}, ${user.id} 已被删除，无法登录`)
       return next()
     }
-    // 比较数据库内的用户手机号与 access_token 解析的手机号是否一致
+    // 比较数据库内的用户账号与 access_token 解析的账号是否一致
     if (info?.account && info?.account === user.account) {
       req.user = user
 
@@ -82,7 +82,7 @@ export class AuthMiddleware implements NestMiddleware {
       _authSrv.loginRepo().update({ id: md5(access_token) }, { lastActiveAt: new Date() })
     }
     else {
-      // 如果手机号不一致，判定用户已更新了手机号，旧的登录授权 token 全部销毁
+      // 如果账号不一致，判定用户已更新了账号，旧的登录授权 token 全部销毁
       req.accessTokenExpired = true
       this.logger.warn(
         `User[${info?.id}]'s account in db[${user.account}] not match account in token[${info.account}]`,

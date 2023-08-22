@@ -1,10 +1,11 @@
 import { In, Repository } from 'typeorm'
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { DailyCount } from 'src/entities/daily-count.entity'
 
 @Injectable()
 export class DailyCountService {
+  private readonly _logger = new Logger(DailyCountService.name)
   constructor(
     @InjectRepository(DailyCount)
     private readonly _dailyCountRepo: Repository<DailyCount>,
@@ -28,6 +29,7 @@ export class DailyCountService {
     }
     catch (err) {
       await this._dailyCountRepo.insert({ id, year, month, date })
+      this._logger.log('new daily-count record')
     }
   }
 

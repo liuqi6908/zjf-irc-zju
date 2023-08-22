@@ -2,7 +2,6 @@ import { Buffer } from 'node:buffer'
 import * as Papa from 'papaparse'
 import { In, IsNull, Not } from 'typeorm'
 import type { FindOptionsWhere } from 'typeorm'
-import { randomString } from '@catsjuice/utils'
 import { batchSave } from 'src/utils/db/batch-save'
 import { ErrorCode, PermissionType } from 'zjf-types'
 import { DataRootIdDto } from 'src/dto/id/data-root.dto'
@@ -17,7 +16,6 @@ import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { createDataDirectoryTree } from 'src/utils/data-directory-tree'
 import { Body, Controller, Delete, Get, Logger, Param, Patch, Put, Query, Req } from '@nestjs/common'
 
-import { md5 } from '../../utils/encrypt/md5'
 import { FileService } from '../file/file.service'
 import { DataService } from './data.service'
 import { CreateRootBodyDto } from './dto/create-root.body.dto'
@@ -39,8 +37,7 @@ export class DataController {
   @HasPermission(PermissionType.DATA_ROOT_CREATE)
   @Put('root')
   public async createRoot(@Body() body: CreateRootBodyDto) {
-    const { nameZH } = body
-    const nameEN = md5(randomString(8, 16, '!@$#%^&*()_+-='))
+    const { nameZH, nameEN } = body
     const root = new DataDirectory()
     root.nameZH = nameZH
     root.nameEN = nameEN

@@ -43,8 +43,8 @@ export class DataService implements OnModuleInit {
   async cacheDir() {
     const client = await this._redisSrv.getClient(RedisType.DATA_DIR_CACHE)
 
-    // 先清空缓存
-    await client.flushAll()
+    // 先清空缓存 （只清空当前 db）
+    await client.flushDb()
 
     // 写入新的缓存
     const dirs = await this._dataDirRepo.find()
