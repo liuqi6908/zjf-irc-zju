@@ -88,6 +88,49 @@ export class FileController {
   }
 
   @ApiOperation({
+    summary: '上传云桌面申请材料',
+    description: '上传成功后会返回最终存储的文件名，用于放入创建云桌面申请的接口的 `attachments` 中',
+  })
+  @ApiSuccessResponse(SuccessStringDto)
+  @IsLogin()
+  @ApiFormData()
+  @Put('private/desktop-request/:filename')
+  public async uploadDesktopRequestAttachments(
+    @Param() param: FilenameDto,
+    @Req() req: FastifyRequest,
+    @Body() body: any,
+  ) {
+    const user = req.raw.user!
+    const buffer = await body?.file?.toBuffer()
+    const filename = param.filename
+    const arr = filename.split('.')
+    const ext = arr.pop()
+    const name = arr.join('.')
+    const saveFilename = `${name}_${Date.now()}.${ext}`
+    const path = `desktop-request/${user.id}/${saveFilename}`
+    await this._fileSrv.upload('pri', path, buffer)
+    return saveFilename
+  }
+
+  @ApiOperation({ summary: '获取（下载）指定用户上传的云桌面申请材料' })
+  @IsLogin()
+  @HasPermission()
+  @Get('private/desktop-request/:userId/:filename')
+  public async getDesktopRequestAttachments(
+    @Req() req: FastifyRequest,
+    @Param() param: GetVerifyAttachmentParamDto,
+  ): Promise<StreamableFile> {
+    const user = req.raw.user!
+    const permissions = user?.role?.permissions || []
+    const allowed = param.userId === user.id || permissions.some(p => p.name === PermissionType.DESKTOP_REQUEST_CAT_ATTACHMENT)
+    if (!allowed)
+      responseError(ErrorCode.PERMISSION_DENIED)
+
+    const path = `desktop-request/${param.userId}/${param.filename}`
+    return new StreamableFile(await this._fileSrv.download('pri', path))
+  }
+
+  @ApiOperation({
     summary: '上传数据库介绍',
     description: '文件名为: `DATABASE_ENG` + `.doc`, 该信息在数据库中不再记录',
   })

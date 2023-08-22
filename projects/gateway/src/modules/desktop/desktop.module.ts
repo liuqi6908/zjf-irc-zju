@@ -6,6 +6,9 @@ import { DesktopQueueHistory } from 'src/entities/desktop-queue-history'
 
 import { DesktopService } from './desktop.service'
 import { DesktopController } from './desktop.controller'
+import { DesktopRequestService } from './desktop-request/desktop-request.service'
+import { DesktopRequestController } from './desktop-request/desktop-request.controller'
+import { DesktopQueueHistoryService } from './desktop-queue-history/desktop-queue-history.service'
 
 @Module({
   imports: [
@@ -15,8 +18,8 @@ import { DesktopController } from './desktop.controller'
       DesktopQueueHistory,
     ]),
   ],
-  controllers: [DesktopController],
-  providers: [DesktopService],
-  exports: [DesktopService],
+  controllers: [DesktopController, DesktopRequestController],
+  providers: [DesktopService, DesktopRequestService, DesktopQueueHistoryService],
+  exports: [DesktopService, DesktopRequestService, DesktopQueueHistoryService],
 })
 export class DesktopModule {}

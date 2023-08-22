@@ -29,4 +29,10 @@ export interface IDesktop extends ICreatedAt, IUpdatedAt {
 
   /** 云桌面当前绑定的用户 ID */
   userId?: IUser['id']
+
+  /** 上一个使用该云桌面的用户 */
+  lastUser?: IUser
+
+  /** 上一个使用该云桌面的用户 ID */
+  lastUserId?: IUser['id']
 }

@@ -2,10 +2,10 @@ import { ConfigService } from '@nestjs/config'
 import { SuccessDto } from 'src/dto/success.dto'
 import type { ESConfig } from 'src/config/_es.config'
 import { ApiSuccessResponse } from 'src/utils/response'
+import { Body, Controller, Get, Post } from '@nestjs/common'
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { logDataMapping } from 'src/config/mapping/log-data.mapping'
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
-import { LogAccessPermission } from 'src/guards/log-access-permission.guard'
+import { HasLogAccess } from 'src/guards/log-access-permission.guard'
 
 import { EsAnalyzerService } from '../es-analyzer/es-analyzer.service'
 import { LogService } from './log.service'
@@ -14,7 +14,7 @@ import { QueryByDslBodyDto } from './dto/query-by-dsl.body.dto'
 import { DailyCountService } from './daily-count/daily-count.service'
 import { GetAccessLast7DaysResDto } from './dto/access/get-access-last-7-days.res.dto'
 
-@UseGuards(LogAccessPermission)
+@HasLogAccess()
 @ApiTags('Log | 日志服务')
 @Controller('log')
 export class LogController {

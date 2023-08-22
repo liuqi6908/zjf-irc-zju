@@ -46,4 +46,10 @@ export class DesktopQueueHistory
     default: DesktopQueueHistoryStatus.Rejected,
   })
   status: DesktopQueueHistoryStatus
+
+  @ApiProperty({
+    description: '驳回的原因',
+  })
+  @Column({ nullable: true })
+  rejectReason?: string
 }

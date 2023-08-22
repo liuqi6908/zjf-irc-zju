@@ -3,8 +3,9 @@ import { ConfigService } from '@nestjs/config'
 import { responseError } from 'src/utils/response'
 import { ErrorCode, PermissionType } from 'zjf-types'
 import { RoleService } from 'src/modules/role/role.service'
-import { type CanActivate, type ExecutionContext, Injectable } from '@nestjs/common'
+import { type CanActivate, type ExecutionContext, Injectable, UseGuards, applyDecorators } from '@nestjs/common'
 
+import { ApiBearerAuth } from '@nestjs/swagger'
 import { PermissionGuard } from './permission.guard'
 
 @Injectable()
@@ -34,4 +35,11 @@ export class LogAccessPermission extends PermissionGuard implements CanActivate 
 
     responseError(ErrorCode.PERMISSION_DENIED)
   }
+}
+
+export function HasLogAccess() {
+  return applyDecorators(
+    ApiBearerAuth(),
+    UseGuards(LogAccessPermission),
+  )
 }

@@ -70,6 +70,18 @@ export enum PermissionType {
   // ------------------ 日志访问 ---------------------
   /** 查看日志 */
   LOG_VIEW = 'log:view',
+
+  // ------------------ 云桌面 ---------------------
+  /** 查看云桌面申请附件 */
+  DESKTOP_REQUEST_CAT_ATTACHMENT = 'desktop-request:cat-attachment',
+  /** 创建云桌面申请 */
+  DESKTOP_REQUEST_CREATE = 'desktop-request:create',
+  /** 通过云桌面申请 */
+  DESKTOP_REQUEST_APPROVE = 'desktop-request:approve',
+  /** 驳回云桌面申请 */
+  DESKTOP_REQUEST_REJECT = 'desktop-request:reject',
+  /** 查询云桌面申请 */
+  DESKTOP_REQUEST_QUERY = 'desktop-request:query',
 }
 
 export const permissionDescriptions: Record<PermissionType, string> = {
@@ -105,4 +117,10 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.DATA_PERMISSION_UPDATE_REFERENCE]: '更新引用规范',
 
   [PermissionType.LOG_VIEW]: '查看日志',
+
+  [PermissionType.DESKTOP_REQUEST_CAT_ATTACHMENT]: '查看云桌面申请附件',
+  [PermissionType.DESKTOP_REQUEST_CREATE]: '创建云桌面申请',
+  [PermissionType.DESKTOP_REQUEST_APPROVE]: '通过云桌面申请',
+  [PermissionType.DESKTOP_REQUEST_REJECT]: '驳回云桌面申请',
+  [PermissionType.DESKTOP_REQUEST_QUERY]: '查询云桌面申请',
 }

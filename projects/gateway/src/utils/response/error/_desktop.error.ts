@@ -1,0 +1,23 @@
+import { HttpStatus } from '@nestjs/common'
+import { ErrorCode } from 'zjf-types'
+
+const _desktopErrors: ErrorMessageCollection = {
+  [ErrorCode.DESKTOP_REQUEST_PENDING_EXISTS]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '存在待审核状态的云桌面申请',
+  },
+  [ErrorCode.DESKTOP_REQUEST_QUEUE_EXISTS]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '存在排队中的云桌面申请',
+  },
+  [ErrorCode.DESKTOP_REQUEST_IN_USE_EXISTS]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '存在正在使用中的云桌面',
+  },
+  [ErrorCode.DESKTOP_REQUEST_PENDING_ONLY]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '仅待审核状态允许被操作',
+  },
+}
+
+export default _desktopErrors

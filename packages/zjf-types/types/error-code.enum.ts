@@ -74,6 +74,16 @@ export enum ErrorCode {
   DATA_TABLE_MANIPULATE_ONLY = 700003,
   /** 该大类下的数据已分配权限，无法删除，请先解绑权限 */
   DATA_ROOT_CANNOT_DELETE_RELATED = 700004,
+
+  // 云桌面相关错误
+  /** 存在待审核状态的云桌面申请 */
+  DESKTOP_REQUEST_PENDING_EXISTS = 800001,
+  /** 存在排队中的云桌面申请 */
+  DESKTOP_REQUEST_QUEUE_EXISTS = 800002,
+  /** 存在正在使用中的云桌面 */
+  DESKTOP_REQUEST_IN_USE_EXISTS = 800003, 
+  /** 仅待审核状态允许被操作 */
+  DESKTOP_REQUEST_PENDING_ONLY = 800004,
 }
 
 export type ErrorMessageCollection = Partial<

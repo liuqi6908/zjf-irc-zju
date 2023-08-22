@@ -61,6 +61,9 @@ export interface IUser extends
   /** 当前使用中的云桌面信息 */
   desktop?: IDesktop;
 
+  /** 曾使用过的云桌面列表 */
+  desktopHistories?: IDesktop[];
+
   /** 当前排队中的云桌面 */
   desktopQueue?: IDesktopQueue;
 

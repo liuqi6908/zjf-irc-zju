@@ -40,8 +40,9 @@ export interface IDesktopQueueHistory extends ICreatedAt, IUpdatedAt {
   /** 申请材料列表 */
   attachments: string[];
 
-  /** 
-   * 状态 
-   **/
+  /** 状态 */
   status: DesktopQueueHistoryStatus;
+
+  /** 驳回原因 */
+  rejectReason?: string;
 }
