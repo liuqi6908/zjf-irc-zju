@@ -17,6 +17,7 @@ declare module 'vue' {
     RectAngleCardSection: typeof import('./components/dialog/RectAngleCardSection.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SliderList: typeof import('./components/slider/sliderList.vue')['default']
     SMSInput: typeof import('./components/auth/SMSInput.vue')['default']
     Tree: typeof import('./components/tree/Tree.vue')['default']
     UserCodeInput: typeof import('./components/auth/UserCodeInput.vue')['default']

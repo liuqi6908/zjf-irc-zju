@@ -3,7 +3,7 @@ import type { DataRoot, IDataDirectory } from 'zjf-types'
 import { cloneDeep } from 'lodash-es'
 
 const { $get } = useRequest()
-const rootTabList = reactive<TabItem[]>([])
+let rootTabList = reactive<TabItem[]>([])
 const rootData = ref<IDataDirectory[]>([])
 const allData = ref<IDataDirectory[]>([])
 const loading = ref()
@@ -16,20 +16,19 @@ export function useDataBase() {
   }
 
   const geRootData = async () => {
-    rootData.value = await $get<IDataDirectory[]>('/data/list/root')
+    rootData.value = await $get<IDataDirectory[]>('/data/root/list')
 
     if (rootData.value && rootData.value.length) {
+      const rootList = [] as TabItem[]
       rootData.value.forEach(async (item) => {
-        rootTabList.push({
+        rootList.push({
           id: item.id,
           label: item.nameZH,
           isRequest: false,
         })
-
-        // for (const res of alldata) {
-        //   // allData.value(*)
-        // }
       })
+
+      rootTabList = cloneDeep(rootList)
     }
   }
 

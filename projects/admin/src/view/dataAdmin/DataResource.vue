@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { cloneDeep } from 'lodash'
 import { Notify } from 'quasar'
 import type { DataRoot, IDataDirectory } from 'zjf-types'
 import { getDataDescribe } from '~/api/file/dataDescribe'
@@ -11,6 +12,7 @@ interface Props {
   midTable: File | undefined
   dataRootId: DataRoot
   describe?: Describe
+  treeData?: { data: IDataDirectory[] }
   dataBase?: IDataDirectory[]
 }
 const props = defineProps<Props>()
@@ -19,13 +21,9 @@ const emits = defineEmits(['update:midTable', 'update:describe', 'update:referen
 const midTable = ref<File>()
 const refDialog = ref(false)
 const reference = reactive<Reference>({ id: '', text: '' })
+const rowData = ref([])
 
 const mideTableCol = [
-  {
-    name: 'index',
-    label: '序号',
-    field: 'index',
-  },
   {
     name: 'DATABASE',
     label: '库',
@@ -66,21 +64,6 @@ const mideTableCol = [
     label: '表-en',
     field: 'TABLE_ENG',
   },
-  {
-    name: 'VARIABLE',
-    label: '字段',
-    field: 'VARIABLE',
-  },
-  {
-    name: 'VARIABLE_ENG',
-    label: '字段-en',
-    field: 'VARIABLE_ENG',
-  },
-  {
-    name: 'DESCRIPTION',
-    label: '字段说明',
-    field: 'DESCRIPTION',
-  },
 ]
 
 function emitDescribe(val: any, enName: string, id?: string) {
@@ -120,6 +103,61 @@ function downLoadDescribe(enName: string): string {
   const res = getDataDescribe(props.dataRootId, filename)
   return res
 }
+
+function flattenTree(tree: IDataDirectory, parentNames = [], result = ([] as any[])) {
+  if (!tree.children)
+    return
+
+  for (const treeChildren of tree.children) {
+    const { nameZH, nameEN, children } = treeChildren
+    const currentNames = [...parentNames, { nameZH, nameEN }]
+
+    if (children) {
+      for (const child of children) {
+        const { nameZH: bNameZH, nameEN: bNameEN, children: partChildren } = child
+
+        if (partChildren) {
+          for (const part of partChildren) {
+            const { nameZH: partNameZH, nameEN: partNameEN, children: tableChildren } = part
+
+            if (tableChildren) {
+              for (const table of tableChildren) {
+                const { nameZH: tableNameZH, nameEN: tableNameEN } = table
+
+                result.push({
+                  DATABASE: currentNames[0].nameZH,
+                  DATABASE_ENG: currentNames[0].nameEN,
+                  B_DATABASE: bNameZH,
+                  B_DATABASE_ENG: bNameEN,
+                  PART: partNameZH,
+                  PART_ENG: partNameEN,
+                  TABLE: tableNameZH,
+                  TABLE_ENG: tableNameEN,
+                })
+              }
+            }
+          }
+        }
+
+        flattenTree(child, currentNames, result)
+      }
+    }
+  }
+
+  return result
+}
+
+const tableData = computed(() => {
+  if (!props.treeData?.data)
+    return []
+  if (!props.treeData.data.length)
+    return []
+
+  const res = flattenTree(props.treeData.data[0])
+  rowData.value = cloneDeep(res)
+
+  return rowData.value
+})
 </script>
 
 <template>
@@ -132,8 +170,8 @@ function downLoadDescribe(enName: string): string {
       <q-file
         :model-value="midTable"
         bg-color="primary"
-        filled
-        dense
+
+        dense filled
         accept=".csv"
         label-color="white"
         label="上传中间表"
@@ -141,7 +179,11 @@ function downLoadDescribe(enName: string): string {
       />
     </header>
 
-    <base-table :cols="mideTableCol" :rows="[]" />
+    <base-table v-slot="{ props, col }" :cols="mideTableCol" :rows="tableData">
+      <div flex="~ row">
+        {{ props.row[`${col}`] }}
+      </div>
+    </base-table>
 
     <header font-600 text-grey-8 title-4 flex="~ row justify-start">
       数据库介绍

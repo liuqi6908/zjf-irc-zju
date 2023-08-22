@@ -19,7 +19,7 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
     :model-value="modelValue"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <q-card min-w-lg p-6 style="border-radius: 12px !important;">
+    <q-card min-w-lg p-6 style="border-radius: 0px !important;">
       <div flex="~ row justify-between items-center" mb-6>
         <div>
           <btn v-if="back" @click="$emit('update:back')" />

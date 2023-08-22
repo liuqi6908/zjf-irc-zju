@@ -6,6 +6,7 @@ import { AUTH_TOKEN_KEY } from 'shared/constants'
 import { login } from '~/api/auth/login'
 
 import { register } from '~/api/auth/register'
+import { getProfile } from '~/api/auth/getProfile'
 
 const authToken = useStorage(AUTH_TOKEN_KEY, '')
 const userInfo = ref<IUser>()
@@ -42,11 +43,24 @@ export function useUser($router = useRouter()) {
     if (res)
       await useLogin({ password, account, email })
   }
+  /** 默认查询当前用户的认证信息 */
+  const useGetProfile = async (relation = 'role.permissions,verification') => {
+    const res = await getProfile(relation)
+    if (res)
+      userInfo.value = res
+  }
+
+  const isRoot = async (relation = 'role.permissions,verification') => {
+    const res = await getProfile(relation)
+    return res.role?.name === 'root'
+  }
 
   return {
     useRegister,
     useLogin,
     userInfo,
     authToken,
+    useGetProfile,
+    isRoot,
   }
 }

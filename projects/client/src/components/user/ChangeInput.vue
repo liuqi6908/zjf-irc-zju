@@ -7,7 +7,7 @@ interface Props {
 }
 defineProps<Props>()
 const emits = defineEmits(['update:modelValue', 'update:isEdit'])
-function closeEdit(edit: boolean) {
+function edit(edit: boolean) {
   emits('update:isEdit', edit)
 }
 </script>
@@ -21,14 +21,10 @@ function closeEdit(edit: boolean) {
         </span>
         <span text-grey-6>{{ captions }}</span>
       </div>
-      <div v-if="isEdit">
-        <Btn label="保存" />
-        <Btn label="取消" ml-4 outline @click="closeEdit(false)" />
-      </div>
-
-      <Btn v-else label="修改" @click="closeEdit(true)" />
+      <Btn label="修改" @click="$emit('update:edit')" />
     </div>
     <UserCodeInput
+      :dark="false"
       :disable="!isEdit"
       :user-code="modelValue"
       @update:user-code="(v) => $emit('update:modelValue', v)"

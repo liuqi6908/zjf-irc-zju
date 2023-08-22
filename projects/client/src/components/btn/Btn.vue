@@ -14,6 +14,7 @@ interface Props extends QBtnGroupProps {
   flat?: boolean
   closePopup?: boolean
   dense?: boolean
+  return?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
