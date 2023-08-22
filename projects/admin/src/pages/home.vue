@@ -6,14 +6,18 @@ import Tabs from 'shared/component/base/tab/Tabs.vue'
 
 import { cloneDeep } from 'lodash-es'
 import { Notify } from 'quasar'
+import { useRouter } from 'vue-router'
 import EditableGrid from '~/components/table/EditableGrid.vue'
 import { getCms } from '~/api/cms/getCms'
 import { upsertCms } from '~/api/cms/upsertCms'
+import { useUser } from '~/composables/useUser'
 
 const homeId = ref('home')
 const currTabObj = ref()
 const tab = ref('')
 const tableLoading = ref()
+const { useGetProfile, userInfo } = useUser()
+const router = useRouter()
 
 const tabList = computed(() => cmsConfig.find(i => i.id === homeId.value)?.children)
 

@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  dark: true,
+})
 const emits = defineEmits(['update:userCode', 'update:accept'])
 
 interface Props {
@@ -7,6 +9,7 @@ interface Props {
   accept?: boolean
   rule?: Array<any>
   disable?: boolean
+  dark?: boolean
 }
 
 const inputRef = ref(null)
@@ -24,7 +27,8 @@ watch(() => props.userCode, () => {
     ref="inputRef"
     :disable="disable"
     :model-value="userCode"
-    outlined dense dark
+    dense outlined
+    :dark="dark"
     :rules="rule"
     @update:model-value="(v) => $emit('update:userCode', v)"
   />

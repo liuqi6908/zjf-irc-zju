@@ -172,6 +172,7 @@ onMounted(async () => {
             <span text-grey-6>{{ a.caption }}</span>
           </div>
           <UserCodeInput
+            :dark="false"
             :disable="a.disable"
             :user-code="a.inputVal"
           />

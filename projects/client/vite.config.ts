@@ -25,6 +25,9 @@ export default ({ mode }: any) => {
   // Object.assign(process.env, loadEnv(mode, process.cwd()))
   return defineConfig({
     base: process.env.VITE_BASE,
+    define: {
+      'process.env': {},
+    },
     server: {
       host: '0.0.0.0',
       port: Number.parseInt((process.env.VITE_DEV_PORT as string) || '3333', 10),

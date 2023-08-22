@@ -8,7 +8,7 @@ import AuthAdminTable from '~/view/authorityAdmin/AuthAdminTable.vue'
 import { upsertDataRole } from '~/api/dataPermission/upsertDataRole'
 import { getDataRolesList } from '~/api/dataPermission/getDataRolesList'
 
-const { geRootData, fetchAllData, allData, verifyTree, loading } = useDataBase()
+const { fetchAllData, verifyTree, loading } = useDataBase()
 
 const settingTable = {
   row: [
