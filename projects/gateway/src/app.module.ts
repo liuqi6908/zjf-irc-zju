@@ -32,6 +32,7 @@ import { ResponseInterceptor } from './interceptors/response.interceptor'
 import { PermissionModule } from './modules/permission/permission.module'
 import { EsAnalyzerModule } from './modules/es-analyzer/es-analyzer.module'
 import { VerificationModule } from './modules/verification/verification.module'
+import { ConfigModule as SysConfigModule } from './modules/config/config.module'
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { VerificationModule } from './modules/verification/verification.module'
     RedisModule,
     EmailModule,
     DesktopModule,
+    SysConfigModule,
     EsAnalyzerModule,
     PermissionModule,
     VerificationModule,
