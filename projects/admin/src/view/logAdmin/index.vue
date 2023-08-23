@@ -36,7 +36,7 @@ const columns: QTableProps['columns'] = reactive([
   },
   {
     name: 'rootId',
-    label: '大类',
+    label: '类',
     field: 'rootId',
   },
   {
@@ -196,4 +196,14 @@ function exportTable() {
 </template>
 
 <style lang="scss" scoped>
+.log-admin {
+  :deep(.q-table) {
+    thead {
+      position: sticky;
+      top: 0;
+      background-color: white;
+      z-index: 1;
+    }
+  }
+}
 </style>
