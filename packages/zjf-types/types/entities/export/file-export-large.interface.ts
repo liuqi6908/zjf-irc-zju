@@ -1,7 +1,7 @@
 import { IUser } from "../user.interface";
-import { IFileExportBasic } from "./_file-export-basic.interface";
+import { IFileExportBasic } from "./file-export-basic.interface";
 
-export interface IFileExportBig extends IFileExportBasic {
+export interface IFileExportLarge extends IFileExportBasic {
   /** 处理者 */
   handler: IUser;
   /** 处理者的唯一标识 */

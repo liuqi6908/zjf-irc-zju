@@ -10,6 +10,8 @@ import { ICreatedAt, IUpdatedAt } from "./_timestamp.interface";
 import { IVerificationHistory } from './verification.interface';
 import { INicknameOptionalDto } from '../dto/nickname.interface';
 import { IDesktopQueueHistory } from './desktop-queue-history.interface';
+import { IFileExportSmall } from '../../dist/cjs/types/entities/export/file-export-small.interface';
+import { IFileExportLarge } from '../../dist/cjs/types/entities/export/file-export-large.interface';
 
 export interface IUser extends 
   ICreatedAt, 
@@ -69,4 +71,13 @@ export interface IUser extends
 
   /** 已结束的云桌面申请（历史记录） */
   desktopQueueHistory?: IDesktopQueueHistory[];
+
+  /** 外发的小文件列表 */
+  exportsSmall?: IFileExportSmall[]
+
+  /** 外发的大文件列表 */
+  exportsLarge?: IFileExportLarge[]
+
+  /** 处理过（通过/驳回）的大文件外发列表 */
+  exportsLargeHandled?: IFileExportLarge[]
 }

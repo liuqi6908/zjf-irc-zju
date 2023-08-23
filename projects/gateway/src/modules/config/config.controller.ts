@@ -16,9 +16,6 @@ export class ConfigController {
   @ApiSuccessResponse(ConfigResDto)
   @Get()
   public async getConfig() {
-    return (await this._sysCfgSrv.repo().findOne({
-      where: {},
-      select: ['config'],
-    }))?.config
+    return await this._sysCfgSrv.getConfig()
   }
 }

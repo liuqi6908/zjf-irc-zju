@@ -1,3 +1,3 @@
-import { IFileExportBasic } from "./_file-export-basic.interface";
+import { IFileExportBasic } from "./file-export-basic.interface";
 
-export interface IFileExportBig extends IFileExportBasic {}
+export interface IFileExportSmall extends IFileExportBasic {}

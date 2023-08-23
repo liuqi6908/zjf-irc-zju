@@ -11,6 +11,8 @@ import { UserDeleted } from './user-deleted'
 import { DesktopQueue } from './desktop-queue'
 import { VerificationHistory } from './verification'
 import { DesktopQueueHistory } from './desktop-queue-history'
+import { FileExportSmall } from './export/file-export-small.entity'
+import { FileExportLarge } from './export/file-export-large.entity'
 
 @Entity()
 export class User extends BaseTimeStamp implements IUser {
@@ -102,4 +104,16 @@ export class User extends BaseTimeStamp implements IUser {
   @ApiProperty({ description: '已完成的云桌面使用（到期历史记录）' })
   @OneToMany(() => DesktopQueueHistory, dqh => dqh.user)
   desktopQueueHistory?: DesktopQueueHistory[]
+
+  @ApiProperty({ description: '外发的小文件列表' })
+  @OneToMany(() => FileExportSmall, fileExpSmall => fileExpSmall.founder)
+  exportsSmall?: FileExportSmall[]
+
+  @ApiProperty({ description: '外发的大文件列表' })
+  @OneToMany(() => FileExportLarge, fileExpLarge => fileExpLarge.founder)
+  exportsLarge?: FileExportLarge[]
+
+  @ApiProperty({ description: '处理过（通过/驳回）的大文件外发列表' })
+  @OneToMany(() => FileExportLarge, fileExpLarge => fileExpLarge.handler)
+  exportsBigHandled?: FileExportLarge[]
 }

@@ -26,6 +26,7 @@ import { RedisModule } from './modules/redis/redis.module'
 import { EmailModule } from './modules/email/email.module'
 import { AuthMiddleware } from './middleware/auth.middleware'
 import { InfoMiddleware } from './middleware/info.middleware'
+import { ExportModule } from './modules/export/export.module'
 import { DesktopModule } from './modules/desktop/desktop.module'
 import { AccessMiddleware } from './middleware/access.middleware'
 import { ResponseInterceptor } from './interceptors/response.interceptor'
@@ -46,6 +47,7 @@ import { ConfigModule as SysConfigModule } from './modules/config/config.module'
     DataModule,
     RedisModule,
     EmailModule,
+    ExportModule,
     DesktopModule,
     SysConfigModule,
     EsAnalyzerModule,
