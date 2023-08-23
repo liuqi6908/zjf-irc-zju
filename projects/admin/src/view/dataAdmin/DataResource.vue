@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import { Notify } from 'quasar'
 import type { DataRoot, IDataDirectory } from 'zjf-types'
 import { getDataDescribe } from '~/api/file/dataDescribe'

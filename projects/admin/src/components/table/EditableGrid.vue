@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import '@wangeditor/editor/dist/css/style.css'
 
+import { defineAsyncComponent } from 'vue'
 import UploadFile from './UploadFile.vue'
-import RichEdit from './RichEdit.vue'
+
+const props = defineProps<Props>()
+
+const emits = defineEmits(['update:rows', 'save'])
+
+const RichEdit = defineAsyncComponent(() => import('./RichEdit.vue'))
 
 export type ColNameType = typeof columnsconfig[number]['name']
 
@@ -14,9 +20,6 @@ interface Props {
   rows: Array<any>
   loading?: false
 }
-const props = defineProps<Props>()
-const emits = defineEmits(['update:rows', 'save'])
-
 const baseCol = ref([])
 const rowsRef = ref([])
 
