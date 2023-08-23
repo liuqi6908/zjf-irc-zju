@@ -153,7 +153,7 @@ function exportTable() {
   ).join('\r\n')
 
   const status = exportFile(
-    `日志管理 ${formatDate()}.csv`,
+    `日志管理 ${moment().format('YYYY-MM-DD HH:mm:ss')}.csv`,
     content,
     'text/csv',
   )
