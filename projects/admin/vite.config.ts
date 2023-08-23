@@ -73,6 +73,7 @@ export default ({ mode }: any) => {
           'src/composables',
           'src/stores',
           'src/constants',
+          'src/utils',
           'src/views',
         ],
         vueTemplate: true,

@@ -1,11 +1,9 @@
 <script setup lang="ts">
-
+import LogAdmin from '~/view/logAdmin/index.vue'
 </script>
 
-<template lang="">
-  <div>
-    日志管理
-  </div>
+<template>
+  <LogAdmin absolute full />
 </template>
 
 <route lang="yaml">
