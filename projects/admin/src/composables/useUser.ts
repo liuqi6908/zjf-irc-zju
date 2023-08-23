@@ -3,6 +3,7 @@ import type { IUser } from 'zjf-types'
 import { encryptPasswordInHttp } from 'zjf-utils'
 import { AUTH_TOKEN_KEY } from 'shared/constants'
 
+import { useRouter } from 'vue-router'
 import { login } from '~/api/auth/login'
 
 import { register } from '~/api/auth/register'
@@ -17,7 +18,7 @@ const userInfo = ref<IUser>()
 //   },
 // }
 
-export function useUser($router = useRouter()) {
+export function useUser(router = useRouter()) {
   /** 登录 */
   const useLogin = async (options: { password: string; account?: string; email?: string }) => {
     /** 加密 */
@@ -26,7 +27,7 @@ export function useUser($router = useRouter()) {
     if (res) {
       authToken.value = res.sign.access_token
       userInfo.value = res.user
-      $router.replace({ path: '/home' })
+      router.replace({ path: '/home' })
     }
   }
 
