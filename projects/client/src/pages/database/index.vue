@@ -26,7 +26,7 @@ onBeforeMount(() => {
   <div flex="~ col" full bg-grey-1>
     <header class="database" h-40 w-full flex-center>
       <div text-grey-1 title-1>
-        常见问题解答(Q&A)
+        数据库
       </div>
     </header>
     <div class="col-grow" flex-start mt-15 justify-center flex="~ row gap-10">

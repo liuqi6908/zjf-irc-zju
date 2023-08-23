@@ -54,7 +54,14 @@ defineExpose({
 </script>
 
 <template>
-  <q-table class="my-sticky-dynamic" :rows="rows" bordered separator="cell" :columns="cols" :loading="loading" flat>
+  <q-table 
+  class="my-sticky-dynamic" 
+  :rows="rows" 
+  bordered 
+  separator="cell" 
+  :columns="cols" 
+  :loading="loading" 
+  flat>
     <!-- <template #top-left>
       <div w-full flex="~ row justify-between">
         <q-btn v-if="operation?.includes('addRows')" label="增加一项" push color="primary-1" @click="addRow" />
@@ -90,4 +97,5 @@ defineExpose({
   thead tr:first-child th /* bg color is important for th; just specify one */
       background: rgba(2, 92, 185, 0.70)
       color: #fff
+      height: 20px
 </style>

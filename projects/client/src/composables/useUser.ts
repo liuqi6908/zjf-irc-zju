@@ -1,5 +1,5 @@
 import { useStorage } from '@vueuse/core'
-import type { IUser } from 'zjf-types'
+import type { IUser, IVerificationHistory } from 'zjf-types'
 import { encryptPasswordInHttp } from 'zjf-utils'
 import { AUTH_TOKEN_KEY } from 'shared/constants'
 import { getProfile } from '~/api/auth/getProfile'
@@ -9,6 +9,9 @@ import { register } from '~/api/auth/register'
 
 const authToken = useStorage(AUTH_TOKEN_KEY, '')
 const userInfo = ref<IUser>()
+const latestVerifiy = ref<IVerificationHistory>()
+
+const { $get } = useRequest()
 
 // const quey: IQueryDto<IVerificationHistory> = {
 //   relations: {
@@ -59,6 +62,11 @@ export function useUser($router = useRouter()) {
       userInfo.value = res
   }
 
+  const getVerify = async () => {
+    latestVerifiy.value = await $get<IVerificationHistory>('/verification/latest')
+    return latestVerifiy.value
+  }
+
   return {
     useRegister,
     useLogin,
@@ -66,5 +74,7 @@ export function useUser($router = useRouter()) {
     userInfo,
     authToken,
     useGetProfile,
+    getVerify,
+    latestVerifiy,
   }
 }

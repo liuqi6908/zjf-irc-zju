@@ -94,11 +94,15 @@ onMounted(async () => {
 
           <div flex flex-row items-center text-primary-1>
             <Avatar
+              flex="~ row gap-2 items-center"
               :avatar-url="userInfo?.avatar"
               :nickname="userInfo?.nickname"
               @update:route="isToken ? (userDropdown = !userDropdown) : router.replace({ path: '/auth/login' })"
-            />
-            {{ isToken ? '' : '登录' }}
+            >
+              <span>
+                {{ isToken ? '' : '登录' }}
+              </span>
+            </Avatar>
             <q-list v-if="userDropdown" absolute right-3 top-20 z-999 bg-grey-1 p-2 filter-drop-shadow>
               <NavItem
                 v-for="u in userList"

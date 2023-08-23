@@ -1,15 +1,18 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 
-import { VerificationIdentify, verificationIdentifyDescriptions } from 'zjf-types'
+import { CodeAction, VerificationIdentify, verificationIdentifyDescriptions } from 'zjf-types'
 import type { ICreateVerificationBodyDto } from 'zjf-types'
 import { Notify } from 'quasar'
 import { useUser } from '../../../composables/useUser'
 
 import { uploadVerifyFile } from '~/api/file/uploadVerifyFile'
 import { requestVerification } from '~/api/auth/verification/requestVerification'
+import { changeNickname } from '~/api/user/chnageNickname'
+import { changeEmail } from '~/api/auth/user/changeEmail'
+import { changePassword } from '~/api/user/changePassword'
 
-const { useGetProfile, userInfo } = useUser()
+const { useGetProfile, userInfo, getVerify, latestVerifiy } = useUser()
 
 const showVeri = ref(false)
 const files = ref<Array<File>>()
@@ -22,16 +25,30 @@ const identify = ref<{ label: string; id: VerificationIdentify }>({ label: '', i
 const baseInfoList = reactive([
   {
     label: '昵称',
-    disable: true,
     id: 'nickname',
-    caption: '',
-    inputVal: userInfo.value && userInfo.value.nickname,
+    edit: '',
+    caption: '可用于登录平台',
+    inputVal: userInfo.value?.nickname || '',
   },
   {
     label: '邮箱',
-    disable: true,
     id: 'email',
-    inputVal: userInfo.value && userInfo.value.email,
+    edit: '',
+    caption: '可用于接受平台信息',
+    smsCode: '',
+    bizId: '',
+    action: CodeAction.BIND_EMAIL,
+    inputVal: userInfo.value?.email || '',
+  },
+  {
+    label: '密码',
+    id: 'password',
+    edit: '',
+    smsCode: '',
+    bizId: '',
+    caption: '设置密码已确保账户安全',
+    action: CodeAction.CHANGE_PASSWORD,
+    inputVal: '',
   },
 ])
 
@@ -40,34 +57,31 @@ const authInfoList = reactive([
     label: '学校',
     id: 'school',
     disable: true,
-    caption: '',
-    inputVal: '',
+    inputVal: latestVerifiy.value?.school,
   },
   {
     label: '学院',
     disable: true,
-    inputVal: '',
+    inputVal: latestVerifiy.value?.college,
   },
   {
     label: '学号/工号',
     disable: true,
-    caption: '',
-    inputVal: '',
+    inputVal: latestVerifiy.value?.number,
   },
   {
     label: '真实姓名',
     disable: true,
-    inputVal: '',
+    inputVal: latestVerifiy.value?.name,
   }, {
     label: '身份证',
     disable: true,
-    caption: '',
-    inputVal: '',
+    inputVal: latestVerifiy.value?.idCard,
   },
   {
     label: '用户类型',
     disable: true,
-    inputVal: '',
+    inputVal: latestVerifiy.value?.identify,
   },
 ])
 
@@ -109,29 +123,52 @@ async function fetchUploadFile(files?: File[]) {
   }
 }
 
-async function confirm() {
+async function requestVerify() {
   await fetchUploadFile(files.value)
   // 请求认证
   const res = await requestVerification(verifiInfo)
+  notify(res, '认证')
 }
 
-function onRejected(rejectedEntries: Array<any>) {
-  rejectedEntries.forEach((reject) => {
+async function confirmEdit(id: string) {
+  const obj = baseInfoList.find(i => i.id === id)
+
+  if (!obj)
+    return
+
+  if (id === 'nickname') {
+    const res = await changeNickname(obj.edit)
+    notify(res, '修改')
+  }
+  if (id === 'email') {
+    const res = await changeEmail(obj.edit, obj.bizId, obj.smsCode)
+    notify(res, '修改')
+  }
+  if (id === 'password') {
+    const res = await changePassword(obj.edit, userInfo.value?.email, obj.bizId, obj.smsCode)
+    notify(res, '修改')
+  }
+}
+
+function notify(res: any, message: string) {
+  if (res) {
     Notify.create({
-      type: 'negative',
-      message: `${reject.failedPropValidation}`,
-    })
-  })
-}
-
-onMounted(async () => {
-  if (!userInfo.value) {
-    await useGetProfile()
-    baseInfoList.forEach((item) => {
-      if (userInfo.value[item.id])
-        item.inputVal = userInfo.value[item.id]
+      message: `${message}成功`,
+      type: 'sucesss',
     })
   }
+  else {
+    Notify.create({
+      message: `${message}失败,请检查输入信息`,
+      type: 'error',
+    })
+  }
+}
+
+// function change
+onBeforeMount(async () => {
+  await useGetProfile()
+  await getVerify()
 })
 </script>
 
@@ -144,15 +181,20 @@ onMounted(async () => {
       </header>
 
       <!-- TODO:修改基本信息的交互 -->
-      <div flex="~ row gap-10">
+      <div flex="~ col gap-10">
         <ChangeInput
           v-for="b in baseInfoList"
+          :id="b.id"
           :key="b.label"
-          v-model="b.inputVal"
+          v-model:user-code="b.inputVal"
+          v-model:edit="b.edit"
+          v-model:smsCode="b.smsCode"
+          :action="b.action"
+          :captions="b.caption"
           class="col-grow"
           :label="b.label"
-          :is-edit="b.disable"
-          @update:is-edit="(val) => b.disable = val"
+          @update:biz-id="(val) => b.bizId = val"
+          @update:confirm="confirmEdit(b.id)"
         />
       </div>
     </div>
@@ -169,29 +211,52 @@ onMounted(async () => {
             <span font-500 text-grey-8>
               {{ a.label }}
             </span>
-            <span text-grey-6>{{ a.caption }}</span>
           </div>
           <UserCodeInput
+            v-model:user-code="a.inputVal"
             :dark="false"
             :disable="a.disable"
-            :user-code="a.inputVal"
           />
         </div>
       </div>
     </div>
 
-    <div>
+    <div flex="~ row" mt-10 w-full justify-center>
       <div v-if="userInfo && userInfo.verification">
-        已认证
+        <VerifyStatus :status="latestVerifiy?.status" />
       </div>
-      <Btn v-else label="认证" @click="showVeri = true" />
+
+      <div v-else flex="~ row gap-5">
+        <VerifyStatus status="none" />
+        <Btn label="前往认证" @click="showVeri = true" />
+      </div>
     </div>
 
-    <ZDialog v-model="showVeri" :confirm-event="confirm" footer title="需要完善信息并且通过审核">
+    <ZDialog v-model="showVeri" :confirm-event="requestVerify" footer title="需要完善信息并且通过审核">
+      <div mb-2 mt-6>
+        <span text-alert-error>*</span> <span font-500 text-grey-8> 所在学院</span>
+      </div>
+      <UserCodeInput v-model:user-code="verifiInfo.college" :dark="false" label="请输入学院名称" />
+
+      <div mb-2 mt-6>
+        <span text-alert-error>*</span> <span font-500 text-grey-8> 身份证号码</span>
+      </div>
+      <UserCodeInput v-model:user-code="verifiInfo.idCard" :dark="false" label="请输入身份证号码" />
+
+      <div mb-2 mt-6>
+        <span text-alert-error>*</span> <span font-500 text-grey-8> 学号/工号</span>
+      </div>
+      <UserCodeInput v-model:user-code="verifiInfo.number" :dark="false" label="请输入学号/工号" />
+
+      <div mb-2 mt-6>
+        <span text-alert-error>*</span> <span font-500 text-grey-8> 学校名称</span>
+      </div>
+      <UserCodeInput v-model:user-code="verifiInfo.school" :dark="false" label="请输入学校名称" />
+
       <div mb-2 mt-6>
         <span text-alert-error>*</span> <span font-500 text-grey-8> 姓名</span>
       </div>
-      <UserCodeInput v-model:user-code="verifiInfo.name" label="请输入您的真实姓名" />
+      <UserCodeInput v-model:user-code="verifiInfo.name" :dark="false" label="请输入您的真实姓名" />
 
       <div mb-2 mt-6>
         <span text-alert-error>*</span> <span font-500 text-grey-8>身份 </span>
@@ -212,7 +277,6 @@ onMounted(async () => {
             type="file"
             label="Standard"
             max-file-size="1048576"
-            @rejected="onRejected"
           />
           <Btn transparent label="选择图片（最多8张）" @click="pickImg" />
         </div>

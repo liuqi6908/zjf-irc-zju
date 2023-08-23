@@ -331,6 +331,9 @@ importers:
       '@iconify-json/carbon':
         specifier: ^1.1.18
         version: registry.npmmirror.com/@iconify-json/carbon@1.1.18
+      '@iconify-json/ep':
+        specifier: ^1.1.12
+        version: registry.npmmirror.com/@iconify-json/ep@1.1.12
       '@iconify-json/material-symbols':
         specifier: ^1.1.54
         version: registry.npmmirror.com/@iconify-json/material-symbols@1.1.54
@@ -3684,6 +3687,14 @@ packages:
     resolution: {integrity: sha512-RbKET6KS9xUMeYVq1FUH3UUA7AYNcnApkHt2AccCwTWTQQs/O58ji4Of6z6PhRajGlbfvrJzT/Uqh19OKECRvA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@iconify-json/carbon/-/carbon-1.1.18.tgz}
     name: '@iconify-json/carbon'
     version: 1.1.18
+    dependencies:
+      '@iconify/types': registry.npmmirror.com/@iconify/types@2.0.0
+    dev: true
+
+  registry.npmmirror.com/@iconify-json/ep@1.1.12:
+    resolution: {integrity: sha512-UnWhRfcGzB9daN5pL9hkq/sWZB9FMPAVo9VKhN/Qf3//CrBNwh8r9hSPW3WTrJO2NKGpTzlIFTvrfHdbhFH3Jg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@iconify-json/ep/-/ep-1.1.12.tgz}
+    name: '@iconify-json/ep'
+    version: 1.1.12
     dependencies:
       '@iconify/types': registry.npmmirror.com/@iconify/types@2.0.0
     dev: true
