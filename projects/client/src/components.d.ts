@@ -21,6 +21,7 @@ declare module 'vue' {
     SliderList: typeof import('./components/slider/sliderList.vue')['default']
     SMSInput: typeof import('./components/auth/SMSInput.vue')['default']
     Tree: typeof import('./components/tree/Tree.vue')['default']
+    UploadFile: typeof import('./components/file/UploadFile.vue')['default']
     UserCodeInput: typeof import('./components/auth/UserCodeInput.vue')['default']
     VerifyStatus: typeof import('./components/user/VerifyStatus.vue')['default']
     ZDialog: typeof import('./components/dialog/ZDialog.vue')['default']
