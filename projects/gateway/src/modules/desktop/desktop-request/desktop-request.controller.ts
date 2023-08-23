@@ -1,16 +1,17 @@
 import { getQuery } from 'src/utils/query'
-import { QueryDto } from 'src/dto/query.dto'
+import { QueryDto, QueryResDto } from 'src/dto/query.dto'
 import { UserIdDto } from 'src/dto/user-id.dto'
 import { IsLogin } from 'src/guards/login.guard'
-import { responseError } from 'src/utils/response'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { HasPermission } from 'src/guards/permission.guard'
 import type { DesktopQueue } from 'src/entities/desktop-queue'
+import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common'
 import { DesktopQueueHistoryStatus, DesktopQueueStatus, ErrorCode, PermissionType } from 'zjf-types'
 
 import { DesktopQueueHistoryService } from '../desktop-queue-history/desktop-queue-history.service'
 import { DesktopRequestService } from './desktop-request.service'
+import { GetOwnDesktopReqResDto } from './dto/get-own-desktop-req.res.dto'
 import { RejectDesktopReqBodyDto } from './dto/reject-desktop-req.body.dto'
 import { CreateDesktopRequestBodyDto } from './dto/create-desktop-req.body.dto'
 
@@ -76,6 +77,7 @@ export class DesktopRequestController {
   // async getQueueLength() {}
 
   @ApiOperation({ summary: '获取当前用户的云桌面使用申请情况' })
+  @ApiSuccessResponse(GetOwnDesktopReqResDto)
   @IsLogin()
   @Get('own')
   async getOwnRequest(@Req() req: FastifyRequest) {
@@ -97,6 +99,7 @@ export class DesktopRequestController {
 
   @ApiOperation({ summary: '查询云桌面申请' })
   @HasPermission(PermissionType.DESKTOP_REQUEST_QUERY)
+  @ApiSuccessResponse(QueryResDto<DesktopQueue>)
   @Post('query')
   async queryRequests(@Body() body: QueryDto<DesktopQueue>) {
     return await getQuery(this._desktopReqSrv.repo(), body || {})

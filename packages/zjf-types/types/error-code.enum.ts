@@ -84,6 +84,8 @@ export enum ErrorCode {
   DESKTOP_REQUEST_IN_USE_EXISTS = 800003, 
   /** 仅待审核状态允许被操作 */
   DESKTOP_REQUEST_PENDING_ONLY = 800004,
+  /** 仅排队状态允许被操作 */
+  DESKTOP_REQUEST_QUEUE_ONLY = 800005,
 }
 
 export type ErrorMessageCollection = Partial<

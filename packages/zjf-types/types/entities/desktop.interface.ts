@@ -35,4 +35,7 @@ export interface IDesktop extends ICreatedAt, IUpdatedAt {
 
   /** 上一个使用该云桌面的用户 ID */
   lastUserId?: IUser['id']
+
+  /** 是否已停用 */
+  disabled?: boolean
 }

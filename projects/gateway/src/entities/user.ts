@@ -91,6 +91,10 @@ export class User extends BaseTimeStamp implements IUser {
   @OneToOne(() => Desktop, desktop => desktop.user)
   desktop?: Desktop
 
+  @ApiProperty({ description: '当前用户曾使用过的云桌面列表' })
+  @OneToMany(() => Desktop, desktop => desktop.lastUser)
+  desktopHistories?: Desktop[]
+
   @ApiProperty({ description: '当前进行中的云桌面排队/申请' })
   @OneToOne(() => DesktopQueue, desktopQueue => desktopQueue.user)
   desktopQueue?: DesktopQueue

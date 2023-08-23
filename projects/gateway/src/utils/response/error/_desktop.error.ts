@@ -18,6 +18,10 @@ const _desktopErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.BAD_REQUEST,
     message: '仅待审核状态允许被操作',
   },
+  [ErrorCode.DESKTOP_REQUEST_QUEUE_ONLY]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '仅排队状态允许被操作',
+  },
 }
 
 export default _desktopErrors

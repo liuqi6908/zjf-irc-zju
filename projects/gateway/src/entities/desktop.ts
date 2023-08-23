@@ -1,6 +1,6 @@
 import type { IDesktop } from 'zjf-types'
 import { ApiProperty } from '@nestjs/swagger'
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from 'typeorm'
 
 import { User } from './user'
 import { BaseTimeStamp } from './_timestamp'
@@ -34,10 +34,24 @@ export class Desktop
   expiredAt: Date
 
   @ApiProperty({ description: '云桌面当前绑定的用户', type: () => User })
-  @OneToOne(() => User)
+  @OneToOne(() => User, user => user.desktop)
   @JoinColumn()
   user?: User
 
+  @ApiProperty({ description: '云桌面当前绑定的用户 ID' })
   @Column({ nullable: true })
   userId?: User['id']
+
+  @ApiProperty({ description: '上一个使用该云桌面的用户', type: () => User })
+  @ManyToOne(() => User, user => user.desktopHistories)
+  @JoinColumn()
+  lastUser?: User
+
+  @ApiProperty({ description: '上一个使用该云桌面的用户 ID' })
+  @Column({ nullable: true })
+  lastUserId?: User['id']
+
+  @ApiProperty({ description: '云桌面是否已禁用' })
+  @Column({ nullable: true, default: false })
+  disabled?: boolean
 }

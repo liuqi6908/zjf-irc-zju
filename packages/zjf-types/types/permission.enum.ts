@@ -71,7 +71,7 @@ export enum PermissionType {
   /** 查看日志 */
   LOG_VIEW = 'log:view',
 
-  // ------------------ 云桌面 ---------------------
+  // ------------------ 云桌面-申请 ---------------------
   /** 查看云桌面申请附件 */
   DESKTOP_REQUEST_CAT_ATTACHMENT = 'desktop-request:cat-attachment',
   /** 创建云桌面申请 */
@@ -82,6 +82,19 @@ export enum PermissionType {
   DESKTOP_REQUEST_REJECT = 'desktop-request:reject',
   /** 查询云桌面申请 */
   DESKTOP_REQUEST_QUERY = 'desktop-request:query',
+
+  // ------------------ 云桌面-管理 ---------------------
+  /** 创建云桌面 */
+  DESKTOP_CREATE = 'desktop:create',
+  /** 停用云桌面 */
+  DESKTOP_DISABLE = 'desktop:disable',
+  /** 更新云桌面 */
+  DESKTOP_UPDATE = 'desktop:update',
+  /** 分配云桌面给指定用户 */
+  DESKTOP_ASSIGN = 'desktop:assign',
+  /** 查询云桌面 */
+  DESKTOP_QUERY = 'desktop:query'
+
 }
 
 export const permissionDescriptions: Record<PermissionType, string> = {
@@ -123,4 +136,10 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.DESKTOP_REQUEST_APPROVE]: '通过云桌面申请',
   [PermissionType.DESKTOP_REQUEST_REJECT]: '驳回云桌面申请',
   [PermissionType.DESKTOP_REQUEST_QUERY]: '查询云桌面申请',
+
+  [PermissionType.DESKTOP_CREATE]: '创建云桌面',
+  [PermissionType.DESKTOP_DISABLE]: '停用云桌面',
+  [PermissionType.DESKTOP_UPDATE]: '更新云桌面',
+  [PermissionType.DESKTOP_ASSIGN]: '分配云桌面给指定用户',
+  [PermissionType.DESKTOP_QUERY]: '查询云桌面',
 }
