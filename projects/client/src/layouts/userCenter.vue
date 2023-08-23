@@ -17,19 +17,26 @@ const userList = ref([
     id: 'myData',
     router: { path: 'myData' },
   },
+  {
+    nameZH: '我的作品',
+    id: 'myWorks',
+    router: { path: 'myWorks' },
+  },
 ])
 
-const clickId = ref('authentication')
+const editDialog = ref(false)
 </script>
 
 <template>
   <HomeLayout>
     <div flex="~ col" class="fit" bg-grey-2>
-      <header border-b-1 pb-6 text-5 font-600 text-grey-8 flex="~ row justify-start">
-        用户中心
+      <header class="userCenter" h-40 w-full flex-center>
+        <div text-grey-1 title-1>
+          用户中心
+        </div>
       </header>
 
-      <div flex="~ row" class="col-grow" flat mt-8 rounded-3 bg-grey-1 p-6>
+      <div flex="~ row" class="col-grow" flat rounded-3 bg-grey-1 p-6>
         <div border-r-1 border-grey-3 pr-6>
           <SliderList :list="userList" />
         </div>
@@ -40,3 +47,9 @@ const clickId = ref('authentication')
     </div>
   </HomeLayout>
 </template>
+
+<style scoped lang="scss">
+.userCenter {
+     background: no-repeat center / cover url("../assets/layout/userCenter.png");
+}
+</style>

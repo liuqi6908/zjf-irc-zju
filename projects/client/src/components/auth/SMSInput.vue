@@ -2,13 +2,16 @@
 import type { CodeAction } from 'zjf-types'
 import { smsCodeByEmail } from '~/api/auth/email/smsCodeByEmail'
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  dark: true,
+})
 const emits = defineEmits(['update:smsCode', 'update:accept', 'update:bizId'])
 
 interface Props {
   smsCode: string
   email: string
   action: CodeAction.REGISTER | CodeAction.LOGIN | CodeAction.CHANGE_PASSWORD
+  dark?: boolean
 }
 const wait = ref(0)
 
@@ -44,7 +47,7 @@ watch(() => props.smsCode, () => {
     label="请输入验证码"
     :model-value="smsCode"
     outlined
-    dark
+    :dark="dark"
     lazy-rules="ondemand"
     @update:model-value="(v: string) => $emit('update:smsCode', v)"
   >
@@ -52,7 +55,7 @@ watch(() => props.smsCode, () => {
       <div v-if="wait" text-4>
         {{ wait }}
       </div>
-      <Btn v-else bg-color="grey-1" dense label="发送验证码" transparent @click="getCode" />
+      <Btn v-else :bg-color="dark ? 'grey-1' : 'primary-1'" dense label="发送验证码" transparent @click="getCode" />
     </template>
     <template #error>
       <span> error </span>

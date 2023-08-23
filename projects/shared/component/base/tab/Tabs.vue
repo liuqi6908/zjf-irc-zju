@@ -19,6 +19,7 @@ interface Props {
     modelValue: string
     tabList: TabItem[]
     textClass?: string
+    align?:string
 }
 const props = defineProps<Props>()
 const emits = defineEmits(['update:modelValue', 'update:currTabObj'])
@@ -39,6 +40,7 @@ watch(() => props.modelValue,
             font-600
             bg-grey-1 
             text-primary-1 
+            :align="align"
             :model-value="modelValue"
             @update:model-value="(tab) => $emit('update:modelValue', tab)">
             <template v-for="tab in tabList" :key="tab.id" >

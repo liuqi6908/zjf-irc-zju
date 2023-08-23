@@ -5,7 +5,7 @@ interface Item {
   nameZH: string
   id: string
   clicked?: boolean
-  router?: { path: string; query: any }
+  router?: { path: string; query?: any }
 }
 
 interface Props {

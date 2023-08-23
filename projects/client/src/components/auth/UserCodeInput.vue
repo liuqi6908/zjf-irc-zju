@@ -31,7 +31,11 @@ watch(() => props.userCode, () => {
     :dark="dark"
     :rules="rule"
     @update:model-value="(v) => $emit('update:userCode', v)"
-  />
+  >
+    <template #prepend>
+      <slot name="prepend" />
+    </template>
+  </q-input>
 </template>
 
 <style lang="scss" scoped>
