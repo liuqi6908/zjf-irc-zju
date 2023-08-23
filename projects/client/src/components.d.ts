@@ -11,6 +11,7 @@ declare module 'vue' {
     Btn: typeof import('./components/btn/Btn.vue')['default']
     ChangeInput: typeof import('./components/user/ChangeInput.vue')['default']
     DisplayCard: typeof import('./components/card/DisplayCard.vue')['default']
+    DropZone: typeof import('./components/file/DropZone.vue')['default']
     NavItem: typeof import('./components/nav/NavItem.vue')['default']
     NavItemSection: typeof import('./components/nav/NavItemSection.vue')['default']
     PasswordInput: typeof import('./components/auth/PasswordInput.vue')['default']
@@ -21,6 +22,7 @@ declare module 'vue' {
     SMSInput: typeof import('./components/auth/SMSInput.vue')['default']
     Tree: typeof import('./components/tree/Tree.vue')['default']
     UserCodeInput: typeof import('./components/auth/UserCodeInput.vue')['default']
+    VerifyStatus: typeof import('./components/user/VerifyStatus.vue')['default']
     ZDialog: typeof import('./components/dialog/ZDialog.vue')['default']
     ZSelect: typeof import('./components/select/ZSelect.vue')['default']
   }
