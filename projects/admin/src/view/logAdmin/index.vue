@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { QTable, exportFile, useQuasar } from 'quasar'
+import moment from 'moment'
 import type { QTableProps } from 'quasar'
 
 interface Action {
@@ -123,11 +124,16 @@ async function queryLogData(props: any) {
     })
     rows.splice(0, rows.length, ...records.map(v => flattenJSON(v)))
     rows.forEach((item) => {
-      item.time = formatDate(item.time)
+      item.time = moment(item.time).format('YYYY-MM-DD HH:mm:ss')
       item.action = actions.find(v => v.key === item.action)?.value || item.action
     })
-    if (sortBy)
-      rows.sort((a, b) => a[sortBy].localeCompare(b[sortBy]))
+    if (sortBy) {
+      rows.sort((a, b) => {
+        const keyA = a[sortBy]?.toString() || ''
+        const keyB = b[sortBy]?.toString() || ''
+        return keyA.localeCompare(keyB)
+      })
+    }
   }
   catch (e) {}
   finally {
