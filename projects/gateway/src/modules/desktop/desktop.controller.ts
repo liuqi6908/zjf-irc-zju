@@ -8,6 +8,7 @@ import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { DesktopQueueStatus, ErrorCode, PermissionType } from 'zjf-types'
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req } from '@nestjs/common'
 
+import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { DesktopService } from './desktop.service'
 import { CreateDesktopBodyDto } from './dto/create-desktop.body.dto'
 import { UpdateDesktopBodyDto } from './dto/update-desktop.body.dto'
@@ -33,7 +34,15 @@ export class DesktopController {
   @HasPermission(PermissionType.DESKTOP_CREATE)
   @Put()
   public async createDesktop(@Body() body: CreateDesktopBodyDto) {
-    return await this._desktopSrv.createDesktop(body)
+    try {
+      return await this._desktopSrv.createDesktop(body)
+    }
+    catch (err) {
+      const sqlErr = parseSqlError(err)
+      if (sqlErr === SqlError.DUPLICATE_ENTRY)
+        responseError(ErrorCode.DESKTOP_ID_EXISTS)
+      responseError(ErrorCode.COMMON_UNEXPECTED_ERROR)
+    }
   }
 
   @ApiOperation({ summary: '停用一个云桌面' })

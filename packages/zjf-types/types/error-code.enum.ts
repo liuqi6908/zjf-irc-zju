@@ -86,6 +86,8 @@ export enum ErrorCode {
   DESKTOP_REQUEST_PENDING_ONLY = 800004,
   /** 仅排队状态允许被操作 */
   DESKTOP_REQUEST_QUEUE_ONLY = 800005,
+  /** 云桌面 id 已存在 */
+  DESKTOP_ID_EXISTS = 800006,
 }
 
 export type ErrorMessageCollection = Partial<

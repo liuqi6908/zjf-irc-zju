@@ -22,6 +22,10 @@ const _desktopErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.BAD_REQUEST,
     message: '仅排队状态允许被操作',
   },
+  [ErrorCode.DESKTOP_ID_EXISTS]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '云桌面 id 已存在',
+  },
 }
 
 export default _desktopErrors
