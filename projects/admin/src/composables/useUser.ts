@@ -1,7 +1,7 @@
 import { useStorage } from '@vueuse/core'
 import type { IUser } from 'zjf-types'
 import { encryptPasswordInHttp } from 'zjf-utils'
-import { AUTH_TOKEN_KEY } from 'shared/constants'
+import { ADMIN_ROLE_NAME, AUTH_TOKEN_KEY } from 'shared/constants'
 
 import { useRouter } from 'vue-router'
 import { login } from '~/api/auth/login'
@@ -11,6 +11,7 @@ import { getProfile } from '~/api/auth/getProfile'
 
 const authToken = useStorage(AUTH_TOKEN_KEY, '')
 const userInfo = ref<IUser>()
+const adminInfo = useStorage(ADMIN_ROLE_NAME, '')
 
 // const quey: IQueryDto<IVerificationHistory> = {
 //   relations: {
@@ -42,7 +43,7 @@ export function useUser(router = useRouter()) {
     password = encryptPasswordInHttp(password)
     const res = await register(account, email, password, bizId, code)
     if (res)
-      await useLogin({ password, account, email })
+      router.replace({ path: '/auth/login' })
   }
   /** 默认查询当前用户的认证信息 */
   const useGetProfile = async (relation = 'role.permissions,verification') => {
@@ -51,9 +52,9 @@ export function useUser(router = useRouter()) {
       userInfo.value = res
   }
 
-  const isRoot = async (relation = 'role.permissions,verification') => {
+  const fetchProfile = async (relation = 'role.permissions,verification') => {
     const res = await getProfile(relation)
-    return res.role?.name === 'root'
+    adminInfo.value = res.role?.name
   }
 
   return {
@@ -62,6 +63,7 @@ export function useUser(router = useRouter()) {
     userInfo,
     authToken,
     useGetProfile,
-    isRoot,
+    fetchProfile,
+    adminInfo,
   }
 }

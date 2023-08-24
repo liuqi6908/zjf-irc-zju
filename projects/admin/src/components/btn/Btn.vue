@@ -40,10 +40,10 @@ const finalProps = computed(() => ({ props }))
     :label="label"
     :outline="outline === true"
     :class="btnClass"
-    unelevated
+
     :disable="disable"
     :dense="dense"
-    rounded-2
+    unelevated rounded-2
   >
     <div v-if="transparent" class="translucent-mask" :class="`bg-${bgColor}`" />
     <template v-if="icon">

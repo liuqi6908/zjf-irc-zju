@@ -215,7 +215,7 @@ const tableData = computed(() => {
       引用规范
     </header>
 
-    <div v-for="data in dataBase" :key="data.id" col-grow min-w-2xl flex="~ row items-center justify-between">
+    <div v-for="data in dataBase" :key="data.id" col-grow flex="~ row items-center justify-between">
       <div font-600 text-grey-5>
         {{ data.nameZH }}
       </div>

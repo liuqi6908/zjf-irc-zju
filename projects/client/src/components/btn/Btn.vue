@@ -53,6 +53,9 @@ const finalProps = computed(() => ({ props }))
     <div absolute>
       <slot />
     </div>
+    <div>
+      <slot name="icon" />
+    </div>
   </q-btn>
 </template>
 

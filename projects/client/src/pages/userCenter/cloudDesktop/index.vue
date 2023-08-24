@@ -1,10 +1,15 @@
 <script setup lang="ts">
+onBeforeMount(async () => {
 
+})
 </script>
 
 <template>
-  <div>
-    我的云桌面
+  <div min-h-2xl>
+    <header>
+      <div />
+      <Btn label="开机" />
+    </header>
   </div>
 </template>
 
