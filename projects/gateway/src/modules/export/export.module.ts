@@ -4,8 +4,10 @@ import { FileExportLarge } from 'src/entities/export/file-export-large.entity'
 import { FileExportSmall } from 'src/entities/export/file-export-small.entity'
 
 import { FileModule } from '../file/file.module'
+import { EmailModule } from '../email/email.module'
 import { ExportService } from './export.service'
-import { ExportController } from './export.controller'
+import { ExportSmController } from './export-sm/export-sm.controller'
+import { ExportLgController } from './export-lg/export-lg.controller'
 
 @Module({
   imports: [
@@ -14,9 +16,10 @@ import { ExportController } from './export.controller'
       FileExportSmall,
     ]),
     FileModule,
+    EmailModule,
   ],
   providers: [ExportService],
-  controllers: [ExportController],
+  controllers: [ExportSmController, ExportLgController],
   exports: [ExportService],
 })
 export class ExportModule {}

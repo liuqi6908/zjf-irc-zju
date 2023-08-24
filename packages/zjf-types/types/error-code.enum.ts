@@ -88,6 +88,14 @@ export enum ErrorCode {
   DESKTOP_REQUEST_QUEUE_ONLY = 800005,
   /** 云桌面 id 已存在 */
   DESKTOP_ID_EXISTS = 800006,
+
+  // 外发相关错误
+  /** 当日的外发次数已达上限 */
+  EXPORT_DAILY_LIMIT_EXCEEDED = 900001,
+  /** 外发文件大小超出限制 */
+  EXPORT_SIZE_LIMIT_EXCEEDED = 900002,
+  /** 外发文件不存在 */
+  EXPORT_FILE_NOT_EXISTS = 900003,
 }
 
 export type ErrorMessageCollection = Partial<

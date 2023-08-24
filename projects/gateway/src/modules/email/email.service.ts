@@ -28,14 +28,20 @@ export class EmailService implements OnModuleInit {
     return this.transporter
   }
 
+  send(mailOptions: nodemailer.SendMailOptions) {
+    return this.transporter.sendMail({
+      ...mailOptions,
+      from: 'NoReplay <noreplay@qiyandata.com>',
+    })
+  }
+
   public async sendCode(body: SendEmailCodeBodyDto) {
     const expInMin = 5
     const { email, action } = body
     const { code, bizId } = await this._codeSrv.createCode(email, action, expInMin)
     const subject = `ZJF ${action}`
     const html = `<p>Your code for ${action} is: <strong>${code}</strong>, expire in ${expInMin} minutes</p>`
-    this.transporter.sendMail({
-      from: 'NoReplay <noreplay@qiyandata.com>',
+    this.send({
       to: email,
       subject,
       html,
@@ -45,8 +51,7 @@ export class EmailService implements OnModuleInit {
 
   public async sendMagicLink(body: LoginByEmailLinkDto, token: string) {
     const href = `${body.redirect}${body.redirect.includes('?') ? '&' : '?'}${body.queryName || 'token'}=${token}`
-    this.transporter.sendMail({
-      from: 'NoReplay <noreplay@qiyandata.com>',
+    this.send({
       to: body.email,
       subject: 'ZJF Login',
       html: `<a href="${href}">Click here to Login</a>, or copy this link to your browser: ${href}`,
