@@ -41,12 +41,12 @@ export function useDataBase() {
 
         if (!res)
           return
-
+        const arr = []
         for (const dataDirectory of res) {
-          const clone = cloneDeep(dataDirectory)
-          clone.lazy = true
-          verifyTree.value[0].children.push(clone)
+          dataDirectory.lazy = true
+          arr.push(dataDirectory)
         }
+        verifyTree.value[0].children = cloneDeep(arr)
       })
     }
     loading.value = false
