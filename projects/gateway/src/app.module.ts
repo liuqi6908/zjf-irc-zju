@@ -58,7 +58,7 @@ import { ConfigModule as SysConfigModule } from './modules/config/config.module'
 
     // External Modules
     ScheduleModule.forRoot(),
-    ThrottlerModule.forRoot({ ttl: 60, limit: 30 }),
+    ThrottlerModule.forRoot({ ttl: 10, limit: 30 }),
     ConfigModule.forRoot({
       envFilePath: ['.env.local', '.env.dev', '.env.staging', '.env.production', '.env'],
       isGlobal: true,
