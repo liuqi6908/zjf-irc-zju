@@ -4,9 +4,10 @@ import { IsLogin } from 'src/guards/login.guard'
 import { responseError } from 'src/utils/response'
 import { ErrorCode, PermissionType } from 'zjf-types'
 import { HasPermission } from 'src/guards/permission.guard'
+import { FileService } from 'src/modules/file/file.service'
 import { ApiFormData } from 'src/decorators/api/api-form-data'
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
-import { Body, Controller, Param, Post, Put, Req } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Put, Req, Res, StreamableFile } from '@nestjs/common'
 import type { FileExportLarge } from 'src/entities/export/file-export-large.entity'
 
 import { ExportService } from '../export.service'
@@ -17,6 +18,7 @@ import { ExportFileBodyDto } from '../dto/export-file.body.dto'
 export class ExportLgController {
   constructor(
     private readonly _exportSrv: ExportService,
+    private readonly _fileSrv: FileService,
   ) {}
 
   @ApiOperation({ summary: '发起大文件外发的申请' })
@@ -83,5 +85,21 @@ export class ExportLgController {
   @Post('reject/:id')
   public async reject(@Param('id') id: string, @Req() req: FastifyRequest, @Body('reason') reason: string) {
     return await this._exportSrv.rejectLarge(id, req.raw.user!, reason)
+  }
+
+  @ApiOperation({ summary: '下载大文件外发的附件' })
+  @HasPermission(PermissionType.EXPORT_LG_DOWNLOAD)
+  @ApiParam({ name: 'id', description: '大文件外发记录的唯一标识' })
+  @Get('file/:id')
+  public async downloadExportLgFile(
+    @Res({ passthrough: true }) res: any,
+    @Param('id') id: string) {
+    const feLg = await this._exportSrv.lgRepo().findOne({ where: { id } })
+    if (!feLg)
+      responseError(ErrorCode.EXPORT_NOT_EXISTS)
+    const readable = await this._fileSrv.download('pri', feLg.path)
+    res.header('Content-Disposition', `attachment; filename=${feLg.fileName}`)
+    res.header('Content-Type', 'application/octet-stream')
+    return new StreamableFile(readable)
   }
 }
