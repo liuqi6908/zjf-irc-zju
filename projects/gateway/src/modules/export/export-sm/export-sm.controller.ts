@@ -1,10 +1,13 @@
+import { ErrorCode } from 'zjf-types'
+import { getQuery } from 'src/utils/query'
+import { QueryDto } from 'src/dto/query.dto'
 import { IsLogin } from 'src/guards/login.guard'
-import { Body, Controller, Put, Req } from '@nestjs/common'
+import { responseError } from 'src/utils/response'
 import { ApiFormData } from 'src/decorators/api/api-form-data'
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Post, Put, Req } from '@nestjs/common'
+import type { FileExportSmall } from 'src/entities/export/file-export-small.entity'
 
-import { responseError } from 'src/utils/response'
-import { ErrorCode } from 'zjf-types'
 import { ExportService } from '../export.service'
 import { ExportFileBodyDto } from '../dto/export-file.body.dto'
 
@@ -43,5 +46,20 @@ export class ExportSmController {
       buffer,
       contentType,
     })
+  }
+
+  @ApiOperation({ summary: '查询自己的小文件外发历史记录' })
+  @IsLogin()
+  @Post('query/own')
+  public async queryOwnHistory(
+    @Req() req: FastifyRequest,
+    @Body() body: QueryDto<FileExportSmall>,
+  ) {
+    const user = req.raw.user!
+    body = body ?? {}
+    // 限制作用域
+    body.filters = [...(body?.filters || [])].filter(cfg => cfg.field !== 'founderId')
+    body.filters.push({ field: 'founderId', type: '=', value: user.id })
+    return await getQuery(this._exportSrv.smRepo(), body || {})
   }
 }

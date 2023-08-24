@@ -6,9 +6,9 @@ import { sharedVariableMarkdown } from 'src/utils/docs/shared-variable'
 import { PaginatedResData, PaginationDto } from './pagination.dto'
 import { SuccessDto } from './success.dto'
 
-class QueryFilter {
+class QueryFilter<T> {
   @ApiProperty({ description: '字段名' })
-  field: string
+  field: keyof T
 
   @ApiProperty({ description: '过滤类型' })
   type: '=' | '!=' | '>' | '<' | '>=' | '<=' | 'BETWEEN' | 'IS NULL' | 'IS NOT NULL' | 'IN' | 'NOT IN' | 'LIKE' | 'NOT LIKE'
@@ -17,9 +17,9 @@ class QueryFilter {
   value: any
 }
 
-class QuerySort implements IQuerySort {
+class QuerySort<T> implements IQuerySort<T> {
   @ApiProperty({ description: '字段名' })
-  field: string
+  field: keyof T
 
   @ApiProperty({ description: '排序类型，`ASC` | `DESC`' })
   order: 'ASC' | 'DESC'
@@ -33,13 +33,13 @@ export class QueryDto<T> implements IQueryConfig<T> {
     type: () => [QueryFilter],
     description: '过滤组合，已定义类型，请直接使用 IQueryFilter 类型' + `\n${sharedVariableMarkdown('IQueryFilter', 'zjf-types', '类型定义')}`,
   }))
-  filters?: Array<QueryFilter>
+  filters?: Array<QueryFilter<T>>
 
   @decorate(ApiProperty({
     type: () => [QuerySort],
     description: '排序组合，已定义类型，请直接使用 IQuerySort 类型' + `\n${sharedVariableMarkdown('IQuerySort', 'zjf-types', '类型定义')}`,
   }))
-  sort?: Array<QuerySort>
+  sort?: Array<QuerySort<T>>
 
   @decorate(ApiProperty({
     type: () => Object,

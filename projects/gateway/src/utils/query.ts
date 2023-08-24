@@ -27,7 +27,8 @@ export function getQueryQB<Entity>(
   // filters
   if (filters?.length) {
     filters.forEach((filter, index) => {
-      const { field, type } = filter
+      const { type } = filter
+      const field = String(filter.field)
 
       if (type === 'BETWEEN') {
         const [start, end] = filter.value
@@ -68,7 +69,8 @@ export function getQueryQB<Entity>(
   // sort
   if (sort?.length) {
     sort.forEach((sort, index) => {
-      const { field, order } = sort
+      const { order } = sort
+      const field = String(sort.field)
 
       if (field.includes(' ') || field.length > 64) {
         const property = `sort[${index}].field`

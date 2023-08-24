@@ -1,8 +1,8 @@
 import { IBasicResponse } from '../http/basic.interface';
 import { IPaginatedResData, IPaginationDto } from './pagination.interface';
 
-export type IQueryFilter = {
-  field: string
+export type IQueryFilter<T> = {
+  field: keyof T
 } & (
   {
     type: '=' | '!=' | '>' | '<' | '>=' | '<='
@@ -21,8 +21,8 @@ export type IQueryFilter = {
   }
 )
 
-export interface IQuerySort {
-  field: string
+export interface IQuerySort<T> {
+  field: keyof T
   order: 'ASC' | 'DESC'
 }
 
@@ -31,10 +31,10 @@ export interface IQueryConfig<Entity> {
    pagination?: IPaginationDto
 
    /** 过滤条件 */
-   filters?: IQueryFilter[]
+   filters?: IQueryFilter<Entity>[]
  
    /** 排序信息 */
-   sort?: IQuerySort[]
+   sort?: IQuerySort<Entity>[]
  
    /** 关联信息，传入字符串数组 */
    relations?: RelationSet<Entity>
