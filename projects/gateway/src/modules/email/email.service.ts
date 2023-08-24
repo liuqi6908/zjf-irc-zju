@@ -1,4 +1,3 @@
-import { Resend } from 'resend'
 import * as nodemailer from 'nodemailer'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
@@ -11,14 +10,14 @@ import type { SendEmailCodeBodyDto } from './dto/send-email-code.body.dto'
 
 @Injectable()
 export class EmailService implements OnModuleInit {
-  readonly resend: Resend
+  // readonly resend: Resend
   readonly transporter: nodemailer.Transporter
 
   constructor(
     private readonly _cfgSrv: ConfigService,
     private readonly _codeSrv: CodeService,
   ) {
-    this.resend = new Resend(_cfgSrv.get<string>('email.resendApiKey'))
+    // this.resend = new Resend(_cfgSrv.get<string>('email.resendApiKey'))
     this.transporter = nodemailer.createTransport(_cfgSrv.get('email.smtp'))
   }
 
