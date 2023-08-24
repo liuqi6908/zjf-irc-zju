@@ -107,6 +107,9 @@ export enum PermissionType {
   EXPORT_LG_REJECT = 'export-lg:reject',
   /** 下载大文件外发的文件 */
   EXPORT_LG_DOWNLOAD = 'export-lg:download',
+
+  // ------------------ 作品/成果 ---------------------
+  WORK_QUERY_ALL = 'work:query-all',
 }
 
 export const permissionDescriptions: Record<PermissionType, string> = {
@@ -160,4 +163,6 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.EXPORT_LG_APPROVE]: '通过大文件外发申请',
   [PermissionType.EXPORT_LG_REJECT]: '驳回大文件外发申请',
   [PermissionType.EXPORT_LG_DOWNLOAD]: '下载大文件外发的文件',
+
+  [PermissionType.WORK_QUERY_ALL]: '查询所有作品/成果',
 }

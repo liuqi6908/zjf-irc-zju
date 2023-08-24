@@ -35,6 +35,13 @@ export class WorkService {
     return work
   }
 
+  public async delete(record) {
+    const path = `work/${record.userId}/${record.filename}`
+    await this._fileSrv.delete('pri', path)
+    const deleteRes = await this._workRepo.delete({ id: record.id })
+    return deleteRes.affected > 0
+  }
+
   public async update({ record, file, title, author, filename }: {
     record: Work
     file: any

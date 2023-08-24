@@ -1,10 +1,15 @@
-import { ErrorCode } from 'zjf-types'
+import { ErrorCode, PermissionType } from 'zjf-types'
 import { IsLogin } from 'src/guards/login.guard'
 import { responseError } from 'src/utils/response'
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
-import { Body, Controller, Param, Patch, Put, Req } from '@nestjs/common'
+import { Body, Controller, Delete, Param, Patch, Post, Put, Req } from '@nestjs/common'
 import { ApiFormData } from 'src/decorators/api/api-form-data'
 
+import { responseParamsError } from 'src/utils/response/validate-exception-factory'
+import { QueryDto } from 'src/dto/query.dto'
+import type { Work } from 'src/entities/work'
+import { getQuery } from 'src/utils/query'
+import { HasPermission } from 'src/guards/permission.guard'
 import { WorkService } from './work.service'
 
 @ApiTags('Work | 成果（作品）模块')
@@ -31,8 +36,18 @@ export class WorkController {
     if (!filename.split('.').pop().match(/pdf/i))
       responseError(ErrorCode.FILE_TYPE_NOT_ALLOWED, '仅支持 PDF 格式')
 
-    const title = body.title?.value
+    let title = body.title?.value
     const author = body.author?.value
+
+    if (!title)
+      title = filename.split('.').shift()
+
+    if (!author) {
+      responseParamsError([{
+        property: 'author',
+        constraints: { author: '作者不能为空' },
+      }])
+    }
 
     return await this._workSrv.upload({
       user: req.raw.user,
@@ -79,5 +94,45 @@ export class WorkController {
     }
 
     return await this._workSrv.update({ record, file: buffer, filename, title, author })
+  }
+
+  @ApiOperation({ summary: '删除已上传的作品' })
+  @ApiParam({ name: 'id', description: '上传记录的唯一标识' })
+  @IsLogin()
+  @Delete(':id')
+  public async delete(
+    @Param('id') id: string,
+    @Req() req: FastifyRequest,
+  ) {
+    const user = req.raw.user
+    const record = await this._workSrv.repo().findOne({ where: { id } })
+    if (!record)
+      responseError(ErrorCode.FILE_NOT_FOUND, '该作品已被删除')
+    if (user.id !== record.userId)
+      responseError(ErrorCode.PERMISSION_DENIED, '无权删除他人的作品')
+
+    return await this._workSrv.delete(record)
+  }
+
+  @ApiOperation({ summary: '查询自己的作品列表' })
+  @IsLogin()
+  @Post('query/own')
+  public async queryOwnWorks(
+    @Req() req: FastifyRequest,
+    @Body() body: QueryDto<Work>,
+  ) {
+    const user = req.raw.user!
+    body = body ?? {}
+    body.filters = [...(body?.filters || [])].filter(cfg => cfg.field !== 'userId')
+    body.filters.push({ field: 'userId', type: '=', value: user.id })
+    return await getQuery(this._workSrv.repo(), body || {})
+  }
+
+  @ApiOperation({ summary: '查询所有的作品列表' })
+  @HasPermission(PermissionType.WORK_QUERY_ALL)
+  @IsLogin()
+  @Post('query')
+  public async query(@Body() body: QueryDto<Work>) {
+    return await getQuery(this._workSrv.repo(), body || {})
   }
 }
