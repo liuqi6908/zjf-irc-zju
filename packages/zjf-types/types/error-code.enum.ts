@@ -96,6 +96,10 @@ export enum ErrorCode {
   EXPORT_SIZE_LIMIT_EXCEEDED = 900002,
   /** 外发文件不存在 */
   EXPORT_FILE_NOT_EXISTS = 900003,
+  /** 外发记录不存在 */
+  EXPORT_NOT_EXISTS = 900004,
+  /** 外发申请已处理，无法重复处理 */
+  EXPORT_HANDLED = 900005,
 }
 
 export type ErrorMessageCollection = Partial<

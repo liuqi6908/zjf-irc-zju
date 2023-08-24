@@ -5,8 +5,8 @@ import { responseError } from 'src/utils/response'
 import { ErrorCode, PermissionType } from 'zjf-types'
 import { HasPermission } from 'src/guards/permission.guard'
 import { ApiFormData } from 'src/decorators/api/api-form-data'
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { Body, Controller, Post, Put, Req } from '@nestjs/common'
+import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Param, Post, Put, Req } from '@nestjs/common'
 import type { FileExportLarge } from 'src/entities/export/file-export-large.entity'
 
 import { ExportService } from '../export.service'
@@ -19,13 +19,10 @@ export class ExportLgController {
     private readonly _exportSrv: ExportService,
   ) {}
 
-  @ApiOperation({
-    summary: '发起大文件外发的申请',
-    description: '备注信息放 `body.note`（Swagger 有冲突文档无法显示）',
-  })
+  @ApiOperation({ summary: '发起大文件外发的申请' })
   @IsLogin()
   @ApiBody({ type: ExportFileBodyDto })
-  @ApiFormData()
+  @ApiFormData('file', { note: { type: 'string', description: '备注信息' } })
   @Put()
   public async postExportLg(@Body() body: any, @Req() req: FastifyRequest) {
     const buffer = await body?.file?.toBuffer()
@@ -37,7 +34,7 @@ export class ExportLgController {
     const contentType = body?.file?.mimetype
     const user = req.raw.user!
     const ip = req.raw.ip
-    const note = body.note
+    const note = body.note.value
 
     return await this._exportSrv.exportLarge({
       user,
@@ -69,5 +66,22 @@ export class ExportLgController {
     body.filters = [...(body?.filters || [])].filter(cfg => cfg.field !== 'founderId')
     body.filters.push({ field: 'founderId', type: '=', value: user.id })
     return await getQuery(this._exportSrv.lgRepo(), body)
+  }
+
+  @ApiOperation({ summary: '通过一个大文件外发申请' })
+  @HasPermission(PermissionType.EXPORT_LG_APPROVE)
+  @ApiParam({ name: 'id', description: '大文件外发记录的唯一标识' })
+  @Post('approve/:id')
+  public async approve(@Param('id') id: string, @Req() req: FastifyRequest) {
+    return await this._exportSrv.approveLarge(id, req.raw.user!)
+  }
+
+  @ApiOperation({ summary: '驳回一个大文件外发申请' })
+  @HasPermission(PermissionType.EXPORT_LG_REJECT)
+  @ApiParam({ name: 'id', description: '大文件外发记录的唯一标识' })
+  @ApiBody({ schema: { type: 'object', properties: { reason: { type: 'string', description: '驳回理由' } } } })
+  @Post('reject/:id')
+  public async reject(@Param('id') id: string, @Req() req: FastifyRequest, @Body('reason') reason: string) {
+    return await this._exportSrv.rejectLarge(id, req.raw.user!, reason)
   }
 }

@@ -18,13 +18,10 @@ export class ExportSmController {
     private readonly _exportSrv: ExportService,
   ) {}
 
-  @ApiOperation({
-    summary: '小文件外发',
-    description: '备注信息放 `body.note`（Swagger 有冲突文档无法显示）',
-  })
+  @ApiOperation({ summary: '小文件外发' })
   @IsLogin()
   @ApiBody({ type: ExportFileBodyDto })
-  @ApiFormData()
+  @ApiFormData('file', { note: { type: 'string', description: '备注信息' } })
   @Put()
   public async exportSmall(
     @Body() body: any,
@@ -38,7 +35,7 @@ export class ExportSmController {
     const contentType = body?.file?.mimetype
     const user = req.raw.user!
     const ip = req.raw.ip
-    const note = body.note
+    const note = body.note.value
 
     return await this._exportSrv.exportSmall({
       user,

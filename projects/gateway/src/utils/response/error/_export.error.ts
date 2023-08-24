@@ -14,6 +14,14 @@ const _exportErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.BAD_REQUEST,
     message: '文件不存在',
   },
+  [ErrorCode.EXPORT_NOT_EXISTS]: {
+    httpStatus: HttpStatus.NOT_FOUND,
+    message: '外发记录不存在',
+  },
+  [ErrorCode.EXPORT_HANDLED]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '外发申请已处理，无法重复处理',
+  },
 }
 
 export default _exportErrors

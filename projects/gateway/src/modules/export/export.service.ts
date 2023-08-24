@@ -7,6 +7,7 @@ import { objectOmit } from '@catsjuice/utils'
 import { MoreThan, Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { responseError } from 'src/utils/response'
+import { readable2buffer } from 'src/utils/readable2buffer'
 import { FileExportLarge } from 'src/entities/export/file-export-large.entity'
 import { FileExportSmall } from 'src/entities/export/file-export-small.entity'
 
@@ -15,6 +16,7 @@ import {
   EXPORT_DFT_SM_DAILY_LIMIT,
   EXPORT_DFT_SM_SIZE_LIMIT,
   ErrorCode,
+  FileExportLargeStatus,
 } from 'zjf-types'
 import { FileService } from '../file/file.service'
 import { EmailService } from '../email/email.service'
@@ -138,6 +140,59 @@ export class ExportService {
     await this._fileSrv.upload('pri', path, buffer)
     await this._feLgRepo.save(feLg)
     return objectOmit(feLg, ['founder'])
+  }
+
+  /**
+   * 通过一个大文件外发申请
+   * @param id
+   */
+  public async approveLarge(id: string, handler: User) {
+    const feLg = await this._feLgRepo.findOne({ where: { id } })
+    if (!feLg)
+      responseError(ErrorCode.EXPORT_NOT_EXISTS)
+    if (feLg.status !== FileExportLargeStatus.Pending)
+      responseError(ErrorCode.EXPORT_HANDLED)
+    feLg.status = FileExportLargeStatus.Approved
+    feLg.handler = handler
+    feLg.handleAt = new Date()
+    const readable = await this._fileSrv.download('pri', feLg.path)
+    const content = await readable2buffer(readable)
+    await this._sendEmailWithAttachment({
+      content,
+      contentType: 'application/octet-stream',
+      email: feLg.email,
+      filename: feLg.fileName,
+      fileSize: feLg.fileSize,
+      note: feLg.note,
+      user: feLg.founder,
+    })
+    await this._feLgRepo.save(feLg)
+    return {
+      ...feLg,
+      handler: objectOmit(feLg.handler, ['verification', 'password', 'role']),
+    }
+  }
+
+  /**
+   * 驳回一个大文件外发申请
+   * @param id
+   * @param reason
+   */
+  public async rejectLarge(id: string, handler: User, reason: string) {
+    const feLg = await this._feLgRepo.findOne({ where: { id } })
+    if (!feLg)
+      responseError(ErrorCode.EXPORT_NOT_EXISTS)
+    if (feLg.status !== FileExportLargeStatus.Pending)
+      responseError(ErrorCode.EXPORT_HANDLED)
+
+    feLg.status = FileExportLargeStatus.Rejected
+    feLg.handler = handler
+    feLg.handleAt = new Date()
+    feLg.rejectReason = reason
+    return {
+      ...feLg,
+      handler: objectOmit(feLg.handler, ['verification', 'password']),
+    }
   }
 
   /**
