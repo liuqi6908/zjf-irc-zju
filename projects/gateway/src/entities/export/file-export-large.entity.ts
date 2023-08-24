@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger'
+import { FileExportLargeStatus } from 'zjf-types'
 import type { IFileExportLarge } from 'zjf-types'
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 
@@ -12,13 +14,32 @@ export class FileExportLarge
   @JoinColumn()
   founder: User
 
+  @ApiProperty({ description: '在 minio 中保存的完整路径' })
+  @Column()
+  path: string
+
+  @ApiProperty({ description: '创建者', type: () => User })
   @ManyToOne(() => User, user => user.exportsBigHandled)
   @JoinColumn()
   handler: User
 
+  @ApiProperty({ description: '创建者的 id' })
   @Column({ nullable: true })
   handlerId: string
 
+  @ApiProperty({ description: '处理时间' })
   @Column({ nullable: true })
   handleAt: Date
+
+  @ApiProperty({ description: '状态' })
+  @Column({
+    type: 'enum',
+    enum: FileExportLargeStatus,
+    default: FileExportLargeStatus.Pending,
+  })
+  status: FileExportLargeStatus
+
+  @ApiProperty({ description: '驳回的原因' })
+  @Column({ nullable: true })
+  rejectReason?: string
 }

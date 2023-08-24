@@ -18,7 +18,10 @@ export class ExportSmController {
     private readonly _exportSrv: ExportService,
   ) {}
 
-  @ApiOperation({ summary: '小文件外发' })
+  @ApiOperation({
+    summary: '小文件外发',
+    description: '备注信息放 `body.note`（Swagger 有冲突文档无法显示）',
+  })
   @IsLogin()
   @ApiBody({ type: ExportFileBodyDto })
   @ApiFormData()
