@@ -3,10 +3,14 @@ import type { TabItem } from 'shared/component/base/tab/Tabs.vue'
 import Tabs from 'shared/component/base/tab/Tabs.vue'
 import { Notify } from 'quasar'
 import { cloneDeep } from 'lodash-es'
+import type { IQueryDto, IVerificationHistory } from 'zjf-types'
+import { PAGINATION_SIZE_MAX } from 'zjf-types'
 import AuthAdminTable from '~/view/authorityAdmin/AuthAdminTable.vue'
 
 import { upsertDataRole } from '~/api/dataPermission/upsertDataRole'
 import { getDataRolesList } from '~/api/dataPermission/getDataRolesList'
+import { queryAllApply } from '~/api/verification/queryAllApply'
+import { updateUserRole } from '~/api/auth/user/updateUserRole'
 
 const { fetchAllData, verifyTree, loading } = useDataBase()
 
@@ -35,29 +39,19 @@ const settingTable = {
 const allocation = {
   col: [
     {
-      name: 'user',
+      name: 'account',
       label: '用户',
       align: 'left',
-      field: 'user',
+      field: 'account',
     },
-    { name: 'realName', align: 'left', label: '真实姓名', field: 'realName' },
+    { name: 'name', align: 'left', label: '真实姓名', field: 'name' },
     { name: 'email', label: '邮箱', align: 'left', field: 'email' },
     { name: 'unit', label: '单位', align: 'left', field: 'unit' },
-    { name: 'attachment', label: '证明材料', align: 'left', field: 'attachment' },
+    { name: 'attachments', label: '证明材料', align: 'left', field: 'attachments' },
     { name: 'roleAssign', label: '角色分配', align: 'left', field: 'roleAssign' },
     { name: 'saveRows', label: '操作', align: 'left', field: 'saveRows' },
   ],
-  row: [{
-    user: 'user',
-    realName: 'realName',
-    unit: 'unit',
-    attachment: ['https://picsum.photos/500/300?t=2', 'https://picsum.photos/500/300?t=3', 'https://picsum.photos/500/300?t='],
-    saveRows: '',
-    roleAssign: {
-      label: '教师',
-      value: 'teacher',
-    },
-  }],
+  row: [],
 }
 
 const tabList = reactive<TabItem[]>([
@@ -67,8 +61,19 @@ const tabList = reactive<TabItem[]>([
 
 const currentTab = ref<TabItem>()
 const tab = ref(tabList[0].id)
+const roles = reactive<string[]>([])
 
-const roleNames = [{ label: '教师', value: 'teacher' }, { label: '学生', value: 'students' }]
+// const roleNames = [{ label: '教师', value: 'teacher' }, { label: '学生', value: 'students' }]
+
+const baseQuery = ({
+  page: 0,
+  pageSize: PAGINATION_SIZE_MAX,
+  filters: [],
+  sort: [],
+  relations: {
+    founder: true,
+  },
+}) as IQueryDto<IVerificationHistory>
 
 async function saveRole(row: any) {
   if (tab.value === 'setting') {
@@ -76,6 +81,15 @@ async function saveRole(row: any) {
     const downLoadStr: string[] = row.downLoadVerify || []
 
     const res = await upsertDataRole(row.roleName, verifyStr, downLoadStr)
+    if (res) {
+      Notify.create({
+        message: '保存成功',
+        type: 'success',
+      })
+    }
+  }
+  else {
+    const res = await updateUserRole(row.userId, row.roleAssign)
     if (res) {
       Notify.create({
         message: '保存成功',
@@ -93,12 +107,31 @@ async function init() {
       const cloneRow = cloneDeep(row)
       const viewArr = cloneRow.viewDirectories.map(i => i.id)
       const downloadArr = cloneRow.downloadDirectories.map(i => i.id)
+      roles.push(cloneRow.name)
       currentTab.value.tableData.row.push({
         roleName: cloneRow.name,
         verify: viewArr,
         downLoadVerify: downloadArr,
+
       })
     }
+  }
+}
+
+async function allocationInit() {
+  loading.value = true
+  const rows = await queryAllApply(baseQuery)
+  if (rows) {
+    rows.data.forEach((item) => {
+      currentTab.value.tableData?.row.push({
+        ...item,
+        email: item.founder.email,
+        unit: item.founder.unit,
+        account: item.founder.account,
+        userId: item.founder.id,
+        roleAssign: item.founder.dataRoleName,
+      })
+    })
   }
 }
 
@@ -113,9 +146,15 @@ watch(tab, async (newTab) => {
       fetchAllData()
       loading.value = false
     })
-
-    obj.isRequest = true
   }
+  else {
+    // const res = await
+    await allocationInit().finally(() => {
+      loading.value = false
+    })
+  }
+
+  obj.isRequest = true
 }, { immediate: true })
 </script>
 
@@ -128,7 +167,7 @@ watch(tab, async (newTab) => {
       :operation="tab === 'setting' ? ['addRows'] : undefined"
       :col="currentTab?.tableData.col"
       :tree-node="verifyTree"
-      :select-list="roleNames"
+      :select-list="roles"
       @update:save="saveRole"
     />
   </Tabs>

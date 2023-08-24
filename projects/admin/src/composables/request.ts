@@ -103,6 +103,9 @@ export function useRequest() {
     useCache && cache.set(cacheKey, response.data)
     return response.data
   }
+  function $getUri(url: string, params?: any) {
+    return $http.getUri({ url, params })
+  }
 
-  return { $get, $post, $put, $patch, $delete, cache, queryParamsUrl }
+  return { $get, $post, $put, $patch, $delete, $getUri, cache, queryParamsUrl }
 }

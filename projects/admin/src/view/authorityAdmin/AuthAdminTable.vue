@@ -4,6 +4,7 @@ import type { QTableProps } from 'quasar'
 import type { OperationType } from '~/components/table/BaseTable.vue'
 
 import { deleteRoles } from '~/api/dataPermission/delectDataRole'
+import { getUrlByToken } from '~/api/file/getUrl'
 
 interface Props {
   rows: Array<any>
@@ -12,7 +13,7 @@ interface Props {
   treeNode: QTree['nodes']
   loading: false
   /** select options（角色列表） */
-  selectList: Array<{ label: string; value: string }>
+  selectList: Array<string>
   operation?: Array<OperationType>
 }
 defineProps<Props>()
@@ -23,13 +24,13 @@ const $q = useQuasar()
 const baseTableRef = ref(null)
 
 /** input组件 */
-const input = ['roleName']
+const input = ['roleName', '']
 /** 树结构组件 */
 const tree = ['verify', 'downLoadVerify']
 /** select组件 */
 const select = ['roleAssign']
 /** dialog组件 */
-const dialog = ['attachment']
+const dialog = ['attachments']
 
 // function save(rowItem: any) {
 //   console.log({ rowItem })
@@ -54,8 +55,11 @@ function check(rowItem: any) {
   if (!Array.isArray(rowItem) || !rowItem.length)
     message = '暂无数据'
 
-  rowItem.forEach((item) => {
-    message += `<img src=${item} /><br/>`
+  const userId = rowItem.userId
+
+  rowItem.attachments.forEach((filename: string) => {
+    const src = getUrlByToken(`file/private/verify/${userId}/${filename}`)
+    message += `<img src=${src} /><br/>`
   })
 
   $q.dialog({
@@ -115,7 +119,7 @@ function onLazyLoad({ node, key, done, fail }) {
     />
 
     <div v-else-if="dialog.includes(col)" flex="~ row">
-      <q-btn flat label="查看" text-primary-1 @click="check(props.row[`${col}`])" />
+      <q-btn flat label="查看" text-primary-1 @click="check(props.row)" />
     </div>
 
     <q-select
