@@ -9,9 +9,9 @@ import { IEmailOptionalDto } from '../dto/email.interface';
 import { ICreatedAt, IUpdatedAt } from "./_timestamp.interface";
 import { IVerificationHistory } from './verification.interface';
 import { INicknameOptionalDto } from '../dto/nickname.interface';
+import { IFileExportSmall } from './export/file-export-small.interface';
+import { IFileExportLarge } from './export/file-export-large.interface';
 import { IDesktopQueueHistory } from './desktop-queue-history.interface';
-import { IFileExportSmall } from '../../dist/cjs/types/entities/export/file-export-small.interface';
-import { IFileExportLarge } from '../../dist/cjs/types/entities/export/file-export-large.interface';
 
 export interface IUser extends 
   ICreatedAt, 
