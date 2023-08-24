@@ -6,10 +6,6 @@ const cache = new Map<string, any>()
 export function useRequest() {
   const requestControllers = new Set<AbortController>()
 
-  onBeforeUnmount(() => {
-    abortAll()
-  })
-
   function newController() {
     const abortController = new AbortController()
     const signal = abortController.signal
@@ -80,6 +76,9 @@ export function useRequest() {
     useCache && cache.set(cacheKey, response.data)
     return response.data
   }
+  function $getUri(url: string, params?: any) {
+    return $http.getUri({ url, params })
+  }
 
-  return { $get, $post, $put, $patch, cache }
+  return { $get, $post, $put, $patch, $getUri, cache }
 }

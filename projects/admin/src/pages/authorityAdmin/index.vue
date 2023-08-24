@@ -72,13 +72,8 @@ const roleNames = [{ label: '教师', value: 'teacher' }, { label: '学生', val
 
 async function saveRole(row: any) {
   if (tab.value === 'setting') {
-    let verifyStr: string[] = []
-    let downLoadStr: string[] = []
-    if (row.verify)
-      verifyStr = row.verify.map(item => item.id)
-
-    if (row.downLoadVerify)
-      downLoadStr = row.downLoadVerify.map(item => item.id)
+    const verifyStr: string[] = row.verify || []
+    const downLoadStr: string[] = row.downLoadVerify || []
 
     const res = await upsertDataRole(row.roleName, verifyStr, downLoadStr)
     if (res) {
@@ -105,7 +100,6 @@ async function init() {
       })
     }
   }
-  loading.value = false
 }
 
 watch(tab, async (newTab) => {
@@ -115,8 +109,11 @@ watch(tab, async (newTab) => {
   if (obj.isRequest)
     return
   if (newTab === 'setting') {
-    fetchAllData()
-    await init()
+    await init().finally(() => {
+      fetchAllData()
+      loading.value = false
+    })
+
     obj.isRequest = true
   }
 }, { immediate: true })

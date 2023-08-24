@@ -94,6 +94,7 @@ function onLazyLoad({ node, key, done, fail }) {
     <QTree
       v-else-if="tree.includes(col)"
       v-model:ticked="props.row[`${col}`]"
+      no-transition
       tick-strategy="leaf"
       :nodes="treeNode"
       node-key="id"

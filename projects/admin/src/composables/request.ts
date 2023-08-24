@@ -58,7 +58,7 @@ export function useRequest() {
       return response
   }
 
-  async function $post<T = any>(url: string, data: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
+  async function $post<T = any>(url: string, data?: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
     const cacheKey = url + JSON.stringify(data) + JSON.stringify(config)
     if (useCache && cache.has(cacheKey))
       return cache.get(cacheKey)

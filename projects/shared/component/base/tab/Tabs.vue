@@ -27,8 +27,9 @@ const emits = defineEmits(['update:modelValue', 'update:currTabObj'])
 watch(() => props.modelValue,
     () => {
         const tabObj = props.tabList.find(i => i.id === props.modelValue)
-        if (tabObj)
+        if (tabObj){
             emits('update:currTabObj', tabObj)
+        }
     },
     { immediate: true })
 </script>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import CurrentData from './CurrentData.vue'
 
-const { geRootData, rootData } = useDataBase()
+const { geRootData, rootData, loading } = useDataBase()
 
 const databaseId = ref('')
 const router = useRouter()
@@ -23,7 +23,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div flex="~ col" full bg-grey-1>
+  <div flex="~ col" full min-h-2xl bg-grey-1>
     <header class="database" h-40 w-full flex-center>
       <div text-grey-1 title-1>
         数据库
@@ -32,7 +32,17 @@ onBeforeMount(() => {
     <div class="col-grow" flex-start mt-15 justify-center flex="~ row gap-10">
       <SliderList :list="rootData" router @update:id="(id) => databaseId = id" />
 
-      <CurrentData />
+      <div min-w-xl flex-center>
+        <q-spinner
+          v-if="loading"
+          color="primary-1"
+          size="5rem"
+          :thickness="2"
+          label-class="text-primary-1"
+          label-style="font-size: 1.1em"
+        />
+        <CurrentData v-else />
+      </div>
     </div>
   </div>
 </template>
