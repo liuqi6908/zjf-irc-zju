@@ -22,6 +22,7 @@ import { AuthModule } from './modules/auth/auth.module'
 import { RoleModule } from './modules/role/role.module'
 import { FileModule } from './modules/file/file.module'
 import { DataModule } from './modules/data/data.module'
+import { WorkModule } from './modules/work/work.module'
 import { RedisModule } from './modules/redis/redis.module'
 import { EmailModule } from './modules/email/email.module'
 import { AuthMiddleware } from './middleware/auth.middleware'
@@ -40,6 +41,7 @@ import { ConfigModule as SysConfigModule } from './modules/config/config.module'
     // Internal Modules
     LogModule,
     CmsModule,
+    WorkModule,
     UserModule,
     AuthModule,
     RoleModule,

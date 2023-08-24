@@ -76,4 +76,9 @@ export class FileService {
     // 签发链接
     return await client.presignedGetObject(this._cfg.bucket[bucket], path, expires)
   }
+
+  public async delete(bucket: keyof MinioConfig['bucket'], path: string) {
+    const client = this.getClient()
+    await client.removeObject(this._cfg.bucket[bucket], path)
+  }
 }

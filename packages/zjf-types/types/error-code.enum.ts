@@ -63,6 +63,8 @@ export enum ErrorCode {
   FILE_TYPE_NOT_ALLOWED = 600001,
   /** 文件不存在 */
   FILE_NOT_FOUND = 600002,
+  /** 文件大小超出限制 */
+  FILE_TOO_LARGE = 600003,
 
 
   // 数据相关错误

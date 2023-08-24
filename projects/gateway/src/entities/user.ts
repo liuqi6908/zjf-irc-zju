@@ -13,6 +13,7 @@ import { VerificationHistory } from './verification'
 import { DesktopQueueHistory } from './desktop-queue-history'
 import { FileExportSmall } from './export/file-export-small.entity'
 import { FileExportLarge } from './export/file-export-large.entity'
+import { Work } from './work'
 
 @Entity()
 export class User extends BaseTimeStamp implements IUser {
@@ -116,4 +117,8 @@ export class User extends BaseTimeStamp implements IUser {
   @ApiProperty({ description: '处理过（通过/驳回）的大文件外发列表' })
   @OneToMany(() => FileExportLarge, fileExpLarge => fileExpLarge.handler)
   exportsBigHandled?: FileExportLarge[]
+
+  @ApiProperty({ description: '上传的作品列表' })
+  @OneToMany(() => Work, work => work.user)
+  works?: Work[]
 }

@@ -12,6 +12,7 @@ import { INicknameOptionalDto } from '../dto/nickname.interface';
 import { IFileExportSmall } from './export/file-export-small.interface';
 import { IFileExportLarge } from './export/file-export-large.interface';
 import { IDesktopQueueHistory } from './desktop-queue-history.interface';
+import { IWork } from './work.interface';
 
 export interface IUser extends 
   ICreatedAt, 
@@ -80,4 +81,7 @@ export interface IUser extends
 
   /** 处理过（通过/驳回）的大文件外发列表 */
   exportsLargeHandled?: IFileExportLarge[]
+
+  /** 上传的作品列表 */
+  works?: IWork[]
 }
