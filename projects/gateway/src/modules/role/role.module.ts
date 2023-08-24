@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 
 import { UserModule } from '../user/user.module'
 import { RoleService } from './role.service'
+import { RoleController } from './role.controller';
 
 @Global()
 @Module({
@@ -13,5 +14,6 @@ import { RoleService } from './role.service'
   ],
   providers: [RoleService],
   exports: [RoleService],
+  controllers: [RoleController],
 })
 export class RoleModule {}

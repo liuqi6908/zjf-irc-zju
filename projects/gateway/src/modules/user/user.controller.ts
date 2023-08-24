@@ -186,6 +186,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '更新指定用户的数据角色' })
+  @HasPermission(PermissionType.ACCOUNT_UPDATE_DATA_ROLE)
   @Patch(':userId/data-role/:dataRoleName')
   public async updateUserDataRole(
     @Param() param: UpdateUserDataRoleParamDto,
