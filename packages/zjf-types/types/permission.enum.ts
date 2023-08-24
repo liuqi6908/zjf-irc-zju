@@ -93,8 +93,14 @@ export enum PermissionType {
   /** 分配云桌面给指定用户 */
   DESKTOP_ASSIGN = 'desktop:assign',
   /** 查询云桌面 */
-  DESKTOP_QUERY = 'desktop:query'
+  DESKTOP_QUERY = 'desktop:query',
 
+
+  // ------------------ 数据外发 ---------------------
+  /** 查询所有大文件外发历史 */
+  EXPORT_LG_QUERY_ALL = 'export-lg:query-all',
+  /** 查询所有小文件外发历史 */
+  EXPORT_SM_QUERY_ALL = "export-sm:query-all"
 }
 
 export const permissionDescriptions: Record<PermissionType, string> = {
@@ -142,4 +148,7 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.DESKTOP_UPDATE]: '更新云桌面',
   [PermissionType.DESKTOP_ASSIGN]: '分配云桌面给指定用户',
   [PermissionType.DESKTOP_QUERY]: '查询云桌面',
+
+  [PermissionType.EXPORT_LG_QUERY_ALL]: '查询所有大文件外发历史',
+  [PermissionType.EXPORT_SM_QUERY_ALL]: '查询所有小文件外发历史'
 }
