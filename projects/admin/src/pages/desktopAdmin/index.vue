@@ -6,6 +6,7 @@ import { cloneDeep } from 'lodash-es'
 import DesktopAdminTable from '~/view/desktopAdmin/DesktopAdminTable.vue'
 
 import { getDesktopQuery } from '~/api/desktopRequest/getdesktopQuery'
+import { desktopQueryList } from '~/api/desktop/desktopsList'
 
 const requestingTable = {
   col: [
@@ -45,6 +46,7 @@ const tabList = ref<TabItem[]>([
 ])
 const currentTab = ref<TabItem>()
 const tab = ref()
+const queueingList = ref([])
 
 const baseOptions = {
   filters: [],
@@ -67,6 +69,11 @@ const options = computed<IQueryConfig<IDesktopQueueHistory>>(() => {
     return base
   }
   else {
+    base.filters = [{
+      field: 'status',
+      type: '=',
+      value: 'queueing',
+    }]
     return base
   }
 })
@@ -79,9 +86,8 @@ watch(tab, async (newTab) => {
   const obj = tabList.value.find(i => i.id === newTab)
   if (obj?.isRequest)
     return
-
+  const res = await getDesktopQuery(options.value)
   if (newTab === 'requestingList') {
-    const res = await getDesktopQuery(options.value)
     res.data.forEach((item: any) => {
       currentTab.value.tableData.row.push({
         ...item,
@@ -93,7 +99,15 @@ watch(tab, async (newTab) => {
     })
   }
   else {
-    // const res = await desktopQueryList(options.value)
+    res.data.forEach((item: any) => {
+      queueingList.value.push(item)
+    })
+    const desktopList = await desktopQueryList(baseOptions)
+    desktopList.data.forEach((item: any) => {
+      currentTab.value.tableData?.row.push({
+        ...item,
+      })
+    })
   }
 
   if (obj)
@@ -107,6 +121,7 @@ watch(tab, async (newTab) => {
       v-if="currentTab?.tableData"
       v-model:rows="currentTab.tableData.row"
       :tab="tab"
+      :queueing-list="queueingList"
       :cols="currentTab?.tableData?.col"
     />
   </Tabs>

@@ -9,17 +9,26 @@ import { rejectDesktop } from '~/api/desktopRequest/rejectDesktop'
 import { createDesktop } from '~/api/desktop/createDesktop'
 import { stopDesktop } from '~/api/desktop/stopDesktop'
 import { updateDesktop } from '~/api/desktop/updateDesktop'
+import { assignDesktop } from '~/api/desktop/assignDesktop'
 
 interface Props {
   tab: string
   rows: Array<any>
   cols: QTableProps['columns']
+  queueingList: Array<any>
 }
-defineProps<Props>()
+const props = defineProps<Props>()
 defineEmits(['update:rows'])
 
 const baseTableRef = ref(null)
 const rejectDialog = ref(false)
+const tableRef = ref()
+const userConfigDialog = ref(false)
+const userConfigInfo = reactive({
+  selectUserId: [],
+  desktopId: '',
+})
+
 const userInfo = reactive({
   userId: '',
   reason: '',
@@ -28,6 +37,30 @@ const userInfo = reactive({
 const input = ['id', 'internalIp', 'accessUrl', 'account', 'password']
 
 const select = ['expiredAt']
+
+const userConfigCol = [
+  { name: 'name', field: 'name', label: '真实姓名', align: 'center' },
+  { name: 'nickname', field: 'nickname', label: '昵称', align: 'center' },
+  { name: 'email', field: 'email', label: '邮箱', align: 'center' },
+  { name: 'duration', field: 'duration', label: '等待时长', align: 'center' },
+]
+
+const userConfigTable = computed(() => {
+  const row = props.queueingList.map((item) => {
+    return {
+      name: item.user.name,
+      email: item.user.email,
+      nickname: item.user.nickname,
+      id: item.userId,
+      duration: item.duration,
+    }
+  })
+
+  return {
+    row,
+    col: userConfigCol,
+  }
+})
 
 async function accessRequest(userId: any) {
   const res = await approveDesktop(userId)
@@ -70,6 +103,17 @@ async function updateDesktops(row: any) {
 function dataFormat(date: string) {
   const format = 'YYYY-MM-DD HH:mm:ss'
   return moment(date, format).toDate()
+}
+
+function userConfig(id: string) {
+  userConfigDialog.value = true
+  userConfigInfo.desktopId = id
+}
+
+async function assignDesktopUser() {
+  const res = await assignDesktop(userConfigInfo.desktopId, userConfigInfo.selectUserId[0]?.id)
+  if (res)
+    notifySuccess('分配用户')
 }
 
 function notifySuccess(message: string) {
@@ -120,7 +164,7 @@ function notifySuccess(message: string) {
     </div>
 
     <div v-else-if="col === 'choseUser'">
-      <q-btn flat text-primary-1 label="选择用户" @click="userConfig" />
+      <q-btn flat text-primary-1 label="选择用户" @click="userConfig(props.row.id)" />
     </div>
     <div v-else-if="col === 'opSaveChangeExpires'">
       <BtnGroup
@@ -148,6 +192,36 @@ function notifySuccess(message: string) {
         <q-btn label="确认" flat text-primary-1 @click="confirmReason" />
         <q-btn v-close-popup flat label="取消" text-alert-error />
       </div>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="userConfigDialog">
+    <q-card min-w-2xl bg-grey-1 p-5>
+      <header mb-10 text-6 font-500>
+        待分配的用户
+      </header>
+
+      <q-table
+        ref="tableRef"
+        v-model:selected="userConfigInfo.selectUserId"
+        flat bordered max-h-lg
+        :rows="userConfigTable.row"
+        :columns="userConfigCol"
+        row-key="id"
+        selection="single"
+      >
+        <template #body-selection="scope">
+          <q-checkbox
+            :model-value="scope.selected"
+            @update:model-value="(val, evt) => { Object.getOwnPropertyDescriptor(scope, 'selected').set(val, evt) }"
+          />
+        </template>
+      </q-table>
+
+      <footer mt-5 flex="~ row justify-end">
+        <q-btn flat text-alert-error label="取消" @click="userConfigDialog = false" />
+        <q-btn label="确认选择" flat text-primary-1 @click="assignDesktopUser" />
+      </footer>
     </q-card>
   </q-dialog>
 </template>
