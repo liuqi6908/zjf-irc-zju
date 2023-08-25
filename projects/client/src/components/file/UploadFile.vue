@@ -2,8 +2,12 @@
 interface Props {
   modelValue: any
   label: string
+  acceptFile?: string
+  multiple?: boolean
 }
-defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+  acceptFile: '.jpg, image/*',
+})
 defineEmits(['update:modelValue'])
 
 const myFileInput = ref(null)
@@ -20,10 +24,11 @@ function pickImg() {
     <q-file
       ref="myFileInput"
       :model-value="files"
-      accept=".jpg, image/*"
+      :accept="acceptFile"
       max-files="8"
       append
-      multiple style="display:none"
+      :multiple="multiple"
+      style="display:none"
       type="file"
       label="Standard"
       max-file-size="1048576"

@@ -1,17 +1,30 @@
 <script lang="ts" setup>
 import BaseTable from 'shared/component/base/table/BaseTable.vue'
+import { Notify } from 'quasar'
+import type { IQueryConfig, IVerificationHistory } from 'zjf-types'
+import { PAGINATION_SIZE_MAX } from 'zjf-types'
 import UploadFile from '~/components/file/UploadFile.vue'
+
+import Btn from '~/components/btn/Btn.vue'
+
+import { createWork } from '~/api/work/createWork'
+import { upsertWork } from '~/api/work/upsertWork'
+import { searchMyWorks } from '~/api/work/searchMyWorks'
+import { deleteWork } from '~/api/work/deleteWrok'
 
 const router = useRouter()
 const uploadDialog = ref(false)
-const readed = ref(false)
+const loading = ref(false)
+const editType = ref<'add' | 'upsert'>()
 
 const editInfo = reactive({
+  id: '',
   title: '',
   author: '',
-  files: [],
-  readed: false,
+  file: null,
+  read: false,
 })
+
 const workCol = [
   {
     name: 'title',
@@ -38,46 +51,106 @@ const workCol = [
     label: '操作',
   },
 ]
-const rows = [
-  {
-    title: '',
-    author: '',
-    filename: '',
-    operation: '',
-  },
-]
+const rows = ref([
+  // {
+  //   title: '',
+  //   author: '',
+  //   filename: '',
+  //   operation: '',
+  // },
+])
 
-function addWork() {
+const baseOptions = {
+  filters: [],
+  pagination: {
+    pageSize: PAGINATION_SIZE_MAX,
+    page: 0,
+  },
+  sort: [],
+} as IQueryConfig<IVerificationHistory>
+
+onMounted(async () => {
+  await fetchSearchMyWorks()
+})
+
+async function fetchSearchMyWorks() {
+  loading.value = true
+  const res = await searchMyWorks(baseOptions)
+  rows.value = res.data.map((item: any) => {
+    return {
+      ...item,
+      operation: '',
+    }
+  })
+  loading.value = false
+}
+
+async function confirmWork() {
+  const { id, file, title, author } = editInfo
+  if (editType.value === 'add') {
+    const res = await createWork(file, title, author)
+    if (res)
+      succNotify('增加作品')
+  }
+  else if (editType.value === 'upsert') {
+    const res = await upsertWork(id, file, title, author)
+    if (res)
+      succNotify('修改作品')
+  }
+
+  await fetchSearchMyWorks()
+}
+
+async function deleteRow(id: string) {
+  editInfo.id = id
+  const res = await deleteWork(editInfo.id)
+  if (res)
+    succNotify('删除作品')
+  await fetchSearchMyWorks()
+}
+
+function resetWork(id: string) {
   uploadDialog.value = true
+  editType.value = 'upsert'
+  editInfo.id = id
+}
+
+function succNotify(message: string) {
+  Notify.create({
+    message: `${message}成功`,
+    type: 'success',
+  })
 }
 </script>
 
 <template>
   <div min-h-xl>
     <header flex="~ row" mb-8>
-      <btn label="增加作品" @click="addWork">
-        <template #icon>
-          <div i-material-symbols:add />
-        </template>
-      </btn>
+      <client-only>
+        <Btn label="增加作品" @click="uploadDialog = true, editType = 'add'">
+          <template #icon>
+            <div i-material-symbols:add />
+          </template>
+        </Btn>
+      </client-only>
     </header>
 
     <div flex="~ col">
-      <div flex="~ row" text-grey-8>
+      <div flex="~ row" mb-5 text-grey-8>
         <span font-600>我的作品</span>
       </div>
 
       <BaseTable v-slot="{ props, col }" :loading="loading" :cols="workCol" :rows="rows">
         <div v-if="col === 'operation'">
-          <btn mr-4 outline label="重新上传" />
-          <btn outline label="删除" bg-color="alert-error" />
+          <Btn mr-4 outline label="重新上传" @click="resetWork(props.row.id)" />
+          <Btn outline label="删除" bg-color="alert-error" @click="deleteRow(props.row.id)" />
         </div>
         <div v-else>
           {{ props.row[`${col}`] }}
         </div>
       </BaseTable>
 
-      <ZDialog v-model="uploadDialog" title="增加作品" :footer="true">
+      <ZDialog v-model="uploadDialog" title="添加作品" footer :confirm-event="confirmWork" :disable-confirm="!editInfo.read">
         <div bg-grey-1 flex="~ col gap-2">
           <span font-500 text-grey-8>题目</span>
           <UserCodeInput v-model:user-code="editInfo.title" label="输入题目" :dark="false" />
@@ -85,16 +158,22 @@ function addWork() {
           <span font-500 text-grey-8>作者</span>
           <UserCodeInput v-model:user-code="editInfo.author" label="输入作者" :dark="false" />
 
-          <div flex="~ row justify-between items-center" my-5>
-            <span text-grey-8>上传资料（必须为PDF格式）</span>
-            <UploadFile v-model="editInfo.files" label="选择文件" />
+          <div flex="~ col" my-5>
+            <div flex="~ row justify-between items-center">
+              <span text-grey-8>上传资料（必须为PDF格式）</span>
+              <UploadFile v-model="editInfo.file" label="选择文件" accept-file=".pdf" />
+            </div>
+
+            <div text-grey-8>
+              {{ editInfo.file?.name }}
+            </div>
           </div>
 
           <div flex="~ row">
             <!-- checked-icon="i-material-symbols:check-circle"
               unchecked-icon="i-material-symbols:lens-outline" -->
             <q-checkbox
-              v-model="editInfo.readed"
+              v-model="editInfo.read"
             />
             <div>
               <span text-grey-5>我已阅读并同意</span>
@@ -107,7 +186,7 @@ function addWork() {
             </div>
           </div>
         </div>
-      </ZDialog>
+      </zdialog>
     </div>
   </div>
 </template>

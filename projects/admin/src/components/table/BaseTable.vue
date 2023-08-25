@@ -8,9 +8,10 @@ interface Props {
   cols: QTableProps['columns']
   operation?: Array<OperationType>
   loading?: boolean
+  search?: string
 }
 const props = defineProps<Props>()
-const emits = defineEmits(['update:rows'])
+const emits = defineEmits(['update:rows', 'update:search'])
 
 const rowsRef = ref<Array<any>>([])
 
@@ -60,11 +61,17 @@ defineExpose({
       </div>
     </template>
     <template #top-right>
-      <!-- <q-input v-if="operation?.includes('search')" borderless dense debounce="300" placeholder="搜索">
+      <q-input
+        v-if="operation?.includes('search')"
+        :model-value="search"
+        dense
+        borderless debounce="300" placeholder="搜索"
+        @update:model-value="(val) => $emit('update:search', val)"
+      >
         <template #append>
           <div i-mingcute:search-2-line />
         </template>
-      </q-input> -->
+      </q-input>
     </template>
 
     <template #body="props">

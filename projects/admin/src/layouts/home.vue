@@ -61,6 +61,21 @@ const navList = [
     name: '管理员分配',
     icon: 'i-mingcute:user-add-2-fill',
   },
+  {
+    id: 'workAdmin',
+    name: '作品管理',
+    icon: 'i-material-symbols:picture-in-picture',
+  },
+  {
+    id: 'request-purchase',
+    name: '申请采购',
+    icon: 'i-material-symbols:picture-in-picture',
+  },
+  {
+    id: 'exportLg',
+    name: '文件外发',
+    icon: 'i-material-symbols:picture-in-picture',
+  },
 ]
 </script>
 

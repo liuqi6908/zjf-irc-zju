@@ -10,5 +10,4 @@ if (typeof window !== 'undefined') {
 
 export function getUrlByToken(url: string, params?: any, token = tokenStr) {
   return $getUri(`${url}?token=${token}`, params)
-  // return `${import.meta.env.VITE_API_BASE}/data/download/link/${dataDirectorId}?token=${token}`
 }
