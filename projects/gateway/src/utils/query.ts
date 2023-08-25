@@ -1,15 +1,21 @@
 import type { Repository } from 'typeorm'
-import { clamp, objectKeys } from '@catsjuice/utils'
 import type { IQueryConfig } from 'zjf-types'
-import { PAGINATION_SIZE_DFT, PAGINATION_SIZE_MAX } from 'zjf-types'
+import { clamp, objectKeys } from '@catsjuice/utils'
 import type { PaginatedResData } from 'src/dto/pagination.dto'
+import { PAGINATION_SIZE_DFT, PAGINATION_SIZE_MAX } from 'zjf-types'
+
 import { responseParamsError } from './response/validate-exception-factory'
 
-function walk(node: Record<string, any>, cb: (key: string, value: boolean, path: string[]) => void, path = []) {
+function walk(
+  node: Record<string, any>,
+  cb: (key: string, value: boolean, path: string[], isLeaf: boolean) => void,
+  path = [],
+) {
   objectKeys(node).forEach((key) => {
     const value = node[key]
-    cb(key, value, path)
-    if (typeof value === 'object')
+    const isLeaf = typeof value !== 'object'
+    cb(key, value, path, isLeaf)
+    if (!isLeaf)
       walk(value, cb, [...path, key])
   })
 }
@@ -18,32 +24,53 @@ export function getQueryQB<Entity>(
   repo: Repository<Entity>,
   config: IQueryConfig<Entity>,
 ) {
+  const rootAlias = 'entity'
   const { pagination, filters, sort, relations } = config
-  const qb = repo.createQueryBuilder('ent')
+  const qb = repo.createQueryBuilder(rootAlias)
   let { page = 1, pageSize = PAGINATION_SIZE_DFT } = pagination || {}
   page = Math.max(page, 1)
   pageSize = clamp(pageSize, 1, PAGINATION_SIZE_MAX)
+
+  // relations
+  if (relations && objectKeys(relations).length) {
+    walk(relations, (key, value, path) => {
+      const arr = [...path, key]
+      const alias = arr.join('_')
+      const parentAlias = path.join('_')
+      value && qb.leftJoinAndSelect(`${parentAlias}.${key}`, alias)
+    }, [rootAlias])
+  }
 
   // filters
   if (filters?.length) {
     filters.forEach((filter, index) => {
       const { type } = filter
+
       const field = String(filter.field)
+      let selector = ''
+      if (field.includes('.')) {
+        const arr = [rootAlias, ...field.split('.')]
+        const f = arr.pop()
+        selector = `${arr.join('_')}.${f}`
+      }
+      else {
+        selector = `${rootAlias}.${field}`
+      }
 
       if (type === 'BETWEEN') {
         const [start, end] = filter.value
-        qb.andWhere(`ent.${field} ${type} :start AND :end`, { start, end })
+        qb.andWhere(`${selector} ${type} :start AND :end`, { start, end })
       }
       else if (type === 'LIKE' || type === 'NOT LIKE') {
         const value = `%${filter.value}%`
-        qb.andWhere(`ent.${field} ${type} :${field}`, { [field]: value })
+        qb.andWhere(`${selector} ${type} :value`, { value })
       }
       else if (type === 'IN' || type === 'NOT IN') {
         const value = filter.value
-        qb.andWhere(`ent.${field} ${type} (:...${field})`, { [field]: value })
+        qb.andWhere(`${selector} ${type} (:...value)`, { value })
       }
       else if (type === 'IS NULL' || type === 'IS NOT NULL') {
-        qb.andWhere(`ent.${field} ${type}`)
+        qb.andWhere(`${selector} ${type}`)
       }
       else if (
         type === '!='
@@ -54,7 +81,7 @@ export function getQueryQB<Entity>(
         || type === '='
       ) {
         const value = (filter as any).value
-        qb.andWhere(`ent.${field} ${type} :${field}`, { [field]: value })
+        qb.andWhere(`${selector} ${type} :value`, { value })
       }
       else {
         const property = `filters[${index}].type`
@@ -79,18 +106,8 @@ export function getQueryQB<Entity>(
           constraints: { [property]: `字段名不合法：${field}` },
         }])
       }
-      qb.addOrderBy(`ent.${String(field)}`, order)
+      qb.addOrderBy(`${rootAlias}.${String(field)}`, order)
     })
-  }
-
-  // relations
-  if (relations && objectKeys(relations).length) {
-    walk(relations, (key, value, path) => {
-      const arr = [...path, key]
-      const alias = arr.join('_')
-      const parentAlias = arr.slice(0, -1).join('_')
-      value && qb.leftJoinAndSelect(`${parentAlias}.${key}`, alias)
-    }, ['ent'])
   }
 
   // paginate

@@ -2,7 +2,7 @@ import { IBasicResponse } from '../http/basic.interface';
 import { IPaginatedResData, IPaginationDto } from './pagination.interface';
 
 export type IQueryFilter<T> = {
-  field: keyof T
+  field: keyof T | string
 } & (
   {
     type: '=' | '!=' | '>' | '<' | '>=' | '<='
@@ -42,8 +42,8 @@ export interface IQueryConfig<Entity> {
 
 export interface IQueryDto<Entity> extends IQueryConfig<Entity> {}
 
-export type RelationSet<Entity> = {
-  [K in keyof Entity]?: boolean | RelationSet<Entity[K]>
+export type RelationSet<Entity, V = boolean> = {
+  [K in keyof Entity]?: V | RelationSet<Entity[K], V>
 }
 
 /** 通用的分页查询结果 */

@@ -1,10 +1,10 @@
 import { decorate } from 'ts-mixer'
-import type { IQueryConfig, IQueryResDto, IQuerySort } from 'zjf-types'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import type { IQueryConfig, IQueryResDto, IQuerySort } from 'zjf-types'
 import { sharedVariableMarkdown } from 'src/utils/docs/shared-variable'
 
-import { PaginatedResData, PaginationDto } from './pagination.dto'
 import { SuccessDto } from './success.dto'
+import { PaginatedResData, PaginationDto } from './pagination.dto'
 
 class QueryFilter<T> {
   @ApiProperty({ description: '字段名' })
