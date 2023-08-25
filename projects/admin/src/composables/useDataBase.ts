@@ -3,7 +3,7 @@ import type { DataRoot, IDataDirectory } from 'zjf-types'
 import { cloneDeep } from 'lodash-es'
 
 const { $get } = useRequest()
-let rootTabList = reactive<TabItem[]>([])
+const rootTabList = ref<TabItem[]>([])
 const rootData = ref<IDataDirectory[]>([])
 const allData = ref<IDataDirectory[]>([])
 const loading = ref()
@@ -34,7 +34,7 @@ export function useDataBase() {
         })
       })
 
-      rootTabList = cloneDeep(rootList)
+      rootTabList.value = cloneDeep(rootList)
     }
   }
   // const deepFreeze = (obj) => {

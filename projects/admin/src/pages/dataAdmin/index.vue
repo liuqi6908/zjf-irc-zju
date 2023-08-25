@@ -115,14 +115,15 @@ const dataBase = computed(() => {
 
 onBeforeMount(() => {
   geRootData().finally(() => {
-    tab.value = rootTabList[0].id
+    if (rootTabList)
+      tab.value = rootTabList.value[0].id
   })
 })
 
 watch([tab, midTable], async ([newTab, newMid]) => {
   if (newMid)
     await uploadFile((newTab as DataRoot), newMid)
-  const isRequest = currentTabObj.value.isRequest
+  const isRequest = currentTabObj.value?.isRequest
 
   tab.value = newTab
 

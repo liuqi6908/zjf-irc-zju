@@ -158,6 +158,8 @@ const tableData = computed(() => {
 
   return rowData.value
 })
+
+const empty = computed(() => !props.dataBase?.length)
 </script>
 
 <template>
@@ -189,7 +191,11 @@ const tableData = computed(() => {
       数据库介绍
     </header>
 
-    <div v-for="data in dataBase" :key="data.id" flex="~ row items-center justify-between">
+    <div v-if="empty" text-alert-error>
+      编辑数据库介绍前请先上传中间表
+    </div>
+
+    <div v-for="data in dataBase" v-else :key="data.id" flex="~ row items-center justify-between">
       <div font-600 text-grey-5>
         {{ data.nameZH }}
       </div>
@@ -214,6 +220,10 @@ const tableData = computed(() => {
     <header font-600 text-grey-8 title-4 flex="~ row justify-start">
       引用规范
     </header>
+
+    <div v-if="empty" min-h-2xl text-alert-error>
+      编辑引用规范前请先上传中间表
+    </div>
 
     <div v-for="data in dataBase" :key="data.id" col-grow flex="~ row items-center justify-between">
       <div font-600 text-grey-5>
