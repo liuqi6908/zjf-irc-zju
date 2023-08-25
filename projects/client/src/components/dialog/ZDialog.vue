@@ -7,6 +7,7 @@ interface Props {
   back?: boolean
   footer?: boolean
   confirmEvent?: () => void
+  disableConfirm?: boolean
 }
 
 defineProps<Props>()
@@ -36,7 +37,7 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
       <footer v-if="footer" mt-10 flex flex-row justify-end>
         <div>
           <Btn label="取消" :close-popup="modelValue" mr-6 outline />
-          <Btn label="确认" :close-popup="modelValue" @click="confirmEvent" />
+          <Btn label="确认" :disable="disableConfirm" :close-popup="modelValue" @click="confirmEvent" />
         </div>
       </footer>
     </q-card>

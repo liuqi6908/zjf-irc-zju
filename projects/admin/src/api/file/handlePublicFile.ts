@@ -1,6 +1,6 @@
 import { useRequest } from '../../composables/request'
 
-const { $put, $get, queryParamsUrl } = useRequest()
+const { $put, $get, queryParamsUrl, $getUri } = useRequest()
 
 export function getPublicFileUrl(path: string, filename: string) {
   if (filename && filename.length) {
@@ -8,11 +8,14 @@ export function getPublicFileUrl(path: string, filename: string) {
     const ext = filename.substring(index + 1)
 
     /** 当图片后缀为svg的时候直接返回svg文本 */
-    if (ext === 'svg')
+    if (ext === 'svg') {
       return $get('file/public', { path: `${path}/${filename}` }, false)
+    }
 
-    else
-      return queryParamsUrl(`${import.meta.env.VITE_API_BASE}/file/public`, { path: `${path}/${filename}` })
+    else {
+      const url = queryParamsUrl('file/public', { path: `${path}/${filename}` })
+      return $getUri(url)
+    }
   }
 }
 
