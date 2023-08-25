@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-export type BtnStatus = 'access' | 'reject' | 'save' | 'change' | 'delete'
+export type BtnStatus = 'access' | 'reject' | 'save' | 'change' | 'delete' | 'expired'
 interface Props {
   types: Array<BtnStatus>
 }
 const props = defineProps<Props>()
-defineEmits(['update:access', 'update:reject', 'update:save', 'update:change', 'update:delete'])
+defineEmits(['update:access', 'update:reject', 'update:save', 'update:change', 'update:delete', 'update:expired'])
 
 const typeColor: Record<BtnStatus, any> = {
   access: { color: 'teal', label: '通过' },
@@ -12,7 +12,9 @@ const typeColor: Record<BtnStatus, any> = {
   reject: { color: 'negative', label: '驳回', showPopup: true },
   save: { color: 'primary-1', label: '保存' },
   change: { color: 'accent', label: '修改' },
+  expired: { color: 'negative', label: '到期' },
 }
+
 const btns = computed(() => {
   if (props.types.length) {
     return props.types.map((btn) => {

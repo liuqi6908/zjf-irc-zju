@@ -40,10 +40,10 @@ function deleteRow(rowItem: any) {
   emits('update:rows', rowsRef.value)
 }
 
-watch(() => props.rows, () => {
-  if (props.rows.length) {
-    rowsRef.value = props.rows
-    emits('update:rows', props.rows)
+watch(() => props.rows, (newRow) => {
+  if (newRow && newRow.length) {
+    rowsRef.value = newRow
+    emits('update:rows', newRow)
   }
 }, { deep: true, immediate: true })
 

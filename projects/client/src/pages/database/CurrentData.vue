@@ -4,7 +4,7 @@ import Tree from '~/components/tree/Tree.vue'
 
 const route = useRoute()
 
-const { getDataByRootId, databaseTab } = useDataBase()
+const { getDataByRootId, databaseTab, loading } = useDataBase()
 
 const tabb = ref('')
 
@@ -24,7 +24,6 @@ watch(() => route.query,
     if (query.database)
       await getDataByRootId(query.database)
   },
-  { immediate: true },
 )
 
 const list = computed(() => {

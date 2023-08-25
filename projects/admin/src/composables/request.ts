@@ -58,7 +58,7 @@ export function useRequest() {
       return response
   }
 
-  async function $post<T = any>(url: string, data: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
+  async function $post<T = any>(url: string, data?: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
     const cacheKey = url + JSON.stringify(data) + JSON.stringify(config)
     if (useCache && cache.has(cacheKey))
       return cache.get(cacheKey)
@@ -103,6 +103,9 @@ export function useRequest() {
     useCache && cache.set(cacheKey, response.data)
     return response.data
   }
+  function $getUri(url: string, params?: any) {
+    return $http.getUri({ url, params })
+  }
 
-  return { $get, $post, $put, $patch, $delete, cache, queryParamsUrl }
+  return { $get, $post, $put, $patch, $delete, $getUri, cache, queryParamsUrl }
 }

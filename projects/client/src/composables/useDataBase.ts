@@ -9,7 +9,7 @@ let rootTabList = reactive<TabItem[]>([])
 const rootData = ref<IDataDirectory[]>([])
 const allData = ref<IDataDirectory[]>([])
 const databaseTab = ref<TabItem[]>([])
-const loading = ref()
+const loading = ref(false)
 const verifyTree = ref([{ nameZH: '数据库类型', id: 'database', children: [] }])
 
 export function useDataBase() {
@@ -18,6 +18,13 @@ export function useDataBase() {
   //   if (res)
   //     userInfo.value = res
   // }
+  // const getPermissionDownloadRole = async (permission = 'string') => {
+  //   return await $get('data-permission/data-role/list', { permission })
+  // }
+
+  const downloadDescribeByRole = async (roleName: string) => {
+    return await $get(`data-permission/data-role/${roleName}`)
+  }
 
   const judgePermission = (roles?: IDataRole[]) => {
     if (!roles)
@@ -32,6 +39,7 @@ export function useDataBase() {
 
   /** 获取指定分类的数据 */
   const getDataByRootId = async (dataRootId: DataRoot) => {
+    loading.value = true
     const res = await $get<IDataDirectory[]>(`/data/list/${dataRootId}`)
     const tabs = [] as TabItem[]
 
@@ -53,9 +61,11 @@ export function useDataBase() {
       })
     }
     databaseTab.value = cloneDeep(tabs)
+    loading.value = false
   }
 
   const geRootData = async () => {
+    loading.value = true
     rootData.value = await $get<IDataDirectory[]>('/data/root/list')
 
     if (rootData.value && rootData.value.length) {
@@ -70,6 +80,7 @@ export function useDataBase() {
 
       rootTabList = cloneDeep(rootList)
     }
+    loading.value = false
   }
 
   const fetchAllData = async () => {
@@ -102,5 +113,6 @@ export function useDataBase() {
     verifyTree,
     loading,
     databaseTab,
+    downloadDescribeByRole,
   }
 }

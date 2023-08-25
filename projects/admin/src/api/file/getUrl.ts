@@ -8,7 +8,7 @@ if (typeof window !== 'undefined') {
   tokenStr = localStorage.getItem(AUTH_TOKEN_KEY) || null
 }
 
-export function getDataDownload(dataDirectorId: string, token = tokenStr) {
-  return $getUri(`data/download/link/${dataDirectorId}?token=${token}`)
+export function getUrlByToken(url: string, params?: any, token = tokenStr) {
+  return $getUri(`${url}?token=${token}`, params)
   // return `${import.meta.env.VITE_API_BASE}/data/download/link/${dataDirectorId}?token=${token}`
 }

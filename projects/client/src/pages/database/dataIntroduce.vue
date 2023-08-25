@@ -11,6 +11,8 @@ const tableFieldsCol = [
   { label: '字段', name: 'nameZH', field: 'nameZH', align: 'center' },
   { label: '含义', name: 'description', field: 'description', align: 'center' },
 ]
+const { downloadDescribeByRole } = useDataBase()
+
 const tableFieldRows = ref([])
 
 const downloadUrl = ref('')
@@ -53,8 +55,11 @@ onBeforeMount(async () => {
   downloadUrl.value = getDataDownload(route.query.dataId as string)
 })
 
-function openDialog() {
+async function openDialog() {
   dialog.value = true
+
+  // const res = await downloadDescribeByRole('访客')
+  // console.log({ res })
 }
 </script>
 
@@ -90,9 +95,10 @@ function openDialog() {
     <span text-primary-1>引用规范：{{ route.query.reference || '暂无引用规范' }}</span>
 
     <div flex="~ row gap-5" my-10>
-      <a :url="downloadUrl">
+      <a :href="downloadUrl" download="数据库">
         <Btn label="数据下载" />
       </a>
+
       <btn v-if="route.query.rootId === 'pre-purchased'" label="建议采购" @click="openDialog()" />
     </div>
 

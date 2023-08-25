@@ -3,6 +3,7 @@ const HomeCarousel = defineAsyncComponent(() => import('../component/cms/home/Ho
 const DataIntroduce = defineAsyncComponent(() => import('../component/cms/home/DataIntroduce.vue'))
 const Footer = defineAsyncComponent(()=>import('../component/cms/home/Footer.vue'))
 const Question = defineAsyncComponent(()=>import('../component/cms/question/Question.vue'))
+const UpdateDescribe = defineAsyncComponent(()=>import('../component/cms/user/UpdateDescribe.vue'))
 
 export const cmsConfig = [
     {
@@ -50,7 +51,22 @@ export const cmsConfig = [
                 component: markRaw(Question), 
                 col: ['title', 'svg','richText','add'],
                 rows: []
-            }
+            },
+        ]
+    },
+    {
+        parentId: '',
+        id: 'user',
+        label: '',
+        children: [
+            {
+                id: 'userUpdateDescribe',
+                label: '问答',
+                parentId: 'userUpdateDescribe',
+                component: markRaw(UpdateDescribe), 
+                col: [],
+                rows: [{ richText: null }]
+            },
         ]
     }
 ]
