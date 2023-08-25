@@ -4,6 +4,8 @@ import { Injectable } from '@nestjs/common'
 import type { User } from 'src/entities/user'
 import { InjectRepository } from '@nestjs/typeorm'
 
+import { responseError } from 'src/utils/response'
+import { ErrorCode } from 'zjf-types'
 import { FileService } from '../file/file.service'
 import { timestampFilename } from '../../utils/timestamp-filename'
 
@@ -33,6 +35,17 @@ export class WorkService {
     await this._fileSrv.upload('pri', path, file)
     await this._workRepo.save(work)
     return work
+  }
+
+  public async download(id: string) {
+    const record = await this._workRepo.findOne({ where: { id } })
+    if (!record)
+      responseError(ErrorCode.FILE_NOT_FOUND)
+    const path = `work/${record.userId}/${record.filename}`
+    return {
+      stream: await this._fileSrv.download('pri', path),
+      filename: record.filename,
+    }
   }
 
   public async delete(record) {

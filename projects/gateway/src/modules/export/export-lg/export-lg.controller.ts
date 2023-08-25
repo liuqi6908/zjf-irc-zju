@@ -98,7 +98,7 @@ export class ExportLgController {
     if (!feLg)
       responseError(ErrorCode.EXPORT_NOT_EXISTS)
     const readable = await this._fileSrv.download('pri', feLg.path)
-    res.header('Content-Disposition', `attachment; filename=${feLg.fileName}`)
+    res.header('Content-Disposition', `attachment; filename=${encodeURIComponent(feLg.fileName)}`)
     res.header('Content-Type', 'application/octet-stream')
     return new StreamableFile(readable)
   }

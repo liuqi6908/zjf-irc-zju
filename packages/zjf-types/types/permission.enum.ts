@@ -111,7 +111,10 @@ export enum PermissionType {
   EXPORT_LG_DOWNLOAD = 'export-lg:download',
 
   // ------------------ 作品/成果 ---------------------
+  /** 查询所有作品/成果 */
   WORK_QUERY_ALL = 'work:query-all',
+  /** 下载指定作品/成果的附件 */
+  WORK_DOWNLOAD = 'work:download',
 
   // ------------------ 采购建议 ----–––---------------
   /** 查询所有的采购建议 */
@@ -172,6 +175,7 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.EXPORT_LG_DOWNLOAD]: '下载大文件外发的文件',
 
   [PermissionType.WORK_QUERY_ALL]: '查询所有作品/成果',
+  [PermissionType.WORK_DOWNLOAD]: '下载指定作品/成果的附件',
 
   [PermissionType.DATA_SUGGEST_QUERY_ALL]: '查询所有的采购建议',
 }

@@ -1,15 +1,15 @@
-import { ErrorCode, PermissionType } from 'zjf-types'
-import { IsLogin } from 'src/guards/login.guard'
-import { responseError } from 'src/utils/response'
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
-import { Body, Controller, Delete, Param, Patch, Post, Put, Req } from '@nestjs/common'
-import { ApiFormData } from 'src/decorators/api/api-form-data'
-
-import { responseParamsError } from 'src/utils/response/validate-exception-factory'
+import { getQuery } from 'src/utils/query'
 import { QueryDto } from 'src/dto/query.dto'
 import type { Work } from 'src/entities/work'
-import { getQuery } from 'src/utils/query'
+import { IsLogin } from 'src/guards/login.guard'
+import { responseError } from 'src/utils/response'
+import { ErrorCode, PermissionType } from 'zjf-types'
 import { HasPermission } from 'src/guards/permission.guard'
+import { ApiFormData } from 'src/decorators/api/api-form-data'
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
+import { responseParamsError } from 'src/utils/response/validate-exception-factory'
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req, Res, StreamableFile } from '@nestjs/common'
+
 import { WorkService } from './work.service'
 
 @ApiTags('Work | 成果（作品）模块')
@@ -134,5 +134,18 @@ export class WorkController {
   @Post('query')
   public async query(@Body() body: QueryDto<Work>) {
     return await getQuery(this._workSrv.repo(), body || {})
+  }
+
+  @ApiOperation({ summary: '下载指定作品的附件' })
+  @ApiParam({ name: 'id', description: '上传记录的唯一标识' })
+  @HasPermission(PermissionType.WORK_DOWNLOAD)
+  @Get('file/:id')
+  public async downloadFile(
+    @Res({ passthrough: true }) res: any,
+    @Param('id') id: string,
+  ) {
+    const { stream, filename } = await this._workSrv.download(id)
+    res.header('Content-Disposition', `attachment; filename=${encodeURIComponent(filename)}`)
+    return new StreamableFile(stream)
   }
 }

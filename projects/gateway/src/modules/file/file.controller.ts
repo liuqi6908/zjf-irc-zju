@@ -39,7 +39,7 @@ export class FileController {
     const file = await this._fileSrv.download('pub', query.path)
     const filename = query.path.split('/').pop()
     const ext = filename.split('.').pop()
-    res.header('Content-Disposition', `attachment; filename=${filename}`)
+    res.header('Content-Disposition', `attachment; filename=${encodeURIComponent(filename)}`)
     res.header('Content-Type', `application/${ext}`)
     return new StreamableFile(file)
   }
