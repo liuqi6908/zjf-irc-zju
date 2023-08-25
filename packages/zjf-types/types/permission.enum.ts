@@ -110,6 +110,10 @@ export enum PermissionType {
 
   // ------------------ 作品/成果 ---------------------
   WORK_QUERY_ALL = 'work:query-all',
+
+  // ------------------ 采购建议 ----–––---------------
+  /** 查询所有的采购建议 */
+  DATA_SUGGEST_QUERY_ALL = "data-suggest:query-all"
 }
 
 export const permissionDescriptions: Record<PermissionType, string> = {
@@ -165,4 +169,6 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.EXPORT_LG_DOWNLOAD]: '下载大文件外发的文件',
 
   [PermissionType.WORK_QUERY_ALL]: '查询所有作品/成果',
+
+  [PermissionType.DATA_SUGGEST_QUERY_ALL]: '查询所有的采购建议',
 }

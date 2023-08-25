@@ -102,6 +102,10 @@ export enum ErrorCode {
   EXPORT_NOT_EXISTS = 900004,
   /** 外发申请已处理，无法重复处理 */
   EXPORT_HANDLED = 900005,
+
+  // 建议采购相关错误
+  /** 重复的采购建议 */
+  DATA_SUGGEST_DUPLICATED = 110001
 }
 
 export type ErrorMessageCollection = Partial<

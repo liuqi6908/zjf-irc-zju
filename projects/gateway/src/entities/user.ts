@@ -3,17 +3,18 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 
 import { Role } from './role'
+import { Work } from './work'
 import { Login } from './login'
 import { Desktop } from './desktop'
 import { DataRole } from './data-role'
 import { BaseTimeStamp } from './_timestamp'
 import { UserDeleted } from './user-deleted'
 import { DesktopQueue } from './desktop-queue'
+import { DataSuggestion } from './data-suggestion'
 import { VerificationHistory } from './verification'
 import { DesktopQueueHistory } from './desktop-queue-history'
 import { FileExportSmall } from './export/file-export-small.entity'
 import { FileExportLarge } from './export/file-export-large.entity'
-import { Work } from './work'
 
 @Entity()
 export class User extends BaseTimeStamp implements IUser {
@@ -121,4 +122,8 @@ export class User extends BaseTimeStamp implements IUser {
   @ApiProperty({ description: '上传的作品列表' })
   @OneToMany(() => Work, work => work.user)
   works?: Work[]
+
+  @ApiProperty({ description: '用户推荐的数据采购信息' })
+  @OneToMany(() => DataSuggestion, sug => sug.user, { cascade: true })
+  suggestions?: DataSuggestion[]
 }

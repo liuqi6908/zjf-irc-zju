@@ -4,6 +4,7 @@ import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from 
 
 import { DataRole } from './data-role'
 import { DataField } from './data-field'
+import { DataSuggestion } from './data-suggestion'
 
 @Entity()
 export class DataDirectory implements IDataDirectory {
@@ -73,4 +74,8 @@ export class DataDirectory implements IDataDirectory {
 
   @Column({ type: 'simple-array', nullable: true })
   path?: string[]
+
+  @ApiProperty({ description: '用户发起的建议' })
+  @OneToMany(() => DataSuggestion, sug => sug.dataDirectory)
+  suggestions?: DataSuggestion[]
 }
