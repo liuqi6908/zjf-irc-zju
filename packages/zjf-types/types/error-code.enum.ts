@@ -5,6 +5,10 @@ export enum ErrorCode {
   COMMON_PARAMS_NOT_VALID = 100002,
   /** 未定义的错误码 */
   COMMON_ERROR_CODE_NOT_DEFINED = 100003,
+  /** 未实现的功能 */
+  COMMON_NOT_IMPLEMENTED = 100004,
+  /** 已废弃的功能 */
+  COMMON_DEPRECATED = 100005,
 
   // ---- 用户相关错误码 ----
   /** 用户未登录 */

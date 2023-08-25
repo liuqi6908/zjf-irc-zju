@@ -56,8 +56,9 @@ export class VerificationController {
     return await getQuery(this._verificationSrv.repo(), body)
   }
 
-  @ApiOperation({ summary: '取消自己的一个认证申请（仅当该申请待处理时有效）' })
+  @ApiOperation({ summary: '取消一个认证申请（仅当该申请待处理时有效）' })
   @ApiSuccessResponse(VerificationResDto)
+  @HasPermission()
   @ApiErrorResponse(ErrorCode.PERMISSION_DENIED)
   @VerificationExists()
   @IsLogin()
@@ -67,10 +68,16 @@ export class VerificationController {
     @Req() req: FastifyRequest,
   ) {
     const verification = req.verificationExistsGuardVerification!
-    if (verification.status !== VerificationStatus.PENDING)
-      responseError(ErrorCode.VERIFICATION_NOT_PENDING)
-
     const user = req.raw.user
+    const permissions = user?.role?.permissions || []
+
+    // 取消自己的申请，或者是管理员取消
+    if (
+      verification.founderId !== req.raw.user!.id
+      || !permissions.some(p => p.name === PermissionType.VERIFICATION_CANCEL)
+    )
+      responseError(ErrorCode.PERMISSION_DENIED)
+
     return this._verificationSrv.updateVerificationStatus(
       req.verificationExistsGuardVerification!,
       user,
@@ -78,7 +85,10 @@ export class VerificationController {
     )
   }
 
-  @ApiOperation({ summary: '重置自己的一个认证申请（仅当该申请已通过时有效）' })
+  @ApiOperation({
+    summary: '重置一个认证申请（仅当该申请已通过时有效），统一使用 cancel 接口',
+    deprecated: true,
+  })
   @ApiSuccessResponse(VerificationResDto)
   @ApiErrorResponse(ErrorCode.PERMISSION_DENIED)
   @VerificationExists()
@@ -88,6 +98,7 @@ export class VerificationController {
     @Param() _: VerificationIdDto,
     @Req() req: FastifyRequest,
   ) {
+    responseError(ErrorCode.COMMON_DEPRECATED)
     const verification = req.verificationExistsGuardVerification!
     if (verification.status !== VerificationStatus.APPROVED)
       responseError(ErrorCode.VERIFICATION_NOT_APPROVED)

@@ -30,6 +30,8 @@ export enum PermissionType {
   VERIFICATION_APPROVE = 'verification:approve',
   /** 驳回身份验证 */
   VERIFICATION_REJECT = 'verification:reject',
+  /** 取消一个用户的认证 */
+  VERIFICATION_CANCEL = 'verification:cancel',
 
   // ------------------ 内容管理 ---------------------
   /** 创建内容 */
@@ -129,6 +131,7 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.VERIFICATION_CAT_ATTACHMENT]: '查看上传的附件',
   [PermissionType.VERIFICATION_APPROVE]: '通过身份验证申请',
   [PermissionType.VERIFICATION_REJECT]: '驳回身份验证申请',
+  [PermissionType.VERIFICATION_CANCEL]: '取消一个用户的认证',
 
   [PermissionType.CMS_CREATE]: '创建内容',
   [PermissionType.CMS_UPDATE]: '更新内容',

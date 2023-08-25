@@ -83,11 +83,6 @@ export class VerificationService {
     // 不允许驳回时没有驳回原因
     if (status === VerificationStatus.REJECTED && !rejectReason)
       responseError(ErrorCode.VERIFICATION_REJECT_REASON_REQUIRED)
-    // 仅允许用户自己取消
-    if (status === VerificationStatus.CANCELLED && verification.founderId !== handler.id)
-      responseError(ErrorCode.PERMISSION_DENIED)
-    // 仅允许管理员处理
-    // 应该在 controller 层处理
 
     await this._vhRepo.update(verification.id, {
       status,
@@ -103,7 +98,7 @@ export class VerificationService {
         .update({ id: verification.founderId }, { verificationId: verification.id })
     }
 
-    if (status === VerificationStatus.CANCELLED && handler.verificationId === verification.id) {
+    if (status === VerificationStatus.CANCELLED) {
       await this._usrSrv
         .repo()
         .update({ id: verification.founderId }, { verificationId: null })
