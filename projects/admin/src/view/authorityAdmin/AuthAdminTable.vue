@@ -22,6 +22,7 @@ defineEmits(['update:rows', 'update:save'])
 const $q = useQuasar()
 
 const baseTableRef = ref(null)
+const treeRef = ref(null)
 
 /** input组件 */
 const input = ['roleName', '']
@@ -97,6 +98,7 @@ function onLazyLoad({ node, key, done, fail }) {
 
     <QTree
       v-else-if="tree.includes(col)"
+      ref="treeRef"
       v-model:ticked="props.row[`${col}`]"
       no-transition
       tick-strategy="leaf"

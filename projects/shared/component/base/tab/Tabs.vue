@@ -64,7 +64,7 @@ watch(() => props.modelValue,
                         >
                         <div flex="~ col">
                             <span>{{ tab.label }}</span>
-                            <span v-if="tab.nameEN">{{ tab.nameEN }}</span>
+                            <span v-if="tab.nameEN" style="text-transform: lowercase">{{ tab.nameEN }}</span>
                         </div>
                           
                         </q-tab>
