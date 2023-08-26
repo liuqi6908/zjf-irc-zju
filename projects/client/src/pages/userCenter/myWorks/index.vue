@@ -141,7 +141,7 @@ function succNotify(message: string) {
       </div>
 
       <BaseTable v-slot="{ props, col }" :loading="loading" :cols="workCol" :rows="rows">
-        <div v-if="col === 'operation'">
+        <div v-if="col === 'operation'" flex="~ row justify-center">
           <Btn mr-4 outline label="重新上传" @click="resetWork(props.row.id)" />
           <Btn outline label="删除" bg-color="alert-error" @click="deleteRow(props.row.id)" />
         </div>
