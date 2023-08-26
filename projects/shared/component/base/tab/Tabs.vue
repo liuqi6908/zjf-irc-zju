@@ -10,6 +10,7 @@ export interface TabItem {
     isRequest: boolean
     to?: string
     currTabObj?: any
+    rightEvent?: string
     tableData?: {
         row: QTableProps['rows']
         col: QTableProps['columns']
@@ -22,7 +23,11 @@ interface Props {
     align?:string
 }
 const props = defineProps<Props>()
-const emits = defineEmits(['update:modelValue', 'update:currTabObj'])
+const emits = defineEmits(['update:modelValue', 'update:currTabObj','update:rightEvent'])
+
+function editPopup(val,event){
+    emits('update:rightEvent',{ val,event})
+}
 
 watch(() => props.modelValue,
     () => {
@@ -50,8 +55,18 @@ watch(() => props.modelValue,
                             {{ tab.label }}
                         </q-route-tab>
 
-                        <q-tab v-else text-4 font-600 :name="tab.id">
-                            {{ tab.label }}
+                        <q-tab  
+                            v-else
+                            @click.right.prevent="editPopup(tab,$event)"  
+                            text-4 
+                            font-600 
+                            :name="tab.id"
+                        >
+                        <div flex="~ col">
+                            <span>{{ tab.label }}</span>
+                            <span v-if="tab.nameEN">{{ tab.nameEN }}</span>
+                        </div>
+                          
                         </q-tab>
                     </div>
             </q-tabs>

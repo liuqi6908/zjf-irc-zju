@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import * as WangEditor from '@wangeditor/editor-for-vue'
-import '@wangeditor/editor/dist/css/style.css'
+
+// import '@wangeditor/editor/dist/css/style.css'
 import { editorConfig } from './richConfig'
 
 interface Props {

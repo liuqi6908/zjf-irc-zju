@@ -18,8 +18,10 @@ const { getDataByRootId, geRootData, rootTabList } = useDataBase()
 
 const tab = ref('')
 const currentTabObj = ref()
+const EditRef = ref()
 const midTable = ref<File>()
 const describe = ref()
+const item = ref(false)
 const editDialog = ref(false)
 const editStatus = ref<'add' | 'update'>()
 const editInfo = reactive({
@@ -66,14 +68,15 @@ async function confirmEditInfo() {
     if (!res)
       return
 
+    await geRootData()
     Notify.create({
       message: '添加成功',
       type: 'success',
     })
   }
   else if (editStatus.value === 'update') {
-    const res = await updateRootData(editInfo.id, editInfo.nameZH, editInfo.nameEN)
-
+    const res = await updateRootData(editInfo.id, editInfo.nameZH)
+    await geRootData()
     if (res) {
       Notify.create({
         message: '修改成功',
@@ -87,18 +90,19 @@ async function confirmEditInfo() {
   editDialog.value = false
 }
 
-async function editDataBase(id: string) {
-  editDialog.value = true
-  editStatus.value = 'update'
-  editInfo.id = id
-}
-async function deleteDataBase(id: string) {
-  const res = await deleteRootData(id)
+// async function editDataBase() {
+//   editDialog.value = true
+//   editStatus.value = 'update'
+//   editInfo.id = id
+// }
+async function deleteDataBase() {
+  const res = await deleteRootData(editInfo.id)
   if (res) {
     Notify.create({
       message: '删除成功',
       type: 'success',
     })
+    await geRootData()
   }
   else {
     Notify.create({
@@ -106,6 +110,14 @@ async function deleteDataBase(id: string) {
       type: 'error',
     })
   }
+}
+
+function rightEvent({ val, event }) {
+  item.value = true
+  editInfo.id = val.id
+  editStatus.value = 'update'
+  EditRef.value.$el.style.left = `${event.clientX - 250}px`
+  EditRef.value.$el.style.display = EditRef.value.$el.style.display === 'none' ? 'block' : 'none'
 }
 
 const dataBase = computed(() => {
@@ -150,14 +162,22 @@ watch(describe, async (newDescribe) => {
     }
   }
 })
+onMounted(() => {
+  document.addEventListener('click', (event) => {
+    if (!EditRef.value)
+      return
+    const element = EditRef.value.$el
+
+    if (!element.contains(event.target))
+      element.style.display = 'none'
+  })
+})
 </script>
 
 <template>
   <div flex="~ row" bg-grey-1>
-    <div flex="~ col" class="col-4" m-10>
-      <q-btn label="增加一个自定义数据库" flat color="primary-1" @click=" editDialog = true, editStatus = 'add'">
-        <div i-material-symbols:add />
-      </q-btn>
+    <!-- <div flex="~ col" class="col-4" m-10>
+      <q-btn label="增加一个自定义数据库" flat color="primary-1" />
       <div flex="~ col">
         <q-chip
           v-for="(data, index) in rootTabList" :key="index"
@@ -171,12 +191,12 @@ watch(describe, async (newDescribe) => {
           {{ data.label }}
         </q-chip>
       </div>
-    </div>
+    </div> -->
 
     <q-dialog v-model="editDialog">
       <q-card min-w-100 p-5>
         <q-card-section>
-          <q-input v-model="editInfo.nameEN" label="请输入英文字段" />
+          <q-input v-if="editStatus === 'add'" v-model="editInfo.nameEN" label="请输入英文字段" />
           <q-input v-model="editInfo.nameZH" label="请输入中文字段" />
         </q-card-section>
 
@@ -187,7 +207,18 @@ watch(describe, async (newDescribe) => {
       </q-card>
     </q-dialog>
 
-    <Tabs v-model="tab" v-model:curr-tab-obj="currentTabObj" class="col-grow" items-start :tab-list="rootTabList">
+    <Tabs
+      v-model="tab"
+      v-model:curr-tab-obj="currentTabObj"
+      class="col-grow" items-start
+      :tab-list="rootTabList"
+      @update:rightEvent="rightEvent"
+    >
+      <template #right>
+        <q-btn flat text-primary-1 @click=" editDialog = true, editStatus = 'add'">
+          <div i-material-symbols:add />
+        </q-btn>
+      </template>
       <!-- <TotalData v-if="tab === 'totalData'" /> -->
       <DataResource
         v-model:mid-table="midTable"
@@ -197,6 +228,19 @@ watch(describe, async (newDescribe) => {
         :tree-data="currentTabObj"
       />
     </Tabs>
+
+    <q-list ref="EditRef" bordered absolute top-12 style="display: none;" bg-grey-1>
+      <q-item clickable>
+        <q-item-section @click="editDialog = true">
+          编辑当前数据库的中文名称
+        </q-item-section>
+      </q-item>
+      <q-item clickable>
+        <q-item-section @click="deleteDataBase()">
+          删除当前数据库
+        </q-item-section>
+      </q-item>
+    </q-list>
   </div>
 </template>
 

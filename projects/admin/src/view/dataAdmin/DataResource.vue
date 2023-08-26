@@ -31,7 +31,7 @@ const mideTableCol = [
   },
   {
     name: 'DATABASE_ENG',
-    label: '库-en',
+    label: '库（英文）',
     field: 'DATABASE_ENG',
   },
   {
@@ -41,7 +41,7 @@ const mideTableCol = [
   },
   {
     name: 'B_DATABASE_ENG',
-    label: '子库-en',
+    label: '子库（英文）',
     field: 'B_DATABASE_ENG',
   },
   {
@@ -51,7 +51,7 @@ const mideTableCol = [
   },
   {
     name: 'PART_ENG',
-    label: '模块-en',
+    label: '模块（英文）',
     field: 'PART_ENG',
   },
   {
@@ -61,7 +61,7 @@ const mideTableCol = [
   },
   {
     name: 'TABLE_ENG',
-    label: '表-en',
+    label: '表（英文）',
     field: 'TABLE_ENG',
   },
 ]

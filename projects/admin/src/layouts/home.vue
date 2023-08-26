@@ -39,12 +39,11 @@ const navList = [
     name: '日志管理',
     icon: 'i-mingcute:shopping-cart-1-line',
   },
-  {
-    id: 'uploadDetail',
-    name: '数据上传说明',
-    icon: 'i-mingcute:file-upload-line',
-  },
-
+  // {
+  //   id: 'uploadDetail',
+  //   name: '数据上传说明',
+  //   icon: 'i-mingcute:file-upload-line',
+  // },
   {
     id: 'authorityAdmin',
     name: '权限管理',
