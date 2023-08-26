@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import OutGoingHeader from './OutGoingHeader.vue'
-
 // const dropzoneFiles = ref<File[]>([])
 const outgoingInfo = reactive<{
   name: string
@@ -34,11 +32,6 @@ function selectedFiles() {
 
 <template>
   <div class="col-grow" p-7 flex="~ col items-start">
-    <OutGoingHeader />
-    <!-- <div text-alert-error my-5 indent-0 pa-2 style="background: rgba(244, 67, 54, 0.08); white-space: normal">
-      您申请外发的文件，可能被误认为垃圾邮件。若您在【收件箱】中无法查找到该邮件，请前往【垃圾邮件】查看，或者您可以将 no-reply@qiyandata.com 添加为可信任的电子邮箱
-    </div> -->
-
     <div flex="~ col" my-5 w-full>
       <div flex="~ row" mb-2 font-500 text-grey-8>
         真实姓名

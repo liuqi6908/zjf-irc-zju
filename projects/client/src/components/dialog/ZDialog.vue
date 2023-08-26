@@ -23,11 +23,11 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
     <q-card min-w-lg p-6 style="border-radius: 0px !important;">
       <div flex="~ row justify-between items-center" mb-6>
         <div>
-          <btn v-if="back" @click="$emit('update:back')" />
+          <Btn v-if="back" @click="$emit('update:back')" />
           <span text-4 font-600 text-grey-8>{{ title }}</span>
         </div>
 
-        <btn :close-popup="modelValue" icon="i-mingcute:close-line" flat text-grey-5 />
+        <Btn :close-popup="modelValue" icon="i-mingcute:close-line" flat text-grey-5 />
       </div>
 
       <div>

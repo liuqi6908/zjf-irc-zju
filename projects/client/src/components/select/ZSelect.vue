@@ -18,15 +18,7 @@ defineEmits(['update:modelValue'])
     :model-value="modelValue"
     popup-content-class="rounded-2 p-2"
     @update:model-value="(val) => $emit('update:modelValue', val)"
-  >
-    <template #option="scope">
-      <q-item v-bind="scope.itemProps">
-        <q-item-section>
-          {{ scope.opt.label }}
-        </q-item-section>
-      </q-item>
-    </template>
-  </q-select>
+  />
 </template>
 
 <style lang="scss" scoped>

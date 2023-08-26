@@ -36,25 +36,27 @@ watch(() => props.modelValue,
 
 <template>
     <div full>
-        <q-tabs 
-            indicator-color="tab-bottom"
-            font-600
-            bg-grey-1 
-            text-primary-1 
-            :align="align"
-            :model-value="modelValue"
-            @update:model-value="(tab) => $emit('update:modelValue', tab)">
-            <template v-for="tab in tabList" :key="tab.id" >
-                <q-route-tab v-if="tab.to" :to="tab.to">
-                    {{ tab.label }}
-                </q-route-tab>
+        <div flex="~ row justify-center">
+            <q-tabs 
+                indicator-color="tab-bottom"
+                font-600
+                bg-grey-1 
+                :model-value="modelValue"
+                text-primary-1 
+                :align="align"
+                @update:model-value="(tab) => $emit('update:modelValue', tab)">
+                    <div v-for="tab in tabList" :key="tab.id" >
+                        <q-route-tab v-if="tab.to" :to="tab.to">
+                            {{ tab.label }}
+                        </q-route-tab>
 
-                <q-tab v-else text-4 font-600 :name="tab.id">
-                    {{ tab.label }}
-                </q-tab>
-            </template>
-        
-        </q-tabs>
+                        <q-tab v-else text-4 font-600 :name="tab.id">
+                            {{ tab.label }}
+                        </q-tab>
+                    </div>
+            </q-tabs>
+            <slot name="right"/>
+        </div>
 
         <q-tab-panels :model-value="modelValue" @update:model-value="(tab) => $emit('update:modelValue', tab)">
             <q-tab-panel p-none :name="modelValue">
@@ -66,4 +68,19 @@ watch(() => props.modelValue,
     </div>
 </template>
 <style lang="scss" scoped>
+.q-tab {
+  &::v-deep {
+    .q-tab__content {
+      flex-wrap: wrap !important;
+    }
+  }
+}
+
+.q-tabs {
+  &::v-deep {
+    .q-tabs__content {
+      flex-wrap: wrap !important;
+    }
+  }
+}
 </style>

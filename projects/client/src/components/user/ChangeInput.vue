@@ -35,14 +35,14 @@ const editDialog = ref(false)
         @update:user-code="(v) => $emit('update:userCode', v)"
       />
       <div>
-        <Btn outline label="修改" @click="editDialog = true" />
+        <Btn v-if="label !== '用户名'" outline label="修改" @click="editDialog = true" />
       </div>
     </div>
 
     <ZDialog v-model="editDialog" :title="`修改${label}`" :footer="true" :confirm-event="() => $emit('update:confirm', id)">
-      <span ext-grey-8>
+      <div mb-3 text-grey-8>
         {{ label }}
-      </span>
+      </div>
 
       <UserCodeInput
         :dark="false"
@@ -51,7 +51,9 @@ const editDialog = ref(false)
       />
 
       <div v-if="action" mt-6>
-        <span text-grey-8>邮箱验证</span>
+        <div mb-3 text-grey-8>
+          邮箱验证
+        </div>
         <SMSInput
           :email="id === 'email' ? edit : userInfo?.email"
           :action="action"

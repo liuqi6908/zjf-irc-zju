@@ -76,9 +76,20 @@ export function useRequest() {
     useCache && cache.set(cacheKey, response.data)
     return response.data
   }
+
+  async function $delete<T = any>(url: string, data?: any, config?: AxiosRequestConfig, useCache = false): Promise<T> {
+    const cacheKey = url + JSON.stringify(data) + JSON.stringify(config)
+    if (useCache && cache.has(cacheKey))
+      return cache.get(cacheKey)
+    const { abortController } = newController()
+    const response = await $http.delete(url, data)
+    requestControllers.delete(abortController)
+    useCache && cache.set(cacheKey, response.data)
+    return response.data
+  }
   function $getUri(url: string, params?: any) {
     return $http.getUri({ url, params })
   }
 
-  return { $get, $post, $put, $patch, $getUri, cache }
+  return { $get, $post, $put, $patch, $getUri, $delete, cache }
 }

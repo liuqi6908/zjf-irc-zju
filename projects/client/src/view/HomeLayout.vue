@@ -99,9 +99,9 @@ onMounted(async () => {
               :nickname="userInfo?.nickname"
               @update:route="isToken ? (userDropdown = !userDropdown) : router.replace({ path: '/auth/login' })"
             >
-              <span>
+              <div>
                 {{ isToken ? '' : '登录' }}
-              </span>
+              </div>
             </Avatar>
             <q-list v-if="userDropdown" absolute right-3 top-20 z-999 bg-grey-1 p-2 filter-drop-shadow>
               <NavItem
