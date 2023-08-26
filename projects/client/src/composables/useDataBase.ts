@@ -45,8 +45,8 @@ export function useDataBase() {
 
     if (res[0].children) {
       res[0].children.forEach((item) => {
-        const view = judgePermission(item.viewDataRoles)
-        const download = judgePermission(item.downloadDataRoles)
+        // const view = judgePermission(item.viewDataRoles)
+        // const download = judgePermission(item.downloadDataRoles)
 
         tabs.push({
           label: item.nameZH,
@@ -55,8 +55,7 @@ export function useDataBase() {
           nameEN: item.nameEN,
           isRequest: false,
           reference: item.reference,
-          view,
-          download,
+
         })
       })
     }
@@ -83,33 +82,13 @@ export function useDataBase() {
     loading.value = false
   }
 
-  const fetchAllData = async () => {
-    loading.value = true
-    await geRootData()
-    if (rootData.value && rootData.value.length) {
-      rootData.value.forEach(async (item) => {
-        const res = await getDataByRootId(item.id as DataRoot)
-
-        if (!res)
-          return
-
-        for (const dataDirectory of res) {
-          const clone = cloneDeep(dataDirectory)
-          clone.lazy = true
-          verifyTree.value[0].children.push(clone)
-        }
-      })
-    }
-    loading.value = false
-  }
-
   return {
     getDataByRootId,
     geRootData,
     rootData,
     allData,
     rootTabList,
-    fetchAllData,
+
     verifyTree,
     loading,
     databaseTab,

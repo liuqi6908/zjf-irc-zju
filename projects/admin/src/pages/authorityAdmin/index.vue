@@ -159,7 +159,7 @@ watch(tab, async (newTab) => {
 </script>
 
 <template>
-  <Tabs v-model="tab" :tab-list="tabList" @update:curr-tab-obj="(val) => currentTab = val">
+  <Tabs v-model="tab" bg-grey-1 :tab-list="tabList" @update:curr-tab-obj="(val) => currentTab = val">
     <AuthAdminTable
       v-if="currentTab?.tableData"
       v-model:rows="currentTab.tableData.row"

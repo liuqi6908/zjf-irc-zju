@@ -30,11 +30,11 @@ function getImageUrl(url: string) {
 </script>
 
 <template>
-  <div cursor-pointer>
+  <div cursor-pointer @click="$emit('update:route')">
     <div
       :style="{ width: `${size}px`, height: `${size}px` }"
       flex-center border-size-1.5 b-primary-1 rounded-full text-primary-1
-      @click="avatarBehavior(), $emit('update:route')"
+      @click="avatarBehavior()"
     >
       <div
         v-if="avatarUrl" overflow-hidden

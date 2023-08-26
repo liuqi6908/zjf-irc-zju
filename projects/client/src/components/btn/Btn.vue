@@ -34,31 +34,34 @@ const finalProps = computed(() => ({ props }))
 </script>
 
 <template>
-  <!-- <client-only> -->
-  <q-btn
-    v-close-popup="closePopup || false"
-    v-bind="finalProps"
-    :flat="flat || transparent === true"
-    :label="label"
-    :outline="outline === true"
-    :class="btnClass"
-    unelevated
-    :disable="disable"
-    :dense="dense"
-    rounded-0
-  >
-    <div v-if="transparent" class="translucent-mask" :class="`bg-${bgColor}`" />
-    <template v-if="icon">
-      <div :class="[icon, ...btnClass]" h-4 w-4 />
-    </template>
-    <div absolute>
-      <slot />
-    </div>
-    <div>
-      <slot name="icon" />
-    </div>
-  </q-btn>
-  <!-- </client-only> -->
+  <div>
+    <client-only>
+      <q-btn
+        v-close-popup="closePopup || false"
+
+        v-bind="finalProps"
+        :flat="flat || transparent === true"
+        :label="label"
+        :outline="outline === true"
+        :class="btnClass"
+
+        :disable="disable"
+        :dense="dense"
+        unelevated w-full rounded-0
+      >
+        <div v-if="transparent" class="translucent-mask" :class="`bg-${bgColor}`" />
+        <template v-if="icon">
+          <div :class="[icon, ...btnClass]" h-4 w-4 />
+        </template>
+        <div absolute>
+          <slot />
+        </div>
+        <div>
+          <slot name="icon" />
+        </div>
+      </q-btn>
+    </client-only>
+  </div>
 </template>
 
 <style scoped>

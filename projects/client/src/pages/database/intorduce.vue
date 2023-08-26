@@ -29,14 +29,14 @@ function downloadDoc(url: string) {
 }
 watch(() => route.query,
   async (query) => {
-    url.value = getDataDescribe(query.rootId, `${query.dataEn}.doc`)
+    url.value = getDataDescribe(query.rootId, `${query.nameEN}.doc`)
     downloadDoc(url.value)
   }, { immediate: true },
 )
 </script>
 
 <template>
-  <div flex="~ col  items-center" min-h-xl bg-grey-1>
+  <div flex="~ col  items-center" min-h-4xl bg-grey-1>
     <div full max-w-4xl>
       <header flex="~ row items-center" mb-10 font-600>
         <q-btn flat mr-2 text-grey-6 :to="{ path: '/database', query: { database: route.query.rootId } }">
@@ -45,7 +45,8 @@ watch(() => route.query,
         <span text-grey-8> 数据库介绍</span>
       </header>
 
-      <div v-html="docHtml" />
+      <Empty v-if="!docHtml" label="暂无数据库介绍" />
+      <div v-else v-html="docHtml" />
     </div>
   </div>
 </template>

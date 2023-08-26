@@ -22,7 +22,7 @@ export const cmsConfig = [
             },
             {
                 id: 'homeDataIntroduce',
-                label: '数据库介绍',
+                label: '平台介绍',
                 parentId: 'home',
                 component: markRaw(DataIntroduce),
                 col: ['title', 'content'],
@@ -31,12 +31,20 @@ export const cmsConfig = [
             },
             {
                 id: 'footer',
-                label: '页脚',
+                label: '联系方式',
                 parentId: 'footer',
                 component: markRaw(Footer),
                 col: ['title', 'richText','delete','add',],
                 rows: []
-            }
+            },
+            {
+                id: 'homeUpdateDescribe',
+                label: '数据上传说明',
+                parentId: 'userUpdateDescribe',
+                component: markRaw(UpdateDescribe), 
+                col: ['richText'],
+                rows: [{ richText: null }]
+            },
         ]
     },
     {
@@ -54,19 +62,19 @@ export const cmsConfig = [
             },
         ]
     },
-    {
-        parentId: '',
-        id: 'user',
-        label: '',
-        children: [
-            {
-                id: 'userUpdateDescribe',
-                label: '问答',
-                parentId: 'userUpdateDescribe',
-                component: markRaw(UpdateDescribe), 
-                col: [],
-                rows: [{ richText: null }]
-            },
-        ]
-    }
+    // {
+    //     parentId: '',
+    //     id: 'user',
+    //     label: '',
+    //     children: [
+    //         {
+    //             id: 'userUpdateDescribe',
+    //             label: '问答',
+    //             parentId: 'userUpdateDescribe',
+    //             component: markRaw(UpdateDescribe), 
+    //             col: [],
+    //             rows: [{ richText: null }]
+    //         },
+    //     ]
+    // }
 ]

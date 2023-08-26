@@ -22,6 +22,7 @@ const midTable = ref<File>()
 const refDialog = ref(false)
 const reference = reactive<Reference>({ id: '', text: '' })
 const rowData = ref([])
+const uploadTab = ref('uploadMid')
 
 const mideTableCol = [
   {
@@ -31,7 +32,7 @@ const mideTableCol = [
   },
   {
     name: 'DATABASE_ENG',
-    label: '库-en',
+    label: '库（英文）',
     field: 'DATABASE_ENG',
   },
   {
@@ -41,7 +42,7 @@ const mideTableCol = [
   },
   {
     name: 'B_DATABASE_ENG',
-    label: '子库-en',
+    label: '子库（英文）',
     field: 'B_DATABASE_ENG',
   },
   {
@@ -51,7 +52,7 @@ const mideTableCol = [
   },
   {
     name: 'PART_ENG',
-    label: '模块-en',
+    label: '模块（英文）',
     field: 'PART_ENG',
   },
   {
@@ -61,7 +62,7 @@ const mideTableCol = [
   },
   {
     name: 'TABLE_ENG',
-    label: '表-en',
+    label: '表（英文）',
     field: 'TABLE_ENG',
   },
 ]
@@ -163,74 +164,101 @@ const empty = computed(() => !props.dataBase?.length)
 </script>
 
 <template>
-  <div full flex="~ col gap-7" p-10>
-    <header flex="~ row items-center gap-10">
-      <span font-600 text-grey-8 title-4>
-        上传中间表
-      </span>
-
-      <q-file
-        :model-value="midTable"
-        bg-color="primary"
-
-        dense filled
-        accept=".csv"
-        label-color="white"
-        label="上传中间表"
-        @update:model-value="(val) => $emit('update:midTable', val)"
-      />
-    </header>
-
-    <base-table v-slot="{ props, col }" :cols="mideTableCol" :rows="tableData">
-      <div flex="~ row">
-        {{ props.row[`${col}`] }}
-      </div>
-    </base-table>
-
-    <header font-600 text-grey-8 title-4 flex="~ row justify-start">
-      数据库介绍
-    </header>
-
-    <div v-if="empty" text-alert-error>
-      编辑数据库介绍前请先上传中间表
+  <div full flex="~ row gap-7" p-10>
+    <div>
+      <q-tabs
+        v-model="uploadTab"
+        vertical
+        class="text-teal"
+      >
+        <q-tab name="uploadMid" label="上传中间表" />
+        <q-tab name="uploadDataIntroduce" label="上传数据库介绍" />
+        <q-tab name="uploadRefrence" label="上传引用规范" />
+      </q-tabs>
     </div>
 
-    <div v-for="data in dataBase" v-else :key="data.id" flex="~ row items-center justify-between">
-      <div font-600 text-grey-5>
-        {{ data.nameZH }}
-      </div>
+    <q-tab-panels v-model="uploadTab" vertical animated class="col-grow">
+      <q-tab-panel name="uploadMid">
+        <div min-h-2xl>
+          <header flex="~ row items-center gap-10" mb-5>
+            <span font-600 text-grey-8 title-4>
+              上传中间表
+            </span>
 
-      <div flex="~ row justify-between gap-5">
-        <q-file
-          bg-color="primary"
-          label="上传当前数据库介绍"
-          filled dense
-          accept=".doc"
-          label-color="white"
-          :model-value="describe?.file[`${data.id}`]"
-          @update:model-value="(val) => emitDescribe(val, data.nameEN, data.rootId)"
-        />
-        <q-btn
-          color="teal" label="下载当前数据库介绍"
-          :href="downLoadDescribe(data.nameEN)"
-        />
-      </div>
-    </div>
+            <q-file
+              :model-value="midTable"
+              bg-color="primary"
 
-    <header font-600 text-grey-8 title-4 flex="~ row justify-start">
-      引用规范
-    </header>
+              dense filled
+              accept=".csv"
+              label-color="white"
+              label="上传中间表"
+              @update:model-value="(val) => $emit('update:midTable', val)"
+            />
+          </header>
 
-    <div v-if="empty" min-h-2xl text-alert-error>
-      编辑引用规范前请先上传中间表
-    </div>
+          <base-table v-slot="{ props, col }" :cols="mideTableCol" :rows="tableData">
+            <div flex="~ row">
+              {{ props.row[`${col}`] }}
+            </div>
+          </base-table>
+        </div>
+      </q-tab-panel>
 
-    <div v-for="data in dataBase" :key="data.id" col-grow flex="~ row items-center justify-between">
-      <div font-600 text-grey-5>
-        {{ data.nameZH }}
-      </div>
-      <q-btn color="primary" label="编辑引用规范" @click="editReference(data.id)" />
-    </div>
+      <q-tab-panel name="uploadDataIntroduce">
+        <div min-h-2xl>
+          <header font-600 text-grey-8 title-4 flex="~ row justify-start">
+            数据库介绍
+          </header>
+
+          <div v-if="empty" text-alert-error>
+            编辑数据库介绍前请先上传中间表
+          </div>
+
+          <div v-for="data in dataBase" v-else :key="data.id" flex="~ row items-center justify-between">
+            <div font-600 text-grey-5>
+              {{ data.nameZH }}
+            </div>
+
+            <div flex="~ row justify-between gap-5">
+              <q-file
+                bg-color="primary"
+                label="上传当前数据库介绍"
+                filled dense
+                accept=".doc"
+                label-color="white"
+                :model-value="describe?.file[`${data.id}`]"
+                @update:model-value="(val) => emitDescribe(val, data.nameEN, data.rootId)"
+              />
+              <q-btn
+                color="teal" label="下载当前数据库介绍"
+                :href="downLoadDescribe(data.nameEN)"
+              />
+            </div>
+          </div>
+        </div>
+      </q-tab-panel>
+
+      <q-tab-panel name="uploadRefrence">
+        <div min-h-2xl>
+          <header flex="~ row justify-start" mb-5 font-600 text-grey-8 title-4>
+            引用规范
+          </header>
+
+          <div v-if="empty" min-h-2xl text-alert-error>
+            编辑引用规范前请先上传中间表
+          </div>
+
+          <div v-for="data in dataBase" v-else :key="data.id" flex="~ row items-center justify-between">
+            <div font-600 text-grey-5>
+              {{ data.nameZH }}
+            </div>
+
+            <q-btn color="primary" label="编辑引用规范" @click="editReference(data.id)" />
+          </div>
+        </div>
+      </q-tab-panel>
+    </q-tab-panels>
 
     <q-dialog v-model="refDialog">
       <q-card min-w-3xl>

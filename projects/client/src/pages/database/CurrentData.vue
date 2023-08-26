@@ -38,7 +38,7 @@ const list = computed(() => {
   <div
     full max-w-180 min-h-2xl flex="~ row" class="col-grow"
   >
-    <Tabs v-model="tab" class="col-6" :tab-list="databaseTab">
+    <Tabs v-model="tab" align="left" class="col-6" :tab-list="databaseTab">
       <div v-if="list?.children">
         <Tree
           v-for="item in list.children"
@@ -49,9 +49,19 @@ const list = computed(() => {
           :children="item.children"
         />
       </div>
+      <template #right>
+        <span
+
+          mt-4 w-xs cursor-pointer text-primary-1
+          @click="() => $router.push({ path: '/database/intorduce', query: { rootId: route.query.database, nameEN: list?.nameEN } })"
+        >
+          查看数据库介绍
+        </span>
+      </template>
     </Tabs>
-    <div class="col-2" ml-5 mt-3>
-      <q-btn flat transparent text-primary-1 label="查看数据库介绍" :to="{ path: '/database/intorduce', query: { rootId: route.query.database } }" />
-    </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+
+</style>

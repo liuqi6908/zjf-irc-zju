@@ -23,11 +23,11 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
     <q-card min-w-lg p-6 style="border-radius: 0px !important;">
       <div flex="~ row justify-between items-center" mb-6>
         <div>
-          <btn v-if="back" @click="$emit('update:back')" />
+          <Btn v-if="back" @click="$emit('update:back')" />
           <span text-4 font-600 text-grey-8>{{ title }}</span>
         </div>
 
-        <btn :close-popup="modelValue" icon="i-mingcute:close-line" flat text-grey-5 />
+        <Btn :close-popup="modelValue" icon="i-mingcute:close-line" flat text-grey-5 />
       </div>
 
       <div>
@@ -35,7 +35,7 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
       </div>
 
       <footer v-if="footer" mt-10 flex flex-row justify-end>
-        <div>
+        <div flex="~ row">
           <Btn label="取消" :close-popup="modelValue" mr-6 outline />
           <Btn label="确认" :disable="disableConfirm" :close-popup="modelValue" @click="confirmEvent" />
         </div>

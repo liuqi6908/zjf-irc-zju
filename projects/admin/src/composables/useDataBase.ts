@@ -30,6 +30,7 @@ export function useDataBase() {
         rootList.push({
           id: item.id,
           label: item.nameZH,
+          nameEN: item.id,
           isRequest: false,
         })
       })

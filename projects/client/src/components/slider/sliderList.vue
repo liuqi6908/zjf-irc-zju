@@ -10,20 +10,29 @@ interface Item {
 
 interface Props {
   list: Item[]
+  currentId: string
 }
 const props = defineProps<Props>()
-const emits = defineEmits(['update:id'])
+const emits = defineEmits(['update:currentId'])
 
 const router = useRouter()
 
-function goooo(item: Item) {
+function updateId(item: Item) {
   const clickedIdList = props.list.filter(i => i.id !== item.id)
   for (const c of clickedIdList)
     c.clicked = false
 
   item.clicked = true
-  emits('update:id', item.id)
+  emits('update:currentId', item.id)
 }
+onMounted(() => {
+  const itemToClick = props.list.find(item => item.id === props.currentId)
+  if (!itemToClick)
+    return
+  updateId(itemToClick)
+  // if (itemToClick.router)
+  //   router.push(itemToClick.router)
+})
 </script>
 
 <template>
@@ -32,11 +41,10 @@ function goooo(item: Item) {
       v-for="item in list"
       :key="item.id"
       :to="item.router"
-
       clickable font-600
       :active="item.clicked || false"
       active-class="text-primary-1"
-      @click="goooo(item)"
+      @click="updateId(item)"
     >
       {{ item. nameZH }}
     </q-item>

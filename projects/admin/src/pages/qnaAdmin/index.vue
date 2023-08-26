@@ -55,7 +55,7 @@ watch(tab, async (newTab) => {
 </script>
 
 <template>
-  <div>
+  <div bg-grey-1>
     <Tabs v-model="tab" :tab-list="tabList" @update:curr-tab-obj="(val) => currTabObj = val">
       <EditableGrid v-model:rows="currTabObj.rows" :loading="tableLoading" :col-names="currTabObj.col" :component-name="currTabObj.label" @save="saveRows" />
       预览
