@@ -4,6 +4,7 @@ import { useDialogPluginComponent } from 'quasar'
 interface Props {
   modelValue: boolean
   title: string
+  caption?: string
   back?: boolean
   footer?: boolean
   confirmEvent?: () => void
@@ -24,7 +25,9 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
       <div flex="~ row justify-between items-center" mb-6>
         <div>
           <Btn v-if="back" @click="$emit('update:back')" />
-          <span text-4 font-600 text-grey-8>{{ title }}</span>
+          <div>
+            <span text-4 font-600 text-grey-8>{{ title }}</span><span text-grey-6>{{ caption }}</span>
+          </div>
         </div>
 
         <Btn :close-popup="modelValue" icon="i-mingcute:close-line" flat text-grey-5 />

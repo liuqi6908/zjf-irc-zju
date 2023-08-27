@@ -10,8 +10,7 @@ defineEmits(['update:modelValue'])
 
 <template>
   <q-select
-    outlined dense
-    text-grey-4
+    dense outlined text-grey-4
     dropdown-icon="fa fa-chevron-down"
     :label="label"
     :options="options"
