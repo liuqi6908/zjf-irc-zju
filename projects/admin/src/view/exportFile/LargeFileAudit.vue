@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash-es'
 import type { QTableProps } from 'quasar'
 import type { IFileExportLarge, IQueryConfig } from 'zjf-types'
 import moment from 'moment'
+import { formatFileSize } from 'zjf-utils'
 import { approveApply, downloadLg, queryExportLg, rejectApply } from '~/api/exportFile/index'
 
 interface Props {
