@@ -189,6 +189,7 @@ export class ExportService {
     feLg.handler = handler
     feLg.handleAt = new Date()
     feLg.rejectReason = reason
+    await this._feLgRepo.save(feLg)
     return {
       ...feLg,
       handler: objectOmit(feLg.handler, ['verification', 'password']),
