@@ -21,6 +21,7 @@ import {
 import { FileService } from '../file/file.service'
 import { EmailService } from '../email/email.service'
 import { SysConfigService } from '../config/config.service'
+import { DesktopService } from '../desktop/desktop.service'
 
 @Injectable()
 export class ExportService {
@@ -34,6 +35,7 @@ export class ExportService {
     private readonly _fileSrv: FileService,
     private readonly _mailSrv: EmailService,
     private readonly _sysCfgSrv: SysConfigService,
+    private readonly _desktopSrv: DesktopService,
   ) {}
 
   /**
@@ -93,18 +95,22 @@ export class ExportService {
       path,
     })
 
-    await this._sendEmailWithAttachment({
-      email,
-      user,
-      note,
-      filename,
-      content: buffer,
-      contentType,
-      fileSize,
-    })
+    const [desktop] = await Promise.all([
+      this._desktopSrv.findActiveDesktopByIP(ip),
+      this._sendEmailWithAttachment({
+        email,
+        user,
+        note,
+        filename,
+        content: buffer,
+        contentType,
+        fileSize,
+      }),
+      this._fileSrv.upload('pri', path, buffer),
+    ])
+    if (feSm)
+      feSm.desktop = desktop
     await this._feSmRepo.save(feSm)
-    await this._fileSrv.upload('pri', path, buffer)
-
     return objectOmit(feSm, ['founder'])
   }
 
@@ -148,7 +154,12 @@ export class ExportService {
       note,
       path,
     })
-    await this._fileSrv.upload('pri', path, buffer)
+    const [desktop] = await Promise.all([
+      this._desktopSrv.findActiveDesktopByIP(ip),
+      this._fileSrv.upload('pri', path, buffer),
+    ])
+    if (desktop)
+      feLg.desktop = desktop
     await this._feLgRepo.save(feLg)
     return objectOmit(feLg, ['founder'])
   }

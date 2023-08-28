@@ -5,6 +5,7 @@ import { FileExportSmall } from 'src/entities/export/file-export-small.entity'
 
 import { FileModule } from '../file/file.module'
 import { EmailModule } from '../email/email.module'
+import { DesktopModule } from '../desktop/desktop.module'
 import { ExportService } from './export.service'
 import { ExportSmController } from './export-sm/export-sm.controller'
 import { ExportLgController } from './export-lg/export-lg.controller'
@@ -17,6 +18,7 @@ import { ExportLgController } from './export-lg/export-lg.controller'
     ]),
     FileModule,
     EmailModule,
+    DesktopModule,
   ],
   providers: [ExportService],
   controllers: [ExportSmController, ExportLgController],

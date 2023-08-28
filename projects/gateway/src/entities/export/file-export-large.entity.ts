@@ -1,9 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { FileExportLargeStatus } from 'zjf-types'
 import type { IFileExportLarge } from 'zjf-types'
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 
 import { User } from '../user'
+import { Desktop } from '../desktop'
 import { FileExportBasic } from './file-export-basic.entity'
 
 @Entity()
@@ -35,7 +36,16 @@ export class FileExportLarge
   })
   status: FileExportLargeStatus
 
-  @ApiProperty({ description: '驳回的原因' })
+  @ApiPropertyOptional({ description: '驳回的原因' })
   @Column({ nullable: true })
   rejectReason?: string
+
+  @ApiPropertyOptional({ description: '发起外发的云桌面' })
+  @ManyToOne(() => Desktop, desktop => desktop.exportsLarge)
+  @JoinColumn()
+  desktop?: Desktop
+
+  @ApiPropertyOptional({ description: '发起外发时所在的云桌面的 id' })
+  @Column({ nullable: true })
+  desktopId?: Desktop['id']
 }

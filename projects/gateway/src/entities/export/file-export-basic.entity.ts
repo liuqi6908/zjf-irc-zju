@@ -42,4 +42,7 @@ export class FileExportBasic
   @ApiProperty({ description: '在 minio 中保存的完整路径' })
   @Column({ default: '' })
   path: string
+
+  // // 非数据实体
+  // desktop?: Desktop
 }

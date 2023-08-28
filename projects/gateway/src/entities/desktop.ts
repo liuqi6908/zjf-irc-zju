@@ -1,9 +1,11 @@
 import type { IDesktop } from 'zjf-types'
 import { ApiProperty } from '@nestjs/swagger'
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm'
 
 import { User } from './user'
 import { BaseTimeStamp } from './_timestamp'
+import { FileExportLarge } from './export/file-export-large.entity'
+import { FileExportSmall } from './export/file-export-small.entity'
 
 @Entity()
 export class Desktop
@@ -54,4 +56,12 @@ export class Desktop
   @ApiProperty({ description: '云桌面是否已禁用' })
   @Column({ nullable: true, default: false })
   disabled?: boolean
+
+  @ApiProperty({ description: '该云桌面上的大文件外发记录' })
+  @OneToMany(() => FileExportLarge, feLg => feLg.desktop, { onDelete: 'SET NULL' })
+  exportsLarge?: FileExportLarge[]
+
+  @ApiProperty({ description: '该云桌面上的小文件外发记录' })
+  @OneToMany(() => FileExportSmall, feSm => feSm.desktop, { onDelete: 'SET NULL' })
+  exportsSmall?: FileExportSmall[]
 }

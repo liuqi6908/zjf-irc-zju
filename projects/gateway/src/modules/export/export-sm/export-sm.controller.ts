@@ -7,8 +7,8 @@ import { HasPermission } from 'src/guards/permission.guard'
 import { FileService } from 'src/modules/file/file.service'
 import { ApiFormData } from 'src/decorators/api/api-form-data'
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
-import { Body, Controller, Get, Param, Post, Put, Req, Res, StreamableFile } from '@nestjs/common'
 import type { FileExportSmall } from 'src/entities/export/file-export-small.entity'
+import { Body, Controller, Get, Param, Post, Put, Req, Res, StreamableFile } from '@nestjs/common'
 
 import { ExportService } from '../export.service'
 import { ExportFileBodyDto } from '../dto/export-file.body.dto'
@@ -68,7 +68,7 @@ export class ExportSmController {
 
   @ApiOperation({ summary: '查询全部的小文件外发历史记录' })
   @HasPermission(PermissionType.EXPORT_SM_QUERY_ALL)
-  @Post('query/all')
+  @Post(['query/all', 'query'])
   public async queryAllHistory(@Body() body: QueryDto<FileExportSmall>) {
     return await getQuery(this._exportSrv.smRepo(), body || {})
   }

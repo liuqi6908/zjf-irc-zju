@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import { Injectable } from '@nestjs/common'
 import { objectPick } from '@catsjuice/utils'
 import { Desktop } from 'src/entities/desktop'
@@ -21,6 +21,34 @@ export class DesktopService {
       expiredAt: body.expiredAt ? new Date(body.expiredAt) : new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
     })
     return insertRes.identifiers[0].id
+  }
+
+  public findActiveDesktopByIP(ip: string) {
+    return this._desktopRepo.findOne({
+      where: { internalIp: ip, disabled: false },
+    })
+  }
+
+  /**
+   * 通过 ip 列表匹配对应的云桌面信息，并将其附加到列表中
+   * @param list
+   * @param ipKey
+   * @param desktopKey
+   * @returns
+   */
+  public async appendDesktop<T>(
+    list: T[],
+    ipKey: keyof T,
+    desktopKey = 'desktop',
+  ) {
+    const ips = Array.from(new Set(list.map(item => item[ipKey])))
+    const desktops = await this.repo().find({
+      where: { internalIp: In(ips), disabled: false },
+    })
+    const desktopIpMap = new Map<string, Desktop>()
+    desktops.forEach(desktop => desktopIpMap.set(desktop.internalIp, desktop))
+    list.forEach(item => item[desktopKey] = desktopIpMap.get(item[ipKey] as string))
+    return list
   }
 
   repo() {

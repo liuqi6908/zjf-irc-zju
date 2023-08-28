@@ -1,4 +1,4 @@
-import type { Repository } from 'typeorm'
+import type { Repository, SelectQueryBuilder } from 'typeorm'
 import type { IQueryConfig } from 'zjf-types'
 import { clamp, objectKeys } from '@catsjuice/utils'
 import type { PaginatedResData } from 'src/dto/pagination.dto'
@@ -133,8 +133,10 @@ export function getQueryQB<Entity>(
 export async function getQuery<Entity>(
   repo: Repository<Entity>,
   config: IQueryConfig<Entity>,
+  inspect?: (qb: SelectQueryBuilder<Entity>) => void,
 ): Promise<PaginatedResData<Entity>> {
   const { page, pageSize, qb } = getQueryQB(repo, config)
+  inspect?.(qb)
   const [data, total] = await qb.getManyAndCount()
   return {
     page,
