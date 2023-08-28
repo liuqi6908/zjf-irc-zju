@@ -1,6 +1,6 @@
 import { IUser } from "../user.interface";
-import { ICreatedAt } from "../_timestamp.interface";
 import { IDesktop } from "../desktop.interface";
+import { ICreatedAt } from "../_timestamp.interface";
 
 export interface IFileExportBasic extends ICreatedAt {
   /** 外发记录的唯一标识 */
@@ -29,4 +29,7 @@ export interface IFileExportBasic extends ICreatedAt {
 
   /** 邮箱地址 */
   email?: string;
+
+  /** 在 minio 中保存的完整路径 */
+  path: string;
 }

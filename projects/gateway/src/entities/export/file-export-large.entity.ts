@@ -14,10 +14,6 @@ export class FileExportLarge
   @JoinColumn()
   founder: User
 
-  @ApiProperty({ description: '在 minio 中保存的完整路径' })
-  @Column()
-  path: string
-
   @ApiProperty({ description: '创建者', type: () => User })
   @ManyToOne(() => User, user => user.exportsBigHandled)
   @JoinColumn()

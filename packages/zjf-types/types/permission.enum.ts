@@ -103,6 +103,8 @@ export enum PermissionType {
   EXPORT_LG_QUERY_ALL = 'export-lg:query-all',
   /** 查询所有小文件外发历史 */
   EXPORT_SM_QUERY_ALL = "export-sm:query-all",
+  /** 下载小文件外发的文件 */
+  EXPORT_SM_DOWNLOAD = "export-sm:download",
   /** 通过大文件外发申请 */
   EXPORT_LG_APPROVE = 'export-lg:approve',
   /** 驳回大文件外发申请 */
@@ -170,6 +172,7 @@ export const permissionDescriptions: Record<PermissionType, string> = {
 
   [PermissionType.EXPORT_LG_QUERY_ALL]: '查询所有大文件外发历史',
   [PermissionType.EXPORT_SM_QUERY_ALL]: '查询所有小文件外发历史',
+  [PermissionType.EXPORT_SM_DOWNLOAD]: '下载小文件外发的文件',
   [PermissionType.EXPORT_LG_APPROVE]: '通过大文件外发申请',
   [PermissionType.EXPORT_LG_REJECT]: '驳回大文件外发申请',
   [PermissionType.EXPORT_LG_DOWNLOAD]: '下载大文件外发的文件',

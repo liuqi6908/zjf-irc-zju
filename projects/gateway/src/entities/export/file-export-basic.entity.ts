@@ -38,4 +38,8 @@ export class FileExportBasic
   @ApiProperty({ description: '外发目标邮箱地址' })
   @Column()
   email?: string
+
+  @ApiProperty({ description: '在 minio 中保存的完整路径' })
+  @Column({ default: '' })
+  path: string
 }

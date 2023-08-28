@@ -74,6 +74,15 @@ export class ExportService {
     if (count >= dailyLimit)
       responseError(ErrorCode.EXPORT_DAILY_LIMIT_EXCEEDED)
 
+    // 上传到 MinIO
+    const year = new Date().getFullYear()
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0')
+    const day = new Date().getDate().toString().padStart(2, '0')
+    const arr = filename.split('.')
+    const ext = arr.pop()
+    const newFilename = `${arr.join('.')}-${Date.now()}.${ext}`
+    const path = `export-sm/${user.id}/${year}/${month}/${day}/${newFilename}`
+
     const feSm = this._feSmRepo.create({
       founder: user,
       ip,
@@ -81,6 +90,7 @@ export class ExportService {
       fileSize,
       note,
       email,
+      path,
     })
 
     await this._sendEmailWithAttachment({
@@ -93,6 +103,7 @@ export class ExportService {
       fileSize,
     })
     await this._feSmRepo.save(feSm)
+    await this._fileSrv.upload('pri', path, buffer)
 
     return objectOmit(feSm, ['founder'])
   }

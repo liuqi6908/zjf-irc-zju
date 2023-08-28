@@ -17,8 +17,6 @@ export interface IFileExportLarge extends IFileExportBasic {
   handlerId: string;
   /** 处理时间 */
   handleAt: Date;
-  /** 在 minio 中保存的完整路径 */
-  path: string;
   /** 状态 */
   status: FileExportLargeStatus;
   /** 驳回原因 */

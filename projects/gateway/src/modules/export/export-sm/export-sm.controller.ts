@@ -1,14 +1,15 @@
-import { ErrorCode, PermissionType } from 'zjf-types'
 import { getQuery } from 'src/utils/query'
 import { QueryDto } from 'src/dto/query.dto'
 import { IsLogin } from 'src/guards/login.guard'
 import { responseError } from 'src/utils/response'
+import { ErrorCode, PermissionType } from 'zjf-types'
+import { HasPermission } from 'src/guards/permission.guard'
+import { FileService } from 'src/modules/file/file.service'
 import { ApiFormData } from 'src/decorators/api/api-form-data'
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { Body, Controller, Post, Put, Req } from '@nestjs/common'
+import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Get, Param, Post, Put, Req, Res, StreamableFile } from '@nestjs/common'
 import type { FileExportSmall } from 'src/entities/export/file-export-small.entity'
 
-import { HasPermission } from 'src/guards/permission.guard'
 import { ExportService } from '../export.service'
 import { ExportFileBodyDto } from '../dto/export-file.body.dto'
 
@@ -17,6 +18,7 @@ import { ExportFileBodyDto } from '../dto/export-file.body.dto'
 export class ExportSmController {
   constructor(
     private readonly _exportSrv: ExportService,
+    private readonly _fileSrv: FileService,
   ) {}
 
   @ApiOperation({ summary: '小文件外发' })
@@ -36,7 +38,7 @@ export class ExportSmController {
     const contentType = body?.file?.mimetype
     const user = req.raw.user!
     const ip = req.raw.ip
-    const note = body.note.value
+    const note = body.note?.value
 
     return await this._exportSrv.exportSmall({
       user,
@@ -69,5 +71,22 @@ export class ExportSmController {
   @Post('query/all')
   public async queryAllHistory(@Body() body: QueryDto<FileExportSmall>) {
     return await getQuery(this._exportSrv.smRepo(), body || {})
+  }
+
+  @ApiOperation({ summary: '下载小文件外发的附件' })
+  @HasPermission(PermissionType.EXPORT_SM_QUERY_ALL)
+  @ApiParam({ name: 'id', description: '小文件外发记录的唯一标识' })
+  @Get('file/:id')
+  public async downloadFile(
+    @Res({ passthrough: true }) res: any,
+    @Param('id') id: string,
+  ) {
+    const feSm = await this._exportSrv.smRepo().findOne({ where: { id } })
+    if (!feSm?.path)
+      responseError(ErrorCode.EXPORT_FILE_NOT_EXISTS)
+    const readable = await this._fileSrv.download('pri', feSm.path)
+    res.header('Content-Disposition', `attachment; filename=${encodeURIComponent(feSm.fileName)}`)
+    res.header('Content-Type', 'application/octet-stream')
+    return new StreamableFile(readable)
   }
 }
