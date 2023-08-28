@@ -54,10 +54,6 @@ export class DesktopController {
     const desktop = await this._desktopSrv.repo().findOne({ where: { id: param.desktopId } })
     if (desktop.disabled)
       return true
-    const updateRes = await this._desktopSrv.repo().update(
-      { id: param.desktopId },
-      { disabled: true, userId: null, lastUserId: desktop.userId },
-    )
     if (desktop.userId) {
       // 将用户的状态更新
       const queue = await this._desktopReqSrv.repo().findOne({ where: { userId: desktop.userId } })
@@ -69,6 +65,11 @@ export class DesktopController {
         {},
       )
     }
+
+    const updateRes = await this._desktopSrv.repo().update(
+      { id: param.desktopId },
+      { disabled: true, userId: null, lastUserId: desktop.userId },
+    )
     return updateRes.affected > 0
   }
 
