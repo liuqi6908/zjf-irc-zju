@@ -3,6 +3,7 @@ import BaseTable from 'shared/component/base/table/BaseTable.vue'
 import { FileExportLargeStatus, PAGINATION_SIZE_MAX } from 'zjf-types'
 import type { IFileExportLarge, IFileExportSmall, IQueryDto } from 'zjf-types'
 import moment from 'moment'
+import { useQuasar } from 'quasar'
 
 import HistoryStatus from './history/HistoryStatus.vue'
 import { getOwnExportLg } from '~/api/exportLg/getOwnExportLg'
@@ -13,8 +14,10 @@ const toggle: Array < { label: string; value: FileType } > = [
   { label: '小文件外发', value: 'small' },
   { label: '大文件外发', value: 'big' },
 ]
+
 const model = ref<FileType>(toggle[0].value)
 const loading = ref(false)
+const $q = useQuasar()
 const baseOpts: IQueryDto<IFileExportSmall> = {
   pagination: {
     page: 0,
@@ -111,6 +114,13 @@ async function getLgExport(options: IQueryDto<IFileExportLarge>) {
       ...i,
       name: i.founder.verification.name,
     }
+  })
+}
+
+function fetchRejectReason(reason: string) {
+  $q.dialog({
+    title: '驳回理由',
+    message: reason,
   })
 }
 
@@ -228,9 +238,23 @@ watch(select, (selectOptions) => {
         <HistoryStatus v-if="model === 'small'" :status="FileExportLargeStatus.Approved" />
         <HistoryStatus v-else :status="props.row[`${col}`]" />
       </div>
+
       <div v-else-if="col === 'createdAt'">
         {{ moment(props.row[`${col}`]).format('YYYY-MM-DD HH:mm:ss') }}
       </div>
+
+      <div v-else-if="col === 'rejectReason'">
+        <div v-if="props.row[`${col}`]">
+          <div text-primary-1 @click="fetchRejectReason(props.row[`${col}`])">
+            点击查看
+          </div>
+        </div>
+
+        <div v-else>
+          -
+        </div>
+      </div>
+
       <div v-else>
         {{ props.row[`${col}`] || '-' }}
       </div>
