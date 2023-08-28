@@ -62,12 +62,16 @@ export function getQueryQB<Entity>(
         qb.andWhere(`${selector} ${type} :start AND :end`, { start, end })
       }
       else if (type === 'LIKE' || type === 'NOT LIKE') {
-        const value = `%${filter.value}%`
-        qb.andWhere(`${selector} ${type} :value`, { value })
+        qb.andWhere(
+          `${selector} ${type} :likeValue`,
+          { likeValue: `%${filter.value}%` },
+        )
       }
       else if (type === 'IN' || type === 'NOT IN') {
-        const value = filter.value
-        qb.andWhere(`${selector} ${type} (:...value)`, { value })
+        qb.andWhere(
+          `${selector} ${type} (:...inValues)`,
+          { inValues: [...filter.value] },
+        )
       }
       else if (type === 'IS NULL' || type === 'IS NOT NULL') {
         qb.andWhere(`${selector} ${type}`)
