@@ -23,6 +23,7 @@ const userList = ref([
     router: { path: 'myWorks' },
   },
 ])
+const currentId = ref(userList.value[0].id)
 
 const editDialog = ref(false)
 </script>
@@ -36,11 +37,12 @@ const editDialog = ref(false)
         </div>
       </header>
 
-      <div flex="~ row" class="col-grow" flat rounded-3 bg-grey-1 p-6>
-        <div border-r-1 border-grey-3 pr-6>
-          <SliderList :list="userList" />
+      <div flex="~ row" flat full rounded-3 bg-grey-1 p-6>
+        <div border-r-1 border-grey-3 pr-6 class="col-3">
+          <SliderList v-model:current-id="currentId" :list="userList" />
         </div>
-        <div class="col-grow" pl-6>
+
+        <div pl-6 style="flex: 1 1 auto;">
           <router-view />
         </div>
       </div>

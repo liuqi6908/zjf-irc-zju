@@ -334,6 +334,9 @@ importers:
       '@iconify-json/material-symbols':
         specifier: ^1.1.54
         version: registry.npmmirror.com/@iconify-json/material-symbols@1.1.54
+      '@iconify-json/mdi':
+        specifier: ^1.1.54
+        version: registry.npmmirror.com/@iconify-json/mdi@1.1.54
       '@iconify-json/mingcute':
         specifier: ^1.1.7
         version: registry.npmmirror.com/@iconify-json/mingcute@1.1.7
@@ -3658,6 +3661,14 @@ packages:
   registry.npmmirror.com/@iconify-json/material-symbols@1.1.54:
     resolution: {integrity: sha512-10DL3dbp5/at3D55df4L5geM+vNf7v/SsF3YHTTN49xWSXGQVWRDEr508RmbCJxUQ1TZb3dHU/n/4VQDbBudCA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@iconify-json/material-symbols/-/material-symbols-1.1.54.tgz}
     name: '@iconify-json/material-symbols'
+    version: 1.1.54
+    dependencies:
+      '@iconify/types': registry.npmmirror.com/@iconify/types@2.0.0
+    dev: true
+
+  registry.npmmirror.com/@iconify-json/mdi@1.1.54:
+    resolution: {integrity: sha512-3QAsxte90EalbN2e8J30OqSSZz9qN2x+kmykQwsPahoW2dOtSvj+BR9YdiUd9A5XKk2nuU4UH5Gj/cq6WZ6CzQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@iconify-json/mdi/-/mdi-1.1.54.tgz}
+    name: '@iconify-json/mdi'
     version: 1.1.54
     dependencies:
       '@iconify/types': registry.npmmirror.com/@iconify/types@2.0.0

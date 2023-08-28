@@ -41,7 +41,7 @@ watch(() => props.modelValue,
 
 <template>
     <div full>
-        <div flex="~ row justify-center">
+        <div flex="~ row" :class="align ? `justify-${align}` : 'justify-center'">
             <q-tabs 
                 indicator-color="tab-bottom"
                 font-600
