@@ -2,9 +2,10 @@ import type { Repository, SelectQueryBuilder } from 'typeorm'
 import type { IQueryConfig } from 'zjf-types'
 import { clamp, objectKeys } from '@catsjuice/utils'
 import type { PaginatedResData } from 'src/dto/pagination.dto'
-import { PAGINATION_SIZE_DFT, PAGINATION_SIZE_MAX } from 'zjf-types'
+import { ErrorCode, PAGINATION_SIZE_DFT, PAGINATION_SIZE_MAX } from 'zjf-types'
 
 import { responseParamsError } from './response/validate-exception-factory'
+import { responseError } from './response'
 
 function walk(
   node: Record<string, any>,
@@ -135,13 +136,26 @@ export async function getQuery<Entity>(
   config: IQueryConfig<Entity>,
   inspect?: (qb: SelectQueryBuilder<Entity>) => void,
 ): Promise<PaginatedResData<Entity>> {
-  const { page, pageSize, qb } = getQueryQB(repo, config)
-  inspect?.(qb)
-  const [data, total] = await qb.getManyAndCount()
-  return {
-    page,
-    pageSize,
-    total,
-    data,
+  try {
+    const { page, pageSize, qb } = getQueryQB(repo, config)
+    inspect?.(qb)
+    const [data, total] = await qb.getManyAndCount()
+    return {
+      page,
+      pageSize,
+      total,
+      data,
+    }
+  }
+  catch (err) {
+    const matchRes = err.message.match(/Relation with property path (.*) in entity was not found/)
+    if (matchRes) {
+      const property = matchRes[1]
+      responseParamsError([{
+        property,
+        constraints: { [property]: '关联不存在，请检查' },
+      }])
+    }
+    responseError(ErrorCode.COMMON_UNEXPECTED_ERROR, err.message)
   }
 }
