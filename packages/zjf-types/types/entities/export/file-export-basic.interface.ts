@@ -1,5 +1,6 @@
 import { IUser } from "../user.interface";
 import { ICreatedAt } from "../_timestamp.interface";
+import { IDesktop } from "../desktop.interface";
 
 export interface IFileExportBasic extends ICreatedAt {
   /** 外发记录的唯一标识 */
@@ -7,6 +8,12 @@ export interface IFileExportBasic extends ICreatedAt {
 
   /** 创建外发的 ip 地址 */
   ip: string;
+
+  /** 
+   * 发起外发的云桌面信息 
+   * 该字段通过 `leftJoinAndMapOne` 关联查询
+   **/
+  desktop?: IDesktop;
 
   /** 创建者 */
   founder: IUser;
