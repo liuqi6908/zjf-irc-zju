@@ -10,7 +10,7 @@ const emits = defineEmits(['update:smsCode', 'update:accept', 'update:bizId'])
 interface Props {
   smsCode: string
   email: string
-  action: CodeAction.REGISTER | CodeAction.LOGIN | CodeAction.CHANGE_PASSWORD
+  action: CodeAction
   dark?: boolean
 }
 const wait = ref(0)

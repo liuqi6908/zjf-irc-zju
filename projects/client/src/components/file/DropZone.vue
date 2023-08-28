@@ -4,7 +4,7 @@ import { ref } from 'vue'
 const active = ref(false)
 const dropZoneFileRef = ref()
 
-function toggleActive() {
+function toggleActive(event: Event) {
   active.value = !active.value
 }
 </script>
@@ -25,11 +25,11 @@ function toggleActive() {
       </div>
       <span font-500 text-primary-1>选择文件</span>
     </label>
-    <input id="dropZoneFile" ref="dropZoneFileRef" class="drop-zone-file" type="file">
+    <input id="dropZoneFile" ref="dropZoneFileRef" class="drop-zone-file" type="file" @change="handleFileChange">
 
     <slot />
 
-    <div flex="~ col">
+    <!-- <div flex="~ col">
       <div text-grey-5 flex="~ row">
         注：
         <div flex="~ col items-start">
@@ -46,7 +46,7 @@ function toggleActive() {
         <div h-2 w-2 rounded-999 bg-alert-error />
         未经允许，不得私自外发原始微观数据，违法者将依法追究法律责任
       </div>
-    </div>
+    </div> -->
   </section>
 </template>
 

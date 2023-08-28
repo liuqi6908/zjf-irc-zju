@@ -10,6 +10,8 @@ import '@unocss/reset/tailwind.css'
 import './styles/main.css'
 import 'uno.css'
 
+import 'echarts'
+
 const routes = setupLayouts(generatedRoutes)
 
 // https://github.com/antfu/vite-ssg
@@ -21,5 +23,6 @@ export const createApp = ViteSSG(
     Object.values(import.meta.glob<{ install: UserModule }>('./modules/*.ts', { eager: true }))
       .forEach(i => i.install?.(ctx))
     // ctx.app.use(Previewer)
+    // ctx.component('VueEcharts', ECharts)
   },
 )

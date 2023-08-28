@@ -30,6 +30,7 @@ watch(() => props.userCode, () => {
     dense outlined
     :dark="dark"
     :rules="rule"
+    @input="debounce ? handleDebounceInput($event) : handleInput($event)"
     @update:model-value="(v) => $emit('update:userCode', v)"
   >
     <template #prepend>

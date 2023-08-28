@@ -182,6 +182,16 @@ export default ({ mode }: any) => {
       },
     },
 
+    optimizeDeps: {
+      include: [
+        'echarts/core',
+        'echarts/renderers',
+        'echarts/charts',
+        'echarts/components',
+        'vue-echarts',
+      ],
+    },
+
     ssr: {
       // TODO: workaround until they support native ESM
       noExternal: ['workbox-window', /vue-i18n/],
