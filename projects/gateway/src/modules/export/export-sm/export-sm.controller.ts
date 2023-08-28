@@ -1,4 +1,4 @@
-import { ErrorCode } from 'zjf-types'
+import { ErrorCode, PermissionType } from 'zjf-types'
 import { getQuery } from 'src/utils/query'
 import { QueryDto } from 'src/dto/query.dto'
 import { IsLogin } from 'src/guards/login.guard'
@@ -8,6 +8,7 @@ import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Body, Controller, Post, Put, Req } from '@nestjs/common'
 import type { FileExportSmall } from 'src/entities/export/file-export-small.entity'
 
+import { HasPermission } from 'src/guards/permission.guard'
 import { ExportService } from '../export.service'
 import { ExportFileBodyDto } from '../dto/export-file.body.dto'
 
@@ -60,6 +61,13 @@ export class ExportSmController {
     // 限制作用域
     body.filters = [...(body?.filters || [])].filter(cfg => cfg.field !== 'founderId')
     body.filters.push({ field: 'founderId', type: '=', value: user.id })
+    return await getQuery(this._exportSrv.smRepo(), body || {})
+  }
+
+  @ApiOperation({ summary: '查询全部的小文件外发历史记录' })
+  @HasPermission(PermissionType.EXPORT_SM_QUERY_ALL)
+  @Post('query/all')
+  public async queryAllHistory(@Body() body: QueryDto<FileExportSmall>) {
     return await getQuery(this._exportSrv.smRepo(), body || {})
   }
 }
