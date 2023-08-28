@@ -3,6 +3,7 @@ interface Props {
   modelValue: any
   options: Array<{ label: string; id: string }>
   label?: string
+  chip?: boolean
 }
 defineProps<Props>()
 defineEmits(['update:modelValue'])
@@ -19,7 +20,10 @@ defineEmits(['update:modelValue'])
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <template #selected-item="scope">
-      <slot :scope="scope" />
+      <slot v-if="chip" :scope="scope" />
+      <div v-else>
+        {{ scope.opt.label }}
+      </div>
     </template>
   </q-select>
 </template>

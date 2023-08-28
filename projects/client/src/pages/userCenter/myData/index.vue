@@ -3,23 +3,29 @@ import Tabs from 'shared/component/base/tab/Tabs.vue'
 import OutGoing from '~/view/userCenter/myData/OutGoing.vue'
 import UpdateData from '~/view/userCenter/myData/UploadData.vue'
 import History from '~/view/userCenter/myData/History.vue'
+import { isDesktop } from '~/api/desktop/isDesktop'
 
 const tab = ref('')
-const tabslit = [
-  {
-    label: '数据外发',
-    id: 'outgoing',
-  },
-  {
-    label: '历史记录',
-    id: 'history',
-  },
+const tabslit = reactive([
   {
     label: '数据上传',
     id: 'updating',
   },
-]
-onBeforeMount(() => {
+])
+onBeforeMount(async () => {
+  const res = await isDesktop()
+
+  if (res) {
+    tabslit.unshift({
+      label: '数据外发',
+      id: 'outgoing',
+    },
+    {
+      label: '历史记录',
+      id: 'history',
+    })
+  }
+
   tab.value = tabslit[0].id
 })
 </script>

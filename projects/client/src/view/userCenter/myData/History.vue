@@ -209,11 +209,11 @@ watch(select, (selectOptions) => {
             v-slot="{ scope }"
             v-model="select"
             input-debounce="0"
-            use-chips multiple min-w-20
+
+            multiple use-chips chip min-w-20
             :options="selectList"
           >
             <q-chip
-
               dense removable ml-2
               :tabindex="scope.tabindex"
               color="grey-2"

@@ -18,7 +18,7 @@ interface Props {
   queueingList: Array<any>
 }
 const props = defineProps<Props>()
-defineEmits(['update:rows'])
+defineEmits(['update:rows', 'update:desktopSelect'])
 
 const baseTableRef = ref(null)
 const rejectDialog = ref(false)
@@ -84,8 +84,7 @@ async function createChanges(options: any) {
     notifySuccess('创建云桌面')
 }
 
-async function endDesktop(row: any) {
-  const { id } = row
+async function endDesktop(id: any) {
   const res = await stopDesktop(id)
   if (res)
     notifySuccess('云桌面到期修改')
@@ -162,16 +161,20 @@ function notifySuccess(message: string) {
         </template>
       </q-input>
     </div>
+    <div v-else-if="col === 'disabled'">
+      {{ props.row[`${col}`] ? '已停用' : '使用中' }}
+    </div>
 
     <div v-else-if="col === 'choseUser'">
       <q-btn flat text-primary-1 label="选择用户" @click="userConfig(props.row.id)" />
     </div>
+
     <div v-else-if="col === 'opSaveChangeExpires'">
       <BtnGroup
-        v-if="props.row[`${col}`]"
-        :types="['expired', 'change']"
-        @update:expired="endDesktop(props.row.id)"
-        @update:change="updateDesktops(props.row)"
+        v-if="props.row[`${col}`] === true"
+        :types="['stop', 'save']"
+        @update:stop="endDesktop(props.row.id)"
+        @update:save="updateDesktops(props.row)"
       />
       <BtnGroup
         v-else

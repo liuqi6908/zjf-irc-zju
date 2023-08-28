@@ -18,14 +18,14 @@ const router = useRouter()
 const { userInfo } = useUser()
 
 const options = [
-  { label: '6个月', value: 180 },
-  { label: '12个月', value: 360 },
-  { label: '长期', value: 999 },
+  { label: '6个月', id: 180 },
+  { label: '12个月', id: 360 },
+  { label: '长期', id: 999 },
 ]
 
 const select = ref(options[0])
 const files = ref<File[]>([])
-const file = ref<File>(null)
+const file = ref<File>()
 const attachments = ref<Array<string>>([])
 const read = ref(false)
 
@@ -39,9 +39,9 @@ async function confirm() {
   for (const file of files.value) {
     const res = await putDesktopRequest(file.name, file)
     if (res)
-      attachments.value.push(getDesktopRequestFileUrl(userInfo.id, file.name))
+      attachments.value.push(getDesktopRequestFileUrl(userInfo.value.id, file.name))
   }
-  const requestRes = await desktopRequest(select.value.value, attachments.value)
+  const requestRes = await desktopRequest(select.value.id, attachments.value)
   if (requestRes) {
     Notify.create({
       message: '申请成功',
