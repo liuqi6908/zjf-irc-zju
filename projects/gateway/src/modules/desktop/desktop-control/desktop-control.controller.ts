@@ -12,6 +12,12 @@ export class DesktopControlController {
     private readonly _zstackSrv: ZstackService,
   ) {}
 
+  @ApiOperation({ summary: '获取全部物理机的 CPU、内存分配 ' })
+  @Get('host/cpu-memory-allocation')
+  public async getHostAllocation() {
+    return await this._zstackSrv.getAllHostCpuMem()
+  }
+
   @ApiOperation({ summary: '获取虚拟机状态' })
   @ApiParam({ name: 'id', description: '虚拟机ID' })
   @Get('vm/state/:id')

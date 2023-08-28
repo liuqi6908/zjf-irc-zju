@@ -11,7 +11,7 @@ import { DesktopController } from './desktop.controller'
 import { DesktopRequestService } from './desktop-request/desktop-request.service'
 import { DesktopRequestController } from './desktop-request/desktop-request.controller'
 import { DesktopQueueHistoryService } from './desktop-queue-history/desktop-queue-history.service'
-import { DesktopControlController } from './desktop-control/desktop-control.controller';
+import { DesktopControlController } from './desktop-control/desktop-control.controller'
 
 @Module({
   imports: [

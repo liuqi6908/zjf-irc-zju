@@ -30,6 +30,7 @@ import { InfoMiddleware } from './middleware/info.middleware'
 import { ExportModule } from './modules/export/export.module'
 import { DesktopModule } from './modules/desktop/desktop.module'
 import { AccessMiddleware } from './middleware/access.middleware'
+import { RequestModule } from './modules/request/request.module'
 import { ResponseInterceptor } from './interceptors/response.interceptor'
 import { PermissionModule } from './modules/permission/permission.module'
 import { EsAnalyzerModule } from './modules/es-analyzer/es-analyzer.module'
@@ -51,6 +52,7 @@ import { ConfigModule as SysConfigModule } from './modules/config/config.module'
     RedisModule,
     EmailModule,
     ExportModule,
+    RequestModule,
     DesktopModule,
     SysConfigModule,
     EsAnalyzerModule,

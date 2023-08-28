@@ -6,7 +6,7 @@ import { QueryDto, QueryResDto } from 'src/dto/query.dto'
 import { HasPermission } from 'src/guards/permission.guard'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
-import { DesktopQueueStatus, ErrorCode, PermissionType } from 'zjf-types'
+import { DesktopQueueHistoryStatus, DesktopQueueStatus, ErrorCode, PermissionType } from 'zjf-types'
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req } from '@nestjs/common'
 
 import { DesktopService } from './desktop.service'
@@ -14,6 +14,7 @@ import { CreateDesktopBodyDto } from './dto/create-desktop.body.dto'
 import { UpdateDesktopBodyDto } from './dto/update-desktop.body.dto'
 import { AssignDesktopParamDto } from './dto/assign-desktop.param.dto'
 import { DesktopRequestService } from './desktop-request/desktop-request.service'
+import { DesktopQueueHistoryService } from './desktop-queue-history/desktop-queue-history.service'
 
 @ApiTags('Desktop | 云桌面')
 @Controller('desktop')
@@ -21,6 +22,7 @@ export class DesktopController {
   constructor(
     private readonly _desktopSrv: DesktopService,
     private readonly _desktopReqSrv: DesktopRequestService,
+    private readonly _desktopHisSrv: DesktopQueueHistoryService,
   ) {}
 
   @ApiOperation({ summary: '判断当前客户端是否在云桌面内使用' })
@@ -56,6 +58,17 @@ export class DesktopController {
       { id: param.desktopId },
       { disabled: true, userId: null, lastUserId: desktop.userId },
     )
+    if (desktop.userId) {
+      // 将用户的状态更新
+      const queue = await this._desktopReqSrv.repo().findOne({ where: { userId: desktop.userId } })
+      if (!queue)
+        return
+      await this._desktopHisSrv.mv2history(
+        queue,
+        DesktopQueueHistoryStatus.Expired,
+        {},
+      )
+    }
     return updateRes.affected > 0
   }
 
