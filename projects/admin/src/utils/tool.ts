@@ -20,3 +20,19 @@ export function flattenJSON(json: any): Record<string, any> {
 
   return result
 }
+
+/**
+ * 根据二进制文件流下载文件
+ * @param stream
+ * @param filename
+ */
+export function downloadFile(stream: string, filename: string) {
+  const blob = new Blob([stream], { type: 'application/octet-stream' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.click()
+  // 清理创建的对象 URL
+  URL.revokeObjectURL(url)
+}

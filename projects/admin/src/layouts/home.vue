@@ -71,7 +71,7 @@ const navList = [
     icon: 'i-material-symbols:picture-in-picture',
   },
   {
-    id: 'exportLg',
+    id: 'exportFile',
     name: '文件外发',
     icon: 'i-material-symbols:picture-in-picture',
   },
