@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import LineEchartsCard from '../../view/request/LineEchartsCard.vue'
-import RoundEchartsCard from '../../view/request/RoundEchartsCard.vue'
 
 import { getOwnDesktopQuery } from '../../api/desktop/getOwnDesktopQuery'
 import DesktopRequestDaialog from '../../view/request/DesktopRequestDaialog.vue'
