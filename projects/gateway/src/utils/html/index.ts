@@ -1,6 +1,8 @@
+import { camel2Dash } from 'zjf-utils'
+
 export class HtmlTag {
   private _style: Record<string, any> = {}
-  private _children: HtmlTag[] = []
+  private _children: Array<HtmlTag | string> = []
 
   constructor(
     public tagName: string,
@@ -21,19 +23,43 @@ export class HtmlTag {
     return this
   }
 
-  style(key: string, value: any) {
-    this._style[key] = value
+  style(obj: Record<string, any>): HtmlTag
+  style(key: string, value: any): HtmlTag
+  style(key: string | Record<string, any>, value?: any) {
+    if (typeof key === 'object') {
+      const obj = key
+      Object.entries(obj).forEach(([k, v]) => {
+        this._style[k] = v
+      })
+    }
+    else {
+      this._style[key] = value
+    }
     return this
   }
 
-  child(tag: HtmlTag) {
-    this._children.push(tag)
+  text(value: string) {
+    this._children.push(value)
+    return this
+  }
+
+  appendChild(...tag: HtmlTag[]) {
+    this._children.push(...tag)
+    return this
+  }
+
+  removeChild(tag: HtmlTag) {
+    this._children = this._children.filter(t => t !== tag)
     return this
   }
 
   raw() {
-    return `<${this.tagName} ${Object.entries(this.attrs).map(([k, v]) => `${k}="${v}"`).join(' ')}>
-      ${this._children.map(c => c.raw()).join('\n')}
+    const styleRaw = Object.keys(this._style).length ? `style="${Object.entries(this._style).map(([k, v]) => `${camel2Dash(k)}: ${v}`).join('; ')}"` : ''
+    return `<${this.tagName} 
+      ${styleRaw}
+      ${Object.entries(this.attrs).map(([k, v]) => `${k}="${v}"`).join(' ')}
+    >
+      ${this._children.map(c => typeof c === 'string' ? c : c.raw()).join('\n')}
     </${this.tagName}>`
   }
 }

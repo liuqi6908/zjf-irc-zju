@@ -21,6 +21,7 @@
     "pinia",
     "pnpm",
     "PSWD",
+    "QRCODE",
     "sizecheck",
     "Streamable",
     "taze",
@@ -33,6 +34,7 @@
     "Vitesse",
     "vitest",
     "vueuse",
+    "WECHAT",
     "Zstack"
   ],
   "i18n-ally.sourceLanguage": "en",
