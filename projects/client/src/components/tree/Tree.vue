@@ -4,6 +4,7 @@ interface Customize {
   id: string
   children?: Customize[]
   reference?: string
+  label?: string
 }
 
 const props = defineProps<Customize>()
@@ -17,7 +18,7 @@ const route = useRoute()
   <div class="q-pa-md row no-wrap my-10 bg-grey-2">
     <q-expansion-item
       dense-toggle switch-toggle-side col-9 max-w-lg lg:max-w-4xl sm:max-w-lg xl:max-w-5xl
-      header-class="font-600 text-5 text-grey-8"
+      header-class="font-600 text-5 text-grayness-8"
       :label="nameZH"
     >
       <q-expansion-item
@@ -28,17 +29,20 @@ const route = useRoute()
         :label="child.nameZH"
         :header-inset-level="1"
         :content-inset-level="2"
-        header-class="font-600 text-4 text-grey-8"
+        header-class="font-600 text-4 text-grayness-8"
       >
-        <div col-grow sm:grid-col-2 grid gap-2 lg:grid-cols-3 xl:grid-cols-4>
+        <div col-grow sm:grid-col-2 grid gap-1 lg:grid-cols-3 xl:grid-cols-4>
           <q-item
             v-for="i in child.children"
             :key="i.nameZH"
-            :to="{ path: '/database/dataIntroduce', query: { dataId: i.id, rootId: route.query.database, reference } }"
-            clickable rounded-0 text-grey-8 @click="$emit('update:id', i.id)"
+            v-ripple
+            :to="{ path: '/database/dataIntroduce', query: { dataId: i.id, rootId: route.query.database, reference, label: props.label } }"
+            clickable rounded-0 text-nowrap text-grey-8 @click="$emit('update:id', i.id)"
           >
             <q-item-section>
-              {{ i.nameZH }}
+              <q-item-label lines="1">
+                {{ i.nameZH }}
+              </q-item-label>
             </q-item-section>
           </q-item>
         </div>

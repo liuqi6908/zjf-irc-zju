@@ -66,7 +66,7 @@ const navList = [
     icon: 'i-material-symbols:picture-in-picture',
   },
   {
-    id: 'request-purchase',
+    id: 'requestPurchase',
     name: '申请采购',
     icon: 'i-material-symbols:picture-in-picture',
   },

@@ -39,7 +39,7 @@ const editDialog = ref(false)
       </div>
     </div>
 
-    <ZDialog v-model="editDialog" :title="`修改${label}`" :footer="true" :confirm-event="() => $emit('update:confirm', id)">
+    <ZDialog v-model="editDialog" :title="`修改${label}`" :footer="true" @ok="() => $emit('update:confirm', id)">
       <div mb-3 text-grey-8>
         {{ label }}
       </div>

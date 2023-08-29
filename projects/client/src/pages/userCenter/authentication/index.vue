@@ -279,7 +279,7 @@ onBeforeMount(async () => {
       </div>
     </div>
 
-    <ZDialog v-model="showVeri" :confirm-event="requestVerify" footer title="需要完善信息并且通过审核" :disable-confirm="disable">
+    <ZDialog v-model="showVeri" footer title="需要完善信息并且通过审核" :disable-confirm="disable" @ok="requestVerify">
       <div mb-2 mt-6>
         <span text-alert-error>*</span> <span font-500 text-grey-8> 学校名称</span>
       </div>

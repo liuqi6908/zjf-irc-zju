@@ -2,9 +2,14 @@
 import Tabs from 'shared/component/base/tab/Tabs.vue'
 import Tree from '~/components/tree/Tree.vue'
 
+interface Props {
+  initDatabase: string
+}
+const props = defineProps<Props>()
+
 const route = useRoute()
 
-const { getDataByRootId, databaseTab, loading } = useDataBase()
+const { getDataByRootId, databaseTab, loading, rootTabList } = useDataBase()
 
 const tabb = ref('')
 
@@ -19,13 +24,10 @@ const tab = computed({
   },
 })
 
-watch(() => route.query,
-  async (query) => {
-    if (query.database)
-      await getDataByRootId(query.database)
-  },
-)
-
+watch(() => props.initDatabase, async (database) => {
+  if (database)
+    await getDataByRootId(database)
+})
 const list = computed(() => {
   if (databaseTab.value) {
     const res = databaseTab.value.find(i => i.id === tab.value)
@@ -38,20 +40,21 @@ const list = computed(() => {
   <div
     full max-w-180 min-h-2xl flex="~ row" class="col-grow"
   >
-    <Tabs v-model="tab" align="left" class="col-6" :tab-list="databaseTab">
+    <Tabs v-model="tab" align="left" :text-style="{ color: '#292D36' }" class="col-6" :tab-list="databaseTab">
       <div v-if="list?.children">
         <Tree
           v-for="item in list.children"
           :id="item.id"
           :key="item.id"
+          :loading="loading"
           :reference="list?.reference"
           :name-z-h="item.nameZH"
           :children="item.children"
+          :label="route.query.label"
         />
       </div>
       <template #right>
         <span
-
           mt-4 w-xs cursor-pointer text-primary-1
           @click="() => $router.push({ path: '/database/intorduce', query: { rootId: route.query.database, nameEN: list?.nameEN } })"
         >

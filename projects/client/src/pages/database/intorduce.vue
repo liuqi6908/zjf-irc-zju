@@ -39,7 +39,7 @@ watch(() => route.query,
   <div flex="~ col  items-center" min-h-4xl bg-grey-1>
     <div full max-w-4xl>
       <header flex="~ row items-center" mb-10 font-600>
-        <q-btn flat mr-2 text-grey-6 :to="{ path: '/database', query: { database: route.query.rootId } }">
+        <q-btn flat mr-2 text-grey-6 @click="() => $router.back()">
           <div i-mingcute:left-line h-6 w-6 />
         </q-btn>
         <span text-grey-8> 数据库介绍</span>

@@ -1,9 +1,8 @@
-import type { IQueryDto, IVerificationHistory } from 'zjf-types'
+import type { IQueryDto, IUser } from 'zjf-types'
 import { useRequest } from '~/composables/request'
 
 const { $post } = useRequest()
 
-/** 关联认证信息 */
-export function searchUserQuery(options: IQueryDto<IVerificationHistory>) {
+export function searchUserQuery(options: IQueryDto<IUser>) {
   return $post('user/query', options)
 }

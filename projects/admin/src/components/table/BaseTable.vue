@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import moment from 'moment'
+import { exportFile, useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 
-export type OperationType = 'addRows' | 'search'
+export type OperationType = 'addRows' | 'search' | 'export'
 
 interface Props {
   rows: Array<any>
@@ -9,11 +11,14 @@ interface Props {
   operation?: Array<OperationType>
   loading?: boolean
   search?: string
+  export?: string
 }
 const props = defineProps<Props>()
 const emits = defineEmits(['update:rows', 'update:search'])
 
 const rowsRef = ref<Array<any>>([])
+
+const $q = useQuasar()
 
 function addRow() {
   if (!props.cols?.length)
@@ -41,6 +46,28 @@ function deleteRow(rowItem: any) {
   emits('update:rows', rowsRef.value)
 }
 
+function exportTable() {
+  if (!props.rows || !props.cols)
+    return
+
+  const content = [props.cols!.map(col => `"${col.label}"`)].concat(
+    props.rows.map(row => props.cols!.map(col => `"${row[col.field as string]}"`).join(',')),
+  ).join('\r\n')
+
+  const status = exportFile(
+    `${props.export}${moment().format('YYYY-MM-DD HH:mm:ss')}.csv`,
+    content,
+    'text/csv',
+  )
+
+  if (!status) {
+    $q.notify({
+      message: '已取消下载...',
+      type: 'warn',
+    })
+  }
+}
+
 watch(() => props.rows, (newRow) => {
   if (newRow && newRow.length) {
     rowsRef.value = newRow
@@ -60,18 +87,32 @@ defineExpose({
         <q-btn v-if="operation?.includes('addRows')" label="增加一项" push color="primary-1" @click="addRow" />
       </div>
     </template>
-    <template #top-right>
+
+    <template v-if="operation?.includes('search')" #top-right>
       <q-input
-        v-if="operation?.includes('search')"
         :model-value="search"
         dense
-        borderless debounce="300" placeholder="搜索"
+        borderless
+        debounce="200"
+        placeholder="搜索"
         @update:model-value="(val) => $emit('update:search', val)"
       >
         <template #append>
           <div i-mingcute:search-2-line />
         </template>
       </q-input>
+    </template>
+
+    <template v-else-if="operation?.includes('export')" #top-right>
+      <q-btn
+        color="primary"
+        :disable="!rows || rows.length === 0"
+        ml-6
+        @click="exportTable"
+      >
+        导出为CSV
+        <q-icon name="fas fa-download" size="18px" ml-2 />
+      </q-btn>
     </template>
 
     <template #body="props">

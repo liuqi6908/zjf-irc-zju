@@ -12,11 +12,12 @@ onBeforeMount(() => {
       rootData.value = rootData.value.map((item) => {
         return {
           ...item,
-          router: { path: '/database', query: { database: item.id } },
+          router: { path: '/database', query: { database: item.id, label: item.nameZH } },
         }
       })
     }
-    router.push({ query: { database: rootData.value[0].id } })
+    router.push({ query: { database: rootData.value[0].id, label: rootData.value[0].nameZH } })
+    databaseId.value = rootData.value[0].id
   },
   )
 })
@@ -30,7 +31,7 @@ onBeforeMount(() => {
       </div>
     </header>
     <div class="col-grow" flex-start mt-15 justify-center flex="~ row gap-10">
-      <SliderList :list="rootData" router @update:id="(id) => databaseId = id" />
+      <SliderList :list="rootData" :current-id="databaseId" router @update:current-id="(id) => databaseId = id" />
 
       <div min-w-xl flex-center>
         <q-spinner
@@ -41,7 +42,7 @@ onBeforeMount(() => {
           label-class="text-primary-1"
           label-style="font-size: 1.1em"
         />
-        <CurrentData v-else />
+        <CurrentData v-else :init-database="databaseId" />
       </div>
     </div>
   </div>

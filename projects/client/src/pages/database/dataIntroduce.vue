@@ -1,9 +1,15 @@
 <script lang="ts" setup>
 import BaseTable from 'shared/component/base/table/BaseTable.vue'
+
 import { cloneDeep } from 'lodash-es'
+import { Notify } from 'quasar'
+import DesktopRequestDaialog from '~/view/request/DesktopRequestDaialog.vue'
 import { getDataDownload } from '~/api/data/dataDownloadHandle'
 import { getDataFields } from '~/api/data/getDataDirctoryFields'
 import { getDataPreview } from '~/api/data/dataPreviewHandle'
+import { putSuggest } from '~/api/dataSuggest/putSuggest'
+
+import { isDesktop } from '~/api/desktop/isDesktop'
 
 const route = useRoute()
 
@@ -11,7 +17,7 @@ const tableFieldsCol = [
   { label: '字段', name: 'nameZH', field: 'nameZH', align: 'center' },
   { label: '含义', name: 'description', field: 'description', align: 'center' },
 ]
-const { downloadDescribeByRole } = useDataBase()
+const { downloadDescribeByRole, rootData } = useDataBase()
 
 const tableFieldRows = ref([])
 
@@ -20,6 +26,8 @@ const previewTable = ref([])
 const referenceText = ref('')
 const dialog = ref(false)
 const loading = ref(false)
+const isClient = ref(false)
+const requestDesktop = ref(false)
 
 const previewTableData = computed(() => {
   let row = [] as any
@@ -53,6 +61,7 @@ onBeforeMount(async () => {
   })
 
   downloadUrl.value = getDataDownload(route.query.dataId as string)
+  isClient.value = await isDesktop()
 })
 
 async function openDialog() {
@@ -61,10 +70,23 @@ async function openDialog() {
   // const res = await downloadDescribeByRole('访客')
   // console.log({ res })
 }
+
+async function confirmRequest() {
+  if (!route.query.dataId)
+    return
+
+  const res = await putSuggest(route.query.dataId as string, referenceText.value)
+  if (res) {
+    Notify.create({
+      message: '建议采购成功',
+      type: 'success',
+    })
+  }
+}
 </script>
 
 <template>
-  <div flex="~ col items-center" full bg-grey-1>
+  <div flex="~ col items-center" min-h-4xl bg-grey-1>
     <div w-3xl>
       <header flex="~ row" items-center justify-start>
         <q-btn flat mr-2 text-grey-6 @click="$router.back()">
@@ -92,24 +114,27 @@ async function openDialog() {
         </BaseTable>
       </div>
     </div>
-    <span text-primary-1>引用规范：{{ route.query.reference || '暂无引用规范' }}</span>
+    <span mt-6 text-primary-1>引用规范：{{ route.query.reference || '暂无引用规范' }}</span>
 
     <div flex="~ row gap-5" my-10>
-      <a :href="downloadUrl" download="数据库">
+      <Btn v-if="!isClient" outline label="数据申请使用" @click="requestDesktop = true" />
+      <a v-else :href="downloadUrl" download="数据库">
         <Btn label="数据下载" />
       </a>
 
-      <btn v-if="route.query.rootId === 'pre-purchased'" label="建议采购" @click="openDialog()" />
+      <btn v-if="route.query.label?.includes('预购')" label="建议采购" @click="openDialog()" />
     </div>
 
     <!-- <BaseTable /> -->
-    <ZDialog v-model="dialog" title="采购理由" footer>
+    <ZDialog v-model="dialog" title="采购理由" footer @ok="confirmRequest">
       <q-input
         v-model="referenceText"
         filled
         type="textarea"
       />
     </ZDialog>
+
+    <DesktopRequestDaialog v-model="requestDesktop" />
   </div>
 </template>
 
