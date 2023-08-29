@@ -1,14 +1,15 @@
+import { CodeAction } from 'zjf-types'
 import * as nodemailer from 'nodemailer'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { OnModuleInit } from '@nestjs/common'
-
-import { CodeAction } from 'zjf-types'
-import { getRegisterCodeHTML } from 'src/utils/html/templates/register-code'
-import { getChangeEmailCodeHTML } from 'src/utils/html/templates/change-email-code'
-import { getChangePswdCodeHTML } from 'src/utils/html/templates/change-pswd-code'
 import { getLoginCodeHTML } from 'src/utils/html/templates/login-code'
+import { getRegisterCodeHTML } from 'src/utils/html/templates/register-code'
 import { getBindEmailCodeHTML } from 'src/utils/html/templates/bind-email-code'
+import { getChangePswdCodeHTML } from 'src/utils/html/templates/change-pswd-code'
+import { getChangeEmailCodeHTML } from 'src/utils/html/templates/change-email-code'
+
+import { APP_NAME } from 'src/utils/html/assets/constants'
 import { CodeService } from '../code/code.service'
 
 import type { LoginByEmailLinkDto } from '../auth/dto/login-by-email-link.body.dto'
@@ -36,7 +37,7 @@ export class EmailService implements OnModuleInit {
   send(mailOptions: nodemailer.SendMailOptions) {
     return this.transporter.sendMail({
       ...mailOptions,
-      from: 'NoReplay <noreplay@qiyandata.com>',
+      from: `${APP_NAME}系统通知 <noreplay@qiyandata.com>`,
     })
   }
 

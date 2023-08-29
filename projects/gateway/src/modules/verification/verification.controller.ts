@@ -10,6 +10,7 @@ import { ApiErrorResponse, ApiSuccessResponse, responseError } from 'src/utils/r
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req } from '@nestjs/common'
 
 import { QueryDto, QueryResDto } from '../../dto/query.dto'
+import { NotifyService } from '../notify/notify.service'
 import { VerificationService } from './verification.service'
 import { VerificationResDto } from './dto/verification.res.dto'
 import { CreateVerificationBodyDto } from './dto/create-verification.body.dto'
@@ -20,6 +21,7 @@ import { RejectVerificationBodyDto } from './dto/reject-verification.body.dto'
 export class VerificationController {
   constructor(
     private readonly _verificationSrv: VerificationService,
+    private readonly _notifySrv: NotifyService,
   ) {}
 
   @ApiOperation({ summary: '发起一个认证申请' })
@@ -34,7 +36,9 @@ export class VerificationController {
     const user = req.raw.user
     if (user.verificationId)
       responseError(ErrorCode.VERIFICATION_NOT_PENDING)
-    return await this._verificationSrv.createVerification(user, body)
+    const res = await this._verificationSrv.createVerification(user, body)
+    this._notifySrv.notifyNewVerification(res)
+    return res
   }
 
   @ApiOperation({ summary: '获取最近一次的申请认证记录' })

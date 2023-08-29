@@ -41,4 +41,8 @@ export class PermissionService implements OnModuleInit {
     // init roles after permissions are ready
     await this._roleSrv.initDefaultRoles()
   }
+
+  repo() {
+    return this._permissionRepo
+  }
 }

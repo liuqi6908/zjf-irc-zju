@@ -25,6 +25,7 @@ const qrCode = HtmlTag
 
 const p1 = HtmlTag
   .create('div')
+  .indent()
 
 const span1 = HtmlTag
   .create('span')
@@ -45,6 +46,7 @@ p1.appendChild(span1, a, span2)
 const p2 = HtmlTag
   .create('div')
   .text('祝工作顺利，生活愉快！')
+  .indent()
 
 footer.appendChild(qrCode, p1, p2)
 

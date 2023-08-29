@@ -5,7 +5,7 @@ import { header } from '../blocks/header'
 import { APP_NAME } from '../assets/constants'
 import { getVerifyCode, verifyCodeDesc } from '../blocks/verify-code'
 
-const p1 = HtmlTag.create('p').text(`我们已收到您关于登录${APP_NAME}的请求。您的验证码为：`)
+const p1 = HtmlTag.create('p').text(`我们已收到您关于登录${APP_NAME}的请求。您的验证码为：`).indent()
 
 /**
  * 登录的验证码

@@ -53,6 +53,11 @@ export class HtmlTag {
     return this
   }
 
+  indent(size = '2em') {
+    this.style('text-indent', size)
+    return this
+  }
+
   raw() {
     const styleRaw = Object.keys(this._style).length ? `style="${Object.entries(this._style).map(([k, v]) => `${camel2Dash(k)}: ${v}`).join('; ')}"` : ''
     return `<${this.tagName} 
