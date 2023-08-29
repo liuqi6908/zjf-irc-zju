@@ -8,6 +8,7 @@ import { VerificationHistory } from 'src/entities/verification'
 
 import { objectPick } from '@catsjuice/utils'
 import { UserService } from '../user/user.service'
+import { NotifyService } from '../notify/notify.service'
 import type { CreateVerificationBodyDto } from './dto/create-verification.body.dto'
 
 @Injectable()
@@ -16,6 +17,7 @@ export class VerificationService {
     @InjectRepository(VerificationHistory)
     private readonly _vhRepo: Repository<VerificationHistory>,
     private readonly _usrSrv: UserService,
+    private readonly _notifySrv: NotifyService,
   ) {}
 
   /**
@@ -103,8 +105,9 @@ export class VerificationService {
         .repo()
         .update({ id: verification.founderId }, { verificationId: null })
     }
-
-    return await this._vhRepo.findOne({ where: { id: verification.id } })
+    const newVerification = await this._vhRepo.findOne({ where: { id: verification.id } })
+    this._notifySrv.notifyVerificationStatusChanged(newVerification)
+    return newVerification
   }
 
   /**
