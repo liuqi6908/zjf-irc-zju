@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Notify, type QTableProps } from 'quasar'
+import { Notify, type QTableProps, useQuasar } from 'quasar'
 import { ref } from 'vue'
 import moment from 'moment'
 import BaseTable from '../../components/table/BaseTable.vue'
@@ -10,6 +10,7 @@ import { createDesktop } from '~/api/desktop/createDesktop'
 import { stopDesktop } from '~/api/desktop/stopDesktop'
 import { updateDesktop } from '~/api/desktop/updateDesktop'
 import { assignDesktop } from '~/api/desktop/assignDesktop'
+import { getUrlByToken } from '~/api/file/getUrl'
 
 interface Props {
   tab: string
@@ -18,8 +19,9 @@ interface Props {
   queueingList: Array<any>
 }
 const props = defineProps<Props>()
-defineEmits(['update:rows', 'update:desktopSelect'])
+const emits = defineEmits(['update:rows', 'update:desktopSelect', 'update:request'])
 
+const { $getUri } = useRequest()
 const baseTableRef = ref(null)
 const rejectDialog = ref(false)
 const tableRef = ref()
@@ -34,6 +36,8 @@ const userInfo = reactive({
   reason: '',
 })
 
+const $q = useQuasar()
+
 const input = ['id', 'internalIp', 'accessUrl', 'account', 'password']
 
 const select = ['expiredAt']
@@ -42,17 +46,17 @@ const userConfigCol = [
   { name: 'name', field: 'name', label: '真实姓名', align: 'center' },
   { name: 'nickname', field: 'nickname', label: '昵称', align: 'center' },
   { name: 'email', field: 'email', label: '邮箱', align: 'center' },
-  { name: 'duration', field: 'duration', label: '等待时长', align: 'center' },
+  { name: 'duration', field: 'duration', label: '申请时长（天）', align: 'center' },
 ]
 
 const userConfigTable = computed(() => {
   const row = props.queueingList.map((item) => {
     return {
-      name: item.user.name,
-      email: item.user.email,
-      nickname: item.user.nickname,
-      id: item.userId,
-      duration: item.duration,
+      name: item.user?.verification?.name,
+      email: item.user?.email,
+      nickname: item.user?.nickname,
+      id: item?.userId,
+      duration: item?.duration,
     }
   })
 
@@ -63,7 +67,13 @@ const userConfigTable = computed(() => {
 })
 
 async function accessRequest(userId: any) {
-  const res = await approveDesktop(userId)
+  $q.dialog({
+    message: '确认通过申请？',
+    cancel: true,
+  }).onOk(async () => {
+    const res = await approveDesktop(userId)
+    emits('update:request')
+  }).onCancel(() => {})
 }
 
 async function rejectRequest(userId: any) {
@@ -74,29 +84,51 @@ async function rejectRequest(userId: any) {
 
 async function confirmReason() {
   const res = await rejectDesktop(userInfo.userId, userInfo.reason)
+  emits('update:request')
 }
 
 async function createChanges(options: any) {
   const { id, internalIp, accessUrl, account, password, expiredAt } = options
   const formatData = dataFormat(expiredAt)
-  const res = await createDesktop({ id, internalIp, accessUrl, account, password, formatData })
-  if (res)
-    notifySuccess('创建云桌面')
+  $q.dialog({
+    message: '确认创建云桌面？',
+    cancel: true,
+  }).onOk(async () => {
+    const res = await createDesktop({ id, internalIp, accessUrl, account, password, formatData })
+    if (res)
+      notifySuccess('创建云桌面')
+    emits('update:desktopSelect')
+  })
 }
 
 async function endDesktop(id: any) {
-  const res = await stopDesktop(id)
-  if (res)
-    notifySuccess('云桌面到期修改')
+  $q.dialog({
+    message: '确认停用云桌面？',
+    cancel: true,
+  }).onOk(async () => {
+    const res = await stopDesktop(id)
+    emits('update:desktopSelect')
+    if (res)
+      notifySuccess('云桌面到期修改')
+  })
 }
 
 async function updateDesktops(row: any) {
-  const { id, internalIp, accessUrl, account, password, expiredAt } = row
-  const formatDate = dataFormat(expiredAt)
-  const res = await updateDesktop(id, { internalIp, accessUrl, account, password, formatDate })
+  let { id, internalIp, accessUrl, account, password, expiredAt } = row
+  expiredAt = dataFormat(expiredAt)
+  $q.dialog({
+    message: '确认更新云桌面？',
+    cancel: true,
+  }).onOk(async () => {
+    if (userConfigInfo.selectUserId[0]?.id) {
+      const res = await assignDesktop(id, userConfigInfo.selectUserId[0]?.id)
+    }
+    const res = await updateDesktop(id, { internalIp, accessUrl, account, password, expiredAt })
 
-  if (res)
-    notifySuccess('云桌面更新')
+    emits('update:desktopSelect')
+    if (res)
+      notifySuccess('云桌面更新')
+  }).onCancel(() => {})
 }
 
 function dataFormat(date: string) {
@@ -104,15 +136,31 @@ function dataFormat(date: string) {
   return moment(date, format).toDate()
 }
 
-function userConfig(id: string) {
+function userConfig(row: any) {
   userConfigDialog.value = true
-  userConfigInfo.desktopId = id
+  userConfigInfo.desktopId = row.id
 }
 
-async function assignDesktopUser() {
-  const res = await assignDesktop(userConfigInfo.desktopId, userConfigInfo.selectUserId[0]?.id)
-  if (res)
-    notifySuccess('分配用户')
+// async function assignDesktopUser() {
+//   userConfigDialog.value = false
+
+//   if (res)
+//     notifySuccess('分配用户')
+// }
+
+function checkAttachments(row: any) {
+  let imgHtml = ''
+
+  for (const img of row.attachments) {
+    const src = getUrlByToken(`file/private/desktop-request/${row.userId}/${img}`)
+    imgHtml += `<img src=${src} /><br/><a href=${src} download>下载链接</a>`
+  }
+
+  $q.dialog({
+    html: true,
+    message: imgHtml,
+    title: '查看申请材料',
+  })
 }
 
 function notifySuccess(message: string) {
@@ -140,7 +188,7 @@ function notifySuccess(message: string) {
       />
     </div>
     <div v-else-if="col === 'attachments'">
-      查看申请材料
+      <q-btn color="primary-1" flat label="查看申请材料" @click="checkAttachments(props.row)" />
     </div>
     <div v-else-if="col === 'createdAt'">
       {{ moment(props.row[`${col}`]).format('YYYY-MM-DD HH:mm:ss') }}
@@ -166,7 +214,7 @@ function notifySuccess(message: string) {
     </div>
 
     <div v-else-if="col === 'choseUser'">
-      <q-btn flat text-primary-1 label="选择用户" @click="userConfig(props.row.id)" />
+      <q-btn :disable="props.row.opSaveChangeExpires !== true" flat text-primary-1 label="选择用户" @click="userConfig(props.row)" />
     </div>
 
     <div v-else-if="col === 'opSaveChangeExpires'">
@@ -176,10 +224,11 @@ function notifySuccess(message: string) {
         @update:stop="endDesktop(props.row.id)"
         @update:save="updateDesktops(props.row)"
       />
-      <BtnGroup
+      <q-btn
         v-else
-        :types="['save']"
-        @update:save="createChanges(props.row)"
+        label="保存创建的云桌面"
+        color="teal"
+        @click="createChanges(props.row)"
       />
     </div>
 
@@ -223,7 +272,7 @@ function notifySuccess(message: string) {
 
       <footer mt-5 flex="~ row justify-end">
         <q-btn flat text-alert-error label="取消" @click="userConfigDialog = false" />
-        <q-btn label="确认选择" flat text-primary-1 @click="assignDesktopUser" />
+        <q-btn label="确认选择" flat text-primary-1 @click="userConfigDialog = false" />
       </footer>
     </q-card>
   </q-dialog>

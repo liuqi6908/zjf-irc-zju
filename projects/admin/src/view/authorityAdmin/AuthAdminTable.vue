@@ -38,17 +38,22 @@ const dialog = ['attachments']
 // }
 
 async function deleteRowItem(rowItem: any) {
-  if (baseTableRef.value) {
-    baseTableRef.value.deleteRow(rowItem)
+  $q.dialog({
+    message: '确认删除',
+    cancel: true,
+  }).onOk(async () => {
+    if (baseTableRef.value) {
+      baseTableRef.value.deleteRow(rowItem)
 
-    const res = await deleteRoles(rowItem.roleName)
-    if (res) {
-      Notify.create({
-        message: '删除成功',
-        type: 'success',
-      })
+      const res = await deleteRoles(rowItem.roleName)
+      if (res) {
+        Notify.create({
+          message: '删除成功',
+          type: 'success',
+        })
+      }
     }
-  }
+  }).onCancel(() => {})
 }
 
 function check(rowItem: any) {

@@ -210,7 +210,8 @@ onMounted(() => {
     <Tabs
       v-model="tab"
       v-model:curr-tab-obj="currentTabObj"
-      class="col-grow" items-start
+      class="col-grow"
+      showcaption items-start
       :tab-list="rootTabList"
       @update:rightEvent="rightEvent"
     >
@@ -229,7 +230,7 @@ onMounted(() => {
       />
     </Tabs>
 
-    <q-list ref="EditRef" bordered absolute top-12 style="display: none;" bg-grey-1>
+    <q-list ref="EditRef" style="display: none;" bordered absolute top-12 bg-grey-1>
       <q-item clickable>
         <q-item-section @click="editDialog = true">
           编辑当前数据库的中文名称

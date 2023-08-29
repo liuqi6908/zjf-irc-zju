@@ -11,6 +11,7 @@ export interface TabItem {
     to?: string
     currTabObj?: any
     rightEvent?: string
+    nameEN?:string
     tableData?: {
         row: QTableProps['rows']
         col: QTableProps['columns']
@@ -21,6 +22,7 @@ interface Props {
     tabList: TabItem[]
     textClass?: string
     align?:string
+    showcaption?:boolean
 }
 const props = defineProps<Props>()
 const emits = defineEmits(['update:modelValue', 'update:currTabObj','update:rightEvent'])
@@ -64,7 +66,7 @@ watch(() => props.modelValue,
                         >
                         <div flex="~ col">
                             <span>{{ tab.label }}</span>
-                            <span v-if="tab.nameEN" style="text-transform: lowercase">{{ tab.nameEN }}</span>
+                            <span v-if="showcaption" style="text-transform: lowercase">{{ tab.nameEN }}</span>
                         </div>
                           
                         </q-tab>
