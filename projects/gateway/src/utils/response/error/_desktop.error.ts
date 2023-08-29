@@ -26,6 +26,10 @@ const _desktopErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.BAD_REQUEST,
     message: '云桌面 id 已存在',
   },
+  [ErrorCode.DESKTOP_NOT_FOUND]: {
+    httpStatus: HttpStatus.NOT_FOUND,
+    message: '云桌面不存在',
+  },
 }
 
 export default _desktopErrors

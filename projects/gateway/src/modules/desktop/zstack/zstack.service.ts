@@ -1,9 +1,9 @@
 import { EventEmitter } from 'node:stream'
 import type { AxiosResponse } from 'axios'
 import { Injectable } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
 import { ConfigService } from '@nestjs/config'
 import { sha512 } from 'src/utils/encrypt/sha512'
-import { HttpService } from '@nestjs/axios'
 
 @Injectable()
 export class ZstackService extends EventEmitter {
@@ -89,10 +89,18 @@ export class ZstackService extends EventEmitter {
     })
   }
 
-  public getHostCpuMem(hostUuid: string) {
+  public async getHostCpuMem(hostUuid: string) {
     // eslint-disable-next-line max-len
     const zqlStr = `query Host.name where uuid = '${hostUuid}' return with (zwatch{{resultName='CPUUsedCount',metricName='CPUUsedCapacityPerHostCount',offsetAheadOfCurrentTime=0}}, zwatch{{resultName='CPUAvailableCount',metricName='CPUAvailableCapacityPerHostCount',offsetAheadOfCurrentTime=0}},zwatch{{resultName='CPUUsedPercent',metricName='CPUUsedCapacityPerHostInPercent',offsetAheadOfCurrentTime=0}}, zwatch{{resultName='memUsed', metricName='MemoryUsedCapacityPerHostInBytes',offsetAheadOfCurrentTime=0}}, zwatch{{resultName='memAvailable', metricName='MemoryAvailableCapacityPerHostInBytes',offsetAheadOfCurrentTime=0}}, zwatch{{resultName='memUsedPercent', metricName='MemoryUsedCapacityPerHostInPercent',offsetAheadOfCurrentTime=0}})`
-    return this.zql(zqlStr)
+    const res = await this.zql(zqlStr)
+    return res.results[0].returnWith
+  }
+
+  public async getHostMonitor(hostUuid: string) {
+    // eslint-disable-next-line max-len
+    const zql = `query Host.name where uuid = '${hostUuid}' return with (zwatch{{resultName='CPUUtilization', metricName='CPUAllIdleUtilization',offsetAheadOfCurrentTime=3600}},zwatch{{resultName='memUsed',metricName='MemoryUsedInPercent',offsetAheadOfCurrentTime=3600}}, zwatch{{resultName='diskRead',metricName='DiskAllReadBytes', offsetAheadOfCurrentTime=3600}}, zwatch{{resultName='diskWrite',metricName='DiskAllWriteBytes', offsetAheadOfCurrentTime=3600}})`
+    const res = await this.zql(zql)
+    return res.results[0].returnWith
   }
 
   /**
@@ -101,7 +109,7 @@ export class ZstackService extends EventEmitter {
    */
   public async getAllHostCpuMem() {
     const hosts = await this.getHostList()
-    const uuids = hosts.results.flatMap(host => host?.inventories?.map(el => el.uuid))
+    const uuids = hosts.map(host => host?.inventories?.map(el => el.uuid))
     const promises = uuids.map(uuid => this.getHostCpuMem(uuid))
     const res = await Promise.all(promises)
     return res.flatMap(el => el.results).map(el => ({
@@ -114,17 +122,68 @@ export class ZstackService extends EventEmitter {
    * 获取物理主机列表
    * @returns
    */
-  public getHostList() {
+  public async getHostList() {
     const zqlStr = 'query Host.uuid,name'
-    return this.zql(zqlStr)
+    const res = await this.zql(zqlStr)
+    return res.results?.flatMap(el => el.inventories)
+  }
+
+  public async startVM(vmUUID: string) {
+    return await this.requestWithSession((cfg) => {
+      return this._httpSrv.axiosRef({
+        ...cfg,
+        method: 'PUT',
+        url: `/zstack/v1/vm-instances/${vmUUID}/actions`,
+        data: { startVmInstance: {} },
+      })
+    })
+  }
+
+  public async stopVM(vmUUID: string) {
+    return await this.requestWithSession((cfg) => {
+      return this._httpSrv.axiosRef({
+        ...cfg,
+        method: 'PUT',
+        url: `/zstack/v1/vm-instances/${vmUUID}/actions`,
+        data: { stopVmInstance: { type: 'grace' } },
+      })
+    })
+  }
+
+  public async rebootVM(vmUUID: string) {
+    return await this.requestWithSession((cfg) => {
+      return this._httpSrv.axiosRef({
+        ...cfg,
+        method: 'PUT',
+        url: `/zstack/v1/vm-instances/${vmUUID}/actions`,
+        data: { rebootVmInstance: {} },
+      })
+    })
+  }
+
+  public async vmOverview() {
+    // eslint-disable-next-line max-len
+    const zqlStr = 'count vminstance named as \'total\'; count vminstance where state = \'Running\' named as \'running\'; count vminstance where state = \'Stopped\' named as \'stopped\''
+    const res = await this.zql(zqlStr)
+    return res.results.reduce((prev, curr) => ({
+      ...prev, [curr.name]: curr.total,
+    }), {})
   }
 
   /**
    * 查询虚拟机状态
    * @param vmUUID
    */
-  public getVMState(vmUUID: string) {
+  public async getVMState(vmUUID: string) {
     const zqlStr = `query vminstance.state,uuid,hypervisorType,architecture,cpuNum,memorySize,platform,guestOsType,uuid,lastOpDate where uuid='${vmUUID}'`
-    return this.zql(zqlStr)
+    const res = await this.zql(zqlStr)
+    return res.results[0].inventories[0]
+  }
+
+  public async getVMStateDetail(vmUUID: string) {
+    // eslint-disable-next-line max-len
+    const zqlStr = `query vminstance.uuid where uuid = '${vmUUID}' return with (zwatch{{resultName='CPU',metricName='CPUAverageUsedUtilization',offsetAheadOfCurrentTime=3600}}, zwatch{{resultName='Disk',metricName='DiskAllUsedCapacityInPercent',offsetAheadOfCurrentTime=3600}},zwatch{{resultName='NetworkIn',metricName='NetworkAllInBytes',offsetAheadOfCurrentTime=3600}},zwatch{{resultName='NetworkOut',metricName='NetworkAllOutBytes',offsetAheadOfCurrentTime=3600}})`
+    const res = await this.zql(zqlStr)
+    return res.results[0].returnWith
   }
 }

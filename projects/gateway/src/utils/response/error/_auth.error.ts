@@ -38,6 +38,10 @@ const _authErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.FORBIDDEN,
     message: '账号已注册',
   },
+  [ErrorCode.AUTH_NOT_VERIFIED]: {
+    httpStatus: HttpStatus.FORBIDDEN,
+    message: '账号未完成认证',
+  },
 }
 
 export default _authErrors

@@ -29,6 +29,8 @@ export enum ErrorCode {
   AUTH_EMAIL_REGISTERED = 200009,
   /** 账号已注册 */
   AUTH_ACCOUNT_REGISTERED = 200010,
+  /** 账号未完成认证 */
+  AUTH_NOT_VERIFIED = 200011,
 
   // 权限相关错误
   PERMISSION_DENIED = 300001,
@@ -94,6 +96,8 @@ export enum ErrorCode {
   DESKTOP_REQUEST_QUEUE_ONLY = 800005,
   /** 云桌面 id 已存在 */
   DESKTOP_ID_EXISTS = 800006,
+  /** 云桌面不存在 */
+  DESKTOP_NOT_FOUND = 800007,
 
   // 外发相关错误
   /** 当日的外发次数已达上限 */

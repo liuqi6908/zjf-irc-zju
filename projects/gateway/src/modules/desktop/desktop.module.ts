@@ -10,8 +10,9 @@ import { ZstackService } from './zstack/zstack.service'
 import { DesktopController } from './desktop.controller'
 import { DesktopRequestService } from './desktop-request/desktop-request.service'
 import { DesktopRequestController } from './desktop-request/desktop-request.controller'
+import { DesktopVmController } from './desktop-control/desktop-vm/desktop-vm.controller'
+import { DesktopHostController } from './desktop-control/desktop-host/desktop-host.controller'
 import { DesktopQueueHistoryService } from './desktop-queue-history/desktop-queue-history.service'
-import { DesktopControlController } from './desktop-control/desktop-control.controller'
 
 @Module({
   imports: [
@@ -22,7 +23,12 @@ import { DesktopControlController } from './desktop-control/desktop-control.cont
       DesktopQueueHistory,
     ]),
   ],
-  controllers: [DesktopController, DesktopRequestController, DesktopControlController],
+  controllers: [
+    DesktopController,
+    DesktopRequestController,
+    DesktopHostController,
+    DesktopVmController,
+  ],
   providers: [DesktopService, DesktopRequestService, DesktopQueueHistoryService, ZstackService],
   exports: [DesktopService, DesktopRequestService, DesktopQueueHistoryService],
 })

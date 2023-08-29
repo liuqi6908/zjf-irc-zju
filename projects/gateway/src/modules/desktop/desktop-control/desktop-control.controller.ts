@@ -1,5 +1,3 @@
-import { ErrorCode } from 'zjf-types'
-import { responseError } from 'src/utils/response'
 import { Controller, Get, Param } from '@nestjs/common'
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
 
@@ -23,26 +21,5 @@ export class DesktopControlController {
   @Get('vm/state/:id')
   public async getVMState(@Param('id') id: string) {
     return await this._zstackSrv.getVMState(id)
-  }
-
-  @ApiOperation({ summary: '开机指定的虚拟机' })
-  @ApiParam({ name: 'id', description: '虚拟机ID' })
-  @Get('vm/start/:id')
-  public async startVM(@Param('id') id: string) {
-    responseError(ErrorCode.COMMON_NOT_IMPLEMENTED)
-  }
-
-  @ApiOperation({ summary: '关机指定的虚拟机' })
-  @ApiParam({ name: 'id', description: '虚拟机ID' })
-  @Get('vm/stop/:id')
-  public async stopVM(@Param('id') id: string) {
-    responseError(ErrorCode.COMMON_NOT_IMPLEMENTED)
-  }
-
-  @ApiOperation({ summary: '重启指定的虚拟机' })
-  @ApiParam({ name: 'id', description: '虚拟机ID' })
-  @Get('vm/reboot/:id')
-  public async rebootVM(@Param('id') id: string) {
-    responseError(ErrorCode.COMMON_NOT_IMPLEMENTED)
   }
 }
