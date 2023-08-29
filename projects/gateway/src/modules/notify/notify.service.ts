@@ -5,10 +5,12 @@ import type { VerificationHistory } from 'src/entities/verification'
 
 import { getVerificationApprovedHTML } from 'src/utils/html/templates/verification-approved'
 import { getVerificationRejectedHTML } from 'src/utils/html/templates/verification-rejected'
+import type { FileExportLarge } from 'src/entities/export/file-export-large.entity'
 import { EmailService } from '../email/email.service'
 import { PermissionService } from '../permission/permission.service'
 import { getNewVerificationHTML } from '../../utils/html/templates/new-verification'
 import { UserService } from '../user/user.service'
+import { getNewExportLgHTML } from '../../utils/html/templates/new-export-lg'
 
 @Injectable()
 export class NotifyService {
@@ -54,7 +56,6 @@ export class NotifyService {
     verification: VerificationHistory,
   ) {
     const user = await this._userSrv.repo().findOne({ where: { id: verification.founderId } })
-    console.log(user)
     if (!user?.email)
       return
 
@@ -71,6 +72,18 @@ export class NotifyService {
           ? getVerificationApprovedHTML(verification)
           : getVerificationRejectedHTML(verification)
       ),
+    })
+  }
+
+  public async notifyNewFileExportLg(info: FileExportLarge) {
+    const { desktop, ip } = info
+    const desktopName = desktop?.id ? `${desktop.id}` : `未知IP (${ip})`
+    const emails = await this.getUserEmailsThatHasPermission([
+      PermissionType.EXPORT_LG_QUERY_ALL,
+    ])
+    return this._emailSrv.send({
+      to: emails,
+      ...getNewExportLgHTML(desktopName),
     })
   }
 }

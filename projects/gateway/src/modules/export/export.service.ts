@@ -20,6 +20,7 @@ import {
 } from 'zjf-types'
 import { FileService } from '../file/file.service'
 import { EmailService } from '../email/email.service'
+import { NotifyService } from '../notify/notify.service'
 import { SysConfigService } from '../config/config.service'
 import { DesktopService } from '../desktop/desktop.service'
 
@@ -36,6 +37,7 @@ export class ExportService {
     private readonly _mailSrv: EmailService,
     private readonly _sysCfgSrv: SysConfigService,
     private readonly _desktopSrv: DesktopService,
+    private readonly _notifySrv: NotifyService,
   ) {}
 
   /**
@@ -161,6 +163,7 @@ export class ExportService {
     if (desktop)
       feLg.desktop = desktop
     await this._feLgRepo.save(feLg)
+    this._notifySrv.notifyNewFileExportLg(feLg)
     return objectOmit(feLg, ['founder'])
   }
 
