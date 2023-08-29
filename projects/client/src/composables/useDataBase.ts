@@ -40,7 +40,9 @@ export function useDataBase() {
   /** 获取指定分类的数据 */
   const getDataByRootId = async (dataRootId: DataRoot) => {
     loading.value = true
-    const res = await $get<IDataDirectory[]>(`/data/list/${dataRootId}`)
+    const res = await $get<IDataDirectory[]>(`/data/list/${dataRootId}`).finally(() => {
+      loading.value = false
+    })
     const tabs = [] as TabItem[]
 
     if (res[0].children) {
@@ -60,7 +62,6 @@ export function useDataBase() {
       })
     }
     databaseTab.value = cloneDeep(tabs)
-    loading.value = false
   }
 
   const geRootData = async () => {

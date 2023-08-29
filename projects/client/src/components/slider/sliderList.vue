@@ -36,14 +36,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <q-list>
+  <q-list text-grey-8>
     <q-item
       v-for="item in list"
       :key="item.id"
       :to="item.router"
+      flex="~ col justify-center"
       clickable font-600
       :active="item.clicked || false"
-      active-class="text-primary-1"
+      active-class="text-primary-1 bg-grey-2"
       @click="updateId(item)"
     >
       {{ item. nameZH }}

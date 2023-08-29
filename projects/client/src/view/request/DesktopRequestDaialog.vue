@@ -63,10 +63,10 @@ watch(file, (newFile) => {
   <Zdialog
     title="申请使用"
     caption="(申请结果前往“用户中心”查看)"
-    :confirm-event="confirm"
     :disable-confirm="!read"
     :model-value="modelValue"
     footer
+    @ok="confirm"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <div flex="~ col">

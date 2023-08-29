@@ -31,7 +31,7 @@ async function confirmEdit() {
 <template>
   <ZDialog
     :model-value="editDialog" :title="`修改${label}`" :footer="true"
-    :confirm-event="confirmEdit"
+    @ok="confirmEdit"
     @update:model-value="(val) => $emit('update:editDialog', val)"
   >
     <div mb-3 text-grey-8>

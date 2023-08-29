@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { color } from 'echarts'
 import type { QTableProps } from 'quasar'
 import { watch } from 'vue'
+ 
 
 export interface TabItem {
     label: string
@@ -20,11 +22,19 @@ export interface TabItem {
 interface Props {
     modelValue: string
     tabList: TabItem[]
-    textClass?: string
+    textStyle?: any
     align?:string
     showcaption?:boolean
+    indicatorColor?:string
 }
-const props = defineProps<Props>()
+
+const props =   withDefaults(defineProps<Props>(),{
+    textStyle: {
+        color: '#025CB9'
+    },
+    indicatorColor: 'primary-1'
+})
+
 const emits = defineEmits(['update:modelValue', 'update:currTabObj','update:rightEvent'])
 
 function editPopup(val,event){
@@ -45,7 +55,7 @@ watch(() => props.modelValue,
     <div full>
         <div flex="~ row" :class="align ? `justify-${align}` : 'justify-center'">
             <q-tabs 
-                indicator-color="tab-bottom"
+                :indicator-color="indicatorColor"
                 font-600
                 bg-grey-1 
                 :model-value="modelValue"
@@ -53,19 +63,20 @@ watch(() => props.modelValue,
                 :align="align"
                 @update:model-value="(tab) => $emit('update:modelValue', tab)">
                     <div v-for="tab in tabList" :key="tab.id" >
-                        <q-route-tab v-if="tab.to" :to="tab.to">
+                        <q-route-tab :style="textStyle" v-if="tab.to" :to="tab.to">
                             {{ tab.label }}
                         </q-route-tab>
 
                         <q-tab  
                             v-else
+                            :style="textStyle"
                             @click.right.prevent="editPopup(tab,$event)"  
                             text-4 
                             font-600 
                             :name="tab.id"
                         >
                         <div flex="~ col">
-                            <span>{{ tab.label }}</span>
+                            <span :style="textStyle">{{ tab.label }}</span>
                             <span v-if="showcaption" style="text-transform: lowercase">{{ tab.nameEN }}</span>
                         </div>
                           

@@ -150,7 +150,7 @@ function succNotify(message: string) {
         </div>
       </BaseTable>
 
-      <ZDialog v-model="uploadDialog" title="添加作品" footer :confirm-event="confirmWork" :disable-confirm="!editInfo.read">
+      <ZDialog v-model="uploadDialog" title="添加作品" footer :disable-confirm="!editInfo.read" @ok="confirmWork">
         <div bg-grey-1 flex="~ col gap-2">
           <span font-500 text-grey-8>题目</span>
           <UserCodeInput v-model:user-code="editInfo.title" label="输入题目" :dark="false" />

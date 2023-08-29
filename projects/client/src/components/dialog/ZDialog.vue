@@ -40,7 +40,7 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
       <footer v-if="footer" mt-10 flex flex-row justify-end>
         <div flex="~ row">
           <Btn label="取消" :close-popup="modelValue" mr-6 outline />
-          <Btn label="确认" :disable="disableConfirm" :close-popup="modelValue" @click="confirmEvent" />
+          <Btn label="确认" :disable="disableConfirm" :close-popup="modelValue" @click="$emit('ok')" />
         </div>
       </footer>
     </q-card>

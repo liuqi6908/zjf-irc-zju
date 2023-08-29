@@ -42,13 +42,15 @@ async function fetchQuery(options: any) {
     loading.value = false
   })
   workRows.value = res.data.map((item) => {
+    const { school, name, college, identify } = item?.user?.verification || ''
+
     return {
       ...item,
       operation: '',
-      school: item.user.verification.school,
-      name: item.user.verification.name,
-      college: item.user.verification.college,
-      identify: item.user.verification.identify,
+      school,
+      name,
+      college,
+      identify,
     }
   })
 }
