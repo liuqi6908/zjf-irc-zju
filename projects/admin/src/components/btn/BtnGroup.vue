@@ -28,9 +28,9 @@ const btns = computed(() => {
 <template>
   <div w-full flex="~ row gap-4 flex-nowrap">
     <div v-for="btn in btns" :key="btn.key">
-      <q-btn v-if="!btn.showPopup" :label="btn.label" :color="btn.color" text-grey-1 @click="$emit(`update:${btn.key}`)" />
+      <q-btn :label="btn.label" :color="btn.color" text-grey-1 @click="$emit(`update:${btn.key}`)" />
 
-      <q-btn v-else :label="btn.label" :color="btn.color" text-grey-1>
+      <!-- <q-btn v-else :label="btn.label" :color="btn.color" text-grey-1>
         <q-popup-proxy>
           <q-banner flex="~ row">
             <div text-grey-5>
@@ -40,7 +40,7 @@ const btns = computed(() => {
             <q-btn v-close-popup color="negative" dense label="取消" />
           </q-banner>
         </q-popup-proxy>
-      </q-btn>
+      </q-btn> -->
     </div>
   </div>
 </template>

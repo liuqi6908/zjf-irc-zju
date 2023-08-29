@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { TabItem } from 'shared/component/base/tab/Tabs.vue'
 import Tabs from 'shared/component/base/tab/Tabs.vue'
-import { Notify } from 'quasar'
+import { Notify, useQuasar } from 'quasar'
 import { cloneDeep } from 'lodash-es'
 import type { IQueryDto, IVerificationHistory } from 'zjf-types'
-import { PAGINATION_SIZE_MAX } from 'zjf-types'
+import { PAGINATION_SIZE_MAX, VerificationStatus } from 'zjf-types'
 import AuthAdminTable from '~/view/authorityAdmin/AuthAdminTable.vue'
 
 import { upsertDataRole } from '~/api/dataPermission/upsertDataRole'
@@ -38,6 +38,8 @@ const settingTable = {
 
 const allocation = {
   col: [
+    { name: 'school', label: '学校', align: 'left', field: 'school' },
+    { name: 'college', label: '学院', align: 'left', field: 'college' },
     {
       name: 'account',
       label: '用户',
@@ -46,7 +48,6 @@ const allocation = {
     },
     { name: 'name', align: 'left', label: '真实姓名', field: 'name' },
     { name: 'email', label: '邮箱', align: 'left', field: 'email' },
-    { name: 'unit', label: '单位', align: 'left', field: 'unit' },
     { name: 'attachments', label: '证明材料', align: 'left', field: 'attachments' },
     { name: 'roleAssign', label: '角色分配', align: 'left', field: 'roleAssign' },
     { name: 'saveRows', label: '操作', align: 'left', field: 'saveRows' },
@@ -62,41 +63,53 @@ const tabList = reactive<TabItem[]>([
 const currentTab = ref<TabItem>()
 const tab = ref(tabList[0].id)
 const roles = reactive<string[]>([])
+const $q = useQuasar()
 
 // const roleNames = [{ label: '教师', value: 'teacher' }, { label: '学生', value: 'students' }]
 
 const baseQuery = ({
   page: 0,
   pageSize: PAGINATION_SIZE_MAX,
-  filters: [],
+  filters: [
+    {
+      field: 'status',
+      type: '=',
+      value: VerificationStatus.APPROVED,
+    },
+  ],
   sort: [],
   relations: {
-    founder: true,
+    founder: { verification: true },
   },
 }) as IQueryDto<IVerificationHistory>
 
 async function saveRole(row: any) {
-  if (tab.value === 'setting') {
-    const verifyStr: string[] = row.verify || []
-    const downLoadStr: string[] = row.downLoadVerify || []
+  $q.dialog({
+    message: '确认删除',
+    cancel: true,
+  }).onOk(async () => {
+    if (tab.value === 'setting') {
+      const verifyStr: string[] = row.verify || []
+      const downLoadStr: string[] = row.downLoadVerify || []
 
-    const res = await upsertDataRole(row.roleName, verifyStr, downLoadStr)
-    if (res) {
-      Notify.create({
-        message: '保存成功',
-        type: 'success',
-      })
+      const res = await upsertDataRole(row.roleName, verifyStr, downLoadStr)
+      if (res) {
+        Notify.create({
+          message: '保存成功',
+          type: 'success',
+        })
+      }
     }
-  }
-  else {
-    const res = await updateUserRole(row.userId, row.roleAssign)
-    if (res) {
-      Notify.create({
-        message: '保存成功',
-        type: 'success',
-      })
+    else {
+      const res = await updateUserRole(row.userId, row.roleAssign)
+      if (res) {
+        Notify.create({
+          message: '保存成功',
+          type: 'success',
+        })
+      }
     }
-  }
+  })
 }
 
 async function init() {
@@ -108,6 +121,7 @@ async function init() {
       const viewArr = cloneRow.viewDirectories.map(i => i.id)
       const downloadArr = cloneRow.downloadDirectories.map(i => i.id)
       roles.push(cloneRow.name)
+
       currentTab.value.tableData.row.push({
         roleName: cloneRow.name,
         verify: viewArr,

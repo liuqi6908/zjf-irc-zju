@@ -5,5 +5,5 @@ const { $delete } = useRequest()
 export function resetApply(
   verificationId: string,
 ) {
-  return $delete(`/verification/reset/${verificationId}`)
+  return $delete(`/verification/cancel/${verificationId}`)
 }

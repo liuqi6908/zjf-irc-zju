@@ -140,14 +140,19 @@ async function fetchDesktopList(isDisable?: boolean) {
   })
 }
 
-async function fetchDesktopRequest() {
+async function fetchDesktopRequest(requestUser?: boolean) {
   const res = await getDesktopQuery(options.value)
   if (!currentTab.value || !currentTab.value.tableData)
     return
+  if (requestUser) {
+    queueingList.value = res.data.map((item: any) => item)
+    return
+  }
   currentTab.value.tableData.row = res.data.map((item: any) => {
     return {
       ...item,
       nickname: item.user?.nickname,
+      userId: item.user.id,
       name: item.user.verification?.name,
       roleName: item.user?.roleName,
       identify: item.user?.verification?.identify,
@@ -174,8 +179,7 @@ watch(tab, async (newTab) => {
     await fetchDesktopRequest()
   }
   else if (newTab === 'desktopAssign') {
-    const res = await fetchDesktopRequest()
-    queueingList.value = res.map((item: any) => item)
+    await fetchDesktopRequest(true)
     fetchDesktopList(false)
   }
   else if (newTab === 'desktopStopList') {
@@ -195,6 +199,8 @@ watch(tab, async (newTab) => {
       :tab="tab"
       :queueing-list="queueingList"
       :cols="currentTab?.tableData?.col"
+      @update:request="fetchDesktopRequest()"
+      @update:desktop-select="fetchDesktopList(false)"
     />
 
     <BaseTable

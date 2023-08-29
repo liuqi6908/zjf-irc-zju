@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Notify } from 'quasar'
 import { useUser } from '../../composables/useUser'
-import { getDesktopRequestFileUrl, putDesktopRequest } from '../../api/file/putDesktopRequest'
+import { putDesktopRequest } from '../../api/file/putDesktopRequest'
 import { desktopRequest } from '../../api/desktop/desktopRequest'
 
 import Zdialog from '../../components/dialog/Zdialog.vue'
@@ -38,8 +38,11 @@ async function confirm() {
     return
   for (const file of files.value) {
     const res = await putDesktopRequest(file.name, file)
-    if (res)
-      attachments.value.push(getDesktopRequestFileUrl(userInfo.value.id, file.name))
+    if (res) {
+      attachments.value.push(
+      `${res}`,
+      )
+    }
   }
   const requestRes = await desktopRequest(select.value.id, attachments.value)
   if (requestRes) {

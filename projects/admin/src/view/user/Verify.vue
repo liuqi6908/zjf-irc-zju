@@ -2,7 +2,7 @@
 import moment from 'moment'
 import { cloneDeep } from 'lodash-es'
 
-import { Notify, type QTableProps } from 'quasar'
+import { Notify, type QTableProps, useQuasar } from 'quasar'
 
 import { approveApply } from '~/api/verification/approveApply'
 import { rejectApply } from '~/api/verification/rejectApply'
@@ -18,7 +18,7 @@ export interface Rows {
   registerTime: string
   verifyTime: string
   attachments: []
-  handle?: '重置' | '确认/驳回'
+  handle?: '重置' | '通过/驳回' | '通过'
 }
 
 interface RowsData extends Rows {
@@ -31,10 +31,11 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const emits = defineEmits(['update:request'])
 
 const verifyId = ref('')
 const reason = ref('')
-const tab = ref('confirm')
+const $q = useQuasar()
 
 const dialogShow = ref(false)
 const fileDialog = ref(false)
@@ -52,7 +53,8 @@ const columns = [
   },
   { name: 'name', align: 'left', label: '真实姓名', required: true, field: 'name', sortable: true },
   { name: 'email', align: 'left', label: '邮箱', field: 'email', sortable: true, required: true },
-  { name: 'unit', align: 'left', label: '单位', field: 'unit', required: true },
+  { name: 'school', align: 'left', label: '学校', field: 'school', required: true },
+  { name: 'college', align: 'left', label: '学院', field: 'college', required: true },
   { name: 'identify', align: 'left', label: '身份', field: 'identify', required: true },
   {
     name: 'registerTime',
@@ -81,53 +83,49 @@ function momentTime(name: string, row: string) {
     return row
 }
 
-function onRowClick(field: string, row: any) {
+function checkAttachment(row: any) {
+  fileDialog.value = true
   clickedRow = cloneDeep(row)
   clickedRow.attachmentsList = []
-
-  if (field === 'attachments') {
-    fileDialog.value = true
-    for (const i in row.attachments) {
-      const url = getVerifyFileUrl(row.founderId, row.attachments[i])
-      clickedRow.attachmentsList.push(url)
-    }
-  }
-  else if (field === 'handle' && row.handle) {
-    dialogShow.value = true
-    verifyId.value = row.id
-
-    if (row.handle === '重置')
-      tab.value = 'reset'
+  for (const i in row.attachments) {
+    const url = getVerifyFileUrl(row.founderId, row.attachments[i])
+    clickedRow.attachmentsList.push(url)
   }
 }
 
-async function confirm() {
-  if (verifyId.value) {
-    const res = await approveApply(verifyId.value)
-    notify(res)
-  }
+async function approveRequest(row: any) {
+  $q.dialog({
+    message: '确认通过申请？',
+    cancel: true,
+  }).onOk(async () => {
+    const res = await approveApply(row.id)
+    emits('update:request')
+  }).onCancel(() => {})
 }
 
+function rejectRequest(row: any) {
+  verifyId.value = row.id
+  dialogShow.value = true
+}
 async function reject() {
   if (!verifyId.value && !reason.value)
     return
   const res = await rejectApply(verifyId.value, reason.value)
+  dialogShow.value = false
+  emits('update:request')
   notify(res)
 }
 
-async function reset() {
-  if (!verifyId.value)
-    return
-  const res = await resetApply(verifyId.value)
-  notify(res)
+async function resetRequest(row: any) {
+  $q.dialog({
+    message: '确认重置申请？',
+    cancel: true,
+  }).onOk(async () => {
+    const res = await resetApply(row.id)
+    notify(res)
+    emits('update:request')
+  }).onCancel(() => {})
 }
-// async function fetchFile(userId: string, filename: string) {
-//   const res =  getVerifyFileUrl(userId, filename)
-//   // console.log('btoa', window.btoa(encodeURIComponent(res)))
-//   imageData.value = `data:image/png;base64,${window.btoa(encodeURIComponent(res))}`
-//   // imgShow.value?.onload=function()
-//   // console.log({ imageData }, btoa(unescape(encodeURIComponent(res))))
-// }
 
 function notify(judge: any, event?: any) {
   if (judge) {
@@ -157,49 +155,43 @@ function notify(judge: any, event?: any) {
     >
       <template #body="props">
         <q-tr :props="props">
-          <q-td v-for="r in columns" :key="r.name" :props="props" @click="onRowClick(r.field, props.row)">
-            {{ r.name === 'attachments' ? '查看认证材料' : momentTime(r.name, props.row[r.name]) }}
+          <q-td v-for="r in columns" :key="r.name" :props="props">
+            <div v-if="r.name === 'handle'">
+              <div v-if="props.row.handle === '重置'">
+                <q-btn flat label="重置" @click="resetRequest(props.row)" />
+              </div>
+              <div v-if="props.row.handle === '通过/驳回'">
+                <q-btn flat label="通过" color="primary-1" @click="approveRequest(props.row)" />
+                <q-btn label="驳回" flat color="red" @click="rejectRequest(props.row)" />
+              </div>
+              <div v-if="props.row.handle === '通过'">
+                <!-- <q-btn flat label="通过" color="primary-1" @click="resetRequest(props.row)" /> -->
+              </div>
+              <!-- <q-btn flat :label="props.row.handle" @click="onRowClick(r.field, props.row)" /> -->
+            </div>
+            <div v-else-if="r.name === 'attachments'">
+              <q-btn color="primary-1" flat label="查看认证材料" @click="checkAttachment(props.row)" />
+            </div>
+            <div v-else-if="r.name === 'registerTime' || r.name === 'verifyTime'">
+              {{ momentTime(r.name, props.row[r.name]) }}
+            </div>
+            <div v-else>
+              {{ props.row[r.name] }}
+            </div>
           </q-td>
         </q-tr>
       </template>
     </q-table>
 
     <q-dialog v-model="dialogShow">
-      <q-card min-h-xs min-w-xs flex flex-col p-4>
-        <header flex="~ row justify-end">
-          <q-btn v-close-popup flat dense round>
-            <div i-mingcute:close-line />
-          </q-btn>
-        </header>
-        <q-tab-panels v-model="tab">
-          <q-tab-panel name="confirm">
-            <q-card-section class="col-grow" flex="~ col justify-end">
-              <q-btn mb-2 font-500 text-grey-1 color="green" @click="confirm">
-                通过审核
-              </q-btn>
-              <q-btn mt-10 font-500 text-grey-1 color="red" @click="tab = 'reject'">
-                驳回审核
-              </q-btn>
-            </q-card-section>
-          </q-tab-panel>
-
-          <q-tab-panel name="reject">
-            <q-card-section class="col-grow" flex="~ col justify-end">
-              <q-input v-model="reason" label="请填写驳回理由" />
-              <q-btn mt-10 font-500 text-grey-1 color="red" @click="reject">
-                驳回审核
-              </q-btn>
-            </q-card-section>
-          </q-tab-panel>
-
-          <q-tab-panel name="reset">
-            <q-card-section class="col-grow" flex="~ col justify-end">
-              <q-btn mb-2 font-500 text-grey-1 color="orange" @click="reset">
-                重置
-              </q-btn>
-            </q-card-section>
-          </q-tab-panel>
-        </q-tab-panels>
+      <q-card min-w-xs flex flex-col>
+        <q-card-section class="col-grow" flex="~ col justify-end">
+          <q-input v-model="reason" label="请填写驳回理由" />
+          <div flex="~ row justify-end">
+            <q-btn flat mt-10 font-500 color="primary-1" label="确认" @click="reject" />
+            <q-btn flat mt-10 font-500 color="red" label="取消" @click="dialogShow = false" />
+          </div>
+        </q-card-section>
       </q-card>
     </q-dialog>
 

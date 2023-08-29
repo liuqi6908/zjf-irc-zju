@@ -11,7 +11,7 @@ import Verify from '../../view/user/Verify.vue'
 // data
 const tabsList = reactive<Array<{ label: string; id: string;isRequest: boolean; rows?: Rows[] }>>([
   {
-    label: '注册用户',
+    label: '所有申请用户',
     id: 'founder',
     isRequest: false,
     rows: [],
@@ -29,7 +29,7 @@ const baseQuery = ({
   filters: [],
   sort: [],
   relations: {
-    founder: true,
+    founder: { verification: true },
   },
 }) as IQueryDto<IVerificationHistory>
 
@@ -65,16 +65,15 @@ function changeTab(t: string) {
 
 function handleField(tab: string) {
   if (tab === VerificationStatus.PENDING)
-    return '确认/驳回'
+    return '通过/驳回'
 
-  else if (tab === VerificationStatus.APPROVED || VerificationStatus.REJECTED)
+  else if (tab === VerificationStatus.APPROVED)
     return '重置'
+  else if (tab === VerificationStatus.REJECTED)
+    return '通过'
 }
 
-watch(tab, async () => {
-  if (!tab.value)
-    return
-
+async function queryAllList() {
   const currentObj = findCurrentTab(tab.value)
   if (currentObj?.isRequest)
     return
@@ -85,12 +84,12 @@ watch(tab, async () => {
   res.data.forEach((data) => {
     if (!currentRow)
       return
-
     currentRow.push({
       user: data.founder.account,
       name: data.name,
       email: data.founder.email,
-      unit: data.founder.unit,
+      school: data.school,
+      college: data.college,
       identify: data.identify,
       registerTime: data.founder.createdAt,
       verifyTime: data.updatedAt,
@@ -100,6 +99,12 @@ watch(tab, async () => {
       founderId: data.founderId,
     })
   })
+}
+
+watch(tab, () => {
+  if (!tab.value)
+    return
+  queryAllList()
   changeTab(tab.value)
 }, { immediate: true })
 </script>
@@ -127,7 +132,7 @@ watch(tab, async () => {
     <q-tab-panels v-model="tab" animated bg-grey-2>
       <q-tab-panel :name="tab">
         <KeepAlive>
-          <Verify :rows="findCurrentTab(tab)?.rows" :current-tab="tab" />
+          <Verify :rows="findCurrentTab(tab)?.rows" :current-tab="tab" @update:request="queryAllList()" />
         </KeepAlive>
       </q-tab-panel>
     </q-tab-panels>
