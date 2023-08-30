@@ -12,7 +12,7 @@ const requestingTable = {
   col: [
     { name: 'status', field: 'status', label: '状态', align: 'center' },
     { name: 'nickname', field: 'nickname', label: '用户名', align: 'center' },
-    { name: 'realName', field: 'realName', label: '真实姓名', align: 'center' },
+    { name: 'name', field: 'name', label: '真实姓名', align: 'center' },
     { name: 'identify', field: 'identify', label: '身份', align: 'center' },
     { name: 'roleName', field: 'roleName', label: '权限', align: 'center' },
     { name: 'createdAt', field: 'createdAt', label: '申请时间', align: 'center' },

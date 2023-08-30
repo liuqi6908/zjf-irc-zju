@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import Tabs from 'shared/component/base/tab/Tabs.vue'
 import Tree from '~/components/tree/Tree.vue'
+import EmptyData from '~/components/empty/EmptyData.vue'
 
 interface Props {
   initDatabase: string
@@ -38,9 +39,12 @@ const list = computed(() => {
 
 <template>
   <div
-    full max-w-180 min-h-2xl flex="~ row" class="col-grow"
+    full max-w-180 min-h-3xl flex="~ row" class="col-grow"
   >
-    <Tabs v-model="tab" align="left" :text-style="{ color: '#292D36' }" class="col-6" :tab-list="databaseTab">
+    <div v-if="!databaseTab || !databaseTab.length" mt-20 full>
+      <EmptyData label="暂无数据" />
+    </div>
+    <Tabs v-else v-model="tab" align="left" :text-style="{ color: '#292D36' }" class="col-6" :tab-list="databaseTab">
       <div v-if="list?.children">
         <Tree
           v-for="item in list.children"

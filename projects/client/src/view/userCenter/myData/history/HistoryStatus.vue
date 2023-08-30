@@ -13,12 +13,12 @@ const textContent = reactive<Record<FileExportLargeStatus, any>>({
 })
 
 const statusClass = computed(() => {
-  return [`bg-${textContent[props.status]?.color}`, 'text-grey-1']
+  return `bg-${textContent[props.status]?.color}`
 })
 </script>
 
 <template>
-  <div :class="[...statusClass]" flex-center gap-1 rounded-6 px-3 py-1>
+  <div :class="statusClass" w-25 flex-center gap-1 rounded-6 px-3 py-1 text-grey-1>
     <div h-4 w-4 flex-center rounded-9999 bg-grey-1>
       <div :class="[`${textContent[status].icon}`, `bg-${textContent[props.status]?.color}`]" h-4 w-4 />
     </div>

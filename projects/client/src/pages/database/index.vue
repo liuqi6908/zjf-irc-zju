@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import CurrentData from './CurrentData.vue'
+import EmptyData from '~/components/empty/EmptyData.vue'
 
 const { geRootData, rootData, loading } = useDataBase()
 
@@ -21,10 +22,12 @@ onBeforeMount(() => {
   },
   )
 })
+
+const empty = computed(() => !rootData.value.length || !rootData.value)
 </script>
 
 <template>
-  <div flex="~ col" full min-h-2xl bg-grey-1>
+  <div flex="~ col" full min-h-3xl bg-grey-1>
     <header class="database" h-40 w-full flex-center>
       <div text-grey-1 title-1>
         数据库
@@ -33,7 +36,7 @@ onBeforeMount(() => {
     <div class="col-grow" flex-start mt-15 justify-center flex="~ row gap-10">
       <SliderList :list="rootData" :current-id="databaseId" router @update:current-id="(id) => databaseId = id" />
 
-      <div min-w-xl flex-center>
+      <div min-w-3xl flex-center>
         <q-spinner
           v-if="loading"
           color="primary-1"
@@ -42,6 +45,9 @@ onBeforeMount(() => {
           label-class="text-primary-1"
           label-style="font-size: 1.1em"
         />
+        <div v-else-if="empty">
+          <EmptyData label="暂无数据" />
+        </div>
         <CurrentData v-else :init-database="databaseId" />
       </div>
     </div>
