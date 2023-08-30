@@ -6,11 +6,14 @@ import type { VerificationHistory } from 'src/entities/verification'
 import { getVerificationApprovedHTML } from 'src/utils/html/templates/verification-approved'
 import { getVerificationRejectedHTML } from 'src/utils/html/templates/verification-rejected'
 import type { FileExportLarge } from 'src/entities/export/file-export-large.entity'
+import type { DesktopQueue } from 'src/entities/desktop-queue'
+import { getUserName } from 'src/utils/get-user-name'
 import { EmailService } from '../email/email.service'
 import { PermissionService } from '../permission/permission.service'
 import { getNewVerificationHTML } from '../../utils/html/templates/new-verification'
 import { UserService } from '../user/user.service'
 import { getNewExportLgHTML } from '../../utils/html/templates/new-export-lg'
+import { getDesktopRequestHTML } from '../../utils/html/templates/desktop-req'
 
 @Injectable()
 export class NotifyService {
@@ -44,6 +47,22 @@ export class NotifyService {
     this._emailSrv.send({
       to: emails,
       ...getNewVerificationHTML(verification),
+    })
+  }
+
+  /**
+   * 新的云桌面使用申请
+   * @param desktopQueue
+   */
+  public async notifyNewDesktopRequest(desktopQueue: DesktopQueue) {
+    const emails = await this.getUserEmailsThatHasPermission([
+      PermissionType.DESKTOP_REQUEST_QUERY,
+    ])
+    this._emailSrv.send({
+      to: emails,
+      ...getDesktopRequestHTML({
+        name: getUserName(desktopQueue.user),
+      }),
     })
   }
 

@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { DesktopQueue } from 'src/entities/desktop-queue'
 import { DesktopQueueHistory } from 'src/entities/desktop-queue-history'
 
+import { NotifyModule } from '../notify/notify.module'
 import { DesktopService } from './desktop.service'
 import { ZstackService } from './zstack/zstack.service'
 import { DesktopController } from './desktop.controller'
@@ -17,6 +18,7 @@ import { DesktopQueueHistoryService } from './desktop-queue-history/desktop-queu
 @Module({
   imports: [
     HttpModule,
+    NotifyModule,
     TypeOrmModule.forFeature([
       Desktop,
       DesktopQueue,

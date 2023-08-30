@@ -7,6 +7,7 @@ import { DesktopQueue } from 'src/entities/desktop-queue'
 import { DesktopQueueStatus, ErrorCode } from 'zjf-types'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 
+import { NotifyService } from 'src/modules/notify/notify.service'
 import type { CreateDesktopRequestBodyDto } from './dto/create-desktop-req.body.dto'
 
 @Injectable()
@@ -14,6 +15,7 @@ export class DesktopRequestService {
   constructor(
     @InjectRepository(DesktopQueue)
     private readonly _desktopQueueRepo: Repository<DesktopQueue>,
+    private readonly _notifySrv: NotifyService,
   ) {}
 
   /**
@@ -32,6 +34,15 @@ export class DesktopRequestService {
         attachments: info.attachments,
         requestAt: new Date(),
         duration: info.duration,
+      })
+      setTimeout(async () => {
+        const queue = await this._desktopQueueRepo.findOne({
+          where: { userId },
+          relations: { user: { verification: true } },
+        })
+        if (!queue)
+          return
+        this._notifySrv.notifyNewDesktopRequest(queue)
       })
       return insertRes.identifiers[0]
     }
