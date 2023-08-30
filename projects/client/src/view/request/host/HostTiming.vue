@@ -29,7 +29,7 @@ const data = reactive({
 
 /** 定时器的引用 */
 const pollingInterval = ref()
-/** 轮训 */
+
 function processData(dataArray, property: string) {
   if (dataArray && dataArray.length) {
     return dataArray.map((item) => {

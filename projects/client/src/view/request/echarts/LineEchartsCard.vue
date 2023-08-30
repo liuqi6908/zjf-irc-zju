@@ -133,7 +133,7 @@ provide(UPDATE_OPTIONS_KEY, options)
 </script>
 
 <template>
-  <div w-full bg-grey-1 p-6>
+  <div bg-grey-1 p-6>
     <header flex="~ row" mb-4 text-grey-8 title-4>
       {{ title }}
     </header>
@@ -141,7 +141,7 @@ provide(UPDATE_OPTIONS_KEY, options)
       class="chart"
       :option="options"
 
-      autofill h-80
+      autofill h-80 min-w-lg
     />
   </div>
 </template>
