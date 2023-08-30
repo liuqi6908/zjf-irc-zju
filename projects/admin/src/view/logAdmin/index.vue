@@ -20,56 +20,16 @@ const { $get, $post } = useRequest()
 const tableRef = ref<QTable>()
 
 const columns: QTableProps['columns'] = reactive([
-  {
-    name: 'account',
-    label: '用户',
-    field: 'account',
-  },
-  {
-    name: 'email',
-    label: '邮箱',
-    field: 'email',
-  },
-  {
-    name: 'ip',
-    label: 'IP 地址',
-    field: 'ip',
-  },
-  {
-    name: 'rootId',
-    label: '类',
-    field: 'rootId',
-  },
-  {
-    name: 'dbId',
-    label: '数据库',
-    field: 'dbId',
-  },
-  {
-    name: 'subDbId',
-    label: '子库',
-    field: 'subDbId',
-  },
-  {
-    name: 'moduleId',
-    label: '模块',
-    field: 'moduleId',
-  },
-  {
-    name: 'tableId',
-    label: '表格',
-    field: 'tableId',
-  },
-  {
-    name: 'time',
-    label: '操作时间',
-    field: 'time',
-  },
-  {
-    name: 'action',
-    label: '操作',
-    field: 'action',
-  },
+  { name: 'account', label: '用户', field: 'account' },
+  { name: 'email', label: '邮箱', field: 'email' },
+  { name: 'ip', label: 'IP 地址', field: 'ip' },
+  { name: 'rootId', label: '类', field: 'rootId' },
+  { name: 'dbId', label: '数据库', field: 'dbId' },
+  { name: 'subDbId', label: '子库', field: 'subDbId' },
+  { name: 'moduleId', label: '模块', field: 'moduleId' },
+  { name: 'tableId', label: '表格', field: 'tableId' },
+  { name: 'time', label: '操作时间', field: 'time' },
+  { name: 'action', label: '操作', field: 'action' },
 ])
 const rows: Array<any> = reactive([])
 const pagination = ref({
@@ -85,7 +45,6 @@ const actions = reactive<Array<Action>>([])
 onMounted(async () => {
   columns.forEach((item) => {
     item.align = 'center'
-    item.sortable = true
   })
   await getActions()
   // 从服务器获取初始数据
@@ -105,7 +64,7 @@ async function getActions() {
  */
 async function queryLogData(props: any) {
   const { filter } = props
-  const { page, rowsPerPage, sortBy } = props.pagination
+  const { page, rowsPerPage } = props.pagination
   loading.value = true
 
   try {
@@ -127,13 +86,6 @@ async function queryLogData(props: any) {
       item.time = moment(item.time).format('YYYY-MM-DD HH:mm:ss')
       item.action = actions.find(v => v.key === item.action)?.value || item.action
     })
-    if (sortBy) {
-      rows.sort((a, b) => {
-        const keyA = a[sortBy]?.toString() || ''
-        const keyB = b[sortBy]?.toString() || ''
-        return keyA.localeCompare(keyB)
-      })
-    }
   }
   catch (e) {}
   finally {
@@ -196,6 +148,9 @@ function exportTable() {
           导出为CSV
           <q-icon name="fas fa-download" size="18px" ml-2 />
         </q-btn>
+      </template>
+      <template #loading>
+        <q-inner-loading showing color="primary" />
       </template>
     </QTable>
   </div>
