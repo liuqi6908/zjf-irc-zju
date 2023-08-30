@@ -43,8 +43,8 @@ export class HtmlTag {
     return this
   }
 
-  appendChild(...tag: HtmlTag[]) {
-    this._children.push(...tag)
+  appendChild(...tags: (HtmlTag | null)[]) {
+    this._children.push(...tags.filter(t => !!t))
     return this
   }
 

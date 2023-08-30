@@ -1,8 +1,6 @@
 import type { Buffer } from 'node:buffer'
-import { formatFileSize } from 'zjf-utils'
 import { Injectable } from '@nestjs/common'
 import type { User } from 'src/entities/user'
-import { codeTag } from 'src/utils/html/code'
 import { objectOmit } from '@catsjuice/utils'
 import { MoreThan, Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -18,11 +16,13 @@ import {
   ErrorCode,
   FileExportLargeStatus,
 } from 'zjf-types'
+import { formatFileSize } from 'zjf-utils'
 import { FileService } from '../file/file.service'
 import { EmailService } from '../email/email.service'
 import { NotifyService } from '../notify/notify.service'
 import { SysConfigService } from '../config/config.service'
 import { DesktopService } from '../desktop/desktop.service'
+import { getFileExportSuccessHTML } from '../../utils/html/templates/file-export-success'
 
 @Injectable()
 export class ExportService {
@@ -107,6 +107,7 @@ export class ExportService {
         content: buffer,
         contentType,
         fileSize,
+        createdAt: feSm.createdAt,
       }),
       this._fileSrv.upload('pri', path, buffer),
     ])
@@ -190,6 +191,7 @@ export class ExportService {
       fileSize: feLg.fileSize,
       note: feLg.note,
       user: feLg.founder,
+      createdAt: feLg.createdAt,
     })
     await this._feLgRepo.save(feLg)
     return {
@@ -233,21 +235,20 @@ export class ExportService {
     content: Buffer
     contentType: string
     fileSize: number
+    createdAt?: Date | string
   }) {
-    const { email, user, note, filename, content, contentType, fileSize } = options
-    const name = user.verification?.name || user.nickname || user.account || user.id
+    const { email, user, note, filename, content, contentType, fileSize, createdAt } = options
+    // const name = user.verification?.name || user.nickname || user.account || user.id
     const readableFileSize = formatFileSize(fileSize)
-
-    let html = `<p>您好，${name}，您的文件已经外发成功，文件名为：
-    ${codeTag(filename)}，文件大小为：${codeTag(readableFileSize)}</p>`
-
-    if (note)
-      html += `，备注信息为：<div style="padding: 5px;border-radius: 10px;color: #222">${note}</div>`
 
     await this._mailSrv.send({
       to: email,
-      subject: 'ZJF Exporter',
-      html,
+      ...getFileExportSuccessHTML({
+        filename,
+        note,
+        createdAt,
+        fileSize: readableFileSize,
+      }),
       attachments: [{
         filename,
         content,
