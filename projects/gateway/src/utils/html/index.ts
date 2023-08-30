@@ -7,7 +7,9 @@ export class HtmlTag {
   constructor(
     public tagName: string,
     public attrs: Record<string, any> = {},
-  ) {}
+  ) {
+    this.style({ lineHeight: '1.7' })
+  }
 
   static create(tagName: string, attrs: Record<string, any> = {}) {
     return new HtmlTag(tagName, attrs)
@@ -44,7 +46,7 @@ export class HtmlTag {
   }
 
   appendChild(...tags: (HtmlTag | null)[]) {
-    this._children.push(...tags.filter(t => !!t))
+    this._children.push(...(tags.filter(t => !!t)))
     return this
   }
 
@@ -64,7 +66,7 @@ export class HtmlTag {
       ${styleRaw}
       ${Object.entries(this.attrs).map(([k, v]) => `${k}="${v}"`).join(' ')}
     >
-      ${this._children.map(c => typeof c === 'string' ? c : c.raw()).join('\n')}
+      ${this._children.filter(Boolean).map(c => typeof c === 'string' ? c : c.raw()).join('\n')}
     </${this.tagName}>`
   }
 }

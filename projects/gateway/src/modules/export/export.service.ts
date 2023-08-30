@@ -23,6 +23,7 @@ import { NotifyService } from '../notify/notify.service'
 import { SysConfigService } from '../config/config.service'
 import { DesktopService } from '../desktop/desktop.service'
 import { getFileExportSuccessHTML } from '../../utils/html/templates/file-export-success'
+import { getFileExportRejectedHTML } from '../../utils/html/templates/file-export-rejected'
 
 @Injectable()
 export class ExportService {
@@ -217,6 +218,17 @@ export class ExportService {
     feLg.handleAt = new Date()
     feLg.rejectReason = reason
     await this._feLgRepo.save(feLg)
+
+    setTimeout(() => {
+      this._mailSrv.send({
+        to: feLg.email,
+        ...getFileExportRejectedHTML({
+          filename: feLg.fileName,
+          time: feLg.createdAt,
+          reason,
+        }),
+      })
+    })
     return {
       ...feLg,
       handler: objectOmit(feLg.handler, ['verification', 'password']),
