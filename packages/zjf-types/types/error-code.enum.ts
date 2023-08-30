@@ -98,6 +98,8 @@ export enum ErrorCode {
   DESKTOP_ID_EXISTS = 800006,
   /** 云桌面不存在 */
   DESKTOP_NOT_FOUND = 800007,
+  /** 正在进行云桌面过期检查中，无法重复进行 */
+  DESKTOP_EXPIRE_CHECKING = 800008,
 
   // 外发相关错误
   /** 当日的外发次数已达上限 */

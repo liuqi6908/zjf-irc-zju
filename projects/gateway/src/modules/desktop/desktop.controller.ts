@@ -1,12 +1,12 @@
 import { getQuery } from 'src/utils/query'
 import type { Desktop } from 'src/entities/desktop'
 import { DesktopIdDto } from 'src/dto/id/desktop.dto'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { QueryDto, QueryResDto } from 'src/dto/query.dto'
 import { HasPermission } from 'src/guards/permission.guard'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req } from '@nestjs/common'
 import { DesktopQueueHistoryStatus, DesktopQueueStatus, ErrorCode, PermissionType } from 'zjf-types'
 
 import { NotifyService } from '../notify/notify.service'
@@ -133,5 +133,16 @@ export class DesktopController {
   @Post('query')
   public async queryDesktop(@Body() body: QueryDto<Desktop>) {
     return await getQuery(this._desktopSrv.repo(), body || {})
+  }
+
+  @ApiOperation({ summary: '手动检查云桌面的过期' })
+  @HasPermission(PermissionType.DESKTOP_EXPIRE_CHECK)
+  @ApiQuery({ name: 'accessKey', description: '操作认证' })
+  @Post('check-expire-manually')
+  public async checkDesktopExpireManually(@Query('accessKey') accessKey: string) {
+    if (accessKey !== 'ZJF-DESKTOP-EXPIRE-CHECK_manually')
+      responseError(ErrorCode.PERMISSION_DENIED)
+    this._desktopSrv.checkExpiredDesktop()
+    return true
   }
 }

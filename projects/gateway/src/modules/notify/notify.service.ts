@@ -1,14 +1,15 @@
 import { In } from 'typeorm'
 import { Injectable } from '@nestjs/common'
+import type { Desktop } from 'src/entities/desktop'
 import { getUserName } from 'src/utils/get-user-name'
 import { PermissionType, VerificationStatus } from 'zjf-types'
 import type { DesktopQueue } from 'src/entities/desktop-queue'
 import type { VerificationHistory } from 'src/entities/verification'
 import type { FileExportLarge } from 'src/entities/export/file-export-large.entity'
+import { getDesktopExpireAdminHTML } from 'src/utils/html/templates/desktop-expire-admin'
 import { getVerificationApprovedHTML } from 'src/utils/html/templates/verification-approved'
 import { getVerificationRejectedHTML } from 'src/utils/html/templates/verification-rejected'
 
-import type { Desktop } from 'src/entities/desktop'
 import { UserService } from '../user/user.service'
 import { EmailService } from '../email/email.service'
 import { PermissionService } from '../permission/permission.service'
@@ -16,6 +17,7 @@ import { getNewExportLgHTML } from '../../utils/html/templates/new-export-lg'
 import { getDesktopRequestHTML } from '../../utils/html/templates/desktop-req'
 import { getNewVerificationHTML } from '../../utils/html/templates/new-verification'
 import { getDesktopAssignedHTML } from '../../utils/html/templates/desktop-assigned'
+import { getDesktopExpireUserHTML } from '../../utils/html/templates/desktop-expire-user'
 import { getDesktopInfoChangedHTML } from '../../utils/html/templates/desktop-info-changed'
 
 @Injectable()
@@ -37,6 +39,34 @@ export class NotifyService {
 
     const users = permissions.flatMap(p => p.roles.flatMap(r => r.users))
     return Array.from(new Set(users.map(u => u.email))).filter(Boolean)
+  }
+
+  /**
+   * 通知云桌面即将过期
+   * @param desktop
+   * @param ahead
+   */
+  public async notifyDesktopExpired(desktop: Desktop) {
+    await Promise.all([
+      (async () => {
+        const emails = await this.getUserEmailsThatHasPermission([
+          PermissionType.DESKTOP_ASSIGN,
+        ])
+        this._emailSrv.send({
+          to: emails,
+          ...getDesktopExpireAdminHTML(desktop),
+        })
+      })(),
+      (async () => {
+        const email = desktop?.user?.email
+        if (!email)
+          return
+        this._emailSrv.send({
+          to: email,
+          ...getDesktopExpireUserHTML(desktop),
+        })
+      })(),
+    ])
   }
 
   /**

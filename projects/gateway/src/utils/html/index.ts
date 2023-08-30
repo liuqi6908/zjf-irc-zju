@@ -11,6 +11,18 @@ export class HtmlTag {
     this.style({ lineHeight: '1.7' })
   }
 
+  static div(attrs: Record<string, any> = {}) {
+    return new HtmlTag('div', attrs)
+  }
+
+  static span(attrs: Record<string, any>): HtmlTag
+  static span(attrs: string): HtmlTag
+  static span(attrs: Record<string, any> | string = {}) {
+    if (typeof attrs === 'string')
+      return new HtmlTag('span').text(attrs)
+    return new HtmlTag('span', attrs)
+  }
+
   static create(tagName: string, attrs: Record<string, any> = {}) {
     return new HtmlTag(tagName, attrs)
   }
@@ -37,6 +49,11 @@ export class HtmlTag {
     else {
       this._style[key] = value
     }
+    return this
+  }
+
+  bold(weight = 500) {
+    this.style('font-weight', weight)
     return this
   }
 

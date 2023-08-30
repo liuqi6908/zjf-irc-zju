@@ -30,6 +30,10 @@ const _desktopErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.NOT_FOUND,
     message: '云桌面不存在',
   },
+  [ErrorCode.DESKTOP_EXPIRE_CHECKING]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '正在进行云桌面过期检查中，无法重复进行',
+  },
 }
 
 export default _desktopErrors

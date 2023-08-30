@@ -41,5 +41,12 @@ export default registerAs('redis', () => {
       username: process.env.REDIS_DATA_DIR_USERNAME,
       password: process.env.REDIS_DATA_DIR_PASSWORD,
     }),
+    [RedisType.DESKTOP_EXPIRE_NOTIFY_CACHE]: getUrl({
+      host: process.env.REDIS_DESKTOP_EXPIRE_NOTIFY_CACHE_HOST,
+      port: Number.parseInt(process.env.REDIS_DESKTOP_EXPIRE_NOTIFY_CACHE_PORT),
+      db: Number.parseInt(process.env.REDIS_DESKTOP_EXPIRE_NOTIFY_CACHE_DB),
+      username: process.env.REDIS_DESKTOP_EXPIRE_NOTIFY_CACHE_USERNAME,
+      password: process.env.REDIS_DESKTOP_EXPIRE_NOTIFY_CACHE_PASSWORD,
+    }),
   }
 })
