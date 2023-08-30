@@ -1,19 +1,21 @@
 import { In } from 'typeorm'
-import { PermissionType, VerificationStatus } from 'zjf-types'
 import { Injectable } from '@nestjs/common'
+import { getUserName } from 'src/utils/get-user-name'
+import { PermissionType, VerificationStatus } from 'zjf-types'
+import type { DesktopQueue } from 'src/entities/desktop-queue'
 import type { VerificationHistory } from 'src/entities/verification'
-
+import type { FileExportLarge } from 'src/entities/export/file-export-large.entity'
 import { getVerificationApprovedHTML } from 'src/utils/html/templates/verification-approved'
 import { getVerificationRejectedHTML } from 'src/utils/html/templates/verification-rejected'
-import type { FileExportLarge } from 'src/entities/export/file-export-large.entity'
-import type { DesktopQueue } from 'src/entities/desktop-queue'
-import { getUserName } from 'src/utils/get-user-name'
+
+import type { Desktop } from 'src/entities/desktop'
+import { UserService } from '../user/user.service'
 import { EmailService } from '../email/email.service'
 import { PermissionService } from '../permission/permission.service'
-import { getNewVerificationHTML } from '../../utils/html/templates/new-verification'
-import { UserService } from '../user/user.service'
 import { getNewExportLgHTML } from '../../utils/html/templates/new-export-lg'
 import { getDesktopRequestHTML } from '../../utils/html/templates/desktop-req'
+import { getNewVerificationHTML } from '../../utils/html/templates/new-verification'
+import { getDesktopAssignedHTML } from '../../utils/html/templates/desktop-assigned'
 
 @Injectable()
 export class NotifyService {
@@ -63,6 +65,17 @@ export class NotifyService {
       ...getDesktopRequestHTML({
         name: getUserName(desktopQueue.user),
       }),
+    })
+  }
+
+  /**
+   * 通知用户已分配云桌面
+   * @param desktop
+   */
+  public async notifyUserDesktopAssigned(desktop: Desktop) {
+    this._emailSrv.send({
+      to: desktop.user.email,
+      ...getDesktopAssignedHTML(desktop),
     })
   }
 

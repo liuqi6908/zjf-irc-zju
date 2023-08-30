@@ -17,15 +17,15 @@ import type { SendEmailCodeBodyDto } from './dto/send-email-code.body.dto'
 
 @Injectable()
 export class EmailService implements OnModuleInit {
-  // readonly resend: Resend
   readonly transporter: nodemailer.Transporter
+  private readonly _mailCfg: any
 
   constructor(
     private readonly _cfgSrv: ConfigService,
     private readonly _codeSrv: CodeService,
   ) {
-    // this.resend = new Resend(_cfgSrv.get<string>('email.resendApiKey'))
-    this.transporter = nodemailer.createTransport(_cfgSrv.get('email.smtp'))
+    this._mailCfg = _cfgSrv.get('email.smtp')
+    this.transporter = nodemailer.createTransport(this._mailCfg)
   }
 
   onModuleInit() {}
@@ -37,7 +37,7 @@ export class EmailService implements OnModuleInit {
   send(mailOptions: nodemailer.SendMailOptions) {
     return this.transporter.sendMail({
       ...mailOptions,
-      from: `${APP_NAME}系统通知 <noreplay@qiyandata.com>`,
+      from: `${APP_NAME}系统通知 <${this._mailCfg?.auth?.user}>`,
     })
   }
 

@@ -6,9 +6,10 @@ import { QueryDto, QueryResDto } from 'src/dto/query.dto'
 import { HasPermission } from 'src/guards/permission.guard'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
-import { DesktopQueueHistoryStatus, DesktopQueueStatus, ErrorCode, PermissionType } from 'zjf-types'
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req } from '@nestjs/common'
+import { DesktopQueueHistoryStatus, DesktopQueueStatus, ErrorCode, PermissionType } from 'zjf-types'
 
+import { NotifyService } from '../notify/notify.service'
 import { DesktopService } from './desktop.service'
 import { CreateDesktopBodyDto } from './dto/create-desktop.body.dto'
 import { UpdateDesktopBodyDto } from './dto/update-desktop.body.dto'
@@ -20,6 +21,7 @@ import { DesktopQueueHistoryService } from './desktop-queue-history/desktop-queu
 @Controller('desktop')
 export class DesktopController {
   constructor(
+    private readonly _notifySrv: NotifyService,
     private readonly _desktopSrv: DesktopService,
     private readonly _desktopReqSrv: DesktopRequestService,
     private readonly _desktopHisSrv: DesktopQueueHistoryService,
@@ -106,6 +108,13 @@ export class DesktopController {
       { userId: param.userId },
       { status: DesktopQueueStatus.Using },
     )
+    setTimeout(async () => {
+      const desktop = await this._desktopSrv.repo().findOne({
+        where: { id: param.desktopId },
+        relations: { user: { verification: true } },
+      })
+      this._notifySrv.notifyUserDesktopAssigned(desktop)
+    })
     return true
   }
 
