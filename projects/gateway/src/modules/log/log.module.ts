@@ -1,8 +1,9 @@
 import { BullModule } from '@nestjs/bull'
-import { Global, Module } from '@nestjs/common'
+import { Global, Module, forwardRef } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { DailyCount } from 'src/entities/daily-count.entity'
 
+import { DataModule } from '../data/data.module'
 import { LogService } from './log.service'
 import { LogConsumer } from './log.consumer'
 import { LogController } from './log.controller'
@@ -11,6 +12,7 @@ import { DailyCountService } from './daily-count/daily-count.service'
 @Global()
 @Module({
   imports: [
+    forwardRef(() => DataModule),
     TypeOrmModule.forFeature([
       DailyCount,
     ]),

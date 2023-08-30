@@ -13,7 +13,7 @@ import { DataPermissionController } from './data-permission/data-permission.cont
 
 @Module({
   imports: [
-    LogModule,
+    forwardRef(() => LogModule),
     forwardRef(() => FileModule),
     TypeOrmModule.forFeature([
       DataDirectory,

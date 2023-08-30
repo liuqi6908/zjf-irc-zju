@@ -7,6 +7,8 @@ import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { logDataMapping } from 'src/config/mapping/log-data.mapping'
 import { HasLogAccess } from 'src/guards/log-access-permission.guard'
 
+import { objectEntries } from '@catsjuice/utils'
+import { DataService } from '../data/data.service'
 import { EsAnalyzerService } from '../es-analyzer/es-analyzer.service'
 import { LogService } from './log.service'
 import { AggLogBodyDto } from './dto/agg-log.body.dto'
@@ -23,6 +25,7 @@ export class LogController {
     private readonly _cfgSrv: ConfigService,
     private readonly _esAnalyzerSrv: EsAnalyzerService,
     private readonly _dailyCountSrv: DailyCountService,
+    private readonly _dataDirSrv: DataService,
   ) {}
 
   @ApiOperation({ summary: '获取当前的日志索引 mapping 信息' })
@@ -57,7 +60,7 @@ export class LogController {
   @Post('data/query/dsl')
   public async queryByDsl(@Body() body: QueryByDslBodyDto) {
     const { dsl, fields, page, pageSize } = body
-    return await this._esAnalyzerSrv.queryByDsl(
+    const res = await this._esAnalyzerSrv.queryByDsl(
       dsl,
       { page, pageSize },
       {
@@ -66,6 +69,26 @@ export class LogController {
         mapping: logDataMapping,
       },
     )
+    const cachedMap = new Map()
+    for (const element of res.records) {
+      element.targetInfo = {}
+      for (const [k, v] of objectEntries(element.target)) {
+        const key = String(k).replace(/Id$/, '')
+        const id = String(v)
+
+        const imMemCache = cachedMap.get(key)
+        if (imMemCache) {
+          element.targetInfo[key] = imMemCache
+          continue
+        }
+        const cache = await this._dataDirSrv.getDirCache(id)
+        if (!cache)
+          continue
+        cachedMap.set(key, cache)
+        element.targetInfo[key] = cache
+      }
+    }
+    return res
   }
 
   @ApiOperation({ summary: '日志聚合分析' })
