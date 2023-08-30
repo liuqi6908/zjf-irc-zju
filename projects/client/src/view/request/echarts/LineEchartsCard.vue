@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Echarts, { UPDATE_OPTIONS_KEY } from 'vue-echarts'
+import Echarts from 'vue-echarts'
 
 import moment from 'moment'
 
@@ -128,8 +128,6 @@ watch(() => props.data,
     }
   },
   { deep: true })
-
-provide(UPDATE_OPTIONS_KEY, options)
 </script>
 
 <template>
@@ -137,12 +135,13 @@ provide(UPDATE_OPTIONS_KEY, options)
     <header flex="~ row" mb-4 text-grey-8 title-4>
       {{ title }}
     </header>
-    <Echarts
-      class="chart"
-      :option="options"
-
-      autofill h-80 min-w-lg
-    />
+    <client-only>
+      <Echarts
+        class="chart"
+        :option="options"
+        autofill h-80 min-w-lg
+      />
+    </client-only>
   </div>
 </template>
 

@@ -98,7 +98,9 @@ onBeforeUnmount(() => {
 <template>
   <div mb-20 mt-10 max-w-6xl w-full>
     <LineEchartsCard :data="data.cpu" legend title="总物理机CPU使用率" unit="%" />
+
     <LineEchartsCard :data="data.storage" legend title="总物理机CPU使用率" unit="%" />
+
     <LineEchartsCard :data="data.oi" legend title="总物理机磁盘IO" unit="kb" />
   </div>
 </template>

@@ -76,11 +76,14 @@ watch(() => props.value,
 <template>
   <div border-1 border-grey-2 bg-grey-1 p-6>
     <div flex="~ row items-center">
-      <Echarts
-        class="chart"
-        :option="options"
-        autoresize h-60 w-40
-      />
+      <client-only>
+        <Echarts
+          class="chart"
+          :option="options"
+          autoresize h-60 w-40
+        />
+      </client-only>
+
       <div mx-5 text-grey-8 title-3>
         {{ percent }}
       </div>
