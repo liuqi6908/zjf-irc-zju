@@ -157,7 +157,6 @@ onMounted(async () => {
         </div>
       </header>
       <DesktopTable
-
         mt-6 w-full
         class="col-grow"
         :cols="desktopCol"

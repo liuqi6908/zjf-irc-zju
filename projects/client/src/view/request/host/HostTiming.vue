@@ -29,8 +29,8 @@ const data = reactive({
 
 /** 定时器的引用 */
 const pollingInterval = ref()
-
-function processData(dataArray: Array<any>, property: string) {
+/** 轮训 */
+function processData(dataArray, property: string) {
   if (dataArray && dataArray.length) {
     return dataArray.map((item) => {
       const { value, time } = item
@@ -42,12 +42,12 @@ function processData(dataArray: Array<any>, property: string) {
   return []
 }
 
-async function pollApi() {
-  const res = await getDesktopTimeHostCpu(props.uuid)
+async function pollApi(uuid?: string) {
+  const res = await getDesktopTimeHostCpu(uuid || props.uuid)
 
   if (!res) {
     stopPolling()
-    return
+    return false
   }
 
   if (res.CPUUtilization) {
@@ -80,8 +80,14 @@ function stopPolling() {
 }
 
 watch(() => props.uuid, (newUuid) => {
-  if (newUuid)
+  if (newUuid) {
+    const res = pollApi(newUuid)
+
+    if (!res)
+      return
+
     startPolling()
+  }
 }, { immediate: true })
 
 onBeforeUnmount(() => {
@@ -91,9 +97,9 @@ onBeforeUnmount(() => {
 
 <template>
   <div mb-20 mt-10 max-w-6xl w-full>
-    <LineEchartsCard :data="data.cpu" title="总物理机CPU使用率" unit="%" />
-    <LineEchartsCard :data="data.storage" title="总物理机CPU使用率" unit="%" />
-    <LineEchartsCard :data="data.oi" title="总物理机磁盘IO" unit="kb" />
+    <LineEchartsCard :data="data.cpu" legend title="总物理机CPU使用率" unit="%" />
+    <LineEchartsCard :data="data.storage" legend title="总物理机CPU使用率" unit="%" />
+    <LineEchartsCard :data="data.oi" legend title="总物理机磁盘IO" unit="kb" />
   </div>
 </template>
 

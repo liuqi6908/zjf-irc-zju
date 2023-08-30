@@ -16,17 +16,44 @@ const cpuList = reactive({
     used: 0,
     total: 0,
   },
+})
+/** 定时器的引用 */
+const pollingInterval = ref()
 
+async function fetchDEsktopCpu(uuid?: string) {
+  const res = await getDesktopHostCpu(uuid || props.uuid)
+
+  if (!res) {
+    stopPolling()
+    return false
+  }
+  cpuList.cpu.used = Number(res.CPUUsedCount[0].value)
+  cpuList.cpu.total = cpuList.cpu.used + Number(res.CPUAvailableCount[0].value)
+
+  cpuList.storage.used = Number(res.memUsed[0].value)
+  cpuList.storage.total = cpuList.storage.used + Number(res.memAvailable[0].value)
+}
+
+function startPolling() {
+  pollingInterval.value = setInterval(() => {
+    fetchDEsktopCpu()
+  }, 10000)
+}
+function stopPolling() {
+  clearInterval(pollingInterval.value)
+  pollingInterval.value = null
+}
+
+onBeforeUnmount(() => {
+  stopPolling()
 })
 
 watch(() => props.uuid, async (val) => {
   if (val) {
-    const res = await getDesktopHostCpu(val)
-    cpuList.cpu.used = Number(res.CPUUsedCount[0].value)
-    cpuList.cpu.total = cpuList.cpu.used + Number(res.CPUAvailableCount[0].value)
-
-    cpuList.storage.used = Number(res.memUsed[0].value)
-    cpuList.storage.total = cpuList.storage.used + Number(res.memAvailable[0].value)
+    const res = fetchDEsktopCpu(val)
+    if (!res)
+      return
+    startPolling()
   }
 }, { immediate: true })
 </script>
