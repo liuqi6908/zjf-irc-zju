@@ -86,6 +86,15 @@ export class DesktopController {
       { id: param.desktopId, disabled: false },
       { ...body },
     )
+    setTimeout(async () => {
+      if (!body.accessUrl && !body.password && !body.account)
+        return
+      const desktop = await this._desktopSrv.repo().findOne({
+        where: { id: param.desktopId },
+        relations: { user: { verification: true } },
+      })
+      this._notifySrv.notifyUserDesktopInfoChanged(desktop)
+    })
     return updateRes.affected > 0
   }
 

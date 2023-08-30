@@ -16,6 +16,7 @@ import { getNewExportLgHTML } from '../../utils/html/templates/new-export-lg'
 import { getDesktopRequestHTML } from '../../utils/html/templates/desktop-req'
 import { getNewVerificationHTML } from '../../utils/html/templates/new-verification'
 import { getDesktopAssignedHTML } from '../../utils/html/templates/desktop-assigned'
+import { getDesktopInfoChangedHTML } from '../../utils/html/templates/desktop-info-changed'
 
 @Injectable()
 export class NotifyService {
@@ -76,6 +77,13 @@ export class NotifyService {
     this._emailSrv.send({
       to: desktop.user.email,
       ...getDesktopAssignedHTML(desktop),
+    })
+  }
+
+  public async notifyUserDesktopInfoChanged(desktop: Desktop) {
+    this._emailSrv.send({
+      to: desktop.user.email,
+      ...getDesktopInfoChangedHTML(desktop),
     })
   }
 

@@ -34,7 +34,7 @@ export function getDesktopConnectInfo(desktop: Desktop) {
 }
 
 export function getDesktopAssignedHTML(desktop: Desktop) {
-  const subject = `云桌面开通通知】${APP_NAME}云桌面开通提示`
+  const subject = `【云桌面开通通知】${APP_NAME}云桌面开通提示`
   const html = HtmlTag
     .create('div')
     .appendChild(
