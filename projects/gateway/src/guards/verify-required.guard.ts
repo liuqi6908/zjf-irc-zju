@@ -12,6 +12,8 @@ export class VerifiedRequiredGuard
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: FastifyRequest = context.switchToHttp().getRequest()
     const user = req.raw.user
+    if (!user)
+      responseError(ErrorCode.AUTH_LOGIN_REQUIRED)
     const verified = !!user.verificationId
     if (!verified)
       responseError(ErrorCode.AUTH_NOT_VERIFIED)
