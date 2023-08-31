@@ -9,10 +9,10 @@ const requestCol = [
   { name: 'userId', field: 'userId', label: '用户id', align: 'center' },
   { name: 'account', field: 'account', label: '用户名', align: 'center' },
   { name: 'name', field: 'name', label: '真实姓名', align: 'center' },
-  { name: 'duration', field: 'duration', label: '数据库', align: 'center' },
-  { name: 'nickname', field: 'nickname', label: '子库', align: 'center' },
-  { name: 'nickname', field: 'nickname', label: '模块', align: 'center' },
-  { name: 'nickname', field: 'nickname', label: '表格', align: 'center' },
+  { name: 'database', field: 'database', label: '数据库', align: 'center' },
+  { name: 'bDatabase', field: 'bDatabase', label: '子库', align: 'center' },
+  { name: 'part', field: 'part', label: '模块', align: 'center' },
+  { name: 'table', field: 'table', label: '表格', align: 'center' },
   { name: 'reason', field: 'reason', label: '采购理由', align: 'center' },
 ]
 const rows = ref([])
@@ -52,10 +52,28 @@ async function fetchDataRequest() {
     rows.value = res.data.map((item) => {
       const { account } = item.user
       const { name } = item.user?.verification || ''
+      let dataDirectory = null
+      let table = ''
+      let part = ''
+      let bDatabase = ''
+      let database = ''
+      if (item?.dataDirectory) {
+        dataDirectory = item.dataDirectory
+        table = dataDirectory.nameZH
+        const { parent } = dataDirectory
+        part = parent.nameZH
+        bDatabase = parent.parent.nameZH
+        database = parent.parent.parent.nameZH
+      }
+
       return {
         ...item,
         account,
         name,
+        table,
+        part,
+        bDatabase,
+        database,
       }
     })
   }

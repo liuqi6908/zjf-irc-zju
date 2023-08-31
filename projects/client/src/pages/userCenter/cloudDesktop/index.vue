@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { type IDesktop, type IQueryConfig, PAGINATION_SIZE_MAX } from 'zjf-types'
+import { Notify } from 'quasar'
+
+import moment from 'moment'
 import DesktopTable from '../../../view/userCenter/myDesktop/DesktopTable.vue'
 import { desktopQueryList } from '~/api/desktop/desktopsList'
 import { getOwnDesktopQuery } from '~/api/desktop/getOwnDesktopQuery'
 import { openDesktop } from '~/api/desktopVm/openDesktop'
 import { resetDesktop } from '~/api/desktopVm/resetDesktop'
 import { closeDesktop } from '~/api/desktopVm/closeDesktop'
+import type { VMBaseInfo } from '~/api/desktopVm/getDesktopVmStatus'
 import { getDesktopVmStatus } from '~/api/desktopVm/getDesktopVmStatus'
 
 import Empty from '~/components/empty/Empty.vue'
@@ -17,9 +21,9 @@ const { userInfo, useGetProfile } = useUser()
 
 const router = useRouter()
 
-const desktopInfo = ref(null)
+const desktopInfo = ref([])
 const vmInfoCol = ref([])
-const pollCount = ref(0)
+const vmStatus = ref('')
 
 const desktopStatus = reactive({
   status: '',
@@ -49,7 +53,7 @@ const desktopBaseCol = [
   { name: 'baseInfo', label: '基本信息' },
 ]
 
-const baseInfoFeild = {
+const baseInfoFeild: Record<keyof VMBaseInfo, string> = {
   uuid: 'UUID',
   platform: '平台',
   architecture: 'CPU架构',
@@ -89,16 +93,29 @@ const desktopId = computed(() => {
 
 async function startDesktop(id: string) {
   const res = await openDesktop(id)
-  // if (res.location)
-  //   pllApi(res.location)
+  if (res)
+    desktopSuccessNotify('启动')
+}
+async function restartDesktop(id: string) {
+  const res = await resetDesktop(id)
+  if (res)
+    desktopSuccessNotify('重启')
+}
+
+async function shutdownDesktop(id: string) {
+  const res = await closeDesktop(id)
+  if (res)
+    desktopSuccessNotify('关闭')
+}
+
+function desktopSuccessNotify(message: string) {
+  Notify.create({
+    message: `云桌面${message}成功`,
+    type: 'success',
+  })
 }
 
 onMounted(async () => {
-  if (!userInfo.value) {
-    desktopInfo.value = null
-    return
-  }
-
   const deskStatus = await getOwnDesktopQuery()
 
   if (deskStatus) {
@@ -111,49 +128,57 @@ onMounted(async () => {
     desktopStatus.queueLength = queueLength
   }
 
-  const base = { ...baseOpts }
-  base.filters = [
-    {
-      field: 'user.id',
-      type: '=',
-      value: userInfo.value.id,
-    },
-  ]
+  const options = { ...baseOpts }
+  if (!userInfo.value) {
+    useGetProfile()
+    desktopInfo.value = []
+  }
+  else {
+    options.filters = [
+      {
+        field: 'user.id',
+        type: '=',
+        value: userInfo.value.id,
+      },
+    ]
+  }
 
-  const res = await desktopQueryList(base)
+  const res = await desktopQueryList(options)
 
-  desktopInfo.value = res.data.map(item => item)
+  if (res && res.data.length)
+    desktopInfo.value = res.data.map(item => item)
 
-  const baseInfo = await getDesktopVmStatus(desktopId.value)
+  const vmInfo = await getDesktopVmStatus(desktopId.value)
 
-  for (const item in baseInfo) {
-    const field = baseInfoFeild[`${item}`]
-    vmInfoCol.value.push({
-      baseInfo: `${field} : ${item}`,
-    })
+  if (vmInfo) {
+    vmStatus.value = vmInfo.state
+
+    for (const item in vmInfo) {
+      const field = baseInfoFeild[`${item}` as keyof VMBaseInfo]
+
+      if (item === 'lastOpDate')
+        vmInfo[item] = moment(new Date(vmInfo[item])).format('YYYY-MM-DD HH:mm')
+
+      else if (item === 'cpuNum')
+        vmInfo[item] = `${vmInfo[item]} 核`
+
+      vmInfoCol.value.push({
+        baseInfo: `${field} : ${vmInfo[item]}`,
+      })
+    }
   }
 })
 </script>
 
 <template>
   <div min-h-2xl>
-    <div v-if="!desktopInfo || !desktopInfo.length" flex="~ col items-center">
-      <Empty :label="desktopStatus.laseRejected ? '您的申请已被驳回' : '您还未申请云桌面'" />
-
-      <div v-if="desktopStatus.laseRejected" flex-center bg-grey-2>
-        <span text-grey-8>{{ desktopStatus.laseRejected }}</span>
-      </div>
-
-      <Btn mt-10 max-w-40 label="前往申请" @click="() => router.replace({ path: '/request' })" />
-    </div>
-
-    <div v-else>
+    <div v-if="desktopInfo && desktopInfo.length">
       <header flex="~ row justify-between">
         <DesktopStatus :status="desktopStatus.status" :duration="desktopStatus.duration" />
         <div flex="~ row gap-5">
           <Btn label="开机" @click="startDesktop(desktopId)" />
-          <Btn label="关机" @click="closeDesktop(desktopId)" />
-          <Btn label="重启" @click="resetDesktop(desktopId)" />
+          <Btn label="关机" @click="shutdownDesktop(desktopId)" />
+          <Btn label="重启" @click="restartDesktop(desktopId)" />
         </div>
       </header>
       <DesktopTable
@@ -172,6 +197,16 @@ onMounted(async () => {
         />
         <Cloud class="col-grow" :uuid="desktopId" />
       </div>
+    </div>
+    <div v-else flex="~ col items-center">
+      <Empty v-if="desktopStatus.laseRejected" label="您的申请已被驳回" />
+      <Empty v-else-if="desktopStatus.status === 'pending'" label="云桌面审核中" />
+
+      <div v-if="desktopStatus.laseRejected" flex-center bg-grey-2>
+        <span text-grey-8>{{ desktopStatus.laseRejected }}</span>
+      </div>
+
+      <Btn mt-10 max-w-40 label="前往申请" @click="() => router.replace({ path: '/request' })" />
     </div>
   </div>
 </template>

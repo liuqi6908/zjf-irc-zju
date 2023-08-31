@@ -10,7 +10,7 @@ const props = defineProps<Props>()
 
 const route = useRoute()
 
-const { getDataByRootId, databaseTab, loading, rootTabList } = useDataBase()
+const { getDataByRootId, databaseTab, loading } = useDataBase()
 
 const tabb = ref('')
 
@@ -29,6 +29,7 @@ watch(() => props.initDatabase, async (database) => {
   if (database)
     await getDataByRootId(database)
 })
+
 const list = computed(() => {
   if (databaseTab.value) {
     const res = databaseTab.value.find(i => i.id === tab.value)
@@ -44,6 +45,7 @@ const list = computed(() => {
     <div v-if="!databaseTab || !databaseTab.length" mt-20 full>
       <EmptyData label="暂无数据" />
     </div>
+
     <Tabs v-else v-model="tab" align="left" :text-style="{ color: '#292D36' }" class="col-6" :tab-list="databaseTab">
       <div v-if="list?.children">
         <Tree

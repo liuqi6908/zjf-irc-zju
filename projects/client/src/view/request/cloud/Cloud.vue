@@ -9,10 +9,10 @@ interface Props {
 }
 const props = defineProps<Props>()
 const data = reactive({
-  cpu: [{ value: [], time: [] }],
-  storage: [{ value: [], time: [] }],
+  cpu: [{ value: [], time: [], label: '使用率' }],
+  storage: [{ value: [], time: [], label: '负载率' }],
   disk: [{ value: [], time: [] }],
-  network: [{ value: [], time: [] }, { value: [], time: [] }],
+  network: [{ value: [], time: [], label: '上行' }, { value: [], time: [], label: '下行' }],
 })
 
 const watchData = [
@@ -89,10 +89,11 @@ onBeforeUnmount(() => {
 <template>
   <DesktopTable :cols="watchData">
     <div flex="~ row justify-center" w-full>
-      <LineEchartsCard :data="data.cpu" title="CPU" unit="%" />
+      <LineEchartsCard :data="data.cpu" title="CPU" unit="%" legend />
     </div>
+
     <div flex="~ row justify-center" w-full>
-      <LineEchartsCard :data="data.network" title="网卡读取速率" unit="kb" />
+      <LineEchartsCard :data="data.network" title="网卡读取速率" unit="kb" legend />
     </div>
   </DesktopTable>
 </template>

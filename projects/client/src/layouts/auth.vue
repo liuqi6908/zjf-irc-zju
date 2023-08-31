@@ -30,20 +30,18 @@ $confirmation-bg: linear-gradient(90deg, #2F96FB 0%, #2041B7 100%);
 $linear: linear-gradient(135deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.01) 100%);
 
 .confirmation {
-    overflow:hidden;
     background: $confirmation-bg;
-    &_ellipse{
-        position:fixed;
-        top:0;
-        left:0;
-        height:100%;
-        width:100%
+    &_ellipse {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%
     }
     &-bgImg {
-      background: no-repeat center / contain url("../assets/auth/authRect.svg"),
-              no-repeat center / cover url("../assets/auth/authBgRect.svg");
+      background: no-repeat center / cover url("../assets/auth/authBgRect.svg");
     }
-    &-card{
+    &-card {
       border: solid 1px transparent;
       background: $linear;
     }

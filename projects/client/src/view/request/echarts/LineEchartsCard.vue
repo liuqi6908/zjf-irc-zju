@@ -5,7 +5,7 @@ import moment from 'moment'
 
 interface Props {
   title: string
-  data: [ { value: []; time: [] }]
+  data: [ { value: []; time: []; label: '' }]
   unit: string
   legend?: boolean
 }
@@ -38,6 +38,56 @@ function fromatterSeries(data: [], color: string) {
     },
     name,
     data,
+  }
+}
+
+function fromatterLegend(labels: [], color: string, data: []) {
+  let colorrr = ''
+  data = data.map((item, index) => {
+    if (index === 0)
+      colorrr = '#025CB9'
+    else
+      colorrr = '#F99E34'
+
+    return {
+      name: item?.name,
+      color,
+      textStyle: {
+        rich: {
+          fontStyle: {
+            color: '#292D36',
+            fontSize: '16px',
+          },
+          numStyle: {
+            color: colorrr,
+            fontSize: '28px',
+          },
+        },
+      },
+    }
+  },
+  )
+
+  // for (const la of labels) {
+  const formatter = function (label: string) {
+    label = `${Number(label).toFixed(2)}${props.unit}`
+    if (labels.length === 1)
+      return `{fontStyle|${labels[0]}}{numStyle|${label}}`
+    else
+      return `{fontStyle|${labels[1]}}{numStyle|${label}}`
+  }
+  // }
+
+  return {
+    data,
+    formatter,
+    icon: 'rect',
+    itemWidth: 10,
+    itemHeight: 10,
+    left: '10%',
+    itemStyle: {
+      borderType: 'solid',
+    },
   }
 }
 
@@ -100,31 +150,19 @@ watch(() => props.data,
           },
         },
       ]
-      options.value.legend = {
-        formatter(name: number) {
-          if (props.unit === '%')
-            return `${Number(name).toFixed(2)}%`
 
-          else return `${Number(name).toFixed(2)}kb`
-        },
-        icon: 'rect',
-        itemWidth: 10,
-        itemHeight: 10,
-        left: '10%',
-        itemStyle: {
-          borderType: 'solid',
-        },
-        textStyle: {
-          fontWeight: 'bold',
-          fontSize: '28',
-        },
-      }
       options.value.series = newData.map((item, index) => {
         const color = index === 0 ? 'rgba(2, 92, 185, 0.12)' : 'rgba(249, 158, 52, 0.12)'
         const newVal = item.value
 
         return fromatterSeries(newVal, color)
       })
+
+      const names = options.value.series.map((item) => {
+        return { name: item.name, label: item.label }
+      })
+      const labels = newData.map(i => i.label)
+      options.value.legend = fromatterLegend(labels, options.value.color[0], names)
     }
   },
   { deep: true })
