@@ -104,7 +104,7 @@ async function outConfirm() {
     <header mb-6 mt-4 full flex-center>
       <q-btn-toggle
         v-model="model"
-        unelevated spread no-caps rounded-0
+        no-caps unelevated spread rounded-0
         toggle-color="primary-1"
         color="white"
         text-color="black"

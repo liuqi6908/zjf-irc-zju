@@ -31,7 +31,15 @@ const baseOptions: IQueryDto<IDataSuggestion> = {
   ],
   relations: {
     user: { verification: true },
-    dataDirectory: true,
+    dataDirectory: {
+      parent: {
+        parent: {
+          parent: {
+            parent: true,
+          },
+        },
+      },
+    },
   },
 }
 

@@ -37,8 +37,16 @@ export function useRequest() {
       return cache.get(cacheKey)
 
     const { signal, abortController } = newController()
-    const queryParams = new URLSearchParams(data)
-    const response = await $http.get(`${url}?${queryParams.toString()}`, { signal, ...(options || {}) })
+    let finalUrl = ''
+    if (data) {
+      const queryParams = new URLSearchParams(data)
+      finalUrl = `${url}?${queryParams.toString()}`
+    }
+    else {
+      finalUrl = url
+    }
+
+    const response = await $http.get(finalUrl, { signal, ...(options || {}) })
     requestControllers.delete(abortController)
     useCache && cache.set(cacheKey, response.data)
     return response.data

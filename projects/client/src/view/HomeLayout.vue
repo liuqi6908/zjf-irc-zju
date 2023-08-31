@@ -96,7 +96,7 @@ onMounted(async () => {
             <Avatar
               flex="~ row gap-2 items-center"
               :avatar-url="userInfo?.avatar"
-              :nickname="userInfo?.nickname"
+              :nickname="userInfo?.account"
               @update:route="isToken ? (userDropdown = !userDropdown) : router.replace({ path: '/auth/login' })"
             >
               <div>

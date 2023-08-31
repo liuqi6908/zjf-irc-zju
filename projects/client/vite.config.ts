@@ -194,7 +194,7 @@ export default ({ mode }: any) => {
 
     ssr: {
       // TODO: workaround until they support native ESM
-      noExternal: ['workbox-window', /vue-i18n/],
+      noExternal: ['workbox-window', /vue-i18n/, 'echarts', 'vue-echarts', 'resize-detector', 'zrender'],
     },
   })
 }

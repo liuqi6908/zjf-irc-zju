@@ -96,9 +96,15 @@ async function getSmExport(options: IQueryDto<IFileExportSmall>) {
   if (!res)
     return
   rows.value = res.data.map((i: any) => {
+    let name
+    if (i?.founder?.verification)
+      name = i.founder.verification.name
+    else
+      name = ''
+
     return {
       ...i,
-      name: i.founder.verification.name,
+      name,
     }
   })
 }
@@ -110,9 +116,15 @@ async function getLgExport(options: IQueryDto<IFileExportLarge>) {
   if (!res)
     return
   rows.value = res.data.map((i: any) => {
+    let name
+    if (i?.founder?.verification)
+      name = i.founder.verification.name
+    else
+      name = ''
+
     return {
       ...i,
-      name: i.founder.verification.name,
+      name,
     }
   })
 }
@@ -234,7 +246,7 @@ watch(select, (selectOptions) => {
     </header>
 
     <BaseTable v-slot="{ col, props }" :cols="historyCol" :rows="rows">
-      <div v-if="col === 'status'">
+      <div v-if="col === 'status'" flex-center>
         <HistoryStatus v-if="model === 'small'" :status="FileExportLargeStatus.Approved" />
         <HistoryStatus v-else :status="props.row[`${col}`]" />
       </div>
