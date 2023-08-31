@@ -18,6 +18,10 @@ const _dataErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.BAD_REQUEST,
     message: '该大类下的数据已分配权限，无法删除，请先解绑权限',
   },
+  [ErrorCode.DATA_ROLE_IN_USAGE]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '角色已被分配',
+  },
 }
 
 export default _dataErrors

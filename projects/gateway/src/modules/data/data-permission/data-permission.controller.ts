@@ -1,6 +1,7 @@
-import { PermissionType } from 'zjf-types'
-import { ApiSuccessResponse } from 'src/utils/response'
+import { ErrorCode, PermissionType } from 'zjf-types'
 import { HasPermission } from 'src/guards/permission.guard'
+import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
+import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common'
 
@@ -31,7 +32,15 @@ export class DataPermissionController {
   @HasPermission(PermissionType.DATA_PERMISSION_DELETE)
   @Delete('data-role/:dataRoleName')
   public async deleteRole(@Param('dataRoleName') dataRoleName: string) {
-    return await this._dataPSrv.deleteRole(dataRoleName)
+    try {
+      return await this._dataPSrv.deleteRole(dataRoleName)
+    }
+    catch (err) {
+      const sqlError = parseSqlError(err)
+      if (sqlError === SqlError.FOREIGN_KEY_CONSTRAINT_FAILS)
+        responseError(ErrorCode.DATA_ROLE_IN_USAGE)
+      responseError(ErrorCode.COMMON_UNEXPECTED_ERROR)
+    }
   }
 
   @ApiOperation({ summary: '列出所有数据下载角色' })
