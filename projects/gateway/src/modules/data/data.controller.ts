@@ -1,5 +1,6 @@
 import { Buffer } from 'node:buffer'
 import * as Papa from 'papaparse'
+import * as iconv from 'iconv-lite'
 import { In, IsNull, Not } from 'typeorm'
 import type { FindOptionsWhere } from 'typeorm'
 import { batchSave } from 'src/utils/db/batch-save'
@@ -106,10 +107,17 @@ export class DataController {
     @Param() param: DataRootIdDto,
     @Body() body: any,
   ) {
-    const buffer = await body?.file?.toBuffer()
-    const csv = Papa.parse(buffer.toString(), {
-      header: true,
-    }).data
+    const buffer: Buffer = await body?.file?.toBuffer()
+    // TODO: extract this
+    // check is utf8
+    const c1 = buffer[0]
+    const c2 = buffer[1]
+    const c3 = buffer[2]
+    const isUtf8 = c1 === 0xEF && c2 === 0xBB && c3 === 0xBF
+    let str = buffer.toString()
+    if (!isUtf8)
+      str = iconv.decode(buffer, 'gbk')
+    const csv = Papa.parse(str, { header: true }).data
 
     const { nodes, fields } = dataCsvParser(csv, param.dataRootId)
 

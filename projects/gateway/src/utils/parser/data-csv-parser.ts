@@ -41,6 +41,9 @@ export function dataCsvParser(arr: Array<{
       ORDER_COLUMN,
     } = el
 
+    if (!DATABASE_ENG || !B_DATABASE_ENG || !PART_ENG || !TABLE_ENG || !VARIABLE_ENG)
+      return
+
     if (!databases[DATABASE_ENG]) {
       const id = md5(rootId + DATABASE_ENG)
       databases[DATABASE_ENG] = { id }

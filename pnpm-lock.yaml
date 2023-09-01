@@ -397,6 +397,9 @@ importers:
       shiki:
         specifier: ^0.14.3
         version: registry.npmmirror.com/shiki@0.14.3
+      shx:
+        specifier: ^0.3.4
+        version: registry.npmmirror.com/shx@0.3.4
       simple-git-hooks:
         specifier: ^2.8.1
         version: registry.npmmirror.com/simple-git-hooks@2.8.1
@@ -535,6 +538,9 @@ importers:
       cron:
         specifier: ^2.4.0
         version: registry.npmmirror.com/cron@2.4.0
+      iconv-lite:
+        specifier: ^0.6.3
+        version: registry.npmmirror.com/iconv-lite@0.6.3
       lodash:
         specifier: ^4.17.21
         version: registry.npmmirror.com/lodash@4.17.21
@@ -7517,7 +7523,7 @@ packages:
     name: '@vueuse/shared'
     version: 10.2.1
     dependencies:
-      vue-demi: registry.npmmirror.com/vue-demi@0.14.5(vue@3.3.4)
+      vue-demi: registry.npmmirror.com/vue-demi@0.14.6(vue@3.3.4)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -17699,6 +17705,17 @@ packages:
       vscode-textmate: registry.npmmirror.com/vscode-textmate@8.0.0
     dev: true
 
+  registry.npmmirror.com/shx@0.3.4:
+    resolution: {integrity: sha512-N6A9MLVqjxZYcVn8hLmtneQWIJtp8IKzMP4eMnx+nqkvXoqinUPCbUFLp2UcWTEIUONhlk0ewxr/jaVGlc+J+g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/shx/-/shx-0.3.4.tgz}
+    name: shx
+    version: 0.3.4
+    engines: {node: '>=6'}
+    hasBin: true
+    dependencies:
+      minimist: registry.npmmirror.com/minimist@1.2.8
+      shelljs: registry.npmmirror.com/shelljs@0.8.5
+    dev: true
+
   registry.npmmirror.com/side-channel@1.0.4:
     resolution: {integrity: sha512-q5XPytqFEIKHkGdiMIrY10mvLRvnQh42/+GoBlFW3b2LXLE2xxJpZFdm94we0BaoV3RwJyGqg5wS7epxTv0Zvw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/side-channel/-/side-channel-1.0.4.tgz}
     name: side-channel
@@ -20445,7 +20462,6 @@ packages:
         optional: true
     dependencies:
       vue: registry.npmmirror.com/vue@3.3.4
-    dev: true
 
   registry.npmmirror.com/vue-echarts@6.6.1(echarts@5.4.3)(vue@3.3.4):
     resolution: {integrity: sha512-EpreTzlNeJ+eaUn0AhXEmKJk98xJGecgTqAdyZovoXWnhTxnlW2HuBM0ei3y8rLw1JCUabf8/sYvxjlr8SzBKQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-echarts/-/vue-echarts-6.6.1.tgz}
