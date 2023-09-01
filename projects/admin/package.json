@@ -4,6 +4,7 @@
   "private": true,
   "packageManager": "pnpm@8.6.7",
   "scripts": {
+    "deploy": "node .deploy.mjs",
     "build": "vite-ssg build",
     "dev": "vite",
     "lint": "eslint .",
