@@ -14,6 +14,7 @@ const repeatPassword = ref ('')
 const userName = ref('')
 const smsCode = ref('')
 const repeatPasswordInput = ref()
+const router = useRouter()
 
 // const $route = useRoute()
 // const $router = useRouter()
@@ -40,6 +41,9 @@ function passwordRule(val: string) {
   return val === password.value || '两次密码保持一致'
 }
 function smsCodeRule(val: string) {
+  if (!email.value.length)
+    return '请先输入邮箱'
+
   return val.length > 0 || '验证码不能为空'
 }
 
@@ -59,10 +63,12 @@ const disable = computed(() => verifyAccept(acceptObj))
 
 <template>
   <div flex="~ col">
-    <header flex="~ flex col items-center justify-center">
-      <span text-7 font-600 text-grey-1>注册</span>
+    <header flex="~ flex row items-center justify-between " mb-10>
+      <div class="i-mingcute:left-line" h-6 w-6 cursor-pointer text-grey-1 @click="router.replace({ path: 'login' })" />
+      <span text-grey-1 title-2>注册</span>
+      <span />
     </header>
-    <span mb-1 font-500 text-grey-1>用户名称</span>
+    <span mb-2 font-500 text-grey-1>用户名称</span>
     <UserCodeInput
       v-model:userCode="userName"
       user-type="user"
@@ -70,12 +76,12 @@ const disable = computed(() => verifyAccept(acceptObj))
       @update:accept="(val) => acceptObj.username = val"
     />
 
-    <div m-b-5 flex flex-col>
+    <div mb-2 flex flex-col>
       <span mb-1 font-500 text-grey-1>密码</span>
       <PasswordInput v-model:password="password" :rules="[(val:string) => passwordRules(val)]" @update:accept="val => acceptObj.password = val" />
     </div>
 
-    <span mb-1 font-500 text-grey-1>确认密码</span>
+    <span mb-2 font-500 text-grey-1>确认密码</span>
     <PasswordInput
       v-model:password="repeatPassword"
       reactive-rules
@@ -83,7 +89,7 @@ const disable = computed(() => verifyAccept(acceptObj))
       @update:accept="(val) => acceptObj.repeatPassword = val"
     />
 
-    <span mb-1 font-500 text-grey-1>邮箱</span>
+    <span mb-2 font-500 text-grey-1>邮箱</span>
     <UserCodeInput
       ref="repeatPasswordInput"
       v-model:userCode="email"
@@ -91,7 +97,7 @@ const disable = computed(() => verifyAccept(acceptObj))
       user-type="email"
       @update:accept="(val) => acceptObj.email = val"
     />
-    <span mb-1 font-500 text-grey-1>邮箱验证</span>
+    <span mb-2 font-500 text-grey-1>邮箱验证</span>
     <SMSInput
       v-model:smsCode="smsCode"
       :action="CodeAction.REGISTER"

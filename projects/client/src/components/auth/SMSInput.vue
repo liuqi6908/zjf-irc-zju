@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useQuasar } from 'quasar'
 import type { CodeAction } from 'zjf-types'
 import { smsCodeByEmail } from '~/api/auth/email/smsCodeByEmail'
 
@@ -16,6 +17,8 @@ interface Props {
 const wait = ref(0)
 
 const inputRef = ref(null)
+const validate = ref(null)
+const $q = useQuasar()
 
 let timer: any
 
@@ -34,9 +37,12 @@ async function getCode() {
 
 watch(() => props.smsCode, () => {
   if (inputRef.value) {
-    const validate = inputRef.value?.validate(props.smsCode)
-    emits('update:accept', validate)
+    validate.value = inputRef.value?.validate(props.smsCode)
+    emits('update:accept', validate.value)
   }
+})
+onMounted(() => {
+  $q.iconSet.type.warning = '<div i-material-symbols:error-outline/>'
 })
 </script>
 
@@ -52,15 +58,15 @@ watch(() => props.smsCode, () => {
     @update:model-value="(v: string) => $emit('update:smsCode', v)"
   >
     <template #append>
-      <div flex="~ col" items-center>
+      <div flex="~ col" justify-center>
         <div v-if="wait" text-4>
           {{ wait }}
         </div>
-        <Btn v-else :bg-color="dark ? 'grey-1' : 'primary-1'" dense label="发送验证码" transparent @click="getCode" />
+        <Btn v-else :disable="!validate" :bg-color="dark ? 'grey-1' : 'primary-1'" dense label="发送验证码" transparent @click="getCode" />
       </div>
     </template>
     <template #error>
-      <span> error </span>
+      <div>error</div>
     </template>
   </q-input>
 </template>
