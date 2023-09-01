@@ -124,10 +124,11 @@ function notify(res: any, message: string) {
 
 async function cancel(verificationId: string) {
   const res = await cancelVerification(verificationId)
+  if (res)
+    checkoutVerifiy()
 }
 
-// function change
-onBeforeMount(async () => {
+async function checkoutVerifiy() {
   await useGetProfile()
   await getVerify()
 
@@ -137,12 +138,20 @@ onBeforeMount(async () => {
       user.inputVal = userInfo.value[key]
   }
 
+  if (latestVerifiy.value?.status !== VerificationStatus.APPROVED)
+    return
+
   // 认证
   for (const key in latestVerifiy.value) {
     const obj = authInfoList.find(i => i.id === key)
     if (latestVerifiy.value[key] && obj)
       obj.inputVal = latestVerifiy.value[key]
   }
+}
+
+// function change
+onBeforeMount(() => {
+  checkoutVerifiy()
 })
 </script>
 
@@ -195,32 +204,38 @@ onBeforeMount(async () => {
     </div>
 
     <div flex="~ row" mt-10 w-full justify-center>
-      <div v-if="userInfo && userInfo.verification">
+      <div flex="~ row items-center gap-5" max-w-sm>
         <VerifyStatus :status="latestVerifiy?.status" />
-
         <Btn
-          v-if="latestVerifiy?.status === VerificationStatus.CANCELLED"
+          v-if="latestVerifiy?.status === VerificationStatus.CANCELLED || !latestVerifiy"
           label="前往认证"
           @click="showVeri = true"
-        />
+        >
+          <template #icon>
+            <div i-material-symbols:arrow-forward />
+          </template>
+        </Btn>
+
         <Btn
-          v-if="latestVerifiy?.status === VerificationStatus.PENDING"
+          v-else-if="latestVerifiy?.status === VerificationStatus.PENDING"
           label="取消认证"
-          @click="cancel(userInfo.verification.id)"
-        />
+          @click="cancel(latestVerifiy.id)"
+        >
+          <template #icon>
+            <div i-material-symbols:close-rounded />
+          </template>
+        </Btn>
 
-        <span v-if="latestVerifiy?.status === VerificationStatus.REJECTED">
-          驳回理由：{{ latestVerifiy.rejectReason }}
-        </span>
-      </div>
-
-      <div v-else flex="~ row gap-5">
-        <VerifyStatus status="none" />
-        <Btn label="前往认证" @click="showVeri = true" />
+        <div v-else-if="VerificationStatus.REJECTED">
+          <VerifyStatus :status="latestVerifiy?.status" />
+          <div v-if="latestVerifiy?.status === VerificationStatus.REJECTED">
+            驳回理由：{{ latestVerifiy.rejectReason }}
+          </div>
+        </div>
       </div>
     </div>
 
-    <VerificationDialog v-model="showVeri" />
+    <VerificationDialog v-model="showVeri" @update:confirm="checkoutVerifiy()" />
   </div>
 </template>
 

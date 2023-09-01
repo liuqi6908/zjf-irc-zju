@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue'
-import { type ICreateVerificationBodyDto, VerificationIdentify, verificationIdentifyDescriptions } from 'zjf-types'
+import type { ICreateVerificationBodyDto } from 'zjf-types'
+import { VerificationIdentify, verificationIdentifyDescriptions } from 'zjf-types'
 import { Notify } from 'quasar'
 import { requestVerification } from '../../../api/auth/verification/requestVerification'
 import { uploadVerifyFile } from '../../../api/file/uploadVerifyFile'
@@ -9,16 +10,15 @@ interface Props {
   modelValue: boolean
 }
 defineProps<Props>()
-defineEmits(['update:modelValue'])
+const emits = defineEmits(['update:modelValue', 'update:confirm'])
 
-const identify = ref<{ label: string; id: VerificationIdentify }>({ label: '', id: VerificationIdentify.TEACHER })
+const identify = ref<{ label: string; id: VerificationIdentify | '' }>({ label: '', id: '' })
 
 const files = ref<Array<File>>()
 const myFileInput = ref(null)
 
-const verifiInfo = reactive<ICreateVerificationBodyDto>({
+const verifiInfo = reactive({
   name: '',
-  identify: identify.value.id,
   attachments: [],
   school: '',
   college: '',
@@ -44,9 +44,16 @@ function transformedArray(): { label: string; id: string }[] {
 }
 async function requestVerify() {
   await fetchUploadFile(files.value)
+
+  const options = {
+    ...verifiInfo,
+    ...{ identify: identify.value.id },
+  } as ICreateVerificationBodyDto
+
   // 请求认证
-  const res = await requestVerification(verifiInfo)
+  const res = await requestVerification(options)
   if (res) {
+    emits('update:confirm')
     Notify.create({
       message: '认证成功',
       type: 'success',
@@ -135,8 +142,8 @@ async function fetchUploadFile(files?: File[]) {
     <div mb-2>
       <span text-alert-error>*</span> <span font-500 text-grey-8>身份 </span>
     </div>
-    <ZSelect v-model="identify" :options="transformedArray()" />
 
+    <ZSelect v-model="identify" :options="transformedArray()" />
     <div mb-2 mt-6 flex="~ row justify-between items-center">
       <div> <span text-alert-error>*</span> <span font-500 text-grey-8>上传资料</span></div>
 

@@ -52,10 +52,12 @@ watch(() => props.smsCode, () => {
     @update:model-value="(v: string) => $emit('update:smsCode', v)"
   >
     <template #append>
-      <div v-if="wait" text-4>
-        {{ wait }}
+      <div flex="~ col" items-center>
+        <div v-if="wait" text-4>
+          {{ wait }}
+        </div>
+        <Btn v-else :bg-color="dark ? 'grey-1' : 'primary-1'" dense label="发送验证码" transparent @click="getCode" />
       </div>
-      <Btn v-else :bg-color="dark ? 'grey-1' : 'primary-1'" dense label="发送验证码" transparent @click="getCode" />
     </template>
     <template #error>
       <span> error </span>

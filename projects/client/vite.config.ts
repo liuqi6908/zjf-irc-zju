@@ -15,6 +15,7 @@ import WebfontDownload from 'vite-plugin-webfont-dl'
 import Components from 'unplugin-vue-components/vite'
 import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import LinkAttributes from 'markdown-it-link-attributes'
+import 'shared/style/base.css'
 
 export default ({ mode }: any) => {
   process.env = {
@@ -160,7 +161,13 @@ export default ({ mode }: any) => {
       // https://github.com/webfansplz/vite-plugin-vue-devtools
       VueDevTools(),
     ],
-
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: '@import shared/style/base.scss',
+        },
+      },
+    },
     // https://github.com/vitest-dev/vitest
     test: {
       include: ['test/**/*.test.ts'],

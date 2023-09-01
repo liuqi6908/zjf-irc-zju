@@ -33,21 +33,23 @@ const currentStyle = computed(() => {
 
 const textClass = computed(() => {
   if (props.status === VerificationStatus.APPROVED)
-    return { text: '已认证', icon: 'ep:success-filled' }
+    return { text: '已认证', icon: '<div i-ep:success-filled/>' }
   else if (props.status === 'none')
-    return { text: '未认证', icon: 'material-symbols:error' }
+    return { text: '未认证', icon: '<div i-material-symbols:error/>' }
   else if (props.status === VerificationStatus.PENDING)
-    return { text: '审核中', icon: 'material-symbols:alarm-rounded' }
+    return { text: '审核中', icon: '<div i-material-symbols:alarm-rounded />' }
   else if (props.status === VerificationStatus.CANCELLED)
-    return { text: '已取消', icon: 'mdi:close-circle' }
+    return { text: '已取消', icon: '<div i-mdi:close-circle />' }
   else if (props.status === VerificationStatus.REJECTED)
-    return { text: '已驳回', icon: 'mdi:close-circle' }
+    return { text: '已驳回', icon: '<div i-mdi:close-circle />' }
 })
 </script>
 
 <template>
   <div :style="currentStyle" flex="~ row items-center" p-2>
-    <span font-600 text-grey-8>认证状态: </span><div mx-2 h-6 w-6 :class="`i-${textClass?.icon}`" /> <span font-600 text-grey-8>{{ textClass?.text }}</span>
+    <span font-600 text-grey-8>认证状态: </span>
+    <div mx-2 h-6 w-6 flex-center v-html="textClass?.icon" />
+    <span font-600 text-grey-8>{{ textClass?.text }}</span>
   </div>
 </template>
 

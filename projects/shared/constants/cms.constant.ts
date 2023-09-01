@@ -17,7 +17,7 @@ export const cmsConfig = [
                 parentId: 'home',
                 component: markRaw(HomeCarousel),
                 /** 当前轮播图所需要的操作，表头按照从左到右的顺序 */
-                col: ['title', 'content', 'uploadImg', 'delete', 'sort', 'add'],
+                col: ['title', 'uploadImg','richText', 'delete', 'sort', 'add'],
                 rows: []
             },
             {
@@ -25,9 +25,9 @@ export const cmsConfig = [
                 label: '平台介绍',
                 parentId: 'home',
                 component: markRaw(DataIntroduce),
-                col: ['title', 'content'],
+                col: ['title', 'richText'],
                 /** col对象没有add操作，rows需要加上一个空对象 */
-                rows: [{ title: null, content: null }]
+                rows: [{ title: null, richText: null }]
             },
             {
                 id: 'footer',

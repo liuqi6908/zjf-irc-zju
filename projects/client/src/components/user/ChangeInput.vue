@@ -34,7 +34,7 @@ const editDialog = ref(false)
         :user-code="userCode"
         @update:user-code="(v) => $emit('update:userCode', v)"
       />
-      <div>
+      <div min-w-20>
         <Btn v-if="label !== '用户名'" outline label="修改" @click="editDialog = true" />
       </div>
     </div>
