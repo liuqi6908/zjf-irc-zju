@@ -45,7 +45,6 @@ const finalProps = computed(() => ({ props }))
         :class="btnClass"
         :disable="disable"
         :dense="dense"
-
         unelevated hfull w-full rounded-0
       >
         <div v-if="transparent" class="translucent-mask" :class="`bg-${bgColor}`" />

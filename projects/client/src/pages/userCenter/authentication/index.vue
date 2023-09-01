@@ -236,7 +236,7 @@ onBeforeMount(async () => {
 
     <div flex="~ row" mt-10 w-full justify-center>
       <div flex="~ row items-center gap-5" max-w-sm>
-        <div v-if="latestVerifiy?.status !== VerificationStatus.REJECTED" max-w-sm flex="~ row items-center gap-5">
+        <div v-if="latestVerifiy?.status !== VerificationStatus.REJECTED" h-full max-w-sm flex="~ row items-center gap-5">
           <VerifyStatus
             :status="latestVerifiy?.status"
           />
@@ -261,7 +261,7 @@ onBeforeMount(async () => {
           </Btn>
         </div>
 
-        <div v-else max-w-sm flex="~ row items-center gap-5">
+        <div v-else h-full max-w-sm flex="~ row items-center gap-5">
           <VerifyStatus :status="latestVerifiy?.status" />
           <div v-if="latestVerifiy?.status === VerificationStatus.REJECTED">
             驳回理由：{{ latestVerifiy.rejectReason }}
