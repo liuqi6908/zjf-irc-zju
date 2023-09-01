@@ -148,7 +148,7 @@ useEventListener(document, 'click', (e) => {
         </q-page>
       </q-page-container>
 
-      <component :is="currComponent('home', 'footer')" :list="footerProps" />
+      <component :is="currComponent('home', 'footer')" v-if="footerProps && footerProps.length" :list="footerProps " />
     </q-layout>
   </main>
 </template>

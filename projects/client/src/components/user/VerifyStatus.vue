@@ -28,7 +28,7 @@ const currentStyle = computed(() => {
   else if (props.status === VerificationStatus.CANCELLED)
     return { border: `1px solid ${cancelColor}`, color: cancelColor, backgroundColor: bgCancel }
   else if (props.status === VerificationStatus.REJECTED)
-    return { border: `1px solid ${noneColor}`, color: noneColor, backgroundColor: bgCancel }
+    return { border: `1px solid ${noneColor}`, color: noneColor, backgroundColor: bgNone }
 })
 
 const textClass = computed(() => {

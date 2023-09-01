@@ -15,7 +15,7 @@ onMounted(async () => {
 
 <template>
   <div class="col-grow">
-    <component :is="components" :list="list" />
+    <component :is="components" v-if="list && list.length" :list="list" />
   </div>
 </template>
 

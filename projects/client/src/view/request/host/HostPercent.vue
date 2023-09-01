@@ -50,7 +50,7 @@ onBeforeUnmount(() => {
 
 watch(() => props.uuid, async (val) => {
   if (val) {
-    const res = fetchDEsktopCpu(val)
+    const res = await fetchDEsktopCpu(val)
     if (!res)
       return
     startPolling()
@@ -60,7 +60,7 @@ watch(() => props.uuid, async (val) => {
 
 <template>
   <div flex="~ row gap-10">
-    <RoundEchartsCard class="col-grow" title="cpu占比" :value="cpuList.cpu" color="#025CB9" />
+    <RoundEchartsCard class="col-grow" title="CPU已分配率" :value="cpuList.cpu" color="#025CB9" />
     <RoundEchartsCard unit="GB" class="col-grow" title="内存已分配率" :value="cpuList.storage" color="#F99E34" />
 
     <!-- <RoundEchartsCard class="col-grow" title="内存已分配率" :value="storagePercent" color="#F99E34" /> -->

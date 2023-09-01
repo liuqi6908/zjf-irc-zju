@@ -27,7 +27,7 @@ const empty = computed(() => !rootData.value.length || !rootData.value)
 </script>
 
 <template>
-  <div flex="~ col" full min-h-3xl bg-grey-1>
+  <div flex="~ col" full min-h-4xl min-w-4xl bg-grey-1>
     <header class="database" h-40 w-full flex-center>
       <div text-grey-1 title-1>
         数据库
@@ -36,7 +36,7 @@ const empty = computed(() => !rootData.value.length || !rootData.value)
     <div class="col-grow" flex-start mt-15 justify-center flex="~ row gap-10">
       <SliderList :list="rootData" :current-id="databaseId" router @update:current-id="(id) => databaseId = id" />
 
-      <div min-w-3xl flex-center>
+      <div min-w-4xl flex-center>
         <q-spinner
           v-if="loading"
           color="primary-1"

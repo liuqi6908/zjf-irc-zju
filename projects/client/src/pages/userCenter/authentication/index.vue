@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 
-import { CodeAction, VerificationStatus } from 'zjf-types'
+import type { IDesktop, IQueryConfig } from 'zjf-types'
+import { CodeAction, PAGINATION_SIZE_MAX, VerificationStatus } from 'zjf-types'
 import { Notify } from 'quasar'
 import { useUser } from '../../../composables/useUser'
 
@@ -11,10 +12,12 @@ import { changeNickname } from '~/api/user/chnageNickname'
 import { changeEmail } from '~/api/auth/user/changeEmail'
 import { changePassword } from '~/api/user/changePassword'
 import { cancelVerification } from '~/api/auth/verification/cancelVerification'
+import { desktopQueryList } from '~/api/desktop/desktopsList'
 
 const { useGetProfile, userInfo, getVerify, latestVerifiy } = useUser()
 
 const showVeri = ref(false)
+const desktop = ref(false)
 
 // if (!userInfo.value)
 //   useGetProfile()
@@ -87,6 +90,18 @@ const authInfoList = reactive([
   },
 ])
 
+const baseOpts: IQueryConfig<IDesktop> = {
+  pagination: {
+    page: 0,
+    pageSize: PAGINATION_SIZE_MAX,
+  },
+  filters: [],
+  sort: [],
+  relations: {
+    user: { desktop: true },
+  },
+}
+
 async function confirmEdit(id: string) {
   const obj = baseInfoList.find(i => i.id === id)
 
@@ -150,8 +165,24 @@ async function checkoutVerifiy() {
 }
 
 // function change
-onBeforeMount(() => {
-  checkoutVerifiy()
+onBeforeMount(async () => {
+  await checkoutVerifiy().finally(async () => {
+    const options = { ...baseOpts }
+    if (userInfo.value) {
+      options.filters = [
+        {
+          field: 'user.id',
+          type: '=',
+          value: userInfo.value.id,
+        },
+      ]
+      const res = await desktopQueryList(options)
+      if (res.data && res.data.length)
+        desktop.value = res.data[0].user.desktop && !res.data[0].user.desktop.disable
+
+      desktop.value = false
+    }
+  })
 })
 </script>
 
@@ -205,36 +236,47 @@ onBeforeMount(() => {
 
     <div flex="~ row" mt-10 w-full justify-center>
       <div flex="~ row items-center gap-5" max-w-sm>
-        <VerifyStatus :status="latestVerifiy?.status" />
-        <Btn
-          v-if="latestVerifiy?.status === VerificationStatus.CANCELLED || !latestVerifiy"
-          label="前往认证"
-          @click="showVeri = true"
-        >
-          <template #icon>
-            <div i-material-symbols:arrow-forward />
-          </template>
-        </Btn>
+        <div v-if="latestVerifiy?.status !== VerificationStatus.REJECTED" max-w-sm flex="~ row items-center gap-5">
+          <VerifyStatus
+            :status="latestVerifiy?.status"
+          />
+          <Btn
+            v-if="latestVerifiy?.status === VerificationStatus.CANCELLED || !latestVerifiy"
+            label="前往认证"
+            @click="showVeri = true"
+          >
+            <template #icon>
+              <div i-material-symbols:arrow-forward />
+            </template>
+          </Btn>
 
-        <Btn
-          v-else-if="latestVerifiy?.status === VerificationStatus.PENDING"
-          label="取消认证"
-          @click="cancel(latestVerifiy.id)"
-        >
-          <template #icon>
-            <div i-material-symbols:close-rounded />
-          </template>
-        </Btn>
+          <Btn
+            v-else-if="latestVerifiy?.status === VerificationStatus.PENDING && desktop"
+            label="取消认证"
+            @click="cancel(latestVerifiy.id)"
+          >
+            <template #icon>
+              <div i-material-symbols:close-rounded />
+            </template>
+          </Btn>
+        </div>
 
-        <div v-else-if="VerificationStatus.REJECTED">
+        <div v-else max-w-sm flex="~ row items-center gap-5">
           <VerifyStatus :status="latestVerifiy?.status" />
           <div v-if="latestVerifiy?.status === VerificationStatus.REJECTED">
             驳回理由：{{ latestVerifiy.rejectReason }}
           </div>
+          <Btn
+            label="前往认证"
+            @click="showVeri = true"
+          >
+            <template #icon>
+              <div i-material-symbols:arrow-forward />
+            </template>
+          </Btn>
         </div>
       </div>
     </div>
-
     <VerificationDialog v-model="showVeri" @update:confirm="checkoutVerifiy()" />
   </div>
 </template>

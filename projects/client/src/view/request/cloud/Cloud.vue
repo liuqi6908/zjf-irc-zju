@@ -71,7 +71,7 @@ async function fetchDesktopVm() {
 }
 watch(() => props.uuid, async (desktopId) => {
   if (desktopId) {
-    const detail = fetchDesktopVm()
+    const detail = await fetchDesktopVm()
     if (!detail)
       return
     startPolling()

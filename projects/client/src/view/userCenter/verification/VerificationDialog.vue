@@ -15,6 +15,7 @@ const emits = defineEmits(['update:modelValue', 'update:confirm'])
 const identify = ref<{ label: string; id: VerificationIdentify | '' }>({ label: '', id: '' })
 
 const files = ref<Array<File>>()
+const previewImgs = ref<Array<{ id: Date; previewURL: any }>>([])
 const myFileInput = ref(null)
 
 const verifiInfo = reactive({
@@ -34,7 +35,7 @@ const veriAccept = reactive({
   number: false,
 })
 
-const disable = computed(() => Object.values(veriAccept).includes(false))
+const disable = computed(() => Object.values(veriAccept).includes(false) || !verifiInfo.attachments.length)
 
 function transformedArray(): { label: string; id: string }[] {
   return Object.keys(VerificationIdentify).map(key => ({
@@ -43,8 +44,6 @@ function transformedArray(): { label: string; id: string }[] {
   }))
 }
 async function requestVerify() {
-  await fetchUploadFile(files.value)
-
   const options = {
     ...verifiInfo,
     ...{ identify: identify.value.id },
@@ -68,18 +67,53 @@ function pickImg() {
 async function fetchUploadFile(files?: File[]) {
   if (!files?.length)
     return
+
+  const attachmentsList: string[] = []
+
   for (const file of files) {
     const { name } = file
 
     const formData = new FormData()
     formData.append('file', file)
 
-    const res = await uploadVerifyFile(name, formData)
-    if (!res)
-      return
-    verifiInfo.attachments.push(res)
+    const res = await uploadVerifyFile(name, formData).catch((err) => {
+      if (err.response.data.status === 200001) {
+        Notify.create({
+          message: err.response.data.message,
+          type: 'danger',
+        })
+      }
+    })
+    attachmentsList.push(res)
   }
+  verifiInfo.attachments = attachmentsList
 }
+
+function deletePreviewImg(fileId: string) {
+  const indexToDelete = previewImgs.value.findIndex(image => image.id === fileId)
+
+  // 如果找到了要删除的文件，就删除它
+  if (indexToDelete !== -1)
+    previewImgs.value.splice(indexToDelete, 1)
+}
+
+watch(files, async (fileArr) => {
+  if (!fileArr || !fileArr.length)
+    return
+  fetchUploadFile(fileArr)
+
+  previewImgs.value = []
+  for (const file of fileArr) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      previewImgs.value.push({
+        id: Date.now(),
+        previewURL: e.target?.result,
+      })
+    }
+    reader.readAsDataURL(file)
+  }
+})
 </script>
 
 <template>
@@ -162,11 +196,23 @@ async function fetchUploadFile(files?: File[]) {
         <Btn transparent label="选择图片（最多8张）" @click="pickImg" />
       </div>
     </div>
-    <div v-for="f in files" :key="f.__key" ml-4 flex flex-row items-center>
-      <div i-mingcute:file-line text-grey-5 />
-      <div ml-1 text-grey-8>
-        {{ f.name }}
-      </div>
+
+    <div mt-3 text-grey-6>
+      学生请上传学生证，教师及其它研究人员请上传校园卡或工作凭证，仅限图片文件，大小不超过2M
+    </div>
+
+    <div grid-cols-2 ml-4 mt-10 items-center gap-3>
+      <q-img v-for="f in previewImgs" :key="f.id" no-native-menu h-20 w-20 :src="f.previewURL" :alt="f.previewURL">
+        <div
+          class="absolute-top-right"
+
+          h-2 w-2 cursor-pointer
+          style="background-color: rgba(0, 0, 0, 0.30);"
+          @click="deletePreviewImg(f.id)"
+        >
+          <div style="top:50%;left: 50%;transform: translate(-50%,-50%);" i-material-symbols:close-rounded absolute />
+        </div>
+      </q-img>
     </div>
   </ZDialog>
 </template>

@@ -188,9 +188,8 @@ const empty = computed(() => !props.dataBase?.length)
             <q-file
               :model-value="midTable"
               bg-color="primary"
-
-              dense filled
-              accept=".csv"
+              dense
+              filled
               label-color="white"
               label="上传中间表"
               @update:model-value="(val) => $emit('update:midTable', val)"

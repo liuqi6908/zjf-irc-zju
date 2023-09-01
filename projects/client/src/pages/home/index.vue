@@ -53,15 +53,9 @@ watch(() => route.name, async () => {
 
 <template>
   <div>
-    <div>
-      <component :is="currCompontnt('homeCarousel')" v-if="comProps('homeCarousel') && currCompontnt('homeCarousel')" :list="comProps('homeCarousel')" />
+    <component :is="currCompontnt('homeCarousel')" v-if="comProps('homeCarousel') && comProps('homeCarousel')?.length && currCompontnt('homeCarousel')" :list="comProps('homeCarousel')" />
 
-      <div v-else>
-        暂无cms组件,清到后台编辑
-      </div>
-    </div>
-
-    <component :is="currCompontnt('homeDataIntroduce')" :list="comProps('homeDataIntroduce')" />
+    <component :is="currCompontnt('homeDataIntroduce')" v-if="comProps('homeDataIntroduce') && comProps('homeDataIntroduce')?.length" :list="comProps('homeDataIntroduce')" />
 
     <div flex-center>
       <div grid my-20 max-w-4xl gap-12 lg:grid-cols-1 xl:grid-cols-2>

@@ -40,7 +40,7 @@ const list = computed(() => {
 
 <template>
   <div
-    full max-w-180 min-h-3xl flex="~ row" class="col-grow"
+    full max-w-250 min-h-3xl flex="~ row" class="col-grow"
   >
     <div v-if="!databaseTab || !databaseTab.length" mt-20 full>
       <EmptyData label="暂无数据" />

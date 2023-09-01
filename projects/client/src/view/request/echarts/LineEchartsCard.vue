@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import Echarts from 'vue-echarts'
+import { cloneDeep } from 'lodash-es'
 
 import moment from 'moment'
 
@@ -25,8 +26,11 @@ function fromatterSeries(data: [], color: string) {
     )
   }
   let name = ''
+
   if (props.legend)
     name = data[data.length - 1]
+
+  name = name.toString()
 
   return {
     type: 'line',
@@ -41,8 +45,18 @@ function fromatterSeries(data: [], color: string) {
   }
 }
 
-function fromatterLegend(labels: [], color: string, data: []) {
+function fromatterLegend(color: string, data: []) {
   let colorrr = ''
+
+  const cloneData = cloneDeep(data)
+
+  const formatter = function (label: string) {
+    const name = cloneData.find(i => i.name === label)?.label
+
+    label = `${Number(label).toFixed(2)}${props.unit}`
+    return `{fontStyle|${name}}{numStyle|${label}}`
+  }
+
   data = data.map((item, index) => {
     if (index === 0)
       colorrr = '#025CB9'
@@ -57,25 +71,18 @@ function fromatterLegend(labels: [], color: string, data: []) {
           fontStyle: {
             color: '#292D36',
             fontSize: '16px',
+            fontWeight: '600',
           },
           numStyle: {
             color: colorrr,
             fontSize: '28px',
+            fontWeight: '600',
           },
         },
       },
     }
   },
   )
-
-  // for (const la of labels) {
-  const formatter = function (label: string) {
-    label = `${Number(label).toFixed(2)}${props.unit}`
-    if (labels.length === 1)
-      return `{fontStyle|${labels[0]}}{numStyle|${label}}`
-    else
-      return `{fontStyle|${labels[1]}}{numStyle|${label}}`
-  }
   // }
 
   return {
@@ -158,11 +165,16 @@ watch(() => props.data,
         return fromatterSeries(newVal, color)
       })
 
-      const names = options.value.series.map((item) => {
-        return { name: item.name, label: item.label }
+      // const names = options.value.series.map((item) => {
+      //   return { name: item.name }
+      // })
+      const names = options.value.series.map((item, index) => {
+        return {
+          label: newData[index].label,
+          name: item.name,
+        }
       })
-      const labels = newData.map(i => i.label)
-      options.value.legend = fromatterLegend(labels, options.value.color[0], names)
+      options.value.legend = fromatterLegend(options.value.color[0], names)
     }
   },
   { deep: true })
