@@ -12,7 +12,7 @@ export interface VMBaseInfo {
   memorySize: string
   /** 系统类型 */
   platform: string
-  state: 'Stop' | 'Running'
+  state: 'Stopped' | 'Running'
   uuid: string
 }
 
