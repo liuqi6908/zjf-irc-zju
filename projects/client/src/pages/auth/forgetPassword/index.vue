@@ -55,8 +55,7 @@ const disable = computed(() => verifyAccept(acceptObj))
 <template>
   <div w-full flex="~ col">
     <header flex="~ flex row items-center justify-between " mb-10>
-      <div class="i-mingcute:left-line" h-6 w-6 cursor-pointer text-grey-1 @click="router.replace({ path: 'login' })" />
-      <span text-grey-1 title-2>邮箱找回</span> <span />
+      <div i-mingcute:left-line h-8 w-8 cursor-pointer text-grey-1 @click="router.replace({ path: 'login' })" />   <span text-7 font-600 text-grey-1>邮箱找回</span> <span />
     </header>
     <span mb-2 text-14px font-500 text-grey-1>
       邮箱
@@ -73,6 +72,7 @@ const disable = computed(() => verifyAccept(acceptObj))
     </span>
     <SMSInput
       v-model:smsCode="smsCode"
+      :disable-send="!email"
       :action="CodeAction.CHANGE_PASSWORD"
       :email="email"
       :rules="[(val:string) => smsCodeRule(val)]"

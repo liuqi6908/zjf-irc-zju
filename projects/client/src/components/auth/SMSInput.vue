@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useQuasar } from 'quasar'
 import type { CodeAction } from 'zjf-types'
 import { smsCodeByEmail } from '~/api/auth/email/smsCodeByEmail'
 
@@ -13,12 +12,12 @@ interface Props {
   email: string
   action: CodeAction
   dark?: boolean
+  disableSend: boolean
 }
 const wait = ref(0)
 
-const inputRef = ref(null)
+const inputRef = ref<any>(null)
 const validate = ref(null)
-const $q = useQuasar()
 
 let timer: any
 
@@ -41,9 +40,6 @@ watch(() => props.smsCode, () => {
     emits('update:accept', validate.value)
   }
 })
-onMounted(() => {
-  $q.iconSet.type.warning = '<div i-material-symbols:error-outline/>'
-})
 </script>
 
 <template>
@@ -55,14 +51,23 @@ onMounted(() => {
     outlined
     :dark="dark"
     lazy-rules="ondemand"
-    @update:model-value="(v: string) => $emit('update:smsCode', v)"
+    @update:model-value="(v: any) => $emit('update:smsCode', v)"
   >
     <template #append>
-      <div flex="~ col" justify-center>
+      <div flex="~" items-center justify-center>
         <div v-if="wait" text-4>
           {{ wait }}
         </div>
-        <Btn v-else :disable="!validate" :bg-color="dark ? 'grey-1' : 'primary-1'" dense label="发送验证码" transparent @click="getCode" />
+        <div
+          v-else
+          bg="white/20"
+          hover:bg="white/30"
+          label="发送验证码"
+          cursor-pointer px2 py1 text-sm text-white
+          @click="() => !validate ? null : getCode()"
+        >
+          发送验证码
+        </div>
       </div>
     </template>
     <template #error>
@@ -77,6 +82,7 @@ $error-color:#FF8080;
 .q-field :deep(.q-field__inner){
     .q-field__control {
       border-radius: 0px !important;
+      padding-right: 8px;
     }
     .q-field__bottom .q-field__messages{
       color: $error-color  !important;
