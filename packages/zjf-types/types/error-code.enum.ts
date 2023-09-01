@@ -82,6 +82,8 @@ export enum ErrorCode {
   DATA_TABLE_MANIPULATE_ONLY = 700003,
   /** 该大类下的数据已分配权限，无法删除，请先解绑权限 */
   DATA_ROOT_CANNOT_DELETE_RELATED = 700004,
+  /** 角色已被分配 */
+  DATA_ROLE_IN_USAGE = 700005,
 
   // 云桌面相关错误
   /** 存在待审核状态的云桌面申请 */

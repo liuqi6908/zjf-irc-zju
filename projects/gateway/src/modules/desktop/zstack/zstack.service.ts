@@ -91,14 +91,19 @@ export class ZstackService extends EventEmitter {
 
   public async getHostCpuMem(hostUuid: string) {
     // eslint-disable-next-line max-len
-    const zqlStr = `query Host.name where uuid = '${hostUuid}' return with (zwatch{{resultName='CPUUsedCount',metricName='CPUUsedCapacityPerHostCount',offsetAheadOfCurrentTime=0}}, zwatch{{resultName='CPUAvailableCount',metricName='CPUAvailableCapacityPerHostCount',offsetAheadOfCurrentTime=0}},zwatch{{resultName='CPUUsedPercent',metricName='CPUUsedCapacityPerHostInPercent',offsetAheadOfCurrentTime=0}}, zwatch{{resultName='memUsed', metricName='MemoryUsedCapacityPerHostInBytes',offsetAheadOfCurrentTime=0}}, zwatch{{resultName='memAvailable', metricName='MemoryAvailableCapacityPerHostInBytes',offsetAheadOfCurrentTime=0}}, zwatch{{resultName='memUsedPercent', metricName='MemoryUsedCapacityPerHostInPercent',offsetAheadOfCurrentTime=0}})`
-    const res = await this.zql(zqlStr)
-    return res.results[0].returnWith
+    const zqlStr1 = `query Host.name where uuid = '${hostUuid}' return with (zwatch{{resultName='CPUUsedCount',metricName='CPUUsedCapacityPerHostCount',offsetAheadOfCurrentTime=0}}, zwatch{{resultName='CPUAvailableCount',metricName='CPUAvailableCapacityPerHostCount',offsetAheadOfCurrentTime=0}},zwatch{{resultName='CPUUsedPercent',metricName='CPUUsedCapacityPerHostInPercent',offsetAheadOfCurrentTime=0}}, zwatch{{resultName='memUsed', metricName='MemoryUsedCapacityPerHostInBytes',offsetAheadOfCurrentTime=0}}, zwatch{{resultName='memAvailable', metricName='MemoryAvailableCapacityPerHostInBytes',offsetAheadOfCurrentTime=0}}, zwatch{{resultName='memUsedPercent', metricName='MemoryUsedCapacityPerHostInPercent',offsetAheadOfCurrentTime=0}})`
+    // eslint-disable-next-line max-len
+    const zqlStr2 = `query Host.name where uuid = '${hostUuid}' return with (zwatch{{resultName='diskTotal', metricName='DiskTotalCapacityInBytes',offsetAheadOfCurrentTime=0}},zwatch{{resultName='diskUsed',metricName='DiskAllUsedCapacityInBytes',offsetAheadOfCurrentTime=0}}, zwatch{{resultName='diskUsedPercent',metricName='DiskAllUsedCapacityInPercent',offsetAheadOfCurrentTime=0}})`
+    const [res1, res2] = await Promise.all([this.zql(zqlStr1), this.zql(zqlStr2)])
+    return {
+      ...res1.results[0].returnWith,
+      ...res2.results[0].returnWith,
+    }
   }
 
-  public async getHostMonitor(hostUuid: string) {
+  public async getHostMonitor(hostUuid: string, period = 60) {
     // eslint-disable-next-line max-len
-    const zql = `query Host.name where uuid = '${hostUuid}' return with (zwatch{{resultName='CPUUtilization', metricName='CPUAllIdleUtilization',offsetAheadOfCurrentTime=3600}},zwatch{{resultName='memUsed',metricName='MemoryUsedInPercent',offsetAheadOfCurrentTime=3600}}, zwatch{{resultName='diskRead',metricName='DiskAllReadBytes', offsetAheadOfCurrentTime=3600}}, zwatch{{resultName='diskWrite',metricName='DiskAllWriteBytes', offsetAheadOfCurrentTime=3600}})`
+    const zql = `query Host.name where uuid = '${hostUuid}' return with (zwatch{{resultName='CPUUtilization', metricName='CPUAllIdleUtilization',offsetAheadOfCurrentTime=3600, period=${period}}},zwatch{{resultName='memUsed',metricName='MemoryUsedInPercent',offsetAheadOfCurrentTime=3600, period=${period}}}, zwatch{{resultName='diskRead',metricName='DiskAllReadBytes', offsetAheadOfCurrentTime=3600, period=${period}}}, zwatch{{resultName='diskWrite',metricName='DiskAllWriteBytes', offsetAheadOfCurrentTime=3600, period=${period}}})`
     const res = await this.zql(zql)
     return res.results[0].returnWith
   }
@@ -180,9 +185,9 @@ export class ZstackService extends EventEmitter {
     return res.results[0].inventories[0]
   }
 
-  public async getVMStateDetail(vmUUID: string) {
+  public async getVMStateDetail(vmUUID: string, period = 60) {
     // eslint-disable-next-line max-len
-    const zqlStr = `query vminstance.uuid where uuid = '${vmUUID}' return with (zwatch{{resultName='CPU',metricName='CPUAverageUsedUtilization',offsetAheadOfCurrentTime=3600}}, zwatch{{resultName='Disk',metricName='DiskAllUsedCapacityInPercent',offsetAheadOfCurrentTime=3600}},zwatch{{resultName='NetworkIn',metricName='NetworkAllInBytes',offsetAheadOfCurrentTime=3600}},zwatch{{resultName='NetworkOut',metricName='NetworkAllOutBytes',offsetAheadOfCurrentTime=3600}})`
+    const zqlStr = `query vminstance.uuid where uuid = '${vmUUID}' return with (zwatch{{resultName='CPU',metricName='CPUAverageUsedUtilization',offsetAheadOfCurrentTime=3600, period=${period}}}, zwatch{{resultName='memUsed',metricName='MemoryUsedInPercent',offsetAheadOfCurrentTime=3600, period=${period}}}, zwatch{{resultName='Disk',metricName='DiskAllUsedCapacityInPercent',offsetAheadOfCurrentTime=3600, period=${period}}},zwatch{{resultName='NetworkIn',metricName='NetworkAllInBytes',offsetAheadOfCurrentTime=3600, period=${period}}},zwatch{{resultName='NetworkOut',metricName='NetworkAllOutBytes',offsetAheadOfCurrentTime=3600, period=${period}}})`
     const res = await this.zql(zqlStr)
     return res.results[0].returnWith
   }

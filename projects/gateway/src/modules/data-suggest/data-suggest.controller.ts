@@ -90,7 +90,16 @@ export class DataSuggestController {
   })
   @HasPermission(PermissionType.DATA_SUGGEST_QUERY_ALL)
   @Post('query')
-  public query(@Body() body: QueryDto<DataSuggestion>) {
-    return getQuery(this._dataSuggestSrv.repo(), body || {})
+  public async query(@Body() body: QueryDto<DataSuggestion>) {
+    const res = await getQuery(this._dataSuggestSrv.repo(), body || {})
+
+    // if (body?.relations?.dataDirectory) {
+    //   for (const el of res.data) {
+    //     const { dataDirectory } = el
+    //     if (!dataDirectory)
+    //       continue
+    //   }
+    // }
+    return res
   }
 }

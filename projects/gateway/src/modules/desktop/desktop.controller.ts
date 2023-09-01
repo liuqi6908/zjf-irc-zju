@@ -82,6 +82,7 @@ export class DesktopController {
     @Param() param: DesktopIdDto,
     @Body() body: UpdateDesktopBodyDto,
   ) {
+    const oldDesktop = await this._desktopSrv.repo().findOne({ where: { id: param.desktopId } })
     const updateRes = await this._desktopSrv.repo().update(
       { id: param.desktopId, disabled: false },
       { ...body },
@@ -93,6 +94,15 @@ export class DesktopController {
         where: { id: param.desktopId },
         relations: { user: { verification: true } },
       })
+      let accessUrlUpdated, passwordUpdated, accountUpdated
+      if (body.accessUrl && oldDesktop.accessUrl !== body.accessUrl)
+        accessUrlUpdated = true
+      if (body.password && oldDesktop.password !== body.password)
+        passwordUpdated = true
+      if (body.account && oldDesktop.account !== body.account)
+        accountUpdated = true
+      if (!accessUrlUpdated && !passwordUpdated && !accountUpdated)
+        return
       this._notifySrv.notifyUserDesktopInfoChanged(desktop)
     })
     return updateRes.affected > 0

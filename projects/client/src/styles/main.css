@@ -1,3 +1,5 @@
+@import "./quasar/index.sass";
+
 html,
 body,
 #app {

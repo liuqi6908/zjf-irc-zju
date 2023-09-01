@@ -39,7 +39,7 @@ export function createDataDirectoryTree(
   // scope 为树节点的 id，将树中不在 scope （及其子节点）中的节点删除
   function filterTree(tree: DataDirectory[]) {
     if (!tree?.length)
-      return undefined
+      return []
 
     return tree.filter((node) => {
       if (scope.includes(node.id))

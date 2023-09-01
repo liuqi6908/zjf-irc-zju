@@ -63,6 +63,7 @@
     "pnpm": "^8.6.7",
     "sass": "1.32.12",
     "shiki": "^0.14.3",
+    "shx": "^0.3.4",
     "simple-git-hooks": "^2.8.1",
     "taze": "^0.11.2",
     "typescript": "^5.1.6",
@@ -89,6 +90,6 @@
     "pre-commit": "npm run lint-staged"
   },
   "lint-staged": {
-    "*": "eslint --fix"
+    "*.(vue|ts|js)": "eslint --fix"
   }
 }
