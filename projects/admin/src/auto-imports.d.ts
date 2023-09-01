@@ -333,7 +333,6 @@ declare module 'vue' {
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly flattenJSON: UnwrapRef<typeof import('./utils/tool')['flattenJSON']>
-    readonly formatFileSize: UnwrapRef<typeof import('./utils/format')['formatFileSize']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
@@ -625,7 +624,6 @@ declare module '@vue/runtime-core' {
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly flattenJSON: UnwrapRef<typeof import('./utils/tool')['flattenJSON']>
-    readonly formatFileSize: UnwrapRef<typeof import('./utils/format')['formatFileSize']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>

@@ -4,7 +4,7 @@ const autoplay = ref(true)
 
 export interface Carousel {
   img: string,
-  content: string,
+  richText: string,
   title: string,
   name: string
 }
@@ -38,9 +38,9 @@ watch(() => props.list, () => {
       @mouseenter="autoplay = false" @mouseleave="autoplay = true">
       <q-carousel-slide pa-none  v-for="(l, index) in list" :key="index" :name="l.name" :img-src="l.img">
         <div class="custom-caption" flex-center>
-          <div text-grey-1>
+          <div text-grey-1 max-w-4xl>
             <div title-2 font-600 >{{ l.title }}</div>
-            <div >{{ l.content }}</div>
+            <div v-html="l.richText"/>
           </div>
         </div>
       </q-carousel-slide>

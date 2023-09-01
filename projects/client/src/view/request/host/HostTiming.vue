@@ -11,18 +11,22 @@ const data = reactive({
   cpu: [{
     time: [],
     value: [],
+    label: '使用率',
   }],
   storage: [{
     time: [],
     value: [],
+    label: '负载率',
   }],
   oi: [{
     time: [],
     value: [],
+    label: '读取',
   },
   {
     time: [],
     value: [],
+    label: '写入',
   }],
 
 })
@@ -79,9 +83,9 @@ function stopPolling() {
   pollingInterval.value = null
 }
 
-watch(() => props.uuid, (newUuid) => {
+watch(() => props.uuid, async (newUuid) => {
   if (newUuid) {
-    const res = pollApi(newUuid)
+    const res = await pollApi(newUuid)
 
     if (!res)
       return
@@ -97,11 +101,11 @@ onBeforeUnmount(() => {
 
 <template>
   <div mb-20 mt-10 max-w-6xl w-full>
-    <LineEchartsCard :data="data.cpu" legend title="总物理机CPU使用率" unit="%" />
+    <LineEchartsCard :data="data.cpu" legend title="CPU" unit="%" />
 
-    <LineEchartsCard :data="data.storage" legend title="总物理机CPU使用率" unit="%" />
+    <LineEchartsCard :data="data.storage" legend title="内存" unit="%" />
 
-    <LineEchartsCard :data="data.oi" legend title="总物理机磁盘IO" unit="kb" />
+    <LineEchartsCard :data="data.oi" legend title="磁盘" unit="kb" />
   </div>
 </template>
 

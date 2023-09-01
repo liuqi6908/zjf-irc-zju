@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { validateAccount, validateEmail } from 'zjf-utils'
+import { validateAccount, validateEmail, validatePassword } from 'zjf-utils'
 import { CodeAction } from 'zjf-types'
 
 // import { register } from '~/api/auth/register'
@@ -23,6 +23,7 @@ const { useRegister } = useUser()
 /** 需要校验的input */
 const acceptObj = reactive({
   username: false,
+  password: false,
   repeatPassword: false,
   email: false,
   sms: false,
@@ -46,6 +47,10 @@ function verifyAccept(obj: any) {
   return Object.values(obj).includes(false)
 }
 
+function passwordRules(val: string) {
+  return validatePassword(val) || true
+}
+
 async function signUp() {
   useRegister(userName.value, email.value, password.value, bizId.value, smsCode.value)
 }
@@ -67,7 +72,7 @@ const disable = computed(() => verifyAccept(acceptObj))
 
     <div m-b-5 flex flex-col>
       <span mb-1 font-500 text-grey-1>密码</span>
-      <PasswordInput v-model:password="password" />
+      <PasswordInput v-model:password="password" :rules="[(val:string) => passwordRules(val)]" @update:accept="val => acceptObj.password = val" />
     </div>
 
     <span mb-1 font-500 text-grey-1>确认密码</span>
@@ -86,7 +91,7 @@ const disable = computed(() => verifyAccept(acceptObj))
       user-type="email"
       @update:accept="(val) => acceptObj.email = val"
     />
-    <span mb-1 font-500 text-grey-1>短信验证</span>
+    <span mb-1 font-500 text-grey-1>邮箱验证</span>
     <SMSInput
       v-model:smsCode="smsCode"
       :action="CodeAction.REGISTER"

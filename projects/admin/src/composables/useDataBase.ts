@@ -38,13 +38,6 @@ export function useDataBase() {
       rootTabList.value = cloneDeep(rootList)
     }
   }
-  // const deepFreeze = (obj) => {
-  //   if (obj && typeof obj === 'object' && !Object.isFrozen(obj)) {
-  //     Object.freeze(obj)
-  //     Object.getOwnPropertyNames(obj).forEach(prop => deepFreeze(obj[prop]))
-  //   }
-  //   return obj
-  // }
 
   const fetchAllData = async () => {
     loading.value = true

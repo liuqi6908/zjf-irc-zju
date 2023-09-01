@@ -75,14 +75,15 @@ onMounted(async () => {
 
 async function fetchSearchMyWorks() {
   loading.value = true
-  const res = await searchMyWorks(baseOptions)
+  const res = await searchMyWorks(baseOptions).finally(() => {
+    loading.value = false
+  })
   rows.value = res.data.map((item: any) => {
     return {
       ...item,
       operation: '',
     }
   })
-  loading.value = false
 }
 
 async function confirmWork() {

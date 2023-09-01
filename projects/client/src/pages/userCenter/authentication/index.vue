@@ -1,24 +1,23 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 
-import { CodeAction, VerificationIdentify, VerificationStatus, verificationIdentifyDescriptions } from 'zjf-types'
-import type { ICreateVerificationBodyDto } from 'zjf-types'
+import type { IDesktop, IQueryConfig } from 'zjf-types'
+import { CodeAction, PAGINATION_SIZE_MAX, VerificationStatus } from 'zjf-types'
 import { Notify } from 'quasar'
 import { useUser } from '../../../composables/useUser'
 
-import { uploadVerifyFile } from '~/api/file/uploadVerifyFile'
-import { requestVerification } from '~/api/auth/verification/requestVerification'
+import VerificationDialog from '~/view/userCenter/verification/VerificationDialog.vue'
+
 import { changeNickname } from '~/api/user/chnageNickname'
 import { changeEmail } from '~/api/auth/user/changeEmail'
 import { changePassword } from '~/api/user/changePassword'
 import { cancelVerification } from '~/api/auth/verification/cancelVerification'
+import { desktopQueryList } from '~/api/desktop/desktopsList'
 
 const { useGetProfile, userInfo, getVerify, latestVerifiy } = useUser()
 
 const showVeri = ref(false)
-const files = ref<Array<File>>()
-const myFileInput = ref(null)
-const identify = ref<{ label: string; id: VerificationIdentify }>({ label: '', id: VerificationIdentify.TEACHER })
+const desktop = ref(false)
 
 // if (!userInfo.value)
 //   useGetProfile()
@@ -91,59 +90,16 @@ const authInfoList = reactive([
   },
 ])
 
-function transformedArray(): { label: string; id: string }[] {
-  return Object.keys(VerificationIdentify).map(key => ({
-    id: VerificationIdentify[key as keyof typeof VerificationIdentify],
-    label: verificationIdentifyDescriptions[VerificationIdentify[key as keyof typeof VerificationIdentify]],
-  }))
-}
-
-const verifiInfo = reactive<ICreateVerificationBodyDto>({
-  name: '',
-  identify: identify.value.id,
-  attachments: [],
-  school: '',
-  college: '',
-  number: '',
-  idCard: '',
-})
-
-const veriAccept = reactive({
-  name: false,
-  school: false,
-  college: false,
-  idCard: false,
-  number: false,
-})
-
-const disable = computed(() => Object.values(veriAccept).includes(false))
-
-function pickImg() {
-  if (myFileInput.value)
-    myFileInput.value.$el.click()
-}
-
-async function fetchUploadFile(files?: File[]) {
-  if (!files?.length)
-    return
-  for (const file of files) {
-    const { name } = file
-
-    const formData = new FormData()
-    formData.append('file', file)
-
-    const res = await uploadVerifyFile(name, formData)
-    if (!res)
-      return
-    verifiInfo.attachments.push(res)
-  }
-}
-
-async function requestVerify() {
-  await fetchUploadFile(files.value)
-  // 请求认证
-  const res = await requestVerification(verifiInfo)
-  notify(res, '认证')
+const baseOpts: IQueryConfig<IDesktop> = {
+  pagination: {
+    page: 0,
+    pageSize: PAGINATION_SIZE_MAX,
+  },
+  filters: [],
+  sort: [],
+  relations: {
+    user: { desktop: true },
+  },
 }
 
 async function confirmEdit(id: string) {
@@ -183,10 +139,11 @@ function notify(res: any, message: string) {
 
 async function cancel(verificationId: string) {
   const res = await cancelVerification(verificationId)
+  if (res)
+    checkoutVerifiy()
 }
 
-// function change
-onBeforeMount(async () => {
+async function checkoutVerifiy() {
   await useGetProfile()
   await getVerify()
 
@@ -196,12 +153,36 @@ onBeforeMount(async () => {
       user.inputVal = userInfo.value[key]
   }
 
+  if (latestVerifiy.value?.status !== VerificationStatus.APPROVED)
+    return
+
   // 认证
   for (const key in latestVerifiy.value) {
     const obj = authInfoList.find(i => i.id === key)
     if (latestVerifiy.value[key] && obj)
       obj.inputVal = latestVerifiy.value[key]
   }
+}
+
+// function change
+onBeforeMount(async () => {
+  await checkoutVerifiy().finally(async () => {
+    const options = { ...baseOpts }
+    if (userInfo.value) {
+      options.filters = [
+        {
+          field: 'user.id',
+          type: '=',
+          value: userInfo.value.id,
+        },
+      ]
+      const res = await desktopQueryList(options)
+      if (res.data && res.data.length)
+        desktop.value = res.data[0].user.desktop && !res.data[0].user.desktop.disable
+
+      desktop.value = false
+    }
+  })
 })
 </script>
 
@@ -254,113 +235,49 @@ onBeforeMount(async () => {
     </div>
 
     <div flex="~ row" mt-10 w-full justify-center>
-      <div v-if="userInfo && userInfo.verification">
-        <VerifyStatus :status="latestVerifiy?.status" />
+      <div flex="~ row items-center gap-5" max-w-sm>
+        <div v-if="latestVerifiy?.status !== VerificationStatus.REJECTED" max-w-sm flex="~ row items-center gap-5">
+          <VerifyStatus
+            :status="latestVerifiy?.status"
+          />
+          <Btn
+            v-if="latestVerifiy?.status === VerificationStatus.CANCELLED || !latestVerifiy"
+            label="前往认证"
+            @click="showVeri = true"
+          >
+            <template #icon>
+              <div i-material-symbols:arrow-forward />
+            </template>
+          </Btn>
 
-        <Btn
-          v-if="latestVerifiy?.status === VerificationStatus.CANCELLED"
-          label="前往认证"
-          @click="showVeri = true"
-        />
-        <Btn
-          v-if="latestVerifiy?.status === VerificationStatus.PENDING"
-          label="取消认证"
-          @click="cancel(userInfo.verification.id)"
-        />
+          <Btn
+            v-else-if="latestVerifiy?.status === VerificationStatus.PENDING && desktop"
+            label="取消认证"
+            @click="cancel(latestVerifiy.id)"
+          >
+            <template #icon>
+              <div i-material-symbols:close-rounded />
+            </template>
+          </Btn>
+        </div>
 
-        <span v-if="latestVerifiy?.status === VerificationStatus.REJECTED">
-          驳回理由：{{ latestVerifiy.rejectReason }}
-        </span>
-      </div>
-
-      <div v-else flex="~ row gap-5">
-        <VerifyStatus status="none" />
-        <Btn label="前往认证" @click="showVeri = true" />
+        <div v-else max-w-sm flex="~ row items-center gap-5">
+          <VerifyStatus :status="latestVerifiy?.status" />
+          <div v-if="latestVerifiy?.status === VerificationStatus.REJECTED">
+            驳回理由：{{ latestVerifiy.rejectReason }}
+          </div>
+          <Btn
+            label="前往认证"
+            @click="showVeri = true"
+          >
+            <template #icon>
+              <div i-material-symbols:arrow-forward />
+            </template>
+          </Btn>
+        </div>
       </div>
     </div>
-
-    <ZDialog v-model="showVeri" footer title="需要完善信息并且通过审核" :disable-confirm="disable" @ok="requestVerify">
-      <div mb-2 mt-6>
-        <span text-alert-error>*</span> <span font-500 text-grey-8> 学校名称</span>
-      </div>
-      <UserCodeInput
-        v-model:user-code="verifiInfo.school"
-        :rules="[(val) => val.length > 0 || '学校名称必填']"
-        :dark="false" label="请输入学校名称"
-        @update:accept="(val) => veriAccept.school = val"
-      />
-
-      <div mb-2>
-        <span text-alert-error>*</span> <span font-500 text-grey-8> 所在学院</span>
-      </div>
-      <UserCodeInput
-        v-model:user-code="verifiInfo.college"
-        :rules="[(val) => val.length > 0 || '学院名称必填']"
-        :dark="false" label="请输入学院名称"
-        @update:accept="(val) => veriAccept.college = val"
-      />
-
-      <div mb-2>
-        <span text-alert-error>*</span> <span font-500 text-grey-8> 身份证号码</span>
-      </div>
-      <UserCodeInput
-        v-model:user-code="verifiInfo.idCard"
-        :rules="[(val) => val.length === 18 || '身份证号码必须为18位']"
-        :dark="false"
-        label="请输入身份证号码"
-        @update:accept="(val) => veriAccept.idCard = val"
-      />
-
-      <div mb-2>
-        <span text-alert-error>*</span> <span font-500 text-grey-8> 学号/工号</span>
-      </div>
-      <UserCodeInput
-        v-model:user-code="verifiInfo.number"
-        :dark="false" label="请输入学号/工号"
-        :rules="[(val) => val.length > 0 || '学号/工号必填']"
-        @update:accept="(val) => veriAccept.number = val"
-      />
-
-      <div mb-2>
-        <span text-alert-error>*</span> <span font-500 text-grey-8> 姓名</span>
-      </div>
-      <UserCodeInput
-        v-model:user-code="verifiInfo.name"
-        :rules="[(val) => val.length > 0 || '姓名必填']"
-        :dark="false" label="请输入您的真实姓名"
-        @update:accept="(val) => veriAccept.name = val"
-      />
-
-      <div mb-2>
-        <span text-alert-error>*</span> <span font-500 text-grey-8>身份 </span>
-      </div>
-      <ZSelect v-model="identify" :options="transformedArray()" />
-
-      <div mb-2 mt-6 flex="~ row justify-between items-center">
-        <div> <span text-alert-error>*</span> <span font-500 text-grey-8>上传资料</span></div>
-
-        <div class="q-gutter-md" style="max-width: 300px">
-          <q-file
-            ref="myFileInput"
-            v-model="files"
-            accept=".jpg, image/*"
-            max-files="8"
-            append multiple
-            style="display:none"
-            type="file"
-            label="Standard"
-            max-file-size="1048576"
-          />
-          <Btn transparent label="选择图片（最多8张）" @click="pickImg" />
-        </div>
-      </div>
-      <div v-for="f in files" :key="f.__key" ml-4 flex flex-row items-center>
-        <div i-mingcute:file-line text-grey-5 />
-        <div ml-1 text-grey-8>
-          {{ f.name }}
-        </div>
-      </div>
-    </ZDialog>
+    <VerificationDialog v-model="showVeri" @update:confirm="checkoutVerifiy()" />
   </div>
 </template>
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { AUTH_TOKEN_KEY } from 'shared/constants'
 import Tabs from 'shared/component/base/tab/Tabs.vue'
+import { useEventListener } from '@vueuse/core'
 import type { ItemList } from '~/components/nav/NavItem.vue'
 
 import { useCms } from '~/composables/useCms'
@@ -12,6 +13,7 @@ const { cmsProps, currComponent } = useCms()
 const qandShow = ref(false)
 const userDropdown = ref(false)
 const footerProps = ref([])
+const AvatarRef = ref<HTMLElement>()
 
 /** hooks */
 const { userInfo, useGetProfile, useLogout } = useUser()
@@ -71,6 +73,20 @@ onMounted(async () => {
   useGetProfile()
   footerProps.value = await cmsProps('footer')
 })
+
+useEventListener(AvatarRef, 'click', (e) => {
+  if (isToken.value)
+    userDropdown.value = !userDropdown.value
+  else
+    router.replace({ path: '/auth/login' })
+})
+
+useEventListener(document, 'click', (e) => {
+  if (!AvatarRef.value?.$el.contains(e.target))
+    userDropdown.value = false
+})
+
+// cleanup()
 </script>
 
 <template>
@@ -94,16 +110,17 @@ onMounted(async () => {
 
           <div flex flex-row items-center text-primary-1>
             <Avatar
+              ref="AvatarRef"
               flex="~ row gap-2 items-center"
               :avatar-url="userInfo?.avatar"
               :nickname="userInfo?.account"
-              @update:route="isToken ? (userDropdown = !userDropdown) : router.replace({ path: '/auth/login' })"
             >
               <div>
                 {{ isToken ? '' : '登录' }}
               </div>
             </Avatar>
-            <q-list v-if="userDropdown" absolute right-3 top-20 z-999 bg-grey-1 p-2 filter-drop-shadow>
+
+            <q-list v-if="userDropdown" id="userDropdown" v-close-popup absolute right-3 top-20 z-999 bg-grey-1 p-2 filter-drop-shadow>
               <NavItem
                 v-for="u in userList"
                 :id="u.id"
@@ -131,7 +148,7 @@ onMounted(async () => {
         </q-page>
       </q-page-container>
 
-      <component :is="currComponent('home', 'footer')" :list="footerProps" />
+      <component :is="currComponent('home', 'footer')" v-if="footerProps && footerProps.length" :list="footerProps " />
     </q-layout>
   </main>
 </template>

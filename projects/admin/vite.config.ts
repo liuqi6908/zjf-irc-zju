@@ -15,6 +15,7 @@ import WebfontDownload from 'vite-plugin-webfont-dl'
 import Components from 'unplugin-vue-components/vite'
 import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import LinkAttributes from 'markdown-it-link-attributes'
+import 'shared/style/base.scss'
 
 export default ({ mode }: any) => {
   process.env = {
@@ -41,7 +42,13 @@ export default ({ mode }: any) => {
         '~/': `${path.resolve(__dirname, 'src')}/`,
       },
     },
-
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: '@import shared/style/base.scss',
+        },
+      },
+    },
     plugins: [
       VueMacros({
         plugins: {

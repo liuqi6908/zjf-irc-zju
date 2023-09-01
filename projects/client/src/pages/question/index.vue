@@ -52,7 +52,7 @@ watch(() => route.name, async () => {
     </header>
     <div class="col-grow" mt-15 flex-center>
       <div max-w-4xl>
-        <component :is="currCompontnt()" :list="comProps" />
+        <component :is="currCompontnt()" v-if="comProps && comProps.length" :list="comProps" />
       </div>
     </div>
   </div>

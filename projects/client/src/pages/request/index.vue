@@ -10,10 +10,13 @@ import DesktopRequestDaialog from '../../view/request/DesktopRequestDaialog.vue'
 import { getDesktopVm } from '~/api/desktopVm/getDesktopVm'
 import HostPercent from '~/view/request/host/HostPercent.vue'
 import HostTiming from '~/view/request/host/HostTiming.vue'
+import VerificationDialog from '~/view/userCenter/verification/VerificationDialog.vue'
+import { useUser } from '~/composables/useUser'
 
 const queueLength = ref()
 
 const requestDialog = ref(false)
+const verificationDialog = ref(false)
 const hostList = ref()
 
 const cpuTimeList = ref([])
@@ -30,6 +33,8 @@ const requestInfo = reactive({
   queueLength: '',
 })
 
+const { userInfo } = useUser()
+
 const desktopList = computed(() => {
   if (hostList.value) {
     return hostList.value.map((item, index: number) => {
@@ -43,8 +48,18 @@ const desktopList = computed(() => {
   }
 })
 
+const isVerification = computed(() => {
+  if (userInfo.value)
+    return userInfo.value.verification
+
+  return null
+})
+
 function requestDesktop() {
-  requestDialog.value = true
+  if (isVerification.value)
+    requestDialog.value = true
+  else
+    verificationDialog.value = true
 }
 
 onMounted(async () => {
@@ -89,6 +104,10 @@ watch(model, async (newModel) => {
     <div w-full flex="~ col items-center" bg-grey-1 py-10>
       <div class="request-flow" h-80 w-6xl />
 
+      <!-- <div v-if="isVerification">
+        未认证，前往认证
+      </div> -->
+
       <div v-if="requestInfo.status !== DesktopQueueStatus.Using" flex="~ row justify-between" mt-10 w-6xl p-6 text-5 style="background:rgba(2, 92, 185, 0.08);">
         <div v-if="requestInfo.status === DesktopQueueStatus.Queueing">
           <span text-grey-8>
@@ -112,6 +131,7 @@ watch(model, async (newModel) => {
     </div>
 
     <DesktopRequestDaialog v-model="requestDialog" />
+    <VerificationDialog v-model="verificationDialog" />
 
     <div mt-10 w-6xl bg-grey-1 p-6>
       <header flex="~ row" text-grey-8 title-4>

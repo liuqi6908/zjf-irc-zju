@@ -37,15 +37,15 @@ function handleCreated(editor: any) {
 </script>
 
 <template>
-  <div>
+  <div flex="~ col">
     <Toolbar
       :editor="editorRef"
       :default-config="toolbarConfig"
-      style="border-bottom: 1px solid #ccc;width: 500px;"
+      style="border-bottom: 1px solid #ccc;"
     />
     <Editor
       :model-value="modelValue"
-      style="height: 400px; overflow-y: hidden;width: 500px;"
+      style="height: 400px; overflow-y: hidden;"
       :default-config="editorConfig"
       :mode="mode"
       @update:model-value="(val:any) => $emit('update:modelValue', val)"

@@ -58,12 +58,16 @@ watch(tab, async (newTab) => {
   if (res)
     currTabObj.value.rows = res.json
 })
+
+async function updateRows() {
+  const res = await upsertCms<Carousel>(tab.value, rowsJson.value)
+}
 </script>
 
 <template>
   <div bg-grey-1 p-xl>
     <Tabs v-model="tab" :tab-list="tabList" @update:curr-tab-obj="(val) => currTabObj = val">
-      <EditableGrid v-model:rows="currTabObj.rows" :loading="tableLoading" :col-names="currTabObj.col" :component-name="currTabObj.label" @save="saveRows" />
+      <EditableGrid v-model:rows="currTabObj.rows" :loading="tableLoading" :col-names="currTabObj.col" :component-name="currTabObj.label" @update:rows="updateRows" @save="saveRows" />
       <component :is="currTabObj.component" :list="rowsJson" />
     </Tabs>
   </div>
