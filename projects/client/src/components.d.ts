@@ -15,6 +15,7 @@ declare module 'vue' {
     EmailEditDialog: typeof import('./components/dialog/EmailEditDialog.vue')['default']
     Empty: typeof import('./components/empty/Empty.vue')['default']
     EmptyData: typeof import('./components/empty/EmptyData.vue')['default']
+    EmptyVeri: typeof import('./components/empty/EmptyVeri.vue')['default']
     NavItem: typeof import('./components/nav/NavItem.vue')['default']
     NavItemSection: typeof import('./components/nav/NavItemSection.vue')['default']
     PasswordInput: typeof import('./components/auth/PasswordInput.vue')['default']

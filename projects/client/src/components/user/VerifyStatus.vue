@@ -2,7 +2,7 @@
 import { VerificationStatus } from 'zjf-types'
 
 interface Props {
-  status: VerificationStatus | 'none'
+  status: VerificationStatus
 }
 const props = defineProps<Props>()
 
@@ -19,9 +19,7 @@ const currentStyle = computed(() => {
   const cancelColor = '#025CB9'
   const bgCancel = 'rgba(2, 92, 185, 0.12)'
 
-  if (props.status === 'none')
-    return { border: `1px solid ${noneColor}`, color: noneColor, backgroundColor: bgNone }
-  else if (props.status === VerificationStatus.APPROVED)
+  if (props.status === VerificationStatus.APPROVED)
     return { border: `1px solid ${doneColor}`, color: doneColor, backgroundColor: bgDone }
   else if (props.status === VerificationStatus.PENDING)
     return { border: `1px solid ${pendingColor}`, color: pendingColor, backgroundColor: bgPending }
@@ -29,19 +27,21 @@ const currentStyle = computed(() => {
     return { border: `1px solid ${cancelColor}`, color: cancelColor, backgroundColor: bgCancel }
   else if (props.status === VerificationStatus.REJECTED)
     return { border: `1px solid ${noneColor}`, color: noneColor, backgroundColor: bgNone }
+  else
+    return { border: `1px solid ${noneColor}`, color: noneColor, backgroundColor: bgNone }
 })
 
 const textClass = computed(() => {
   if (props.status === VerificationStatus.APPROVED)
     return { text: '已认证', icon: '<div i-ep:success-filled/>' }
-  else if (props.status === 'none')
-    return { text: '未认证', icon: '<div i-material-symbols:error/>' }
   else if (props.status === VerificationStatus.PENDING)
     return { text: '审核中', icon: '<div i-material-symbols:alarm-rounded />' }
   else if (props.status === VerificationStatus.CANCELLED)
     return { text: '已取消', icon: '<div i-mdi:close-circle />' }
   else if (props.status === VerificationStatus.REJECTED)
     return { text: '已驳回', icon: '<div i-mdi:close-circle />' }
+  else
+    return { text: '未认证', icon: '<div i-material-symbols:error/>' }
 })
 </script>
 
