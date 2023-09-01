@@ -17,7 +17,12 @@ const route = useRoute()
   <!-- 两个层级 -->
   <div class="q-pa-md row no-wrap my-10 bg-grey-2">
     <q-expansion-item
-      dense-toggle switch-toggle-side col-9 max-w-lg lg:max-w-4xl sm:max-w-lg xl:max-w-5xl
+      dense-toggle
+      switch-toggle-side
+      col-9
+      max-w-lg
+      icon="perm_identity"
+      lg:max-w-4xl sm:max-w-lg xl:max-w-5xl
       header-class="font-600 text-5 text-grayness-8"
       :label="nameZH"
     >

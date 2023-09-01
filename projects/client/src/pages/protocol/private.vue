@@ -6,9 +6,10 @@ const router = useRouter()
 
 <template>
   <div bg-grey-1 p-20 text-grey-8>
-    <Btn transparent @click="() => router.back()">
-      返回
-    </Btn>
+    <header flex="~ row">
+      <div i-material-symbols:arrow-back-ios-rounded cursor-pointer @click="() => router.back()" />
+    </header>
+
     <h1>「社科大数据平台」隐私政策</h1>
     最近更新时间：2021年10月12日
 

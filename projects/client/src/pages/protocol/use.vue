@@ -5,10 +5,10 @@ const router = useRouter()
 </script>
 
 <template>
-  <div bg-grey-1 text-grey-8>
-    <btn @click="() => router.back()">
-      返回
-    </btn>
+  <div bg-grey-1 p-10 text-grey-8>
+    <header flex="~ row">
+      <div i-material-symbols:arrow-back-ios-rounded cursor-pointer @click="() => router.back()" />
+    </header>
     <h1>「社科大数据平台」用户使用协议</h1>
     最近更新时间：2021年10月12日
 

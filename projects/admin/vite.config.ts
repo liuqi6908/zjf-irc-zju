@@ -44,6 +44,7 @@ export default ({ mode }: any) => {
     css: {
       preprocessorOptions: {
         scss: {
+          additionalData: '@import "shared/style/base.scss";',
         },
       },
     },
