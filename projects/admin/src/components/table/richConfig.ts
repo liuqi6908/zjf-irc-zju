@@ -36,6 +36,10 @@ const insertLink = {
   parseLinkUrl: customParseLinkUrl,
 }
 
+const lineHeight = {
+  lineHeight: 1.2,
+}
+
 /** 图片上传 */
 type InsertFnType = (url: string) => void
 const uploadImage = {
@@ -57,6 +61,7 @@ const editorConfig: Partial<IEditorConfig> = {
   MENU_CONF: {
     uploadImage,
     insertLink,
+    lineHeight,
   },
 }
 

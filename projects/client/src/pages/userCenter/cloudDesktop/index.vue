@@ -53,17 +53,17 @@ const desktopBaseCol = [
   { name: 'baseInfo', label: '基本信息' },
 ]
 
-const baseInfoFeild: Record<keyof VMBaseInfo, string> = {
-  uuid: 'UUID',
-  platform: '平台',
-  architecture: 'CPU架构',
-  hypervisorType: '虚拟机类型',
-  memorySize: '内存',
-  cpuNum: 'CPU',
-  lastOpDate: '最后操作时间',
-  state: '启用状态',
-  guestOsType: '操作系统',
-}
+const baseInfoFeild: Record<keyof VMBaseInfo, { label: string; value: string }> = reactive({
+  uuid: { label: 'UUID', value: '' },
+  platform: { label: '平台', value: '' },
+  architecture: { label: 'CPU架构', value: '' },
+  hypervisorType: { label: '虚拟机类型', value: '' },
+  memorySize: { label: '内存', value: '' },
+  cpuNum: { label: 'CPU', value: '' },
+  lastOpDate: { label: '最后操作时间', value: '' },
+  state: { label: '启用状态', value: '' },
+  guestOsType: { label: '操作系统', value: '' },
+})
 
 const desktopRow = computed(() => {
   if (desktopInfo.value)
@@ -162,8 +162,10 @@ onMounted(async () => {
       else if (item === 'cpuNum')
         vmInfo[item] = `${vmInfo[item]} 核`
 
+      field.value = `${vmInfo[item]}`
+
       vmInfoCol.value.push({
-        baseInfo: `${field} : ${vmInfo[item]}`,
+        baseInfo: `${field.label} : ${field.value}`,
       })
     }
   }
@@ -176,9 +178,9 @@ onMounted(async () => {
       <header flex="~ row justify-between">
         <DesktopStatus :status="desktopStatus.status" :duration="desktopStatus.duration" />
         <div flex="~ row gap-5">
-          <Btn label="开机" @click="startDesktop(desktopId)" />
-          <Btn label="关机" @click="shutdownDesktop(desktopId)" />
-          <Btn label="重启" @click="restartDesktop(desktopId)" />
+          <Btn label="开机" :disable="baseInfoFeild.state.value === 'Running'" @click="startDesktop(desktopId)" />
+          <Btn label="关机" :disable="baseInfoFeild.state.value === 'Stopped'" @click="shutdownDesktop(desktopId)" />
+          <Btn label="重启" :disable="baseInfoFeild.state.value !== 'Stopped'" @click="restartDesktop(desktopId)" />
         </div>
       </header>
       <DesktopTable
