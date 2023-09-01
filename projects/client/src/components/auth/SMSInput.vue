@@ -12,11 +12,11 @@ interface Props {
   email: string
   action: CodeAction
   dark?: boolean
-  disableSend: boolean
 }
 const wait = ref(0)
 
 const inputRef = ref<any>(null)
+const validate = ref(null)
 
 let timer: any
 
@@ -35,8 +35,8 @@ async function getCode() {
 
 watch(() => props.smsCode, () => {
   if (inputRef.value) {
-    const validate = inputRef.value?.validate(props.smsCode)
-    emits('update:accept', validate)
+    validate.value = inputRef.value?.validate(props.smsCode)
+    emits('update:accept', validate.value)
   }
 })
 </script>
@@ -63,14 +63,14 @@ watch(() => props.smsCode, () => {
           hover:bg="white/30"
           label="发送验证码"
           cursor-pointer px2 py1 text-sm text-white
-          @click="() => disableSend ? null : getCode()"
+          @click="() => !validate ? null : getCode()"
         >
           发送验证码
         </div>
       </div>
     </template>
     <template #error>
-      <span> error </span>
+      <div>error</div>
     </template>
   </q-input>
 </template>

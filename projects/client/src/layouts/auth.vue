@@ -17,7 +17,7 @@
     <div class="col-5 flex-center" mr-40>
       <div
         flex="~ col" class="confirmation-card"
-        min-w-sm px-10 py-20 backdrop-blur-md
+        min-w-sm p-10 backdrop-blur-md
       >
         <RouterView />
       </div>

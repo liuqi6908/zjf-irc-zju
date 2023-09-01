@@ -34,6 +34,7 @@ watch(() => props.password, () => {
   >
     <template #append>
       <div
+
         :class="isPwd ? 'i-material-symbols:visibility-off-outline' : 'i-material-symbols:visibility-outline' "
         cursor-pointer
         @click="isPwd = !isPwd"
