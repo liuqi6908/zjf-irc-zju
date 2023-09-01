@@ -178,12 +178,13 @@ function succNotify(message: string) {
             />
             <div>
               <span text-grey-5>我已阅读并同意</span>
-              <span cursor-pointer text-primary-1 @click="() => router.replace('/protocol/private')">
+              <RouterLink cursor-pointer text-primary-1 :to="{ path: '/protocol/private' }">
                 《「社科大数据平台」隐私政策》
-              </span>
-              <span cursor-pointer text-primary-1 @click="() => router.replace('/protocol/use')">
+              </RouterLink>
+
+              <RouterLink cursor-pointer text-primary-1 :to="{ path: '/protocol/use' }">
                 《「社科大数据平台」用户使用协议》
-              </span>
+              </RouterLink>
             </div>
           </div>
         </div>

@@ -261,19 +261,27 @@ onBeforeMount(async () => {
           </Btn>
         </div>
 
-        <div v-else h-full max-w-sm flex="~ row items-center gap-5">
-          <VerifyStatus :status="latestVerifiy?.status" />
-          <div v-if="latestVerifiy?.status === VerificationStatus.REJECTED">
-            驳回理由：{{ latestVerifiy.rejectReason }}
+        <div v-else flex="~ col items-center" h-full>
+          <div flex="~ row items-center gap-5" h-full max-w-sm>
+            <VerifyStatus :status="latestVerifiy?.status" />
+            <Btn
+              label="前往认证"
+              @click="showVeri = true"
+            >
+              <template #icon>
+                <div i-material-symbols:arrow-forward />
+              </template>
+            </Btn>
           </div>
-          <Btn
-            label="前往认证"
-            @click="showVeri = true"
-          >
-            <template #icon>
-              <div i-material-symbols:arrow-forward />
-            </template>
-          </Btn>
+
+          <div v-if="latestVerifiy?.status === VerificationStatus.REJECTED" mt-5 w-full flex="~ col" bg-grey-2 p-4>
+            <div flex="~ row" mb-2 font-500 text-grey-8>
+              驳回理由
+            </div>
+            <div flex="~ row" indent-0 text-grey-8>
+              {{ latestVerifiy.rejectReason }}
+            </div>
+          </div>
         </div>
       </div>
     </div>

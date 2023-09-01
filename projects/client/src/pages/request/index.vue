@@ -55,7 +55,7 @@ const isVerification = computed(() => {
 })
 
 function requestDesktop() {
-  verificationDialog.value = true
+  requestDialog.value = true
 }
 
 onMounted(async () => {
