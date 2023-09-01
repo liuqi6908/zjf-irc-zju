@@ -12,7 +12,6 @@ interface Props {
   email: string
   action: CodeAction
   dark?: boolean
-  disableSend: boolean
 }
 const wait = ref(0)
 
