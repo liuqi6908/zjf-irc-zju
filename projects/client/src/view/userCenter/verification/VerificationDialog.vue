@@ -15,17 +15,17 @@ const emits = defineEmits(['update:modelValue', 'update:confirm'])
 const identify = ref<{ label: string; id: VerificationIdentify | '' }>({ label: '', id: '' })
 
 const files = ref<Array<File>>()
-const previewImgs = ref<Array<{ id: Date; previewURL: any }>>([])
+// const previewImgs = ref<Array<{ id: number; previewURL: any }>>([])
 const myFileInput = ref(null)
 
 const verifiInfo = reactive({
   name: '',
-  attachments: [],
   school: '',
   college: '',
   number: '',
   idCard: '',
 })
+const attachmentsList = ref<Array<{ id: number;filename: string; previewURL: any }>>([])
 
 const veriAccept = reactive({
   name: false,
@@ -35,7 +35,7 @@ const veriAccept = reactive({
   number: false,
 })
 
-const disable = computed(() => Object.values(veriAccept).includes(false) || !verifiInfo.attachments.length)
+const disable = computed(() => Object.values(veriAccept).includes(false) || !attachmentsList.value.length)
 
 function transformedArray(): { label: string; id: string }[] {
   return Object.keys(VerificationIdentify).map(key => ({
@@ -44,8 +44,11 @@ function transformedArray(): { label: string; id: string }[] {
   }))
 }
 async function requestVerify() {
+  let attachments = []
+  attachments = attachmentsList.value.map(i => i.filename)
   const options = {
     ...verifiInfo,
+    attachments,
     ...{ identify: identify.value.id },
   } as ICreateVerificationBodyDto
 
@@ -68,10 +71,10 @@ async function fetchUploadFile(files?: File[]) {
   if (!files?.length)
     return
 
-  const attachmentsList: string[] = []
+  attachmentsList.value = []
 
   for (const file of files) {
-    const { name } = file
+    const { name, lastModified } = file
 
     const formData = new FormData()
     formData.append('file', file)
@@ -83,36 +86,33 @@ async function fetchUploadFile(files?: File[]) {
           type: 'danger',
         })
       }
-    })
-    attachmentsList.push(res)
-  }
-  verifiInfo.attachments = attachmentsList
-}
+    }) as string
 
-function deletePreviewImg(fileId: string) {
-  const indexToDelete = previewImgs.value.findIndex(image => image.id === fileId)
-
-  // 如果找到了要删除的文件，就删除它
-  if (indexToDelete !== -1)
-    previewImgs.value.splice(indexToDelete, 1)
-}
-
-watch(files, async (fileArr) => {
-  if (!fileArr || !fileArr.length)
-    return
-  fetchUploadFile(fileArr)
-
-  previewImgs.value = []
-  for (const file of fileArr) {
+    if (!res)
+      return
     const reader = new FileReader()
     reader.onload = (e) => {
-      previewImgs.value.push({
-        id: Date.now(),
-        previewURL: e.target?.result,
-      })
+      attachmentsList.value.push({ filename: res, id: lastModified, previewURL: e.target?.result })
     }
     reader.readAsDataURL(file)
   }
+}
+
+function deletePreviewImg(fileId: number) {
+  const indexToDelete = attachmentsList.value.findIndex(image => image.id === fileId)
+  const deleteFile = files.value?.findIndex(item => item.lastModified === fileId)
+
+  if (deleteFile !== -1) {
+    attachmentsList.value.splice(indexToDelete, 1)
+    files.value?.splice(deleteFile, 1)
+  }
+}
+
+watch(files, (fileArr) => {
+  if (!fileArr || !fileArr.length)
+    return
+
+  fetchUploadFile(fileArr)
 })
 </script>
 
@@ -202,10 +202,9 @@ watch(files, async (fileArr) => {
     </div>
 
     <div grid-cols-2 ml-4 mt-10 items-center gap-3>
-      <q-img v-for="f in previewImgs" :key="f.id" no-native-menu h-20 w-20 :src="f.previewURL" :alt="f.previewURL">
+      <q-img v-for="f in attachmentsList" :key="f.id" no-native-menu h-20 w-20 :src="f.previewURL" :alt="f.previewURL">
         <div
           class="absolute-top-right"
-
           h-2 w-2 cursor-pointer
           style="background-color: rgba(0, 0, 0, 0.30);"
           @click="deletePreviewImg(f.id)"

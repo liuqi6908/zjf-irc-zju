@@ -1,7 +1,7 @@
 <template>
     <div flex="~ row gap-10" max-w-6xl>
-        <q-list w-xl flex="~ col items-start">
-            <q-item  
+        <q-list text-grey-8 w-xl flex="~ col items-start">
+            <q-item
                 v-for="(item,index) in list"
                 flex="~ col justify-center"
                 font-600 
@@ -13,8 +13,10 @@
                 {{ item.title }}
             </q-item>
         </q-list>
-        <div flex="~ col" w-600>
+        <div flex="~ col" w-600 >
             <q-expansion-item
+                py-12
+                border-b border-grey-3
                 dense
                 dense-toggle
                 switch-toggle-side
@@ -22,7 +24,6 @@
                 v-for="(item,index) in list" 
                 :key="index" 
                 :id="`title${index + 1}`" 
-                 mb-12 border-b border-grey-2
                 :label="item.title"
             >
                 <!-- <div title-4 text-grey-8 flex mb-4> {{  }}</div> -->
@@ -34,6 +35,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 
 interface Question{
@@ -47,6 +49,8 @@ interface Props{
 defineProps<Props>()
 
 const link = ref('')
+
+const $q = useQuasar()
 
 function scrollTo(title:string,index:number){
     link.value = title

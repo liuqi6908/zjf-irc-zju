@@ -1,9 +1,30 @@
 /* styles.css */
 
+// div,span,p{
+//   color: #292D36 ;
+// }
+
 /* Reset some default browser styles */
 body, h1, h2, p, ul, li {
   margin: 0;
   padding: 0;
+}
+:root {
+  --text-color-light: #292D36;
+}
+
+body {
+  color: var(--text-color-light); 
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    color: var(--text-color-light); 
+  }
+}
+
+body.body--dark {
+  color: red
 }
 
 

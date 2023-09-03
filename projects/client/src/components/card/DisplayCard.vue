@@ -21,7 +21,7 @@ function htmlDecodeByRegExp(htmlStr: string) {
       {{ title }}
     </div>
     <br>
-    <span indent-1 text-grey-6>
+    <span indent-1 text-grey-6 class="ellipsis-3-lines">
       {{ htmlDecodeByRegExp(richText) }}
     </span>
   </div>

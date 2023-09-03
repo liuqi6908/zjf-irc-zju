@@ -75,21 +75,10 @@ const desktopId = computed(() => {
     return desktopInfo.value[0].id
 })
 
-// function pllApi(url: string) {
-//   if (pollCount.value >= 4)
-//     return
-
-//   $http.get(url).then((res) => {
-//     if (res)
-//       return
-
-//     pollCount.value++
-//     setTimeout(pllApi(url), 1000)
-//   }).catch((err) => {
-//     console.error({ err })
-//     pollCount.value++
-//   })
-// }
+const userID = computed(() => {
+  if (userInfo.value)
+    return userInfo.value.id
+})
 
 async function startDesktop(id: string) {
   const res = await openDesktop(id)
@@ -115,6 +104,10 @@ function desktopSuccessNotify(message: string) {
   })
 }
 
+onMounted(() => {
+
+})
+
 onMounted(async () => {
   const deskStatus = await getOwnDesktopQuery()
 
@@ -129,20 +122,22 @@ onMounted(async () => {
   }
 
   const options = { ...baseOpts }
-  if (!userInfo.value) {
-    useGetProfile()
-    desktopInfo.value = []
-  }
-  else {
-    options.filters = [
-      {
-        field: 'user.id',
-        type: '=',
-        value: userInfo.value.id,
-      },
-    ]
-  }
 
+  let value = ''
+
+  await useGetProfile().finally(() => {
+    if (userInfo.value)
+      value = userInfo.value.id
+  })
+
+  options.filters = [
+    {
+      field: 'user.id',
+      type: '=',
+      value,
+    },
+  ]
+  // }
   const res = await desktopQueryList(options)
 
   if (res && res.data.length)
@@ -165,7 +160,7 @@ onMounted(async () => {
       field.value = `${vmInfo[item]}`
 
       vmInfoCol.value.push({
-        baseInfo: `${field.label} : ${field.value}`,
+        baseInfo: `<span>${field.label}:</span>  <span flex-1>${field.value}</span>`,
       })
     }
   }
@@ -192,6 +187,7 @@ onMounted(async () => {
 
       <div mt-20 flex="~ row gap-10">
         <DesktopTable
+          align="evenly"
           min-w-lg
           class="col-grow"
           :cols="desktopBaseCol"
@@ -201,11 +197,11 @@ onMounted(async () => {
       </div>
     </div>
     <div v-else flex="~ col items-center">
-      <Empty v-if="desktopStatus.laseRejected" label="您的申请已被驳回" />
-      <Empty v-else-if="desktopStatus.status === 'pending'" label="云桌面审核中" />
+      <Empty v-if="desktopStatus.status === 'pending'" label="云桌面审核中" />
+      <Empty v-else-if="desktopStatus.laseRejected" label="您的申请已被驳回" />
 
       <div v-if="desktopStatus.laseRejected" flex-center bg-grey-2>
-        <span text-grey-8>{{ desktopStatus.laseRejected }}</span>
+        <span>驳回理由：</span> <span text-grey-8>{{ desktopStatus.laseRejected }}</span>
       </div>
 
       <Btn mt-10 max-w-40 label="前往申请" @click="() => router.replace({ path: '/request' })" />

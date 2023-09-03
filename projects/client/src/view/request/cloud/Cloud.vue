@@ -46,7 +46,7 @@ async function fetchDesktopVm() {
   const detail = await getDesktopVmDetail(props.uuid)
   if (!detail) {
     stopPolling()
-    return false
+    return 'stop'
   }
 
   if (detail.CPU && detail.CPU.length) {
@@ -72,7 +72,7 @@ async function fetchDesktopVm() {
 watch(() => props.uuid, async (desktopId) => {
   if (desktopId) {
     const detail = await fetchDesktopVm()
-    if (!detail)
+    if (detail === 'stop')
       return
     startPolling()
   }
