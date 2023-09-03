@@ -51,7 +51,7 @@ async function pollApi(uuid?: string) {
 
   if (!res) {
     stopPolling()
-    return false
+    return 'stop'
   }
 
   if (res.CPUUtilization) {
@@ -87,7 +87,7 @@ watch(() => props.uuid, async (newUuid) => {
   if (newUuid) {
     const res = await pollApi(newUuid)
 
-    if (!res)
+    if (res === 'stop')
       return
 
     startPolling()

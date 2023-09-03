@@ -20,6 +20,9 @@ export const install: UserModule = ({ app, isClient }) => {
     },
     lang: quasarLang,
     iconSet: quasarIconSet,
+    config: {
+      dark: false,
+    },
   })
 }
 

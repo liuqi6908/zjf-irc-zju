@@ -16,12 +16,12 @@ defineEmits(['update:modelValue'])
     :label="label"
     :options="options"
     :model-value="modelValue"
-    popup-content-class="rounded-2 p-2"
+    popup-content-class="rounded-2 p-2 text-grey-8"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <template #selected-item="scope">
       <slot v-if="chip" :scope="scope" />
-      <div v-else>
+      <div v-else text-grey-8>
         {{ scope.opt.label }}
       </div>
     </template>

@@ -21,7 +21,6 @@ const route = useRoute()
       switch-toggle-side
       col-9
       max-w-lg
-      icon="perm_identity"
       lg:max-w-4xl sm:max-w-lg xl:max-w-5xl
       header-class="font-600 text-5 text-grayness-8"
       :label="nameZH"
@@ -44,7 +43,7 @@ const route = useRoute()
             :to="{ path: '/database/dataIntroduce', query: { dataId: i.id, rootId: route.query.database, reference, label: props.label } }"
             clickable rounded-0 text-nowrap text-grey-8 @click="$emit('update:id', i.id)"
           >
-            <q-item-section>
+            <q-item-section text-grey-8>
               <q-item-label lines="1">
                 {{ i.nameZH }}
               </q-item-label>

@@ -2,6 +2,7 @@
 interface Props {
   cols: Array<{ name: string; label: string }>
   rows?: Array<any>
+  align?: string
 }
 defineProps<Props>()
 </script>
@@ -18,9 +19,13 @@ defineProps<Props>()
     </tr>
 
     <tr v-for="(row, index) in rows" v-else :key="index">
-      <td v-for="(col, index) in cols" :key="index" text-grey-8>
-        {{ row[col.name] }}
-      </td>
+      <td
+        v-for="(col, index) in cols"
+        :key="index"
+        :class="align === 'evenly' ? 'row items-center' : ''"
+        text-grey-8
+        v-html="row[col.name]"
+      />
     </tr>
   </table>
 </template>
