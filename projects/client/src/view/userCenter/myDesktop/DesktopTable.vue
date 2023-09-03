@@ -8,7 +8,7 @@ defineProps<Props>()
 </script>
 
 <template>
-  <table min-w-80>
+  <table min-w-100>
     <tr bg-grey-2 px-4>
       <td v-for="(col, index) in cols" :key="index">
         {{ col.label }}

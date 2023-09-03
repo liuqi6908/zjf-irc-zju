@@ -160,7 +160,7 @@ onMounted(async () => {
       field.value = `${vmInfo[item]}`
 
       vmInfoCol.value.push({
-        baseInfo: `<span>${field.label}:</span>  <span flex-1>${field.value}</span>`,
+        baseInfo: `<span w-25 class="row">${field.label}:</span>  <span>${field.value}</span>`,
       })
     }
   }
@@ -187,6 +187,7 @@ onMounted(async () => {
 
       <div mt-20 flex="~ row gap-10">
         <DesktopTable
+          h-full
           align="evenly"
           min-w-lg
           class="col-grow"
