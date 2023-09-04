@@ -62,13 +62,15 @@ export class DataDirectory implements IDataDirectory {
 
   @ApiProperty({ description: '拥有查看权限的数据角色列表' })
   @ManyToMany(() => DataRole, role => role.viewDirectories, {
-    createForeignKeyConstraints: false,
+    // createForeignKeyConstraints: false,
+    onDelete: 'CASCADE',
   })
   viewDataRoles?: DataRole[]
 
   @ApiProperty({ description: '拥有下载权限的数据角色列表' })
   @ManyToMany(() => DataRole, role => role.downloadDirectories, {
-    createForeignKeyConstraints: false,
+    // createForeignKeyConstraints: false,
+    onDelete: 'CASCADE',
   })
   downloadDataRoles?: DataRole[]
 
