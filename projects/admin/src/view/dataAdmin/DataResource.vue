@@ -173,15 +173,13 @@ const tableData = computed(() => {
 
 const empty = computed(() => !props.dataBase?.length)
 
-onMounted(() => {
-  props.dataBase?.forEach((item) => {
-    fetchFileIsExist(item.nameEN)
-  })
-})
-// watch(() => props.describe, () => {
-//   console.log('describe')
-//   fetchAllFile()
-// })
+watch(() => props.dataBase, (database) => {
+  if (database && database.length) {
+    database?.forEach((item) => {
+      fetchFileIsExist(item.nameEN)
+    })
+  }
+}, { immediate: true })
 </script>
 
 <template>
