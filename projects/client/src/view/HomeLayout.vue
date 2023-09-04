@@ -48,7 +48,9 @@ const navList = [
     isRequest: false,
   },
 ]
+
 const nav = ref(navList[0].id)
+const userCenter = ref<{ clientX: number; clientY: number }>({ clientX: 0, clientY: 0 })
 
 const userList: Array<ItemList> = [
   {
@@ -73,11 +75,13 @@ onMounted(async () => {
   footerProps.value = await cmsProps('footer')
 })
 
-useEventListener(avatarRef, 'click', (e) => {
-  if (isToken.value)
+useEventListener(avatarRef, 'click', (e: PointerEvent) => {
+  if (isToken.value) {
+    userCenter.value.clientX = e.clientX - 60
+    userCenter.value.clientY = e.clientY + 40
     userDropdown.value = !userDropdown.value
-  else
-    router.replace({ path: '/auth/login' })
+  }
+  else { router.replace({ path: '/auth/login' }) }
 })
 
 useEventListener(document, 'click', (e) => {
@@ -119,7 +123,12 @@ useEventListener(document, 'click', (e) => {
             </div>
           </Avatar>
 
-          <q-list v-if="userDropdown" id="userDropdown" v-close-popup absolute right-3 top-20 z-999 bg-grey-1 p-2 filter-drop-shadow>
+          <q-list
+            v-if="userDropdown" id="userDropdown"
+
+            absolute z-999 bg-grey-1 p-2 filter-drop-shadow
+            :style="{ left: `${userCenter.clientX}px`, top: `${userCenter.clientY}px` }"
+          >
             <NavItem
               v-for="u in userList"
               :id="u.id"

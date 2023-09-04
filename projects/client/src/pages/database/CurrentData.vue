@@ -11,29 +11,29 @@ const route = useRoute()
 
 const { getDataByRootId, databaseTab, loading } = useDataBase()
 
-const tabb = ref('')
+const currentTab = ref('')
 
 const tab = computed({
   get: () => {
     if (databaseTab.value.length)
-      tabb.value = tabb.value || databaseTab.value[0].id
-    return tabb.value
+      currentTab.value = currentTab.value || databaseTab.value[0].nameEN as string
+    return currentTab.value
   },
   set: (val) => {
-    tabb.value = val
+    currentTab.value = val
   },
 })
-
-watch(() => props.initDatabase, async (database) => {
-  if (database)
-    await getDataByRootId(database)
-})
-
 const list = computed(() => {
   if (databaseTab.value) {
     const res = databaseTab.value.find(i => i.id === tab.value)
     return res
   }
+})
+
+watch(() => props.initDatabase, (database) => {
+  if (!database)
+    return
+  getDataByRootId(database)
 })
 </script>
 
