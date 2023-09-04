@@ -135,18 +135,15 @@ onBeforeMount(() => {
 watch([tab, midTable], async ([newTab, newMid]) => {
   if (newMid)
     await uploadFile((newTab as DataRoot), newMid)
-  const isRequest = currentTabObj.value?.isRequest
 
   tab.value = newTab
 
-  if (!newTab || isRequest)
+  if (!newTab)
     return
 
   const res = await getDataByRootId(newTab as DataRoot)
-  if (res && currentTabObj.value) {
+  if (res && currentTabObj.value)
     currentTabObj.value.data = res
-    currentTabObj.value.isRequest = true
-  }
 })
 
 watch(describe, async (newDescribe) => {
