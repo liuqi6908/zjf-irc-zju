@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { AUTH_TOKEN_KEY } from 'shared/constants'
-import Tabs from 'shared/component/base/tab/Tabs.vue'
-import { useEventListener } from '@vueuse/core'
+import { objectPick, useEventListener } from '@vueuse/core'
 import type { ItemList } from '~/components/nav/NavItem.vue'
 
 import { useCms } from '~/composables/useCms'
@@ -132,7 +131,15 @@ useEventListener(document, 'click', (e) => {
             </q-list>
           </div>
         </q-toolbar>
-        <Tabs v-model="nav" :tab-list="navList" />
+        <q-tabs v-model="nav" class="home-layout-tabs" text-bold>
+          <q-route-tab
+            v-for="tab in navList"
+            :key="tab.id"
+            v-bind="objectPick(tab, ['to'])"
+          >
+            <span text-16px font-bold text-primary-1>{{ tab.label }}</span>
+          </q-route-tab>
+        </q-tabs>
       </q-header>
 
       <q-page-container bg-grey-2>
@@ -157,4 +164,18 @@ useEventListener(document, 'click', (e) => {
 .nav-Br {
   border-radius:0.5rem 0 0 0.5rem ;
 }
+</style>
+
+<style lang="sass">
+.home-layout-tabs
+  .q-tab__indicator
+    padding: 0 18px
+    background: none
+    height: 4px
+    &::after
+      display: block
+      content: ''
+      width: 100%
+      height: 100%
+      background: #F99E34
 </style>
