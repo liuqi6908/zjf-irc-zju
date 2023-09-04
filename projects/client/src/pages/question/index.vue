@@ -51,7 +51,7 @@ watch(() => route.name, async () => {
       </div>
     </header>
     <div class="col-grow" mt-15 flex-center>
-      <div max-w-4xl min-h-4xl>
+      <div max-w-6xl min-h-4xl>
         <component :is="currCompontnt()" v-if="comProps && comProps.length" :list="comProps" />
       </div>
     </div>

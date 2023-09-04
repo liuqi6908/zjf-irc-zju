@@ -3,16 +3,17 @@ import { cmsConfig } from 'shared/constants/cms.constant'
 import { getCms } from '~/api/cms/getCms'
 import { useCms } from '~/composables/useCms'
 
-// const cmsList = reactive<Array<ICms>>([])
 const cmsId = ref('home')
 const homeList = ref([])
-const questionProps = ref([])
+const questionProps = ref<[{ title: string; svg: string; richText: string }]>()
 const route = useRoute()
 const { cmsProps } = useCms()
 
-function currCompontnt(id: string) {
+function currCom(id: string) {
   const list = cmsConfig.find(i => i.id === cmsId.value)?.children
-  return list?.find(i => i.id === id).component
+  const item = list?.find(i => i.id === id)
+  if (item)
+    return item.component
 }
 const comProps = computed(() => (currId: string) => {
   const json: any[] = []
@@ -22,7 +23,7 @@ const comProps = computed(() => (currId: string) => {
       return
     const jsons = clone.json
     if (jsons && json) {
-      jsons.forEach((item, index) => {
+      jsons.forEach((item: any, index: number) => {
         json.push({
           name: `silder${index}`,
           content: item.content,
@@ -53,16 +54,16 @@ watch(() => route.name, async () => {
 
 <template>
   <div>
-    <component :is="currCompontnt('homeCarousel')" v-if="comProps('homeCarousel') && comProps('homeCarousel')?.length && currCompontnt('homeCarousel')" :list="comProps('homeCarousel')" />
+    <component :is="currCom('homeCarousel')" v-if="comProps('homeCarousel') && comProps('homeCarousel')?.length && currCom('homeCarousel')" :list="comProps('homeCarousel')" />
 
-    <component :is="currCompontnt('homeDataIntroduce')" v-if="comProps('homeDataIntroduce') && comProps('homeDataIntroduce')?.length" :list="comProps('homeDataIntroduce')" />
+    <component :is="currCom('homeDataIntroduce')" v-if="comProps('homeDataIntroduce') && comProps('homeDataIntroduce')?.length" :list="comProps('homeDataIntroduce')" />
 
     <div flex-center>
       <div grid my-20 max-w-4xl gap-12 lg:grid-cols-1 xl:grid-cols-2>
         <RouterLink
           v-for="(item, index) in questionProps"
           :key="index"
-          to="/question"
+          :to="{ path: '/question', query: { title: item.title, index } }"
         >
           <DisplayCard
             v-bind="{ ...item }"
