@@ -93,9 +93,10 @@ watch(model, async (newModel) => {
 
     <div v-if="!isVerification" flex="~ col items-center" full min-h-4xl bg-grey-1 pt-32>
       <EmptyVeri label="您还未进行身份认证" captions="用户认证通过后，才能申请云桌面" />
+      <!-- <div> -->
       <Btn
-        mt-10
-        min-w-50
+
+        mt-10 max-h-8 min-w-50
         label="前往认证"
         @click="verificationDialog = true"
       >
@@ -103,6 +104,7 @@ watch(model, async (newModel) => {
           <div i-material-symbols:arrow-forward />
         </template>
       </Btn>
+      <!-- </div> -->
     </div>
 
     <div v-else>
