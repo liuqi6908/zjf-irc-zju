@@ -159,6 +159,7 @@ function notify(judge: any, event?: any) {
   <div>
     <q-table
       flat
+      :rows-per-page-options="[50, 60, 70]"
       bordered
       :rows="rows"
       :columns="columns"

@@ -17,6 +17,7 @@ const props = defineProps<Props>()
 const emits = defineEmits(['update:rows', 'update:search'])
 
 const rowsRef = ref<Array<any>>([])
+const pagination = ref({ rowsPerPage: 50 })
 
 const $q = useQuasar()
 
@@ -81,7 +82,10 @@ defineExpose({
 </script>
 
 <template>
-  <q-table :rows="rows" :columns="cols" :loading="loading">
+  <q-table
+    :rows-per-page-options="[50, 60, 70]"
+    :rows="rows" :columns="cols" :loading="loading"
+  >
     <template #top-left>
       <div w-full flex="~ row justify-between">
         <q-btn v-if="operation?.includes('addRows')" label="增加一项" push color="primary-1" @click="addRow" />

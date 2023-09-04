@@ -1,5 +1,5 @@
 <template >
-    <div flex="~ row justify-center" p-25 text-grey-1  style="background-color: #001020;">
+    <div flex="~ row justify-center" p-25 text-grey-1 w-full  style="background-color: #001020;">
       <div v-for="(item,index) in list" :key="index" mx-10 flex="~ row">
         <div v-if="index!==0" py-10 h-full w-0.25 class="border-color"  />
         <div flex="~ col" ml-15>

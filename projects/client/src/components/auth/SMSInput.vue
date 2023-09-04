@@ -63,7 +63,7 @@ watch(() => props.smsCode, () => {
           hover:bg="white/30"
           label="发送验证码"
           cursor-pointer px2 py1 text-sm text-white
-          @click="() => !validate ? null : getCode()"
+          @click="() => validate ? null : getCode()"
         >
           发送验证码
         </div>
