@@ -6,7 +6,7 @@ const allListProps = ref([])
 const listProps = ref([])
 
 export function useCms() {
-  const currComponent = (pId: string, id: string) => {
+  const currComponent = (pId: string, id: string): any => {
     const children = cmsConfig.find(i => i.id === pId)?.children
     const cmsObj = children?.find(i => i.id === id)
     if (cmsObj)

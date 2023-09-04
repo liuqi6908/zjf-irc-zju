@@ -9,10 +9,10 @@ const router = useRouter()
 
 const { cmsProps, currComponent } = useCms()
 
-const qandShow = ref(false)
+const showQAndA = ref(false)
 const userDropdown = ref(false)
-const footerProps = ref([])
-const AvatarRef = ref<HTMLElement>()
+const footerProps = ref<any[]>([])
+const avatarRef = ref<any>()
 
 /** hooks */
 const { userInfo, useGetProfile, useLogout } = useUser()
@@ -73,7 +73,7 @@ onMounted(async () => {
   footerProps.value = await cmsProps('footer')
 })
 
-useEventListener(AvatarRef, 'click', (e) => {
+useEventListener(avatarRef, 'click', (e) => {
   if (isToken.value)
     userDropdown.value = !userDropdown.value
   else
@@ -81,7 +81,7 @@ useEventListener(AvatarRef, 'click', (e) => {
 })
 
 useEventListener(document, 'click', (e) => {
-  if (!AvatarRef.value?.$el.contains(e.target))
+  if (!avatarRef.value?.$el.contains(e.target))
     userDropdown.value = false
 })
 
@@ -92,45 +92,47 @@ useEventListener(document, 'click', (e) => {
   <main
     full
     text="center"
+    flex="~ col" items-center
   >
-    <q-layout container view="lHh lpr lFf">
-      <q-header bg-white>
-        <q-toolbar flex="~ row justify-between items-center">
-          <div mx-8 my-4 flex="~ row">
-            <img mr-2 h-6 src="../assets/layout/cloud.png">
+    <div w-limited-1 bg-white>
+      <div flex="~ row justify-between items-center">
+        <div mx-8 my-4 flex="~ row">
+          <img mr-2 h-6 src="../assets/layout/cloud.png">
+          <div>
+            <span text-xl font-600 text-primary-1>
+              智能云科研平台 |
+            </span>
+            <span text-primary-1>CloudResearch</span>
+          </div>
+          <!-- <Icon text-grey-8 icon="mdi-light:home" /> -->
+        </div>
+
+        <div flex flex-row items-center text-primary-1>
+          <Avatar
+            ref="avatarRef"
+            flex="~ row gap-2 items-center"
+            :avatar-url="userInfo?.avatar"
+            :nickname="userInfo?.account"
+          >
             <div>
-              <span text-xl font-600 text-primary-1>
-                智能云科研平台 |
-              </span>
-              <span text-primary-1>CloudResearch</span>
+              {{ isToken ? '' : '登录' }}
             </div>
-            <!-- <Icon text-grey-8 icon="mdi-light:home" /> -->
-          </div>
+          </Avatar>
 
-          <div flex flex-row items-center text-primary-1>
-            <Avatar
-              ref="AvatarRef"
-              flex="~ row gap-2 items-center"
-              :avatar-url="userInfo?.avatar"
-              :nickname="userInfo?.account"
-            >
-              <div>
-                {{ isToken ? '' : '登录' }}
-              </div>
-            </Avatar>
-
-            <q-list v-if="userDropdown" id="userDropdown" v-close-popup absolute right-3 top-20 z-999 bg-grey-1 p-2 filter-drop-shadow>
-              <NavItem
-                v-for="u in userList"
-                :id="u.id"
-                :key="u.id"
-                :click-event="u.clickEvent"
-                :back="u.back"
-                :name="u.name"
-              />
-            </q-list>
-          </div>
-        </q-toolbar>
+          <q-list v-if="userDropdown" id="userDropdown" v-close-popup absolute right-3 top-20 z-999 bg-grey-1 p-2 filter-drop-shadow>
+            <NavItem
+              v-for="u in userList"
+              :id="u.id"
+              :key="u.id"
+              :click-event="u.clickEvent"
+              :back="u.back"
+              :name="u.name"
+            />
+          </q-list>
+        </div>
+      </div>
+      <!-- Navigation -->
+      <div flex="~" mb4 w-full justify-center border-b-1 border-b-grey-3>
         <q-tabs v-model="nav" class="home-layout-tabs" text-bold>
           <q-route-tab
             v-for="tab in navList"
@@ -140,23 +142,24 @@ useEventListener(document, 'click', (e) => {
             <span text-16px font-bold text-primary-1>{{ tab.label }}</span>
           </q-route-tab>
         </q-tabs>
-      </q-header>
+      </div>
+    </div>
 
-      <q-page-container bg-grey-2>
-        <q-page>
-          <ZDialog
-            v-model="qandShow"
-            title="常见问题解答(Q&A)"
-          >
-            <!-- <RectAngleCardSection title="国外，境外手机号注册" content="sdkhasgdjhasd<br/>skdhgakhjdkjh" /> -->
-          </ZDialog>
-          <slot />
-          <!-- <RouterView /> -->
-        </q-page>
-      </q-page-container>
+    <div w-full>
+      <ZDialog
+        v-model="showQAndA"
+        title="常见问题解答(Q&A)"
+      >
+        <!-- <RectAngleCardSection title="国外，境外手机号注册" content="sdkhasgdjhasd<br/>skdhgakhjdkjh" /> -->
+      </ZDialog>
+      <slot />
+      <!-- <RouterView /> -->
+    </div>
 
-      <component :is="currComponent('home', 'footer')" v-if="footerProps && footerProps.length" :list="footerProps " />
-    </q-layout>
+    <component
+      :is="currComponent('home', 'footer')"
+      v-if="footerProps && footerProps.length" :list="footerProps "
+    />
   </main>
 </template>
 

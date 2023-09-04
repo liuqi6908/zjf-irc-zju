@@ -12,7 +12,8 @@ import {
 export default defineConfig({
   shortcuts: [
     ['full', 'w-full h-full'],
-    ['flex-center', 'flex items-center justify-center']
+    ['flex-center', 'flex items-center justify-center'],
+    ['w-limited-1', 'w-full max-w-1220px mx-auto']
   ],
   rules: [
     [/^title-(\d+)$/, ([_, size]) => ({
