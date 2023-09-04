@@ -52,7 +52,7 @@ export function useDataBase() {
 
         tabs.push({
           label: item.nameZH,
-          id: item.id,
+          id: item.nameEN,
           children: item.children,
           nameEN: item.nameEN,
           isRequest: false,

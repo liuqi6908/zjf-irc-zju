@@ -35,13 +35,21 @@ const route = useRoute()
         :content-inset-level="2"
         header-class="font-600 text-4 text-grayness-8"
       >
-        <div col-grow sm:grid-col-2 grid gap-1 lg:grid-cols-3 xl:grid-cols-4>
+        <div
+          v-if="child.children"
+          :class="child.children.length < 3 ? 'lg:grid-cols-2 sm:grid-cols-1' : 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'"
+          grid gap-1
+        >
           <q-item
             v-for="i in child.children"
             :key="i.nameZH"
             v-ripple
             :to="{ path: '/database/dataIntroduce', query: { dataId: i.id, rootId: route.query.database, reference, label: props.label } }"
-            clickable rounded-0 text-nowrap text-grey-8 @click="$emit('update:id', i.id)"
+            clickable
+            rounded-0
+            text-nowrap
+            class="col-grow"
+            text-grey-8 @click="$emit('update:id', i.id)"
           >
             <q-item-section text-grey-8>
               <q-item-label lines="1">
