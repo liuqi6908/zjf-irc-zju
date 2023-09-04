@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
+import { watch } from 'vue'
 
 interface Item {
   nameZH: string
@@ -25,26 +26,29 @@ function updateId(item: Item) {
   item.clicked = true
   emits('update:currentId', item.id)
 }
-onMounted(() => {
-  const itemToClick = props.list.find(item => item.id === props.currentId)
-  if (!itemToClick)
+
+watch(() => props.currentId, (id) => {
+  if (!id)
     return
-  updateId(itemToClick)
-  // if (itemToClick.router)
-  //   router.push(itemToClick.router)
-})
+  const itemToClick = props.list.find(item => item.id === id)
+  updateId(itemToClick || props.list[0])
+}, { immediate: true })
 </script>
 
 <template>
-  <q-list text-grey-8>
+  <q-list flex="~ col" gap-1 text-grey-8>
     <q-item
       v-for="item in list"
       :key="item.id"
       :to="item.router"
       flex="~ col justify-center"
-      clickable font-600
       :active="item.clicked || false"
-      active-class="text-primary-1 bg-grey-2"
+      :class="{
+        'text-grey-#292D36': !item.clicked,
+        'text-primary-1': item.clicked,
+      }"
+      clickable max-w-200px px-16px py-10px text-left text-nowrap font-600
+      active-class="bg-grey-2"
       @click="updateId(item)"
     >
       {{ item. nameZH }}
@@ -52,6 +56,6 @@ onMounted(() => {
   </q-list>
 </template>
 
-<style lang="">
+<style lang="sass" scoped>
 
 </style>

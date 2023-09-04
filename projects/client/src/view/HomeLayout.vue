@@ -158,7 +158,8 @@ useEventListener(document, 'click', (e) => {
 
     <component
       :is="currComponent('home', 'footer')"
-      v-if="footerProps && footerProps.length" :list="footerProps "
+      v-if="footerProps && footerProps.length"
+      w-full :list="footerProps "
     />
   </main>
 </template>
