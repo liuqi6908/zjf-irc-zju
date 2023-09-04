@@ -4,19 +4,21 @@ interface Props {
   svg: string
   richText: string
 }
-defineProps<Props>()
+const props = defineProps<Props>()
 function htmlDecodeByRegExp(htmlStr: string) {
   return htmlStr.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi, '').replace(/<[^>]+?>/g, '').replace(/\s+/g, ' ').replace(/ /g, ' ').replace(/&ldquo;/g, ' ').replace(/&rdquo;/g, ' ')
     .replace(/&nbsp;/ig, '')
     .replace(/>/g, ' ')
 }
+// onMounted(() => {
+//   console.log(props.svg)
+// })
 </script>
 
 <template>
   <div border-rd-3 p-x-10 p-b-6 p-t-12 flex="~ col items-center">
-    <div class="card-icon" h-12 w-12 flex-center>
-      <div text-primary-1 v-html="svg" />
-    </div>
+    <div class="card-icon" h-12 w-12 flex-center p-2 text-primary-1 v-html="svg" />
+
     <div my-3 text-5 font-600 text-grey-8>
       {{ title }}
     </div>
@@ -31,5 +33,9 @@ function htmlDecodeByRegExp(htmlStr: string) {
 .card-icon {
     background: rgba(2, 92, 185, 0.08);
     border-radius: 50% !important;
+         svg {
+            width: 1.5rem !important;
+            height: 1.5rem !important;
+        }
 }
 </style>
