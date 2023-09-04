@@ -41,6 +41,8 @@ export function dataCsvParser(arr: Array<{
       ORDER_COLUMN,
     } = el
 
+    const ORDER = Number(ORDER_COLUMN) || 1
+
     if (!DATABASE_ENG || !B_DATABASE_ENG || !PART_ENG || !TABLE_ENG || !VARIABLE_ENG)
       return
 
@@ -52,7 +54,7 @@ export function dataCsvParser(arr: Array<{
         nameEN: DATABASE_ENG,
         nameZH: DATABASE,
         level: 1,
-        order: Number(ORDER_COLUMN),
+        order: ORDER,
         parentId: rootId,
         rootId,
         path: [rootId, id],
@@ -69,7 +71,7 @@ export function dataCsvParser(arr: Array<{
         nameEN: B_DATABASE_ENG,
         nameZH: B_DATABASE,
         level: 2,
-        order: Number(ORDER_COLUMN),
+        order: ORDER,
         parentId: databases[DATABASE_ENG].id,
         rootId,
         path: [rootId, databases[DATABASE_ENG].id, id],
@@ -86,7 +88,7 @@ export function dataCsvParser(arr: Array<{
         nameEN: PART_ENG,
         nameZH: PART,
         level: 3,
-        order: Number(ORDER_COLUMN),
+        order: ORDER,
         parentId: bDatabase[B_DATABASE_ENG].id,
         rootId,
         path: [rootId, databases[DATABASE_ENG].id, bDatabase[B_DATABASE_ENG].id, id],
@@ -104,7 +106,7 @@ export function dataCsvParser(arr: Array<{
         nameEN: TABLE_ENG,
         nameZH: TABLE,
         level: 4,
-        order: Number(ORDER_COLUMN),
+        order: ORDER,
         parentId: part[PART_ENG].id,
         rootId,
         path: [rootId, databases[DATABASE_ENG].id, bDatabase[B_DATABASE_ENG].id, part[PART_ENG].id, id],
