@@ -10,7 +10,7 @@ interface Props {
 const props = defineProps<Props>()
 const data = reactive({
   cpu: [{ value: [], time: [], label: '使用率' }],
-  storage: [{ value: [], time: [], label: '负载率' }],
+  storage: [{ value: [], time: [], label: '磁盘' }],
   disk: [{ value: [], time: [] }],
   network: [{ value: [], time: [], label: '上行' }, { value: [], time: [], label: '下行' }],
 })
@@ -31,6 +31,7 @@ function stopPolling() {
   clearInterval(pollingInterval.value)
   pollingInterval.value = null
 }
+
 function processData(dataArray, property: string) {
   if (dataArray && dataArray.length) {
     return dataArray.map((item) => {
@@ -42,6 +43,7 @@ function processData(dataArray, property: string) {
   }
   return []
 }
+
 async function fetchDesktopVm() {
   const detail = await getDesktopVmDetail(props.uuid)
   if (!detail) {
@@ -67,6 +69,22 @@ async function fetchDesktopVm() {
   if (detail.NetworkOut && detail.NetworkOut.length) {
     data.network[1].value = processData(detail.NetworkOut, 'value')
     data.network[1].time = processData(detail.NetworkOut, 'time')
+  }
+
+  if (detail.Disk && detail.Disk.length) {
+    data.disk[0].value = processData(detail.Disk, 'value')
+    data.disk[0].time = processData(detail.Disk, 'time')
+  }
+
+  if (detail.memUsed && detail.memUsed.length) {
+    data.storage[0].value = detail.memUsed.map((item: any) => {
+      const { value } = item
+      return Number(value) * 100
+    })
+    data.storage[0].time = detail.memUsed.map((item: any) => {
+      const { time } = item
+      return time
+    })
   }
 }
 watch(() => props.uuid, async (desktopId) => {
@@ -94,6 +112,14 @@ onBeforeUnmount(() => {
 
     <div flex="~ row justify-center" w-full>
       <LineEchartsCard :data="data.network" title="网卡读取速率" unit="kb" legend />
+    </div>
+
+    <div flex="~ row justify-center" w-full>
+      <LineEchartsCard :data="data.storage" title="磁盘" unit="%" legend />
+    </div>
+
+    <div flex="~ row justify-center" w-full>
+      <LineEchartsCard :data="data.disk" title="网卡读取速率" unit="kb" legend />
     </div>
   </DesktopTable>
 </template>

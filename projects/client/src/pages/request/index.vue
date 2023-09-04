@@ -159,11 +159,10 @@ watch(model, async (newModel) => {
           <header v-if="model && desktopList" mb-10>
             <q-btn-toggle
               v-model="model"
-
               unelevated no-caps spread rounded-0
               toggle-color="primary-1"
-              color="white"
-              text-color="black"
+              :flat="desktopList.length === 1 ? true : false"
+              text-color="primary-1"
               :options="desktopList"
             />
           </header>

@@ -16,6 +16,10 @@ const cpuList = reactive({
     used: 0,
     total: 0,
   },
+  disk: {
+    used: 0,
+    total: 0,
+  },
 })
 /** 定时器的引用 */
 const pollingInterval = ref()
@@ -25,13 +29,17 @@ async function fetchDEsktopCpu(uuid?: string) {
 
   if (!res) {
     stopPolling()
-    return false
+    return 'stop'
   }
+
   cpuList.cpu.used = Number(res.CPUUsedCount[0].value)
   cpuList.cpu.total = cpuList.cpu.used + Number(res.CPUAvailableCount[0].value)
 
   cpuList.storage.used = Number(res.memUsed[0].value)
   cpuList.storage.total = cpuList.storage.used + Number(res.memAvailable[0].value)
+
+  cpuList.disk.used = Number(res.diskUsed[0].value)
+  cpuList.disk.total = cpuList.storage.used + Number(res.diskTotal[0].value)
 }
 
 function startPolling() {
@@ -51,7 +59,7 @@ onBeforeUnmount(() => {
 watch(() => props.uuid, async (val) => {
   if (val) {
     const res = await fetchDEsktopCpu(val)
-    if (!res)
+    if (res === 'stop')
       return
     startPolling()
   }
@@ -63,7 +71,7 @@ watch(() => props.uuid, async (val) => {
     <RoundEchartsCard class="col-grow" title="CPU已分配率" :value="cpuList.cpu" color="#025CB9" />
     <RoundEchartsCard unit="GB" class="col-grow" title="内存已分配率" :value="cpuList.storage" color="#F99E34" />
 
-    <!-- <RoundEchartsCard class="col-grow" title="内存已分配率" :value="storagePercent" color="#F99E34" /> -->
+    <RoundEchartsCard class="col-grow" title="主内存已分配率" :value="cpuList.disk" color="#F99E34" />
   </div>
 </template>
 

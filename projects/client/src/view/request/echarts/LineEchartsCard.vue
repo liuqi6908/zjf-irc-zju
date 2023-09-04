@@ -54,6 +54,7 @@ function fromatterLegend(color: string, data: []) {
     const name = cloneData.find(i => i.name === label)?.label
 
     label = `${Number(label).toFixed(2)}${props.unit}`
+
     return `{fontStyle|${name}}{numStyle|${label}}`
   }
 

@@ -14,6 +14,7 @@ declare module 'vue' {
     DropZone: typeof import('./components/file/DropZone.vue')['default']
     EmailEditDialog: typeof import('./components/dialog/EmailEditDialog.vue')['default']
     Empty: typeof import('./components/empty/Empty.vue')['default']
+    EmptyCloud: typeof import('./components/empty/EmptyCloud.vue')['default']
     EmptyData: typeof import('./components/empty/EmptyData.vue')['default']
     EmptyVeri: typeof import('./components/empty/EmptyVeri.vue')['default']
     NavItem: typeof import('./components/nav/NavItem.vue')['default']
