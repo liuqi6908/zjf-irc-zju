@@ -10,14 +10,19 @@ import { resetApply } from '~/api/verification/resetApply'
 import { getVerifyFileUrl } from '~/api/file/getVerifyFile'
 
 export interface Rows {
-  user: string
-  name: string
-  email: string
-  unit: string
-  identify: string
-  registerTime: string
-  verifyTime: string
-  attachments: []
+  user?: string
+  name?: string
+  email?: string
+  unit?: string
+  identify?: string
+  registerTime?: string
+  verifyTime?: string
+  attachments?: []
+  college?: string
+  id?: string
+  idCard?: string
+  school?: string
+  founderId?: string
   handle?: '重置' | '通过/驳回' | '通过'
 }
 
@@ -61,6 +66,13 @@ const columns = [
     align: 'left',
     label: '注册时间',
     field: 'registerTime',
+    required: true,
+  },
+  {
+    name: 'idCard',
+    align: 'left',
+    label: '身份证',
+    field: 'idCard',
     required: true,
   },
   { name: 'verifyTime', align: 'left', label: '认证时间', field: 'verifyTime', required: true },
@@ -204,8 +216,8 @@ function notify(judge: any, event?: any) {
         </header>
 
         <q-card-section flex flex-col gap-10>
-          <div v-if="(clickedRow.attachments.length === 0)">
-            没有数据
+          <div v-if="!clickedRow.attachments || !clickedRow.attachments.length">
+            没有图片
           </div>
           <div v-for="(url, index) in clickedRow.attachmentsList" v-else :key="index" min-w-lg flex="~ row">
             <q-img

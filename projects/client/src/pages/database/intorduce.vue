@@ -8,8 +8,9 @@ const docHtml = ref('')
 
 /** 解析 */
 function parseDocFile(fileData: ArrayBuffer) {
-  const unit8Arr = new Uint8Array(fileData)
-  mammoth.convertToHtml({ arrayBuffer: unit8Arr }).then((res) => {
+  // const unit8Arr = new Uint8Array(fileData)
+  // console.log({ fileData })
+  mammoth.convertToHtml({ arrayBuffer: fileData }).then((res) => {
     const html = res.value
     docHtml.value = html
   }).catch((err) => {
@@ -29,7 +30,7 @@ function downloadDoc(url: string) {
 }
 watch(() => route.query,
   async (query) => {
-    url.value = getDataDescribe(query.rootId, `${query.nameEN}.doc`)
+    url.value = getDataDescribe(query.rootId, `${query.nameEN}.docx`)
     downloadDoc(url.value)
   }, { immediate: true },
 )
