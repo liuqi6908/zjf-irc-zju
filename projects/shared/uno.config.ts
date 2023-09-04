@@ -13,7 +13,7 @@ export default defineConfig({
   shortcuts: [
     ['full', 'w-full h-full'],
     ['flex-center', 'flex items-center justify-center'],
-    ['w-limited-1', 'w-full max-w-1220px mx-auto']
+    ['w-limited-1', 'w-full max-w-1284px px8 mx-auto']
   ],
   rules: [
     [/^title-(\d+)$/, ([_, size]) => ({

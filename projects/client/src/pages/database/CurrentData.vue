@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import Tabs from 'shared/component/base/tab/Tabs.vue'
 import Tree from '~/components/tree/Tree.vue'
 import EmptyData from '~/components/empty/EmptyData.vue'
 
@@ -40,13 +39,30 @@ const list = computed(() => {
 
 <template>
   <div
-    full max-w-250 min-h-3xl flex="~ row" class="col-grow"
+    full max-w-250 min-h-3xl flex="~ col" class="col-grow"
   >
     <div v-if="!databaseTab || !databaseTab.length" mt-20 full>
       <EmptyData label="暂无数据" />
     </div>
 
-    <Tabs v-else v-model="tab" align="left" :text-style="{ color: '#292D36' }" class="col-6" :tab-list="databaseTab">
+    <div v-else w-full>
+      <div flex="~" w-full items-start gap-2>
+        <DbTabs
+          v-model="tab"
+          w0
+          flex="~ 1"
+          :items="databaseTab"
+        />
+        <q-item flex-center pr0>
+          <router-link
+            :to="{ path: '/database/intorduce', query: { rootId: route.query.database, nameEN: list?.nameEN } }"
+            shrink-0 text-nowrap text-primary-1
+          >
+            查看数据库介绍
+          </router-link>
+        </q-item>
+      </div>
+
       <div v-if="list?.children">
         <Tree
           v-for="item in list.children"
@@ -59,15 +75,7 @@ const list = computed(() => {
           :label="route.query.label"
         />
       </div>
-      <template #right>
-        <span
-          mt-4 w-xs cursor-pointer text-primary-1
-          @click="() => $router.push({ path: '/database/intorduce', query: { rootId: route.query.database, nameEN: list?.nameEN } })"
-        >
-          查看数据库介绍
-        </span>
-      </template>
-    </Tabs>
+    </div>
   </div>
 </template>
 

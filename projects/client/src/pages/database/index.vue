@@ -46,7 +46,7 @@ const empty = computed(() => !rootData.value.length || !rootData.value)
     >
       <SliderList :list="rootData" :current-id="databaseId" router @update:current-id="(id) => databaseId = id" />
 
-      <div min-w-4xl flex-center>
+      <div flex="1" w0 flex-center>
         <q-spinner
           v-if="loading"
           color="primary-1"

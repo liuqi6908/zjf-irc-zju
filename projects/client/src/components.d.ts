@@ -10,6 +10,7 @@ declare module 'vue' {
     Avatar: typeof import('./components/avatar/Avatar.vue')['default']
     Btn: typeof import('./components/btn/Btn.vue')['default']
     ChangeInput: typeof import('./components/user/ChangeInput.vue')['default']
+    DbTabs: typeof import('./components/tabs/db-tabs.vue')['default']
     DisplayCard: typeof import('./components/card/DisplayCard.vue')['default']
     DropZone: typeof import('./components/file/DropZone.vue')['default']
     EmailEditDialog: typeof import('./components/dialog/EmailEditDialog.vue')['default']
