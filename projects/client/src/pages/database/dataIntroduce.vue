@@ -50,6 +50,8 @@ const previewTableData = computed(() => {
   }
 })
 
+const isPurchased = computed(() => route.query.label?.includes('预购'))
+
 onBeforeMount(async () => {
   loading.value = true
 
@@ -117,12 +119,12 @@ async function confirmRequest() {
     <span mt-6 text-primary-1>引用规范：{{ route.query.reference || '暂无引用规范' }}</span>
 
     <div flex="~ row gap-5" my-10>
-      <Btn v-if="!isClient" outline label="数据申请使用" @click="requestDesktop = true" />
-      <a v-else :href="downloadUrl" download="数据库">
+      <Btn v-if="!isClient && !isPurchased" outline label="数据申请使用" @click="requestDesktop = true" />
+      <a v-else-if="!isPurchased" :href="downloadUrl" download="数据库">
         <Btn label="数据下载" />
       </a>
 
-      <btn v-if="route.query.label?.includes('预购')" label="建议采购" @click="openDialog()" />
+      <btn v-if="isPurchased" label="建议采购" @click="openDialog()" />
     </div>
 
     <!-- <BaseTable /> -->

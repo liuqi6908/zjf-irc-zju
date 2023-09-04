@@ -72,6 +72,7 @@ async function queryLogData(props: any) {
     let dsl = '${status} = 0'
     if (filter)
       dsl += ` AND \${user.account} HAS '${filter}'`
+
     const { total, records } = await $post('/log/data/query/dsl', {
       page,
       pageSize: rowsPerPage,
