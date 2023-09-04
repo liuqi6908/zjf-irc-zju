@@ -78,6 +78,8 @@ export class DataDirectory implements IDataDirectory {
   path?: string[]
 
   @ApiProperty({ description: '用户发起的建议' })
-  @OneToMany(() => DataSuggestion, sug => sug.dataDirectory)
+  @OneToMany(() => DataSuggestion, sug => sug.dataDirectory, {
+    onDelete: 'CASCADE',
+  })
   suggestions?: DataSuggestion[]
 }

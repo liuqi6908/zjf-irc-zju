@@ -14,7 +14,10 @@ export class DataSuggestion implements IDataSuggestion {
   id: string
 
   @ApiProperty({ description: '建议的数据目录信息' })
-  @ManyToOne(() => DataDirectory, dir => dir.suggestions, { eager: true })
+  @ManyToOne(() => DataDirectory,
+    dir => dir.suggestions,
+    { eager: true, onDelete: 'CASCADE' },
+  )
   dataDirectory: DataDirectory
 
   @ApiProperty({ description: '建议的数据目录 id' })
