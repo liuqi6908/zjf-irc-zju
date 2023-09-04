@@ -96,6 +96,7 @@ async function queryAllList() {
       attachments: data.attachments,
       handle: handleField(tab.value),
       id: data.id,
+      idCard: data.idCard,
       founderId: data.founderId,
     })
   })

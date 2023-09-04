@@ -5,7 +5,7 @@ import { getUrlByToken } from './getUriByToken'
 const { $put } = useRequest()
 /** filename 为DATABASE_ENG + .doc */
 export function getDataDescribe(dataRootId: DataRoot, filename: string) {
-  return getUrlByToken(`/file/private/db/${dataRootId}/${filename}`)
+  return getUrlByToken(`file/private/db/${dataRootId}/${filename}`)
 }
 
 export function downloadDataDescribe(dataRootId: DataRoot, filename: string, file: FormData) {

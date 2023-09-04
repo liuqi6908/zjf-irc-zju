@@ -152,7 +152,7 @@ watch([tab, midTable], async ([newTab, newMid]) => {
 watch(describe, async (newDescribe) => {
   if (newDescribe && newDescribe.file) {
     const formData = fileToFormData(newDescribe.file)
-    const filename = `${newDescribe.enName}.doc`
+    const filename = `${newDescribe.enName}.docx`
     const res = await uploadDataDescribe(tab.value, filename, formData)
     if (!res) {
       Notify.create({
