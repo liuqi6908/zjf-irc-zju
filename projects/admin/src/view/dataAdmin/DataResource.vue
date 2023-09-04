@@ -23,6 +23,7 @@ const refDialog = ref(false)
 const reference = reactive<Reference>({ id: '', text: '' })
 const rowData = ref([])
 const uploadTab = ref('uploadMid')
+const fileOssList = ref<string[]>([])
 
 const mideTableCol = [
   {
@@ -74,6 +75,9 @@ function emitDescribe(val: any, enName: string, id?: string) {
   desc.id = id
   desc.enName = enName
 
+  // console.log('describe', props.describe)
+  fetchFileIsExist(enName)
+
   emits('update:describe', desc)
 }
 
@@ -92,17 +96,24 @@ async function confirmRef() {
     })
   }
 }
-// function emitReference(val: string, id: string) {
-//   const refer = {} as Reference
-//   refer.text = val
-//   refer.id = id
-//   emits('update:reference', refer)
-// }
 
 function downLoadDescribe(enName: string): string {
-  const filename = `${enName}.doc`
+  const filename = `${enName}.docx`
   const res = getDataDescribe(props.dataRootId, filename)
   return res
+}
+
+function fetchFileIsExist(entName: string) {
+  const res = getDataDescribe(props.dataRootId, `${entName}.docx`)
+  const xhr = new XMLHttpRequest()
+
+  xhr.open('GET', res, true)
+
+  xhr.onload = function () {
+    if (xhr.status === 200)
+      fileOssList.value.push(entName)
+  }
+  xhr.send()
 }
 
 function flattenTree(tree: IDataDirectory, parentNames = [], result = ([] as any[])) {
@@ -161,6 +172,16 @@ const tableData = computed(() => {
 })
 
 const empty = computed(() => !props.dataBase?.length)
+
+onMounted(() => {
+  props.dataBase?.forEach((item) => {
+    fetchFileIsExist(item.nameEN)
+  })
+})
+// watch(() => props.describe, () => {
+//   console.log('describe')
+//   fetchAllFile()
+// })
 </script>
 
 <template>
@@ -214,23 +235,29 @@ const empty = computed(() => !props.dataBase?.length)
             编辑数据库介绍前请先上传中间表
           </div>
 
-          <div v-for="data in dataBase" v-else :key="data.id" flex="~ row items-center justify-between">
+          <div v-for="data in dataBase" v-else :key="data.id" my-4 flex="~ row items-center justify-between">
             <div font-600 text-grey-5>
               {{ data.nameZH }}
             </div>
 
-            <div flex="~ row justify-between gap-5">
+            <div flex="~ row justify-between gap-5 items-center">
+              <span font-600 text-grey-8>文件名:</span><span class="text-grey-8">{{ fileOssList.includes(data.nameEN) ? `${data.nameEN}.docx` : '暂未上传文件' }}</span>
+
+              <!-- <q-btn label="预览已上传的数据库介绍" /> -->
+
               <q-file
                 bg-color="primary"
                 label="上传当前数据库介绍"
-                filled dense
-                accept=".doc"
+                filled
+                accept=".docx"
+                dense
                 label-color="white"
                 :model-value="describe?.file[`${data.id}`]"
                 @update:model-value="(val) => emitDescribe(val, data.nameEN, data.rootId)"
               />
               <q-btn
-                color="teal" label="下载当前数据库介绍"
+                color="teal"
+                label="下载当前数据库介绍"
                 :href="downLoadDescribe(data.nameEN)"
               />
             </div>
