@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { AUTH_TOKEN_KEY } from 'shared/constants'
-import Tabs from 'shared/component/base/tab/Tabs.vue'
-import { useEventListener } from '@vueuse/core'
+import { objectPick, useEventListener } from '@vueuse/core'
 import type { ItemList } from '~/components/nav/NavItem.vue'
 
 import { useCms } from '~/composables/useCms'
@@ -10,10 +9,10 @@ const router = useRouter()
 
 const { cmsProps, currComponent } = useCms()
 
-const qandShow = ref(false)
+const showQAndA = ref(false)
 const userDropdown = ref(false)
-const footerProps = ref([])
-const AvatarRef = ref<HTMLElement>()
+const footerProps = ref<any[]>([])
+const avatarRef = ref<any>()
 
 /** hooks */
 const { userInfo, useGetProfile, useLogout } = useUser()
@@ -74,7 +73,7 @@ onMounted(async () => {
   footerProps.value = await cmsProps('footer')
 })
 
-useEventListener(AvatarRef, 'click', (e) => {
+useEventListener(avatarRef, 'click', (e) => {
   if (isToken.value)
     userDropdown.value = !userDropdown.value
   else
@@ -82,7 +81,7 @@ useEventListener(AvatarRef, 'click', (e) => {
 })
 
 useEventListener(document, 'click', (e) => {
-  if (!AvatarRef.value?.$el.contains(e.target))
+  if (!avatarRef.value?.$el.contains(e.target))
     userDropdown.value = false
 })
 
@@ -93,63 +92,74 @@ useEventListener(document, 'click', (e) => {
   <main
     full
     text="center"
+    flex="~ col" items-center
   >
-    <q-layout container view="lHh lpr lFf">
-      <q-header bg-white>
-        <q-toolbar flex="~ row justify-between items-center">
-          <div mx-8 my-4 flex="~ row">
-            <img mr-2 h-6 src="../assets/layout/cloud.png">
-            <div>
-              <span text-xl font-600 text-primary-1>
-                智能云科研平台 |
-              </span>
-              <span text-primary-1>CloudResearch</span>
-            </div>
-            <!-- <Icon text-grey-8 icon="mdi-light:home" /> -->
+    <div w-limited-1 bg-white>
+      <div flex="~ row justify-between items-center">
+        <div mx-8 my-4 flex="~ row">
+          <img mr-2 h-6 src="../assets/layout/cloud.png">
+          <div>
+            <span text-xl font-600 text-primary-1>
+              智能云科研平台 |
+            </span>
+            <span text-primary-1>CloudResearch</span>
           </div>
+          <!-- <Icon text-grey-8 icon="mdi-light:home" /> -->
+        </div>
 
-          <div flex flex-row items-center text-primary-1>
-            <Avatar
-              ref="AvatarRef"
-              flex="~ row gap-2 items-center"
-              :avatar-url="userInfo?.avatar"
-              :nickname="userInfo?.account"
-            >
-              <div>
-                {{ isToken ? '' : '登录' }}
-              </div>
-            </Avatar>
-
-            <q-list v-if="userDropdown" id="userDropdown" v-close-popup absolute right-3 top-20 z-999 bg-grey-1 p-2 filter-drop-shadow>
-              <NavItem
-                v-for="u in userList"
-                :id="u.id"
-                :key="u.id"
-                :click-event="u.clickEvent"
-                :back="u.back"
-                :name="u.name"
-              />
-            </q-list>
-          </div>
-        </q-toolbar>
-        <Tabs v-model="nav" :tab-list="navList" />
-      </q-header>
-
-      <q-page-container bg-grey-2>
-        <q-page>
-          <ZDialog
-            v-model="qandShow"
-            title="常见问题解答(Q&A)"
+        <div flex flex-row items-center text-primary-1>
+          <Avatar
+            ref="avatarRef"
+            flex="~ row gap-2 items-center"
+            :avatar-url="userInfo?.avatar"
+            :nickname="userInfo?.account"
           >
-            <!-- <RectAngleCardSection title="国外，境外手机号注册" content="sdkhasgdjhasd<br/>skdhgakhjdkjh" /> -->
-          </ZDialog>
-          <slot />
-          <!-- <RouterView /> -->
-        </q-page>
-      </q-page-container>
+            <div>
+              {{ isToken ? '' : '登录' }}
+            </div>
+          </Avatar>
 
-      <component :is="currComponent('home', 'footer')" v-if="footerProps && footerProps.length" :list="footerProps " />
-    </q-layout>
+          <q-list v-if="userDropdown" id="userDropdown" v-close-popup absolute right-3 top-20 z-999 bg-grey-1 p-2 filter-drop-shadow>
+            <NavItem
+              v-for="u in userList"
+              :id="u.id"
+              :key="u.id"
+              :click-event="u.clickEvent"
+              :back="u.back"
+              :name="u.name"
+            />
+          </q-list>
+        </div>
+      </div>
+      <!-- Navigation -->
+      <div flex="~" mb4 w-full justify-center border-b-1 border-b-grey-3>
+        <q-tabs v-model="nav" class="home-layout-tabs" text-bold>
+          <q-route-tab
+            v-for="tab in navList"
+            :key="tab.id"
+            v-bind="objectPick(tab, ['to'])"
+          >
+            <span text-16px font-bold text-primary-1>{{ tab.label }}</span>
+          </q-route-tab>
+        </q-tabs>
+      </div>
+    </div>
+
+    <div w-full>
+      <ZDialog
+        v-model="showQAndA"
+        title="常见问题解答(Q&A)"
+      >
+        <!-- <RectAngleCardSection title="国外，境外手机号注册" content="sdkhasgdjhasd<br/>skdhgakhjdkjh" /> -->
+      </ZDialog>
+      <slot />
+      <!-- <RouterView /> -->
+    </div>
+
+    <component
+      :is="currComponent('home', 'footer')"
+      v-if="footerProps && footerProps.length" :list="footerProps "
+    />
   </main>
 </template>
 
@@ -157,4 +167,18 @@ useEventListener(document, 'click', (e) => {
 .nav-Br {
   border-radius:0.5rem 0 0 0.5rem ;
 }
+</style>
+
+<style lang="sass">
+.home-layout-tabs
+  .q-tab__indicator
+    padding: 0 18px
+    background: none
+    height: 4px
+    &::after
+      display: block
+      content: ''
+      width: 100%
+      height: 100%
+      background: #F99E34
 </style>

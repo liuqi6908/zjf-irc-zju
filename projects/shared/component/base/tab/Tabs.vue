@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { color } from 'echarts'
 import type { QTableProps } from 'quasar'
 import { watch } from 'vue'
  
