@@ -116,11 +116,13 @@ onMounted(async () => {
   if (deskStatus) {
     const { laseRejected, queueLength } = deskStatus
 
-    const { status, duration } = deskStatus.queue
-    desktopStatus.status = status
-    desktopStatus.duration = duration
     desktopStatus.laseRejected = laseRejected
     desktopStatus.queueLength = queueLength
+    if (deskStatus.queue) {
+      const { status, duration } = deskStatus.queue
+      desktopStatus.status = status
+      desktopStatus.duration = duration
+    }
   }
 
   const options = { ...baseOpts }
@@ -145,7 +147,9 @@ onMounted(async () => {
   if (res && res.data.length)
     desktopInfo.value = res.data.map(item => item)
 
-  const vmInfo = await getDesktopVmStatus(desktopId.value)
+  const vmInfo = await getDesktopVmStatus(desktopId.value).finally(() => {
+    loading.value = false
+  })
 
   if (vmInfo) {
     vmStatus.value = vmInfo.state
@@ -166,7 +170,6 @@ onMounted(async () => {
       })
     }
   }
-  loading.value = false
 })
 </script>
 
@@ -219,7 +222,11 @@ onMounted(async () => {
         <span text-grey-8>驳回理由： {{ desktopStatus.laseRejected }}</span>
       </div>
 
-      <Btn mt-10 max-w-40 label="前往申请" @click="() => router.replace({ path: '/request' })" />
+      <Btn mt-10 max-w-40 label="前往申请" @click="() => router.replace({ path: '/request' })">
+        <template #icon>
+          <div i-material-symbols:arrow-forward />
+        </template>
+      </Btn>
     </div>
   </div>
 </template>
