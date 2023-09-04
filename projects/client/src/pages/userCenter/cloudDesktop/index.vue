@@ -24,6 +24,7 @@ const router = useRouter()
 const desktopInfo = ref([])
 const vmInfoCol = ref([])
 const vmStatus = ref('')
+const loading = ref(false)
 
 const desktopStatus = reactive({
   status: '',
@@ -109,6 +110,7 @@ onMounted(() => {
 })
 
 onMounted(async () => {
+  loading.value = true
   const deskStatus = await getOwnDesktopQuery()
 
   if (deskStatus) {
@@ -164,12 +166,23 @@ onMounted(async () => {
       })
     }
   }
+  loading.value = false
 })
 </script>
 
 <template>
   <div min-h-2xl>
-    <div v-if="desktopInfo && desktopInfo.length">
+    <div v-if="loading" full flex-center>
+      <q-spinner
+        color="primary-1"
+        size="5rem"
+        :thickness="2"
+        label-class="text-primary-1"
+        label-style="font-size: 1.1em"
+      />
+    </div>
+
+    <div v-else-if="desktopInfo && desktopInfo.length">
       <header flex="~ row justify-between">
         <DesktopStatus :status="desktopStatus.status" :duration="desktopStatus.duration" />
         <div flex="~ row gap-5">
@@ -185,9 +198,8 @@ onMounted(async () => {
         :rows="desktopRow"
       />
 
-      <div mt-20 flex="~ row gap-10">
+      <div mt-20 flex="~ row gap-10 items-stretch">
         <DesktopTable
-          h-full
           align="evenly"
           min-w-lg
           class="col-grow"
@@ -197,12 +209,14 @@ onMounted(async () => {
         <Cloud class="col-grow" :uuid="desktopId" />
       </div>
     </div>
+
     <div v-else flex="~ col items-center">
       <Empty v-if="desktopStatus.status === 'pending'" label="云桌面审核中" />
       <Empty v-else-if="desktopStatus.laseRejected" label="您的申请已被驳回" />
+      <EmptyCloud v-else label="您还未申请云桌面" />
 
-      <div v-if="desktopStatus.laseRejected" flex-center bg-grey-2>
-        <span>驳回理由：</span> <span text-grey-8>{{ desktopStatus.laseRejected }}</span>
+      <div v-if="desktopStatus.laseRejected" flex-center bg-grey-2 p-4>
+        <span text-grey-8>驳回理由： {{ desktopStatus.laseRejected }}</span>
       </div>
 
       <Btn mt-10 max-w-40 label="前往申请" @click="() => router.replace({ path: '/request' })" />
