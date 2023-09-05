@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import type { IDataDirectory } from 'zjf-types'
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
+import { Column, DeleteDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
 
 import { DataRole } from './data-role'
 import { DataField } from './data-field'
@@ -82,4 +82,7 @@ export class DataDirectory implements IDataDirectory {
     onDelete: 'CASCADE',
   })
   suggestions?: DataSuggestion[]
+
+  @DeleteDateColumn({ nullable: true })
+  deletedAt?: Date
 }

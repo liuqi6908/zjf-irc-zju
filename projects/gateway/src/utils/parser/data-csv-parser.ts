@@ -22,6 +22,8 @@ export function dataCsvParser(arr: Array<{
 }>, rootId: string) {
   const databases = {}
 
+  const idMap = new Map()
+
   const nodes: DataDirectory[] = []
   const fields: DataField[] = []
 
@@ -48,79 +50,96 @@ export function dataCsvParser(arr: Array<{
 
     if (!databases[DATABASE_ENG]) {
       const id = md5(rootId + DATABASE_ENG)
-      databases[DATABASE_ENG] = { id }
-      nodes.push({
-        id,
-        nameEN: DATABASE_ENG,
-        nameZH: DATABASE,
-        level: 1,
-        order: ORDER,
-        parentId: rootId,
-        rootId,
-        path: [rootId, id],
-      })
+      if (!idMap.has(id)) {
+        idMap.set(id, true)
+        databases[DATABASE_ENG] = { id }
+        nodes.push({
+          id,
+          nameEN: DATABASE_ENG,
+          nameZH: DATABASE,
+          level: 1,
+          order: ORDER,
+          parentId: rootId,
+          rootId,
+          path: [rootId, id],
+        })
+      }
     }
 
     const bDatabase = databases[DATABASE_ENG]
 
     if (!bDatabase[B_DATABASE_ENG]) {
       const id = md5(rootId + DATABASE_ENG + B_DATABASE_ENG)
-      bDatabase[B_DATABASE_ENG] = { id }
-      nodes.push({
-        id,
-        nameEN: B_DATABASE_ENG,
-        nameZH: B_DATABASE,
-        level: 2,
-        order: ORDER,
-        parentId: databases[DATABASE_ENG].id,
-        rootId,
-        path: [rootId, databases[DATABASE_ENG].id, id],
-      })
+      if (!idMap.has(id)) {
+        idMap.set(id, true)
+        bDatabase[B_DATABASE_ENG] = { id }
+        nodes.push({
+          id,
+          nameEN: B_DATABASE_ENG,
+          nameZH: B_DATABASE,
+          level: 2,
+          order: ORDER,
+          parentId: databases[DATABASE_ENG].id,
+          rootId,
+          path: [rootId, databases[DATABASE_ENG].id, id],
+        })
+      }
     }
 
     const part = bDatabase[B_DATABASE_ENG]
 
     if (!part[PART_ENG]) {
       const id = md5(rootId + DATABASE_ENG + B_DATABASE_ENG + PART_ENG)
-      part[PART_ENG] = { id }
-      nodes.push({
-        id,
-        nameEN: PART_ENG,
-        nameZH: PART,
-        level: 3,
-        order: ORDER,
-        parentId: bDatabase[B_DATABASE_ENG].id,
-        rootId,
-        path: [rootId, databases[DATABASE_ENG].id, bDatabase[B_DATABASE_ENG].id, id],
-      })
+      if (!idMap.has(id)) {
+        idMap.set(id, true)
+        part[PART_ENG] = { id }
+        nodes.push({
+          id,
+          nameEN: PART_ENG,
+          nameZH: PART,
+          level: 3,
+          order: ORDER,
+          parentId: bDatabase[B_DATABASE_ENG].id,
+          rootId,
+          path: [rootId, databases[DATABASE_ENG].id, bDatabase[B_DATABASE_ENG].id, id],
+        })
+      }
     }
 
     const table = part[PART_ENG]
 
     if (!table[TABLE_ENG]) {
       const id = md5(rootId + DATABASE_ENG + B_DATABASE_ENG + PART_ENG + TABLE_ENG)
-
-      table[TABLE_ENG] = { id }
-      nodes.push({
-        id,
-        nameEN: TABLE_ENG,
-        nameZH: TABLE,
-        level: 4,
-        order: ORDER,
-        parentId: part[PART_ENG].id,
-        rootId,
-        path: [rootId, databases[DATABASE_ENG].id, bDatabase[B_DATABASE_ENG].id, part[PART_ENG].id, id],
-      })
+      if (!idMap.has(id)) {
+        idMap.set(id, true)
+        table[TABLE_ENG] = { id }
+        nodes.push({
+          id,
+          nameEN: TABLE_ENG,
+          nameZH: TABLE,
+          level: 4,
+          order: ORDER,
+          parentId: part[PART_ENG].id,
+          rootId,
+          path: [rootId, databases[DATABASE_ENG].id, bDatabase[B_DATABASE_ENG].id, part[PART_ENG].id, id],
+        })
+      }
     }
 
-    fields.push({
-      id: md5(TABLE_ENG + VARIABLE_ENG),
-      description: DESCRIPTION,
-      directoryId: table[TABLE_ENG].id,
-      nameEN: VARIABLE_ENG,
-      nameZH: VARIABLE,
-    })
+    const fieldId = md5(TABLE_ENG + VARIABLE_ENG)
+    if (!idMap.has(fieldId)) {
+      idMap.set(fieldId, true)
+      fields.push({
+        id: fieldId,
+        description: DESCRIPTION,
+        directoryId: table[TABLE_ENG].id,
+        nameEN: VARIABLE_ENG,
+        nameZH: VARIABLE,
+      })
+    }
   })
+
+  nodes.sort((a, b) => a.level - b.level)
 
   return { nodes, fields }
 }

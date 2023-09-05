@@ -137,18 +137,19 @@ export class DataController {
         }
         const deleteCount = await this._dataSrv.dirRepo().count({ where })
         logger.log(`clear ${deleteCount} rows`)
-        await this._dataSrv.dirRepo().delete(where)
+        await this._dataSrv.dirRepo().softDelete(where)
         logger.log('clear success')
       }
-      Promise.all([
-        batchSave(this._dataSrv.dirRepo(), nodes),
-        batchSave(this._dataSrv.fieldRepo(), fields),
-      ])
-        .then(() => {
-          logger.log('upload success')
-          this._dataSrv.cacheDir()
-        })
-        .catch(logger.error)
+      try {
+        await batchSave(this._dataSrv.dirRepo(), nodes, 'id', 1, true)
+        await batchSave(this._dataSrv.fieldRepo(), fields, 'id')
+        logger.log('upload success')
+        this._dataSrv.cacheDir()
+      }
+      catch (err) {
+        logger.error(err)
+        logger.error('upload failed')
+      }
     })()
 
     return {
