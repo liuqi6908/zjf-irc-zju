@@ -45,12 +45,14 @@ const router = useRouter()
 
 function scrollTo(title: string, index: number) {
     link.value = title
-    const target = document.querySelector(`#title${index}`)
-    if (target) {
-        target.scrollIntoView({
-            behavior: 'smooth'
-        });
-        router.replace({query:{title,index}})
+    if(typeof document !=='undefined'){
+        const target = document.querySelector(`#title${index}`)
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth'
+            });
+            router.replace({query:{title,index}})
+        }
     }
 }
 
