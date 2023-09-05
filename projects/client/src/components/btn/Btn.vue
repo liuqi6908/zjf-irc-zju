@@ -21,6 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
   bgColor: 'primary-1',
   color: 'grey-1',
 })
+const emit = defineEmits(['click'])
 const btnClass = computed(() => {
   if (props.icon)
     return 'text-grey-5'
@@ -31,6 +32,11 @@ const btnClass = computed(() => {
 })
 
 const finalProps = computed(() => ({ props }))
+
+function handleClick() {
+  if (!props.disable)
+    emit('click')
+}
 </script>
 
 <template>
@@ -45,7 +51,8 @@ const finalProps = computed(() => ({ props }))
         :class="btnClass"
         :disable="disable"
         :dense="dense"
-        unelevated hfull w-full rounded-0
+        unelevated w-full rounded-0 hfull
+        @click="handleClick"
       >
         <div v-if="transparent" class="translucent-mask" :class="`bg-${bgColor}`" />
         <template v-if="icon">

@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import { DesktopQueueStatus } from 'zjf-types'
+import { DesktopQueueHistoryStatus, DesktopQueueStatus, VerificationStatus } from 'zjf-types'
 import { getDesktopTimeHostCpu } from '../../api/desktopHost/getDesktopTimeCpu'
-
 import { getOwnDesktopQuery } from '../../api/desktop/getOwnDesktopQuery'
 import { getDesktopHostList } from '../../api/desktopHost/getDesktopHostList'
 import DesktopRequestDaialog from '../../view/request/DesktopRequestDaialog.vue'
@@ -10,13 +9,9 @@ import DesktopRequestDaialog from '../../view/request/DesktopRequestDaialog.vue'
 import { getDesktopVm } from '~/api/desktopVm/getDesktopVm'
 import HostPercent from '~/view/request/host/HostPercent.vue'
 import HostTiming from '~/view/request/host/HostTiming.vue'
-import VerificationDialog from '~/view/userCenter/verification/VerificationDialog.vue'
 import { useUser } from '~/composables/useUser'
 
-const queueLength = ref()
-
 const requestDialog = ref(false)
-const verificationDialog = ref(false)
 const hostList = ref()
 
 const cpuTimeList = ref([])
@@ -30,14 +25,16 @@ const model = ref('')
 
 const requestInfo = reactive({
   status: '',
-  queueLength: '',
+  queueLength: 0,
+  rejectReason: '',
 })
 
-const { userInfo } = useUser()
+const { userInfo, getVerify, latestVerifiy } = useUser()
+const $router = useRouter()
 
 const desktopList = computed(() => {
   if (hostList.value) {
-    return hostList.value.map((item, index: number) => {
+    return hostList.value.map((item: any, index: number) => {
       const deskIndex = Number(index) + 1
       return {
         label: `主机${deskIndex}`,
@@ -48,28 +45,32 @@ const desktopList = computed(() => {
   }
 })
 
-const isVerification = computed(() => {
-  if (userInfo.value)
-    return userInfo.value.verification
-  return null
+const userStatus = computed(() => {
+  return userInfo.value ? latestVerifiy.value?.status || 'notApply' : null
 })
-
-function requestDesktop() {
-  requestDialog.value = true
-}
 
 onMounted(async () => {
-  const res = await getOwnDesktopQuery()
-  if (res) {
-    requestInfo.status = res.queue.status
-    requestInfo.queueLength = res.queueLength
-  }
-  else { requestInfo.status = '' }
-
+  await getVerify()
+  await getRequestInfo()
   vmInfo.value = await getDesktopVm()
-
   hostList.value = await getDesktopHostList()
 })
+
+/**
+ * 获取申请信息
+ */
+async function getRequestInfo() {
+  const res = await getOwnDesktopQuery()
+  if (res) {
+    const { lastRejected, queue, queueLength } = res
+    requestInfo.status = queue?.status || lastRejected?.status || ''
+    requestInfo.queueLength = queueLength || 0
+    requestInfo.rejectReason = lastRejected?.rejectReason
+  }
+  else {
+    requestInfo.status = ''
+  }
+}
 
 watch(desktopList, (val) => {
   if (!val)
@@ -90,45 +91,106 @@ watch(model, async (newModel) => {
         申请使用
       </div>
     </header>
-
-    <div v-if="!isVerification" flex="~ col items-center" full min-h-4xl bg-grey-1 pt-32>
-      <EmptyVeri label="您还未进行身份认证" captions="用户认证通过后，才能申请云桌面" />
-      <!-- <div> -->
-      <Btn
-
-        mt-10 max-h-8 min-w-50
-        label="前往认证"
-        @click="verificationDialog = true"
-      >
-        <template #icon>
-          <div i-material-symbols:arrow-forward />
-        </template>
-      </Btn>
-      <!-- </div> -->
+    <!-- 未通过身份认证 -->
+    <div v-if="userStatus !== VerificationStatus.APPROVED" flex="~ col items-center" full min-h-4xl bg-grey-1 pt-32>
+      <template v-if="!userStatus">
+        <EmptyVeri label="您还未登录系统" captions="用户登录并通过认证后，才能申请使用" />
+        <Btn
+          mt-10 max-h-8 min-w-50
+          label="前往登录"
+          @click="$router.push('/auth/login')"
+        >
+          <template #icon>
+            <div i-material-symbols:arrow-forward />
+          </template>
+        </Btn>
+      </template>
+      <template v-else-if="userStatus === 'notApply'">
+        <EmptyVeri label="您还未进行身份认证" captions="用户认证通过后，才能申请使用" />
+        <Btn
+          mt-10 max-h-8 min-w-50
+          label="前往认证"
+          @click="$router.push('/userCenter/authentication')"
+        >
+          <template #icon>
+            <div i-material-symbols:arrow-forward />
+          </template>
+        </Btn>
+      </template>
+      <template v-else>
+        <EmptyVeri label="您的身份认证尚未通过审核" captions="用户认证通过后，才能申请使用" />
+        <VerifyStatus :status="userStatus" mt-10 />
+      </template>
     </div>
-
+    <!-- 申请使用云桌面 -->
     <div v-else>
       <div w-full flex="~ col items-center" bg-grey-1 py-10>
         <div class="request-flow" h-80 w-6xl />
-        <div v-if="requestInfo.status !== DesktopQueueStatus.Using" flex="~ row justify-between" mt-10 w-6xl p-6 text-5 style="background:rgba(2, 92, 185, 0.08);">
-          <div v-if="requestInfo.status === DesktopQueueStatus.Queueing">
+        <!-- 申请状态 -->
+        <div flex="~ row justify-between" style="background:rgba(2, 92, 185, 0.08);" mt-10 w-6xl p-6 font-600 text-xl>
+          <!-- 使用中 -->
+          <template v-if="requestInfo.status === DesktopQueueStatus.Using">
             <span text-grey-8>
-              云桌面排队情况：前面有
+              您已经成功申请云桌面，前往【用户中心/我的云桌面】查看
             </span>
-            <span text-tab-bottom>
-              {{ queueLength }}人
-            </span>
-            <span text-grey-8>
-              在排队
-            </span>
-          </div>
-          <div v-if="requestInfo.status === DesktopQueueStatus.Pending">
-            <span text-grey-8>
-              云桌面正在审核中
-            </span>
-          </div>
-
-          <Btn label="申请使用" @click="requestDesktop" />
+            <Btn
+              label="前往查看"
+              @click="$router.push('/userCenter/cloudDesktop')"
+            >
+              <template #icon>
+                <q-icon name="fas fa-arrow-right" size="14px" ml-2 />
+              </template>
+            </Btn>
+          </template>
+          <template v-else>
+            <!-- 排队中 -->
+            <div v-if="requestInfo.status === DesktopQueueStatus.Queueing">
+              <span text-grey-8>
+                云桌面排队情况：前面有
+              </span>
+              <span text-tab-bottom v-text="`${requestInfo.queueLength} 人`" />
+              <span text-grey-8>
+                在排队
+              </span>
+            </div>
+            <!-- 待审核 -->
+            <div v-else-if="requestInfo.status === DesktopQueueStatus.Pending">
+              <span text-grey-8>
+                云桌面正在审核中
+              </span>
+            </div>
+            <!-- 已驳回 -->
+            <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Rejected">
+              <span text-grey-8>
+                您的申请已被驳回，请重新提交
+              </span>
+              <div flex="~ col" bg-grey-2 p-4 text-sm mt-2 font-500 w-75>
+                <div flex="~ row" mb-2 text-grey-8>
+                  驳回理由
+                </div>
+                <div flex="~ row" indent-0 text-grey-8 text-left v-text="requestInfo.rejectReason" />
+              </div>
+            </div>
+            <!-- 已取消 -->
+            <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Canceled">
+              <span text-grey-8>
+                您的申请已取消，请重新提交
+              </span>
+            </div>
+            <!-- 已过期 -->
+            <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Expired">
+              <span text-grey-8>
+                您的云桌面已过期，请重新提交申请
+              </span>
+            </div>
+            <Btn
+              :label="!requestInfo.status || (Object.values(DesktopQueueStatus) as Array<string>).includes(requestInfo.status)
+                ? '申请使用' : '重新申请'
+              "
+              :disable="(Object.values(DesktopQueueStatus) as Array<string>).includes(requestInfo.status)"
+              @click="requestDialog = true"
+            />
+          </template>
         </div>
       </div>
 
@@ -170,12 +232,10 @@ watch(model, async (newModel) => {
           </header>
         </div>
         <HostPercent :uuid="model" />
-
         <HostTiming :uuid="model" />
       </div>
     </div>
-    <DesktopRequestDaialog v-model="requestDialog" />
-    <VerificationDialog v-model="verificationDialog" />
+    <DesktopRequestDaialog v-model="requestDialog" @callback="getRequestInfo()" />
   </div>
 </template>
 
