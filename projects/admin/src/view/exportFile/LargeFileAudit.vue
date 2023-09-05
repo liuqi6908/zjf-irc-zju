@@ -75,22 +75,16 @@ async function queryData(props: any) {
     const { total, data } = await queryExportLg(body) as QueryLg
     pagination.value.rowsNumber = total
     data.forEach((item) => {
-      // 用户
-      item.account = item.founder?.account
-      item.nickname = item.founder?.nickname
-      item.roleName = item.founder?.roleName
       // 云桌面
-      item.desktopAccount = item.desktop?.account
-      item.internalIp = item.desktop?.internalIp
-      item.accessUrl = item.desktop?.accessUrl
-      item.expiredAt = item.desktop?.expiredAt && moment(item.desktop?.expiredAt).format('YYYY-MM-DD HH:mm:ss')
+      if (item.desktop)
+        item.desktop.expiredAt = item.desktop.expiredAt && moment(item.desktop.expiredAt).format('YYYY-MM-DD HH:mm:ss')
       // 文件
       item.fileSize = formatFileSize(item.fileSize)
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
     })
-    rows.splice(0, rows.length, ...data)
+    rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
   }
-  catch (e) {}
+  catch (_) {}
   finally {
     // 更新本地分页对象
     pagination.value.page = page
@@ -219,7 +213,7 @@ function reject(id: string) {
             <q-btn label="驳回" color="red" size="sm" @click="reject(prop.row.id)" />
           </template>
           <template v-else>
-            {{ prop.row[col.name] }}
+            {{ prop.row[col.field as string] }}
           </template>
         </q-td>
       </q-tr>

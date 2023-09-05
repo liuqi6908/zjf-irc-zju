@@ -3,21 +3,20 @@
  * @param json
  * @returns
  */
-export function flattenJSON(json: any): Record<string, any> {
-  let result: Record<string, any> = {}
-
+export function flattenJSON(json: any, prefix = '', result?: Record<string, any>): Record<string, any> {
+  if (!result)
+    result = {}
   for (const key in json) {
     if (Object.prototype.hasOwnProperty.call(json, key)) {
-      if (typeof json[key] === 'object' && !Array.isArray(json[key])) {
-        const nestedJson = flattenJSON(json[key])
-        result = { ...result, ...nestedJson }
-      }
-      else {
-        result[key] = json[key]
-      }
+      const value = json[key]
+      const newKey = prefix ? `${prefix}.${key}` : key
+
+      if (typeof value === 'object' && !Array.isArray(value))
+        flattenJSON(value, newKey, result)
+      else
+        result[newKey] = value
     }
   }
-
   return result
 }
 

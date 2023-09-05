@@ -9,16 +9,17 @@ interface Tab extends TabItem {
 
 const cols = [
   /** 用户信息 */
-  { name: 'account', field: 'account', label: '用户' },
+  { name: 'account', field: 'founder.account', label: '用户' },
   { name: 'email', field: 'email', label: '邮箱' },
-  { name: 'nickname', field: 'nickname', label: '姓名' },
-  { name: 'roleName', field: 'roleName', label: '权限' },
+  { name: 'nickname', field: 'founder.nickname', label: '姓名' },
+  { name: 'dataRoleName', field: 'founder.dataRoleName', label: '角色' },
+  { name: 'roleName', field: 'founder.roleName', label: '权限' },
   /** 云桌面信息 */
   { name: 'desktopId', field: 'desktopId', label: '云桌面ID' },
-  { name: 'desktopAccount', field: 'desktopAccount', label: '云桌面账号' },
-  { name: 'internalIp', field: 'internalIp', label: '云桌面IP' },
-  { name: 'accessUrl', field: 'accessUrl', label: '访问地址' },
-  { name: 'expiredAt', field: 'expiredAt', label: '到期时间' },
+  { name: 'desktopAccount', field: 'desktop.account', label: '云桌面账号' },
+  { name: 'internalIp', field: 'desktop.internalIp', label: '云桌面IP' },
+  { name: 'accessUrl', field: 'desktop.accessUrl', label: '访问地址' },
+  { name: 'expiredAt', field: 'desktop.expiredAt', label: '到期时间' },
   /** 外发文件信息 */
   { name: 'fileName', field: 'fileName', label: '文件名' },
   { name: 'fileSize', field: 'fileSize', label: '文件大小' },

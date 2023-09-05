@@ -20,14 +20,14 @@ const { $get, $post } = useRequest()
 const tableRef = ref<QTable>()
 
 const columns: QTableProps['columns'] = reactive([
-  { name: 'account', label: '用户', field: 'account' },
-  { name: 'email', label: '邮箱', field: 'email' },
+  { name: 'account', label: '用户', field: 'user.account' },
+  { name: 'email', label: '邮箱', field: 'user.email' },
   { name: 'ip', label: 'IP 地址', field: 'ip' },
-  { name: 'rootId', label: '类', field: 'rootId' },
-  { name: 'dbId', label: '数据库', field: 'dbId' },
-  { name: 'subDbId', label: '子库', field: 'subDbId' },
-  { name: 'moduleId', label: '模块', field: 'moduleId' },
-  { name: 'tableId', label: '表格', field: 'tableId' },
+  { name: 'rootId', label: '类', field: 'target.rootId' },
+  { name: 'dbId', label: '数据库', field: 'target.dbId' },
+  { name: 'subDbId', label: '子库', field: 'target.subDbId' },
+  { name: 'moduleId', label: '模块', field: 'target.moduleId' },
+  { name: 'tableId', label: '表格', field: 'target.tableId' },
   { name: 'time', label: '操作时间', field: 'time' },
   { name: 'action', label: '操作', field: 'action' },
 ])

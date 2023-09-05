@@ -91,8 +91,8 @@ async function confirmRequest() {
   <div flex="~ col items-center" min-h-4xl bg-grey-1>
     <div w-3xl>
       <header flex="~ row" items-center justify-start>
-        <q-btn flat mr-2 text-grey-6 @click="$router.back()">
-          <div i-mingcute:left-line h-6 w-6 />
+        <q-btn flat text-grey-6 mr-2 @click="$router.back()">
+          <div h-6 w-6 i-mingcute:left-line />
         </q-btn>
         <span font-600 text-grey-8>数据资源介绍</span>
       </header>
@@ -115,8 +115,9 @@ async function confirmRequest() {
           </div>
         </BaseTable>
       </div>
+
+      <div mt-6 text="primary-1 left" v-text="`引用规范：${route.query.reference || '暂无引用规范'}`" />
     </div>
-    <span mt-6 text-primary-1>引用规范：{{ route.query.reference || '暂无引用规范' }}</span>
 
     <div flex="~ row gap-5" my-10>
       <Btn v-if="!isClient && !isPurchased" outline label="数据申请使用" @click="requestDesktop = true" />

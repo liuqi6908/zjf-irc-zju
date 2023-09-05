@@ -29,8 +29,8 @@ const columns: QTableProps['columns'] = reactive([
   { name: 'status', field: 'status', label: '状态' },
   { name: 'rejectReason', field: 'rejectReason', label: '驳回原因' },
   { name: 'handleAt', field: 'handleAt', label: '审核时间' },
-  { name: 'handlerAccount', field: 'handlerAccount', label: '审核人账号' },
-  { name: 'handlerNickname', field: 'handlerNickname', label: '审核人姓名' },
+  { name: 'handlerAccount', field: 'handler.account', label: '审核人账号' },
+  { name: 'handlerNickname', field: 'handler.nickname', label: '审核人姓名' },
 ])
 const rows: Array<any> = reactive([])
 const pagination = ref({
@@ -121,26 +121,18 @@ async function queryData(props: any) {
     const { total, data } = await queryExportLg(body) as QueryLg
     pagination.value.rowsNumber = total
     data.forEach((item) => {
-      // 用户
-      item.account = item.founder?.account
-      item.nickname = item.founder?.nickname
-      item.roleName = item.founder?.roleName
       // 云桌面
-      item.desktopAccount = item.desktop?.account
-      item.internalIp = item.desktop?.internalIp
-      item.accessUrl = item.desktop?.accessUrl
-      item.expiredAt = item.desktop?.expiredAt && moment(item.desktop?.expiredAt).format('YYYY-MM-DD HH:mm:ss')
+      if (item.desktop)
+        item.desktop.expiredAt = item.desktop.expiredAt && moment(item.desktop.expiredAt).format('YYYY-MM-DD HH:mm:ss')
       // 文件
       item.fileSize = formatFileSize(item.fileSize)
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
-      // 审核人
-      item.handlerAccount = item.handler?.account
-      item.handlerNickname = item.handler?.nickname
+      // 审核时间
       item.handleAt = item.handleAt && moment(item.handleAt).format('YYYY-MM-DD HH:mm:ss')
     })
-    rows.splice(0, rows.length, ...data)
+    rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
   }
-  catch (e) { }
+  catch (_) {}
   finally {
     // 更新本地分页对象
     pagination.value.page = page
@@ -207,7 +199,7 @@ function download(name: string, id: string) {
             />
           </template>
           <template v-else>
-            {{ prop.row[col.name] }}
+            {{ prop.row[col.field as string] }}
           </template>
         </q-td>
       </q-tr>
