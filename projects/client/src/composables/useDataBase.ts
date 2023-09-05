@@ -1,5 +1,5 @@
 import type { TabItem } from 'shared/component/base/tab/Tabs.vue'
-import type { DataRoot, IDataDirectory, IDataRole } from 'zjf-types'
+import type { IDataDirectory, IDataRole } from 'zjf-types'
 import { cloneDeep } from 'lodash-es'
 
 const { $get } = useRequest()
@@ -38,7 +38,7 @@ export function useDataBase() {
   }
 
   /** 获取指定分类的数据 */
-  const getDataByRootId = async (dataRootId: DataRoot) => {
+  const getDataByRootId = async (dataRootId: string) => {
     loading.value = true
     const res = await $get<IDataDirectory[]>(`/data/list/${dataRootId}`).finally(() => {
       loading.value = false

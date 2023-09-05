@@ -64,7 +64,7 @@ useResizeObserver($elRef, debounce(updateIndicator, 50))
       </span>
     </q-item>
     <div
-      absolute h1 bg-primary-1 transition-all
+      absolute h1 bg-primary-1
       class="database-tab-indicator" :style="indicatorStyle"
     />
   </div>
@@ -76,4 +76,7 @@ useResizeObserver($elRef, debounce(updateIndicator, 50))
   font-weight: 600
   &--active
     color: var(--grey-8)
+
+  &-indicator
+    transition: all 0.35s ease
 </style>

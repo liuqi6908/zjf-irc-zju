@@ -58,7 +58,7 @@ const empty = computed(() => !rootData.value.length || !rootData.value)
         <div v-else-if="empty">
           <EmptyData label="暂无数据" />
         </div>
-        <CurrentData v-else :init-database="databaseId" />
+        <CurrentData v-else :db-id="databaseId" />
       </div>
     </div>
   </div>

@@ -17,6 +17,7 @@ export interface TabItem {
         row: QTableProps['rows']
         col: QTableProps['columns']
     }
+    children?: TabItem[]
 }
 interface Props {
     modelValue: string

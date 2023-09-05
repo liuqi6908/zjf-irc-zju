@@ -3,7 +3,7 @@ import Tree from '~/components/tree/Tree.vue'
 import EmptyData from '~/components/empty/EmptyData.vue'
 
 interface Props {
-  initDatabase: string
+  dbId: string
 }
 const props = defineProps<Props>()
 
@@ -28,9 +28,10 @@ const list = computed(() => {
     const res = databaseTab.value.find(i => i.id === tab.value)
     return res
   }
+  else { return null }
 })
 
-watch(() => props.initDatabase, (database) => {
+watch(() => props.dbId, (database) => {
   if (!database)
     return
   getDataByRootId(database)
@@ -39,7 +40,7 @@ watch(() => props.initDatabase, (database) => {
 
 <template>
   <div
-    full max-w-250 min-h-3xl flex="~ col" class="col-grow"
+    full min-h-3xl flex="~ col" class="col-grow"
   >
     <div v-if="!databaseTab || !databaseTab.length" mt-20 full>
       <EmptyData label="暂无数据" />
@@ -63,7 +64,7 @@ watch(() => props.initDatabase, (database) => {
         </q-item>
       </div>
 
-      <div v-if="list?.children">
+      <div v-if="list?.children" flex="~ col nowrap" gap6 py6>
         <Tree
           v-for="item in list.children"
           :id="item.id"
