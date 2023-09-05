@@ -1,15 +1,18 @@
 <template >
-    <div flex="~ row justify-center" p-25 text-grey-1 w-full  style="background-color: #001020;">
-      <div v-for="(item,index) in list" :key="index" mx-10 flex="~ row">
-        <div v-if="index!==0" py-10 h-full w-0.25 class="border-color"  />
-        <div flex="~ col" ml-15>
+    <div 
+      flex="~ row justify-center" 
+      p25 text-grey-1 w-full bg="#001020"
+      gap24
+    >
+      <div v-for="(item,index) in list" :key="index" flex="~ row" class="footer-item">
+        <div flex="~ col">
             <span text-4.5 font-600 mb-5>{{ item.title }}</span>
             <div class="col-grow items-center" v-html="item.richText"/>
         </div>
       </div>
-   
-    </div>
+  </div>
 </template>
+
 <script lang="ts" setup>
 interface footerItem {
     title: string
@@ -20,9 +23,25 @@ interface Props {
 }
 defineProps<Props>()
 </script>
+
+
 <style lang="scss" scoped>
 .border-color {
    background-color: var(--transparency-white-3, rgba(255, 255, 255, 0.30));;
 }
-    
+.footer-item:not(:last-child) {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    height: 65px;
+    background: rgba(255,255,255,0.3);
+    width: 1px;
+    left: calc(100% + 48px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+}
 </style>
