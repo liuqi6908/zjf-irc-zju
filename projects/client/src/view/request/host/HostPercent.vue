@@ -70,7 +70,7 @@ watch(() => props.uuid, async (val) => {
   <div flex="~ row gap-10">
     <RoundEchartsCard class="col-grow" title="CPU分配情况" :value="cpuList.cpu" color="#025CB9" />
     <RoundEchartsCard unit="GB" class="col-grow" title="内存使用率" :value="cpuList.storage" color="#F99E34" />
-    <RoundEchartsCard unit="GB" class="col-grow" title="存储使用率" :value="cpuList.disk" color="#F99E34" />
+    <RoundEchartsCard unit="GB" class="col-grow" title="存储使用率" :value="cpuList.disk" color="#8D5FF0" />
   </div>
 </template>
 

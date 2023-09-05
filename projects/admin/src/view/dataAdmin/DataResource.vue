@@ -83,18 +83,25 @@ function emitDescribe(val: any, enName: string, id?: string) {
 }
 
 function editReference(id: string) {
+  const { dataRootId, treeData } = props
   refDialog.value = true
+  reference.text = treeData?.data.find(v => v.id === dataRootId)?.children?.find(v => v.id === id)?.reference || ''
   reference.id = id
 }
 
 async function confirmRef() {
   refDialog.value = !refDialog.value
-  const res = await updateReference(reference.id, reference.text)
+  const { id, text } = reference
+  const res = await updateReference(id, text)
   if (res) {
     Notify.create({
       message: '上传成功',
       type: 'success',
     })
+    const { dataRootId, treeData } = props
+    const obj = treeData?.data.find(v => v.id === dataRootId)?.children?.find(v => v.id === id)
+    if (obj)
+      obj.reference = text
   }
 }
 
@@ -274,7 +281,7 @@ watch(uploadTab, (currTab) => {
             编辑引用规范前请先上传中间表
           </div>
 
-          <div v-for="data in dataBase" v-else :key="data.id" flex="~ row items-center justify-between">
+          <div v-for="data in dataBase" v-else :key="data.id" flex="~ row items-center justify-between" mb-2>
             <div font-600 text-grey-5>
               {{ data.nameZH }}
             </div>

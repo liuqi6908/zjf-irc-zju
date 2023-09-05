@@ -122,7 +122,7 @@ onMounted(() => {
 <template>
   <div flex="~ col  items-center" min-h-4xl bg-grey-1>
     <div full max-w-6xl flex="~ col justify-center items-center">
-      <header flex="~ row items-center" mb-10 min-w-4xl font-600>
+      <header flex="~ row items-center" mb-10 font-600 min-w-4xl>
         <q-btn flat mr-2 text-grey-6 @click="() => $router.back()">
           <div i-mingcute:left-line h-6 w-6 />
         </q-btn>
@@ -130,26 +130,23 @@ onMounted(() => {
       </header>
 
       <Empty v-if="!docHtml" label="暂无数据库介绍" />
-      <div v-else full py-10 flex="~ row gap-10">
-        <!-- <nav class="nav" flex="~ col justify-start">
-          <a  :key="index" w-sm text-grey-8 @click="scrollTo(index)">
-            {{ node.textContent }}
-          </a>
-        </nav> -->
+      <div v-else full pn-10 flex="~ row gap-10">
+        <div>
+          <q-list text-grey-8 sticky top-0 h-100vh overflow-x-hidden overflow-y-auto class="navs">
+            <q-item
+              v-for="(node, index) in navList" :key="index" class="ellipsis"
+              flex="~ col justify-center items-start" clickable font-600 w-50 p-0 min-h-10 :active="link === node.textContent"
+              active-class="text-primary-1 bg-grey-2" @click="scrollTo(node.textContent, index)"
+            >
+              <q-item-section>
+                <q-item-label lines="1">
+                  {{ node.textContent }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </div>
 
-        <q-list text-grey-8>
-          <q-item
-            v-for="(node, index) in navList" :key="index" class="ellipsis"
-            flex="~ col justify-center items-start" clickable w-50 font-600 :active="link === node.textContent"
-            active-class="text-primary-1 bg-grey-2" @click="scrollTo(node.textContent, index)"
-          >
-            <q-item-section>
-              <q-item-label lines="1">
-                {{ node.textContent }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
         <div class="docHtml" flex="~ col justify-start items-start" v-html="navHtml?.article.innerHTML" />
       </div>
     </div>
@@ -177,6 +174,31 @@ onMounted(() => {
 .docHtml :deep(td) {
     padding: 8px;
     border: 1px solid #ccc;
+}
+
+.navs {
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* 修改滚动条的轨道背景颜色 */
+  &::-webkit-scrollbar-track {
+    background-color: white;
+    border-radius: 24px;
+    border: 1px solid #D4DDEA;
+    &:hover {
+      border-color: #cdd6e4;
+    }
+  }
+
+  /* 修改滚动条的滑块样式 */
+  &::-webkit-scrollbar-thumb {
+    background-color: #D4DDEA;
+    border-radius: 24px;
+    &:hover {
+      background-color: #cdd6e4;
+    }
+  }
 }
 </style>
 
