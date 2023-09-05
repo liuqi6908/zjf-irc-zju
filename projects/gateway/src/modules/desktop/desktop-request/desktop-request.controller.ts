@@ -1,10 +1,11 @@
 import { getQuery } from 'src/utils/query'
-import { QueryDto, QueryResDto } from 'src/dto/query.dto'
 import { UserIdDto } from 'src/dto/user-id.dto'
 import { IsLogin } from 'src/guards/login.guard'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { QueryDto, QueryResDto } from 'src/dto/query.dto'
 import { HasPermission } from 'src/guards/permission.guard'
 import type { DesktopQueue } from 'src/entities/desktop-queue'
+import { VerifiedRequired } from 'src/guards/verify-required.guard'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common'
 import { DesktopQueueHistoryStatus, DesktopQueueStatus, ErrorCode, PermissionType } from 'zjf-types'
@@ -24,7 +25,7 @@ export class DesktopRequestController {
   ) {}
 
   @ApiOperation({ summary: '发起一个云桌面使用申请' })
-  @HasPermission(PermissionType.DESKTOP_REQUEST_CREATE)
+  @VerifiedRequired()
   @Put()
   async requestDesktop(
     @Body() body: CreateDesktopRequestBodyDto,
