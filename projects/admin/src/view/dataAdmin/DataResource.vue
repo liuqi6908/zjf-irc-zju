@@ -14,6 +14,7 @@ interface Props {
   describe?: Describe
   treeData?: { data: IDataDirectory[] }
   dataBase?: IDataDirectory[]
+  loading?: boolean
 }
 const props = defineProps<Props>()
 const emits = defineEmits(['update:midTable', 'update:describe', 'update:reference'])
@@ -173,9 +174,9 @@ const tableData = computed(() => {
 
 const empty = computed(() => !props.dataBase?.length)
 
-watch(() => props.dataBase, (database) => {
-  if (database && database.length) {
-    database?.forEach((item) => {
+watch(uploadTab, (currTab) => {
+  if (currTab === 'uploadDataIntroduce') {
+    props.dataBase?.forEach((item: any) => {
       fetchFileIsExist(item.nameEN)
     })
   }
@@ -215,7 +216,7 @@ watch(() => props.dataBase, (database) => {
             />
           </header>
 
-          <base-table v-slot="{ props, col }" :cols="mideTableCol" :rows="tableData">
+          <base-table v-slot="{ props, col }" :loading="loading" :cols="mideTableCol" :rows="tableData">
             <div flex="~ row">
               {{ props.row[`${col}`] }}
             </div>
