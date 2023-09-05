@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 interface Props {
   modelValue: any
-  options: Array<{ label: string; id: string }>
+  options: Array<{ label: string; id: string | number }>
   label?: string
   chip?: boolean
 }

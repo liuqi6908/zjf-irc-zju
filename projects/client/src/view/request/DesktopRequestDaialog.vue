@@ -1,21 +1,15 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { Notify } from 'quasar'
-import { useUser } from '../../composables/useUser'
 import { putDesktopRequest } from '../../api/file/putDesktopRequest'
 import { desktopRequest } from '../../api/desktop/desktopRequest'
 
-import Zdialog from '../../components/dialog/Zdialog.vue'
+import ZDialog from '../../components/dialog/ZDialog.vue'
 import ZSelect from '../../components/select/ZSelect.vue'
 import UploadFile from '../../components/file/UploadFile.vue'
 
 defineProps<Props>()
-
-defineEmits(['update:modelValue'])
-
-const router = useRouter()
-const { userInfo } = useUser()
+const $emit = defineEmits(['update:modelValue', 'callback'])
 
 const options = [
   { label: '6个月', id: 180 },
@@ -34,36 +28,47 @@ interface Props {
 }
 
 async function confirm() {
-  if (!files.value || !files.value.length)
-    return
-  for (const file of files.value) {
-    const res = await putDesktopRequest(file.name, file)
-    if (res) {
-      attachments.value.push(
-      `${res}`,
-      )
-    }
-  }
   const requestRes = await desktopRequest(select.value.id, attachments.value)
   if (requestRes) {
     Notify.create({
       message: '申请成功',
       type: 'success',
     })
+    $emit('callback')
   }
 }
 
-watch(file, (newFile) => {
-  if (newFile)
-    files.value.push(newFile)
+watch(file, async (newFile) => {
+  if (newFile) {
+    const name = await putDesktopRequest(newFile.name, newFile)
+    if (name) {
+      attachments.value.push(name)
+      files.value.push(newFile)
+    }
+    else {
+      Notify.create({
+        message: '文件上传失败',
+        type: 'danger',
+      })
+    }
+  }
 })
+
+/**
+ * 移除文件
+ * @param index
+ */
+function removeFile(index: number) {
+  files.value.splice(index, 1)
+  attachments.value.splice(index, 1)
+}
 </script>
 
 <template>
-  <Zdialog
+  <ZDialog
     title="申请使用"
     caption="(申请结果前往“用户中心”查看)"
-    :disable-confirm="!read"
+    :disable-confirm="!read || !files.length"
     :model-value="modelValue"
     footer
     @ok="confirm"
@@ -75,13 +80,16 @@ watch(file, (newFile) => {
     </div>
 
     <div my-6 flex="~ col">
-      <div flex="~ row justify-between items-center">
+      <div flex="~ row justify-between items-center" mb-2>
         <span text-4 font-600 text-grey-8>研究计划/其他材料</span>
         <UploadFile v-model="file" label="提交文件" />
       </div>
 
-      <div v-for="(file, index) in files" :key="index" flex="~ row" text-grey-5>
-        <div i-mingcute:file-line text-grey-5 />{{ file.name }}
+      <div v-for="(item, index) in files" :key="index" flex="~ row" text-grey-5 hover:bg-gray-100 items-center justify-between class="file-item">
+        <div>
+          <q-icon name="far fa-file" mr-1 />{{ item.name }}
+        </div>
+        <q-icon class="remove" name="fas fa-close" relative top-1px cursor-pointer hidden @click="removeFile(index)" />
       </div>
     </div>
 
@@ -99,5 +107,15 @@ watch(file, (newFile) => {
         </RouterLink>
       </div>
     </div>
-  </Zdialog>
+  </ZDialog>
 </template>
+
+<style lang="scss" scoped>
+.file-item {
+  &:hover {
+    .remove {
+      display: inline-block;
+    }
+  }
+}
+</style>
