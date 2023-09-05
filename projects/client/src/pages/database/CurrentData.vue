@@ -78,7 +78,3 @@ watch(() => props.initDatabase, (database) => {
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-
-</style>

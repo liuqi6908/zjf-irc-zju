@@ -83,11 +83,12 @@ useEventListener(avatarRef, 'click', (e: PointerEvent) => {
   }
   else { router.replace({ path: '/auth/login' }) }
 })
-
-useEventListener(document, 'click', (e) => {
-  if (!avatarRef.value?.$el.contains(e.target))
-    userDropdown.value = false
-})
+if (typeof document !== 'undefined') {
+  useEventListener(document, 'click', (e) => {
+    if (!avatarRef.value?.$el.contains(e.target))
+      userDropdown.value = false
+  })
+}
 
 // cleanup()
 </script>

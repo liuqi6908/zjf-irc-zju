@@ -22,46 +22,48 @@ function judegeISHEaderHtml(node: HTMLElement) {
 }
 
 function resolveHTML(html: string) {
-  const article = document.createElement('article')
-  article.innerHTML = html
-  const hs = article.querySelectorAll('h1, h2, h3 ,h4')
-  const hsArr = Array.from(hs) as HTMLElement[]
+  if (typeof document !== 'undefined') {
+    const article = document.createElement('article')
+    article.innerHTML = html
+    const hs = article.querySelectorAll('h1, h2, h3 ,h4')
+    const hsArr = Array.from(hs) as HTMLElement[]
 
-  const parentCursorMap = {} as any
-  const toc = []
-  let id = 0
+    const parentCursorMap = {} as any
+    const toc = []
+    let id = 0
 
-  for (const h of hsArr) {
-    id++
-    const level = +h.tagName.slice(1)
+    for (const h of hsArr) {
+      id++
+      const level = +h.tagName.slice(1)
 
-    h.setAttribute('id', id)
+      h.setAttribute('id', id)
 
-    if (id === 1)
-      h.setAttribute('style', 'width: 100% !important;display: flex !important;flex-direction: inherit;align-items: center')
+      if (id === 1)
+        h.setAttribute('style', 'width: 100% !important;display: flex !important;flex-direction: inherit;align-items: center')
 
-    const node = { text: h.innerText, id, level }
+      const node = { text: h.innerText, id, level }
 
-    if (level === 1) {
-      toc.push(node)
+      if (level === 1) {
+        toc.push(node)
+        parentCursorMap[level] = node
+
+        continue
+      }
+
+      const parentLevel = level - 1
+      const parentCursor = parentCursorMap[parentLevel]
+
+      if (!parentCursor)
+        throw new Error(`parent level ${parentLevel} not found`)
+
+      if (!parentCursor.children)
+        parentCursor.children = []
+
+      parentCursor.children.push(node)
       parentCursorMap[level] = node
-
-      continue
     }
-
-    const parentLevel = level - 1
-    const parentCursor = parentCursorMap[parentLevel]
-
-    if (!parentCursor)
-      throw new Error(`parent level ${parentLevel} not found`)
-
-    if (!parentCursor.children)
-      parentCursor.children = []
-
-    parentCursor.children.push(node)
-    parentCursorMap[level] = node
+    return { toc, article }
   }
-  return { toc, article }
 }
 
 const navList = computed(() => {
@@ -99,20 +101,22 @@ function downloadDoc(url: string) {
 
 function scrollTo(title: string, index: number) {
   link.value = title
-  const target = document.getElementById(`${index + 1}`)
-  if (target) {
-    target.scrollIntoView({
-      behavior: 'smooth',
-    })
+  if (typeof document !== 'undefined') {
+    const target = document.getElementById(`${index + 1}`)
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+      })
+    }
   }
 }
 
-watch(() => route.query,
-  async (query) => {
-    url.value = getDataDescribe(query.rootId, `${query.nameEN}.docx`)
-    downloadDoc(url.value)
-  }, { immediate: true },
-)
+onMounted(() => {
+  const { rootId, nameEN } = route.query
+  url.value = getDataDescribe(rootId, `${nameEN}.docx`)
+  // console.log({ url })
+  downloadDoc(url.value)
+})
 </script>
 
 <template>
@@ -153,24 +157,6 @@ watch(() => route.query,
 </template>
 
 <style lang="scss" scoped>
-@import './doc.css';
-
-// .docHtml {
-//   * {
-//     table {
-//       width: 100%;
-//       border-collapse: collapse;
-//     }
-
-//     tr {
-//       padding: 8px;
-//       text-align: left;
-//       font-weight: bold;
-//       border: 1px solid #ccc;
-//     }
-//   }
-// }
-
 .docHtml :deep(table) {
   width: 100%;
   border-collapse: collapse;

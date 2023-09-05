@@ -46,14 +46,16 @@ function dropFiles(e: DragEvent) {
 }
 
 function selectedFiles() {
-  const fileList = document.querySelector('.drop-zone-file')?.files as FileList
+  if (typeof document !== 'undefined') {
+    const fileList = document.querySelector('.drop-zone-file')?.files as FileList
 
-  if (fileList && fileList.length) {
-    const fileArr = Array.from(fileList)
-    for (const file of fileArr) {
-      const approve = checkFile(file, outgoingInfo[model.value].size)
-      if (approve)
-        outgoingInfo[model.value].dropzoneFile = file
+    if (fileList && fileList.length) {
+      const fileArr = Array.from(fileList)
+      for (const file of fileArr) {
+        const approve = checkFile(file, outgoingInfo[model.value].size)
+        if (approve)
+          outgoingInfo[model.value].dropzoneFile = file
+      }
     }
   }
 }
@@ -190,7 +192,3 @@ async function outConfirm() {
     <EmailEditDialog v-model:edit-dialog="editDialog" label="邮箱" />
   </div>
 </template>
-
-<style lang="scss" scoped>
-
-</style>
