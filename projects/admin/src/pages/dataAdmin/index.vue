@@ -14,7 +14,7 @@ import { useDataBase } from '~/composables/useDataBase'
 import { deleteRootData } from '~/api/data/delecteRootData'
 import { updateRootData } from '~/api/data/updateRootData'
 
-const { getDataByRootId, geRootData, rootTabList } = useDataBase()
+const { getDataByRootId, geRootData, rootTabList, loading } = useDataBase()
 
 const tab = ref('')
 const currentTabObj = ref()
@@ -30,7 +30,7 @@ const editInfo = reactive({
   nameZH: '',
 })
 
-async function uploadFile(tab: DataRoot, file: File) {
+async function uploadFile(tab: string, file: File) {
   const fromData = new FormData()
   fromData.append('file', file)
 
@@ -120,6 +120,12 @@ function rightEvent({ val, event }) {
   EditRef.value.$el.style.display = EditRef.value.$el.style.display === 'none' ? 'block' : 'none'
 }
 
+async function getRootDataById(tab: string) {
+  const res = await getDataByRootId(tab)
+  if (res && currentTabObj.value)
+    currentTabObj.value.data = res
+}
+
 const dataBase = computed(() => {
   if (currentTabObj.value.data && currentTabObj.value.data.length)
     return findLevelObjects(currentTabObj.value.data, 1)
@@ -132,18 +138,19 @@ onBeforeMount(() => {
   })
 })
 
-watch([tab, midTable], async ([newTab, newMid]) => {
-  if (newMid)
-    await uploadFile((newTab as DataRoot), newMid)
-
+watch(tab, async (newTab) => {
   tab.value = newTab
 
   if (!newTab)
     return
+  getRootDataById(newTab)
+})
 
-  const res = await getDataByRootId(newTab as DataRoot)
-  if (res && currentTabObj.value)
-    currentTabObj.value.data = res
+watch(midTable, async (newMid) => {
+  if (newMid) {
+    await uploadFile((tab.value as DataRoot), newMid)
+    await getRootDataById(tab.value as DataRoot)
+  }
 })
 
 watch(describe, async (newDescribe) => {
@@ -217,10 +224,10 @@ onMounted(() => {
           <div i-material-symbols:add />
         </q-btn>
       </template>
-      <!-- <TotalData v-if="tab === 'totalData'" /> -->
       <DataResource
         v-model:mid-table="midTable"
         v-model:describe="describe"
+        :loading="loading"
         :data-root-id="tab"
         :data-base="dataBase"
         :tree-data="currentTabObj"

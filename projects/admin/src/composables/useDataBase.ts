@@ -15,10 +15,11 @@ export function useDataBase() {
   }
 
   /** 获取指定分类的数据 */
-  const getDataByRootId = async (dataRootId: DataRoot) => {
+  const getDataByRootId = async (dataRootId: string) => {
     if (!dataRootId)
       return
-    return await $get<IDataDirectory[]>(`/data/list/${dataRootId}`)
+    loading.value = true
+    return await $get<IDataDirectory[]>(`/data/list/${dataRootId}`).finally(() => loading.value = false)
   }
 
   const geRootData = async () => {

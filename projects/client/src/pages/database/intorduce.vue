@@ -5,14 +5,82 @@ import { getDataDescribe } from '~/api/file/dataDescribe'
 const route = useRoute()
 const url = ref('')
 const docHtml = ref('')
+const link = ref('')
+const navHtml = ref<{
+  toc: {
+    text: string
+    id: number
+    level: number
+  }[]
+  article: HTMLElement
+}>()
+
+// const tableStyle
+
+function judegeISHEaderHtml(node: HTMLElement) {
+  return Object.prototype.toString.call(node) === '[object HTMLHeadingElement]'
+}
+
+function resolveHTML(html: string) {
+  const article = document.createElement('article')
+  article.innerHTML = html
+  const hs = article.querySelectorAll('h1, h2, h3 ,h4')
+  const hsArr = Array.from(hs) as HTMLElement[]
+
+  const parentCursorMap = {} as any
+  const toc = []
+  let id = 0
+
+  for (const h of hsArr) {
+    id++
+    const level = +h.tagName.slice(1)
+
+    h.setAttribute('id', id)
+
+    if (id === 1)
+      h.setAttribute('style', 'width: 100% !important;display: flex !important;flex-direction: inherit;align-items: center')
+
+    const node = { text: h.innerText, id, level }
+
+    if (level === 1) {
+      toc.push(node)
+      parentCursorMap[level] = node
+
+      continue
+    }
+
+    const parentLevel = level - 1
+    const parentCursor = parentCursorMap[parentLevel]
+
+    if (!parentCursor)
+      throw new Error(`parent level ${parentLevel} not found`)
+
+    if (!parentCursor.children)
+      parentCursor.children = []
+
+    parentCursor.children.push(node)
+    parentCursorMap[level] = node
+  }
+  return { toc, article }
+}
+
+const navList = computed(() => {
+  const nodeList = []
+  if (navHtml.value?.article.childNodes) {
+    for (const node of navHtml.value?.article.childNodes) {
+      if (judegeISHEaderHtml(node))
+        nodeList.push(node)
+    }
+  }
+  return nodeList
+})
 
 /** 解析 */
 function parseDocFile(fileData: ArrayBuffer) {
-  // const unit8Arr = new Uint8Array(fileData)
-  // console.log({ fileData })
   mammoth.convertToHtml({ arrayBuffer: fileData }).then((res) => {
     const html = res.value
     docHtml.value = html
+    navHtml.value = resolveHTML(docHtml.value)
   }).catch((err) => {
     console.error('error', err)
   })
@@ -28,6 +96,17 @@ function downloadDoc(url: string) {
   }
   xhr.send()
 }
+
+function scrollTo(title: string, index: number) {
+  link.value = title
+  const target = document.getElementById(`${index + 1}`)
+  if (target) {
+    target.scrollIntoView({
+      behavior: 'smooth',
+    })
+  }
+}
+
 watch(() => route.query,
   async (query) => {
     url.value = getDataDescribe(query.rootId, `${query.nameEN}.docx`)
@@ -38,8 +117,8 @@ watch(() => route.query,
 
 <template>
   <div flex="~ col  items-center" min-h-4xl bg-grey-1>
-    <div full max-w-4xl>
-      <header flex="~ row items-center" mb-10 font-600>
+    <div full max-w-6xl flex="~ col justify-center items-center">
+      <header flex="~ row items-center" mb-10 min-w-4xl font-600>
         <q-btn flat mr-2 text-grey-6 @click="() => $router.back()">
           <div i-mingcute:left-line h-6 w-6 />
         </q-btn>
@@ -47,13 +126,72 @@ watch(() => route.query,
       </header>
 
       <Empty v-if="!docHtml" label="暂无数据库介绍" />
-      <div v-else v-html="docHtml" />
+      <div v-else full py-10 flex="~ row gap-10">
+        <!-- <nav class="nav" flex="~ col justify-start">
+          <a  :key="index" w-sm text-grey-8 @click="scrollTo(index)">
+            {{ node.textContent }}
+          </a>
+        </nav> -->
+
+        <q-list text-grey-8>
+          <q-item
+            v-for="(node, index) in navList" :key="index" class="ellipsis"
+            flex="~ col justify-center items-start" clickable w-50 font-600 :active="link === node.textContent"
+            active-class="text-primary-1 bg-grey-2" @click="scrollTo(node.textContent, index)"
+          >
+            <q-item-section>
+              <q-item-label lines="1">
+                {{ node.textContent }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+        <div class="docHtml" flex="~ col justify-start items-start" v-html="navHtml?.article.innerHTML" />
+      </div>
     </div>
   </div>
 </template>
 
-<style lang="">
+<style lang="scss" scoped>
+@import './doc.css';
 
+// .docHtml {
+//   * {
+//     table {
+//       width: 100%;
+//       border-collapse: collapse;
+//     }
+
+//     tr {
+//       padding: 8px;
+//       text-align: left;
+//       font-weight: bold;
+//       border: 1px solid #ccc;
+//     }
+//   }
+// }
+
+.docHtml :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.docHtml :deep(tr:nth-child(1)) {
+  background-color: #e0e0e0;
+}
+
+.docHtml :deep(th) {
+    padding: 8px;
+    text-align: left;
+    font-weight: bold;
+    border: 1px solid #ccc;
+}
+
+  /* 数据单元格样式 */
+.docHtml :deep(td) {
+    padding: 8px;
+    border: 1px solid #ccc;
+}
 </style>
 
 <route lang="yaml">
