@@ -18,14 +18,13 @@ const fillReplacedSvg = computed(() => {
 </script>
 
 <template>
-  <div border-rd-3 p-x-10 p-b-6 p-t-12 flex="~ col items-center">
+  <div flex="~ col items-center" gap3 border-rd-3 p-x-10 p-b-6 p-t-12>
     <div class="card-icon" h-12 w-12 flex-center p-2 text-primary-1 v-html="fillReplacedSvg" />
 
-    <div my-3 text-5 font-600 text-grey-8>
+    <div text-5 font-600 text-grey-8>
       {{ title }}
     </div>
-    <br>
-    <span break-all indent-1 text-grey-6 class="ellipsis-3-lines">
+    <span break-all indent-1 text-4 text-grey-6 class="ellipsis-3-lines">
       {{ htmlDecodeByRegExp(richText) }}
     </span>
   </div>
