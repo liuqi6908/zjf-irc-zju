@@ -126,7 +126,6 @@ if (typeof document !== 'undefined') {
 
           <q-list
             v-if="userDropdown" id="userDropdown"
-
             absolute z-999 bg-grey-1 p-2 filter-drop-shadow
             :style="{ left: `${userCenter.clientX}px`, top: `${userCenter.clientY}px` }"
           >
@@ -182,6 +181,8 @@ if (typeof document !== 'undefined') {
 
 <style lang="sass">
 .home-layout-tabs
+  .q-tab--inactive
+    opacity: 1
   .q-tab__indicator
     padding: 0 18px
     background: none
