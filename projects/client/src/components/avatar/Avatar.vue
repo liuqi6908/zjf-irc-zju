@@ -6,7 +6,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  size: 30,
+  size: 40,
 })
 
 defineEmits(['update:route'])
@@ -30,7 +30,7 @@ function getImageUrl(url: string) {
 </script>
 
 <template>
-  <div cursor-pointer>
+  <div cursor-pointer select-none>
     <div
       :style="{ width: `${size}px`, height: `${size}px` }"
       flex-center border-size-1.5 b-primary-1 rounded-full text-primary-1
@@ -39,7 +39,7 @@ function getImageUrl(url: string) {
         v-if="avatarUrl" overflow-hidden
         :style="{ width: `${size}px`, height: `${size}px`, background: `${getImageUrl(avatarUrl)} cover` }"
       />
-      <span v-else-if="nickname">
+      <span v-else-if="nickname" h0 text-5 style="line-height: 0">
         {{ subStr(nickname) }}
       </span>
       <div v-else i-mingcute:user-2-fill />
@@ -47,7 +47,3 @@ function getImageUrl(url: string) {
     <slot />
   </div>
 </template>
-
-<style lang="scss">
-
-</style>
