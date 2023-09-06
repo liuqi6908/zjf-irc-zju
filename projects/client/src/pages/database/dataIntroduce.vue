@@ -111,7 +111,7 @@ async function confirmRequest() {
 
         <BaseTable
           v-slot="{ props, col }"
-          disable-pagination :loading="loading" :cols="previewTableData.col" :rows="previewTableData.row"
+          :loading="loading" :cols="previewTableData.col" :rows="previewTableData.row"
         >
           <div>
             {{ props.row[`${col}`] }}

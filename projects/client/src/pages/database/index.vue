@@ -32,16 +32,16 @@ const empty = computed(() => !rootData.value || !rootData.value.length)
 
 <template>
   <div flex="~ col" full min-h-4xl items-center bg-grey-1>
-    <header class="database" w-full flex-center h-40>
+    <header class="database" h-40 w-full flex-center>
       <div text-grey-1 title-1 v-text="'数据库'" />
     </header>
     <div
-      class="col-grow" justify-center flex-start w-limited-1 mt-15
+      class="col-grow" flex-start w-limited-1 mt-15 justify-center
       flex="~ row gap-10"
     >
       <SliderList :list="rootData" :current-id="databaseId" router @update:current-id="(id) => databaseId = id" />
 
-      <div flex="1" flex-center w0>
+      <div flex="1" w0 flex-center>
         <q-spinner
           v-if="loading"
           color="primary-1"
