@@ -135,6 +135,7 @@ export function dataCsvParser(arr: Array<{
         directoryId: table[TABLE_ENG].id,
         nameEN: VARIABLE_ENG,
         nameZH: VARIABLE,
+        order: ORDER,
       })
     }
   })

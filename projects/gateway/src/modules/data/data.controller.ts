@@ -211,6 +211,7 @@ export class DataController {
 
     return await this._dataSrv.fieldRepo().find({
       where: { directoryId: dataDirectoryId },
+      order: { order: 'ASC' },
     })
   }
 

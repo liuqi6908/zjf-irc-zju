@@ -29,4 +29,8 @@ export class DataField implements IDataField {
   @ApiProperty({ description: '所属的目录 id' })
   @Column()
   directoryId: string
+
+  @ApiProperty({ description: '字段排序' })
+  @Column({ nullable: true })
+  order?: number
 }
