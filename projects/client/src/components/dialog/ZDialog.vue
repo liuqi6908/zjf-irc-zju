@@ -9,9 +9,14 @@ interface Props {
   footer?: boolean
   confirmEvent?: () => void
   disableConfirm?: boolean
+  cancelText?: string
+  confirmText?: string
 }
 
-defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+  cancelText: '取消',
+  confirmText: '确认',
+})
 defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValue'])
 </script>
 
@@ -42,17 +47,17 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
       <footer v-if="footer" flex flex-row justify-end>
         <div flex="~ row" gap6>
           <q-btn
-            color="primary"
-            :close-popup="modelValue" square h10 min-w-28 outline
+            v-close-popup
+            color="primary" square h10 min-w-28 outline
           >
-            <span text-3.5 font-500>取消</span>
+            <span text-3.5 font-500>{{ cancelText }}</span>
           </q-btn>
           <q-btn
-            flat square h10 min-w-28 bg-primary-1 text-white
-            :disable="disableConfirm" :close-popup="modelValue"
+            v-close-popup flat square h10 min-w-28 bg-primary-1
+            text-white :disable="disableConfirm"
             @click="$emit('ok')"
           >
-            <span text-3.5 font-500>确认</span>
+            <span text-3.5 font-500>{{ confirmText }}</span>
           </q-btn>
         </div>
       </footer>

@@ -10,6 +10,7 @@ const { cmsProps, currComponent } = useCms()
 
 const showQAndA = ref(false)
 const userDropdown = ref(false)
+const showLogoutConfirmDialog = ref(false)
 const footerProps = ref<any[]>([])
 const avatarRef = ref<any>()
 
@@ -60,7 +61,7 @@ const userList: Array<any> = [
   {
     id: 'adminQRCode',
     name: '退出登录',
-    action: () => useLogout(),
+    action: () => showLogoutConfirmDialog.value = true,
   },
 ]
 
@@ -140,7 +141,7 @@ if (typeof document !== 'undefined') {
                   v-close-popup
 
                   :to="u.to"
-                  clickable dense h12
+                  dense clickable h12
                   style="--q-primary: var(--grey-2); color: var(--grey-2) !important;"
                   @click="() => u.action?.()"
                 >
@@ -192,6 +193,16 @@ if (typeof document !== 'undefined') {
       v-if="footerProps && footerProps.length"
       w-full :list="footerProps "
     />
+
+    <ZDialog
+      v-model="showLogoutConfirmDialog"
+      title="退出登录"
+      confirm-text="退出"
+      footer
+      @ok="useLogout()"
+    >
+      是否退出登录
+    </ZDialog>
   </main>
 </template>
 
