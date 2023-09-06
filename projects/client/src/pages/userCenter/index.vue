@@ -1,5 +1,5 @@
 <template>
-  <div full min-h-xl bg-grey-1 />
+  <div full bg-grey-1 min-h-xl />
 </template>
 
 <route lang="yaml">

@@ -91,7 +91,7 @@ async function queryUserList(props: any) {
       item['verification.status'] = userStatus.find(v => v.value === item['verification.status'])?.label || '未认证'
     })
   }
-  catch (_) { }
+  catch (_) {}
   finally {
     // 更新本地分页对象
     pagination.value.page = page

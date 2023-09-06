@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import HomeLayout from '~/view/HomeLayout.vue'
 
+const $route = useRoute()
+
 const userList = ref([
   {
     nameZH: '我的认证',
@@ -23,9 +25,7 @@ const userList = ref([
     router: { path: 'myWorks' },
   },
 ])
-const currentId = ref(userList.value[0].id)
-
-const editDialog = ref(false)
+const currentId = ref(userList.value.find(v => $route.path.includes(v.router.path))?.id || userList.value[0].id)
 </script>
 
 <template>
