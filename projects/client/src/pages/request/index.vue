@@ -164,11 +164,11 @@ watch(model, async (newModel) => {
               <span text-grey-8>
                 您的申请已被驳回，请重新提交
               </span>
-              <div flex="~ col" bg-grey-2 p-4 text-sm mt-2 font-500 w-75>
+              <div flex="~ col" text-sm font-500 bg-grey-2 p-4 mt-2 w-75>
                 <div flex="~ row" mb-2 text-grey-8>
                   驳回理由
                 </div>
-                <div flex="~ row" indent-0 text-grey-8 text-left v-text="requestInfo.rejectReason" />
+                <div flex="~ row" text-grey-8 text-left indent-0 v-text="requestInfo.rejectReason" />
               </div>
             </div>
             <!-- 已取消 -->
@@ -199,14 +199,14 @@ watch(model, async (newModel) => {
           云主机情况
         </header>
         <section flex="~ row items-center justify-around">
-          <div class="desktopCode" ml-20 mt-6 h-60 w-60 />
-          <div flex="~ col" ml-13 max-h-30 p-6 style="background: linear-gradient(135deg, #F5F7FA 0%, rgba(245, 247, 250, 0.00) 100%);">
+          <div class="desktopCode" mt-6 ml-20 h-60 w-60 />
+          <div flex="~ col" p-6 ml-13 max-h-30 style="background: linear-gradient(135deg, #F5F7FA 0%, rgba(245, 247, 250, 0.00) 100%);">
             <span text-primary-1 title-2>{{ vmInfo.total }}</span>
             <span text-4 text-grey-5>总数量</span>
           </div>
 
           <table min-w-80>
-            <tr min-h-10 bg-grey-2>
+            <tr bg-grey-2 min-h-10>
               <td>运行中</td>
               <td>停止</td>
             </tr>
@@ -219,11 +219,11 @@ watch(model, async (newModel) => {
       </div>
 
       <div bg-grey-1>
-        <div mt-10 w-6xl px-6 py-10>
+        <div mt-10 w-6xl py-10 px-6>
           <header v-if="model && desktopList" mb-10>
             <q-btn-toggle
               v-model="model"
-              unelevated no-caps spread rounded-0
+              rounded-0 unelevated no-caps spread
               toggle-color="primary-1"
               :flat="desktopList.length === 1 ? true : false"
               text-color="primary-1"
