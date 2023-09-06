@@ -78,7 +78,7 @@ export class VerificationController {
     // 取消自己的申请，或者是管理员取消
     if (
       verification.founderId !== req.raw.user!.id
-      || !permissions.some(p => p.name === PermissionType.VERIFICATION_CANCEL)
+      && !permissions.some(p => p.name === PermissionType.VERIFICATION_CANCEL)
     )
       responseError(ErrorCode.PERMISSION_DENIED)
 
