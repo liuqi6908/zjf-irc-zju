@@ -21,8 +21,8 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
     :model-value="modelValue"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <q-card min-w-lg p-6 style="border-radius: 0px !important;">
-      <div flex="~ row justify-between items-center" mb-6>
+    <q-card rounded="!0" flex="~ col" min-w-lg gap-6 p6>
+      <header flex="~ row justify-between items-center" h4>
         <div>
           <Btn v-if="back" @click="$emit('update:back')" />
           <div>
@@ -30,17 +30,31 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
           </div>
         </div>
 
-        <Btn :close-popup="modelValue" icon="i-mingcute:close-line" flat text-grey-5 />
-      </div>
+        <q-btn :close-popup="modelValue" dense flat h7 w7 translate-x-2 p0>
+          <div i-mingcute:close-line text-grey-5 />
+        </q-btn>
+      </header>
 
       <div>
         <slot />
       </div>
 
-      <footer v-if="footer" mt-10 flex flex-row justify-end>
-        <div flex="~ row">
-          <Btn label="取消" :close-popup="modelValue" mr-6 outline />
-          <Btn label="确认" :disable="disableConfirm" :close-popup="modelValue" @click="$emit('ok')" />
+      <footer v-if="footer" flex flex-row justify-end>
+        <div flex="~ row" gap6>
+          <q-btn
+            color="primary"
+            :close-popup="modelValue" square h10 min-w-28 outline
+          >
+            <span text-3.5 font-500>取消</span>
+          </q-btn>
+          <q-btn
+
+            flat square h10 min-w-28 bg-primary-1 text-white
+            :disable="disableConfirm" :close-popup="modelValue"
+            @click="$emit('ok')"
+          >
+            <span text-3.5 font-500>确认</span>
+          </q-btn>
         </div>
       </footer>
     </q-card>
