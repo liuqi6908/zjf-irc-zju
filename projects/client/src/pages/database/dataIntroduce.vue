@@ -2,17 +2,20 @@
 import BaseTable from 'shared/component/base/table/BaseTable.vue'
 
 import { cloneDeep } from 'lodash-es'
-import { Notify } from 'quasar'
+import { Notify, useQuasar } from 'quasar'
+import type { QTableProps } from 'quasar'
 import { getDataDownload } from '~/api/data/dataDownloadHandle'
 import { getDataFields } from '~/api/data/getDataDirctoryFields'
 import { getDataPreview } from '~/api/data/dataPreviewHandle'
 import { putSuggest } from '~/api/dataSuggest/putSuggest'
 
 const route = useRoute()
-const { isDesktop } = useUser()
+const $router = useRouter()
+const { userInfo, isDesktop } = useUser()
 const { $get } = useRequest()
+const $q = useQuasar()
 
-const tableFieldsCol = [
+const tableFieldsCol: QTableProps['columns'] = [
   { label: '字段', name: 'nameZH', field: 'nameZH', align: 'center' },
   { label: '含义', name: 'description', field: 'description', align: 'center' },
 ]
@@ -58,7 +61,7 @@ onBeforeMount(async () => {
 
   previewTable.value = (await getDataPreview(route.query.dataId as string).finally(() => {
     loading.value = false
-  })).filter(row => Object.values(row).some(v => v))
+  })).filter((row: any) => Object.values(row).some(v => v))
 
   let url = getDataDownload(route.query.dataId as string)
   if (url.startsWith('/api'))
@@ -66,6 +69,26 @@ onBeforeMount(async () => {
   downloadUrl.value = await $get(url)
 })
 
+function applyForUsing() {
+  if (!userInfo.value) {
+    $q.dialog({
+      title: '数据申请使用',
+      message: '该功能需登录后才可使用，是否立即前往登录？',
+      cancel: '取消',
+      ok: '立即前往',
+    })
+      .onOk(() => {
+        $router.push('/auth/login')
+      })
+  }
+  else {
+    $router.push('/request')
+  }
+}
+
+/**
+ * 建议采购申请
+ */
 async function confirmRequest() {
   if (!route.query.dataId)
     return
@@ -123,7 +146,7 @@ async function confirmRequest() {
     </div>
 
     <div flex="~ row gap-5" my-10>
-      <Btn v-if="!isDesktop && !isPurchased" outline label="数据申请使用" />
+      <Btn v-if="!isDesktop && !isPurchased" outline label="数据申请使用" @click="applyForUsing()" />
       <a v-else-if="!isPurchased" :href="downloadUrl" download="数据库">
         <Btn label="数据下载" />
       </a>
