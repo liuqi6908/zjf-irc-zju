@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { AUTH_TOKEN_KEY } from 'shared/constants'
 import { objectPick, useEventListener } from '@vueuse/core'
-import type { ItemList } from '~/components/nav/NavItem.vue'
 
 import { useCms } from '~/composables/useCms'
 
@@ -52,13 +51,17 @@ const navList = [
 const nav = ref(navList[0].id)
 const userCenter = ref<{ clientX: number; clientY: number }>({ clientX: 0, clientY: 0 })
 
-const userList: Array<ItemList> = [
+const userList: Array<any> = [
   {
     name: '用户中心',
     id: 'userCunt',
-    clickEvent: () => router.replace({ path: '/userCenter' }),
+    to: { path: '/userCenter' },
   },
-  { id: 'adminQRCode', name: '退出登录', back: true, clickEvent: () => useLogout() },
+  {
+    id: 'adminQRCode',
+    name: '退出登录',
+    action: () => useLogout(),
+  },
 ]
 
 const isToken = computed(() => {
@@ -119,25 +122,43 @@ if (typeof document !== 'undefined') {
             :avatar-url="userInfo?.avatar"
             :nickname="userInfo?.account"
           >
-            <div>
-              {{ isToken ? '' : '登录' }}
+            <div v-if="!isToken">
+              {{ '登录' }}
             </div>
-          </Avatar>
+            <q-menu
+              style="box-shadow: 0px 9px 28px 8px rgba(0, 0, 0, 0.05), 0px 6px 16px 0px rgba(0, 0, 0, 0.08), 0px 3px 6px -4px rgba(0, 0, 0, 0.12);"
+              rounded-0
+              :offset="[0, 16]"
+              anchor="bottom right" self="top right"
+            >
+              <q-list
+                w50 py2 filter-drop-shadow
+              >
+                <q-item
+                  v-for="u in userList"
+                  :key="u.id"
+                  v-close-popup
 
-          <q-list
-            v-if="userDropdown" id="userDropdown"
-            absolute z-999 bg-grey-1 p-2 filter-drop-shadow
-            :style="{ left: `${userCenter.clientX}px`, top: `${userCenter.clientY}px` }"
-          >
-            <NavItem
-              v-for="u in userList"
-              :id="u.id"
-              :key="u.id"
-              :click-event="u.clickEvent"
-              :back="u.back"
-              :name="u.name"
-            />
-          </q-list>
+                  :to="u.to"
+                  clickable dense h12
+                  style="--q-primary: var(--grey-2); color: var(--grey-2) !important;"
+                  @click="() => u.action?.()"
+                >
+                  <div w-full flex="~" items-center justify-between>
+                    <span text="4 grey-8">{{ u.name }}</span>
+                    <div>
+                      <svg
+                        v-if="u.to"
+                        width="7" height="10" viewBox="0 0 7 10" fill="none" xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M4.50033 5L0.666992 1.16667L1.83366 0L6.83366 5L1.83366 10L0.666992 8.83333L4.50033 5Z" fill="#6E7686" />
+                      </svg>
+                    </div>
+                  </div>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </Avatar>
         </div>
       </div>
       <!-- Navigation -->
