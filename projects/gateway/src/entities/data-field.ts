@@ -5,7 +5,7 @@ import { DataDirectory } from './data-directory'
 
 @Entity()
 export class DataField implements IDataField {
-  @ApiProperty({ description: '字段唯一标，生成方式为： `md5(table_en + field_en)`' })
+  @ApiProperty({ description: '字段唯一标，生成方式为： `md5(rootId + table_en + field_en)`' })
   @PrimaryColumn()
   id: string
 
@@ -29,4 +29,8 @@ export class DataField implements IDataField {
   @ApiProperty({ description: '所属的目录 id' })
   @Column()
   directoryId: string
+
+  @ApiProperty({ description: '字段排序' })
+  @Column({ nullable: true })
+  order?: number
 }

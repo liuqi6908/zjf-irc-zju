@@ -103,8 +103,8 @@ async function confirmRequest() {
       <div flex="~ col" mt-5 gap-5>
         <span flex="~ row" text-4 font-600 text-grey-8>表格字段说明</span>
         <BaseTable
-          v-if="tableFieldRows.length" v-slot="{ props, col }" disable-pagination :loading="loading"
-          :cols="tableFieldsCol" :rows="tableFieldRows"
+          v-if="tableFieldRows.length"
+          v-slot="{ props, col }" disable-pagination :loading="loading" :cols="tableFieldsCol" :rows="tableFieldRows"
         >
           <div>
             {{ props.row[`${col}`] }}
@@ -118,8 +118,8 @@ async function confirmRequest() {
         <span flex="~ row" text-4 font-600 text-grey-8> 表格数据预览</span>
 
         <BaseTable
-          v-slot="{ props, col }" disable-pagination :loading="loading" :cols="previewTableData.col"
-          :rows="previewTableData.row"
+          v-slot="{ props, col }"
+          disable-pagination :loading="loading" :cols="previewTableData.col" :rows="previewTableData.row"
         >
           <div>
             {{ props.row[`${col}`] }}

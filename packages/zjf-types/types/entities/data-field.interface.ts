@@ -10,4 +10,6 @@ export interface IDataField {
   description: string;
   /** 所属的目录 id */
   directoryId: string;
+  /** 字段排序 */
+  order?: number;
 }

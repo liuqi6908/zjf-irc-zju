@@ -45,7 +45,7 @@ watch(() => props.list, () => {
         </div>
       </q-carousel-slide>
       <template #navigation-icon="{ active, onClick }">
-        <div rounded-1000 mx-2 w-4 h-4 border-2 border-grey-1 :class="active ? 'bg-grey-1' : ''" @click="onClick" />
+        <div rounded-1000 w3 h3 mx2 border-1 border-grey-1 :class="active ? 'bg-grey-1' : ''" @click="onClick" />
       </template>
     </q-carousel>
   </div>

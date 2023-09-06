@@ -126,7 +126,7 @@ export function dataCsvParser(arr: Array<{
       }
     }
 
-    const fieldId = md5(TABLE_ENG + VARIABLE_ENG)
+    const fieldId = md5(rootId + TABLE_ENG + VARIABLE_ENG)
     if (!idMap.has(fieldId)) {
       idMap.set(fieldId, true)
       fields.push({
@@ -135,6 +135,7 @@ export function dataCsvParser(arr: Array<{
         directoryId: table[TABLE_ENG].id,
         nameEN: VARIABLE_ENG,
         nameZH: VARIABLE,
+        order: ORDER,
       })
     }
   })
