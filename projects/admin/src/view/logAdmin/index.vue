@@ -79,16 +79,13 @@ async function queryLogData(props: any) {
       dsl,
     }) as QueryLog
     pagination.value.rowsNumber = total.value
-    records.forEach((item) => {
-      delete item.user?.id
-    })
     rows.splice(0, rows.length, ...records.map(v => flattenJSON(v)))
     rows.forEach((item) => {
       item.time = moment(item.time).format('YYYY-MM-DD HH:mm:ss')
       item.action = actions.find(v => v.key === item.action)?.value || item.action
     })
   }
-  catch (e) {}
+  catch (_) {}
   finally {
     // 更新本地分页对象
     pagination.value.page = page

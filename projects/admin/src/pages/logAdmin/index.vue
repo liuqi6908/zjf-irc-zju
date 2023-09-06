@@ -3,7 +3,7 @@ import LogAdmin from '~/view/logAdmin/index.vue'
 </script>
 
 <template>
-  <LogAdmin absolute full />
+  <LogAdmin full absolute />
 </template>
 
 <route lang="yaml">
