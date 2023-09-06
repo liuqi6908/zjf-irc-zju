@@ -30,12 +30,12 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
           </div>
         </div>
 
-        <q-btn :close-popup="modelValue" dense flat h7 w7 translate-x-2 p0>
+        <q-btn v-close-popup dense flat h7 w7 translate-x-2 p0>
           <div i-mingcute:close-line text-grey-5 />
         </q-btn>
       </header>
 
-      <div>
+      <div rounded="0!">
         <slot />
       </div>
 
@@ -48,7 +48,6 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
             <span text-3.5 font-500>取消</span>
           </q-btn>
           <q-btn
-
             flat square h10 min-w-28 bg-primary-1 text-white
             :disable="disableConfirm" :close-popup="modelValue"
             @click="$emit('ok')"

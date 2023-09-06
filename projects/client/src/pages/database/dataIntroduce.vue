@@ -145,10 +145,30 @@ async function confirmRequest() {
     </div>
 
     <ZDialog v-model="dialog" title="采购理由" footer @ok="confirmRequest">
-      <q-input v-model="referenceText" filled type="textarea" />
+      <q-input
+        v-model="referenceText"
+        placeholder="请输入采购理由"
+        class="advice-input" filled type="textarea" :rows="6"
+      />
     </ZDialog>
   </div>
 </template>
+
+<style lang="sass">
+.advice-input
+  .q-field__control,
+  .q-field__inner
+    border-radius: 0px !important
+  &.q-field--filled .q-field__control
+    background: var(--grey-2)
+    border: 1px solid var(--grey-3)
+
+  &.q-field--filled .q-field__control::before
+    border-bottom: none
+  &.q-field--filled textarea
+    padding-top: 10px
+    min-height: 200px
+</style>
 
 <route lang="yaml">
 meta:
