@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, reactive } from 'vue';
 import { useRoute,useRouter }  from 'vue-router'
 
 interface Question {
@@ -13,6 +13,7 @@ interface Props {
 defineProps<Props>()
 
 const link = ref('')
+const openState = reactive<Record<string, boolean>>({})
 
 const route = useRoute()
 const router = useRouter()
@@ -32,16 +33,16 @@ function scrollTo(title: string, index: number) {
 
 onMounted(() => {
   const { title, index } = route.query
-  scrollTo(title, index)
+  scrollTo(String(title), Number(index))
 })
 </script>
 
 <template>
-  <div flex="~ row gap-15" max-w-6xl>
-    <q-list text-grey-8>
-      <div sticky top-0>
+  <div flex="~ row gap-15" w-full>
+    <q-list text-grey-8 sticky top-0>
+      <div>
         <q-item
-          w-50 v-for="(item, index) in list" class="ellipsis" flex="~ col justify-center items-start" font-600
+          w-50 v-for="(item, index) in list" class="ellipsis" flex="~ col" justify-center items-start font-600
           clickable @click="scrollTo(item.title, index)" :active="link === item.title"
           active-class="text-primary-1 bg-grey-2"
         >
@@ -53,16 +54,39 @@ onMounted(() => {
         </q-item>
       </div>
     </q-list>
-    <div flex="~ col" w-1000>
-      <q-expansion-item
-        py-12 border-b border-grey-3 dense dense-toggle switch-toggle-side
-        header-class="font-600 text-5 text-grayness-8" v-for="(item, index) in list" :key="index"
-        :id="`title${index}`" :label="item.title"
+    <div flex="~ col 1" w0>
+      <div v-for="(item, index) in list" :key="index" 
+        border-grey-3
+        :class="{ 
+          'border-b': index !== list.length - 1,
+          ...(index === 0 ? { 'pb-7.5': true } : { 'py-7.5': true })
+        }"
       >
-        <div mt-4 ml-10 w-150 border-l-2  p-5 style="border-color:#025CB9B2">
-          <div w-150 v-html="item.richText" />
-        </div>
-      </q-expansion-item>
+        <q-item clickable flex="~" items-center gap-2 @click="openState[item.title] = !openState[item.title]">
+          <div 
+            w6 h6 transition-all flex-center
+            :style="{ transform: openState[item.title] ? 'rotate(0deg)' : 'rotate(-90deg)' }"
+          >
+            <svg  width="10" height="5" viewBox="0 0 10 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 5L0 0H10L5 5Z" fill="black"/>
+            </svg>
+          </div>
+          <span text="5 grey-8" font-bold>{{ item.title }}</span>
+        </q-item>
+        <q-expansion-item
+          v-model="openState[item.title]"
+          header-class="display-none"
+          :id="`title${index}`" :label="item.title"
+          
+        >
+          <div w-150 pl12 pt4>
+            <div relative full pl4>
+              <div absolute w2px left-0 top="1/2" translate-y="-1/2" bg="primary-1/70" style="height: calc(100% - 10px)"></div>
+              <div class="question-content" w-150 v-html="item.richText" />
+            </div>
+          </div>
+        </q-expansion-item>
+      </div>
     </div>
   </div>
 </template>
@@ -81,4 +105,10 @@ onMounted(() => {
     }
   }
 }
+</style>
+
+<style lang="sass">
+.question-content
+  color: var(--grey-6)
+  text-align: start
 </style>
