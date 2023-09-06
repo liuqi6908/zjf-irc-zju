@@ -32,7 +32,7 @@ const empty = computed(() => !rootData.value || !rootData.value.length)
 
 <template>
   <div flex="~ col" full min-h-4xl items-center bg-grey-1>
-    <header class="database" h-40 w-full flex-center>
+    <header class="database" h-64 w-full flex-center>
       <div text-grey-1 title-1 v-text="'数据库'" />
     </header>
     <div
@@ -61,7 +61,7 @@ const empty = computed(() => !rootData.value || !rootData.value.length)
 
 <style lang="scss" scoped>
 .database {
-    background: no-repeat center / cover url("../../assets/layout/database.png");
+    background: no-repeat center / cover url("../../assets/layout/database.jpg");
 }
 </style>
 
