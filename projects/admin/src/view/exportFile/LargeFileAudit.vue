@@ -103,7 +103,6 @@ function download(name: string, id: string) {
     title: '下载确认',
     message: '该操作将下载大文件外发附件，是否继续？',
     cancel: true,
-    persistent: true,
   }).onOk(async () => {
     loading.value = true
     try {
@@ -131,7 +130,6 @@ function approve(id: string) {
     title: '通过确认',
     message: '该操作将通过大文件外发审核，是否继续？',
     cancel: true,
-    persistent: true,
   }).onOk(async () => {
     loading.value = true
     try {
@@ -168,7 +166,6 @@ function reject(id: string) {
       type: 'text',
     },
     cancel: true,
-    persistent: true,
   }).onOk(async (val) => {
     loading.value = true
     try {

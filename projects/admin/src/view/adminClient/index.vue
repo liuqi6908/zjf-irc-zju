@@ -111,7 +111,7 @@ function checkAttachment(row: any) {
   if (images && images.length) {
     images.forEach((filename: string) => {
       const src = getUrlByToken(`file/private/verify/${row.id}/${filename}`)
-      message += `<img src=${src} /><a href=${src} download>点击下载文件</a><br/>`
+      message += `<img src="${src}"><a href="${src}" download>点击下载文件</a><br/>`
     })
   }
   else {

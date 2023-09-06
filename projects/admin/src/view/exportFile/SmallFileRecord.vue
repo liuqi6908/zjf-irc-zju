@@ -95,7 +95,6 @@ function download(name: string, id: string) {
     title: '下载确认',
     message: '该操作将下载文件外发附件，是否继续？',
     cancel: true,
-    persistent: true,
   }).onOk(async () => {
     loading.value = true
     try {
