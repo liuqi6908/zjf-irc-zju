@@ -10,10 +10,10 @@ import { getDataDownload } from '~/api/data/dataDownloadHandle'
 import { getDataFields } from '~/api/data/getDataDirctoryFields'
 import { getDataPreview } from '~/api/data/dataPreviewHandle'
 import { putSuggest } from '~/api/dataSuggest/putSuggest'
-import { isDesktop } from '~/api/desktop/isDesktop'
 
 const route = useRoute()
 const { $get } = useRequest()
+const { isDesktop } = useUser()
 
 const tableFieldsCol: QTableProps['columns'] = [
   { label: '字段', name: 'nameZH', field: 'nameZH', align: 'center' },
@@ -27,7 +27,6 @@ const previewTable = ref([])
 const referenceText = ref('')
 const dialog = ref(false)
 const loading = ref(false)
-const isClient = ref(false)
 const requestDesktop = ref(false)
 
 const previewTableData = computed(() => {
@@ -63,7 +62,6 @@ onBeforeMount(async () => {
     loading.value = false
   })
 
-  isClient.value = await isDesktop()
   let url = getDataDownload(route.query.dataId as string)
   if (url.startsWith('/api'))
     url = url.substring(4)
@@ -124,7 +122,7 @@ async function confirmRequest() {
     </div>
 
     <div flex="~ row gap-5" my-10>
-      <Btn v-if="!isClient && !isPurchased" outline label="数据申请使用" @click="requestDesktop = true" />
+      <Btn v-if="!isDesktop && !isPurchased" outline label="数据申请使用" @click="requestDesktop = true" />
       <a v-else-if="!isPurchased" :href="downloadUrl" download="数据库">
         <Btn label="数据下载" />
       </a>
