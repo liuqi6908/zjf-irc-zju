@@ -146,6 +146,7 @@ if (typeof document !== 'undefined') {
           <q-route-tab
             v-for="tab in navList"
             :key="tab.id"
+            px8
             v-bind="objectPick(tab, ['to'])"
           >
             <span text-16px font-bold text-primary-1>{{ tab.label }}</span>
@@ -184,7 +185,7 @@ if (typeof document !== 'undefined') {
   .q-tab--inactive
     opacity: 1
   .q-tab__indicator
-    padding: 0 18px
+    padding: 0 32px
     background: none
     height: 4px
     &::after
