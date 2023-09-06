@@ -3,15 +3,14 @@ import BaseTable from 'shared/component/base/table/BaseTable.vue'
 
 import { cloneDeep } from 'lodash-es'
 import { Notify } from 'quasar'
-import DesktopRequestDaialog from '~/view/request/DesktopRequestDaialog.vue'
 import { getDataDownload } from '~/api/data/dataDownloadHandle'
 import { getDataFields } from '~/api/data/getDataDirctoryFields'
 import { getDataPreview } from '~/api/data/dataPreviewHandle'
 import { putSuggest } from '~/api/dataSuggest/putSuggest'
 
-import { isDesktop } from '~/api/desktop/isDesktop'
-
 const route = useRoute()
+const { isDesktop } = useUser()
+const { $get } = useRequest()
 
 const tableFieldsCol = [
   { label: '字段', name: 'nameZH', field: 'nameZH', align: 'center' },
@@ -26,8 +25,6 @@ const previewTable = ref([])
 const referenceText = ref('')
 const dialog = ref(false)
 const loading = ref(false)
-const isClient = ref(false)
-const requestDesktop = ref(false)
 
 const previewTableData = computed(() => {
   let row = [] as any
@@ -63,16 +60,11 @@ onBeforeMount(async () => {
     loading.value = false
   })).filter(row => Object.values(row).some(v => v))
 
-  downloadUrl.value = getDataDownload(route.query.dataId as string)
-  isClient.value = await isDesktop()
+  let url = getDataDownload(route.query.dataId as string)
+  if (url.startsWith('/api'))
+    url = url.substring(4)
+  downloadUrl.value = await $get(url)
 })
-
-async function openDialog() {
-  dialog.value = true
-
-  // const res = await downloadDescribeByRole('访客')
-  // console.log({ res })
-}
 
 async function confirmRequest() {
   if (!route.query.dataId)
@@ -106,7 +98,7 @@ async function confirmRequest() {
           v-if="tableFieldRows.length"
           v-slot="{ props, col }" disable-pagination :loading="loading" :cols="tableFieldsCol" :rows="tableFieldRows"
         >
-          <div>
+          <div text-left>
             {{ props.row[`${col}`] }}
           </div>
         </BaseTable>
@@ -131,20 +123,17 @@ async function confirmRequest() {
     </div>
 
     <div flex="~ row gap-5" my-10>
-      <Btn v-if="!isClient && !isPurchased" outline label="数据申请使用" @click="requestDesktop = true" />
+      <Btn v-if="!isDesktop && !isPurchased" outline label="数据申请使用" />
       <a v-else-if="!isPurchased" :href="downloadUrl" download="数据库">
         <Btn label="数据下载" />
       </a>
 
-      <btn v-if="isPurchased" label="建议采购" @click="openDialog()" />
+      <btn v-if="isPurchased" label="建议采购" @click="dialog = true" />
     </div>
 
-    <!-- <BaseTable /> -->
     <ZDialog v-model="dialog" title="采购理由" footer @ok="confirmRequest">
       <q-input v-model="referenceText" filled type="textarea" />
     </ZDialog>
-
-    <DesktopRequestDaialog v-model="requestDesktop" />
   </div>
 </template>
 
