@@ -7,24 +7,26 @@ import { login } from '~/api/auth/login'
 import { logout } from '~/api/auth/logout'
 import { register } from '~/api/auth/register'
 
+/** 用户token */
 const authToken = useStorage(AUTH_TOKEN_KEY, '')
+/** 用户信息 */
 const userInfo = ref<IUser>()
+/** 认证信息 */
 const latestVerifiy = ref<IVerificationHistory>()
+/** 是否云桌面 */
+const isDesktop = ref(false)
+let isDesktopFetched = false
 
 const { $get } = useRequest()
-
-// const quey: IQueryDto<IVerificationHistory> = {
-//   relations: {
-//     user: true,
-//   },
-// }
 
 export function useUser($router = useRouter()) {
   /** 登录 */
   const useLogin = async (options: { password: string; account?: string; email?: string }) => {
-    /** 加密 */
-    options.password = encryptPasswordInHttp(options.password)
-    const res = await login(options)
+    const res = await login({
+      ...options,
+      /** 加密 */
+      password: encryptPasswordInHttp(options.password),
+    })
     if (res) {
       authToken.value = res.sign.access_token
       userInfo.value = res.user
@@ -47,6 +49,7 @@ export function useUser($router = useRouter()) {
       await useLogin({ password, account, email })
   }
 
+  /** 登出 */
   const useLogout = async () => {
     const res = await logout()
     if (!res)
@@ -67,6 +70,13 @@ export function useUser($router = useRouter()) {
     return latestVerifiy.value
   }
 
+  onMounted(async () => {
+    if (!isDesktopFetched) {
+      isDesktopFetched = true
+      isDesktop.value = await $get('desktop/is')
+    }
+  })
+
   return {
     useRegister,
     useLogin,
@@ -76,5 +86,6 @@ export function useUser($router = useRouter()) {
     useGetProfile,
     getVerify,
     latestVerifiy,
+    isDesktop,
   }
 }

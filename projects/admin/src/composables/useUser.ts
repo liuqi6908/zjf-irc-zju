@@ -22,9 +22,11 @@ const adminInfo = useStorage(ADMIN_ROLE_NAME, '')
 export function useUser(router = useRouter()) {
   /** 登录 */
   const useLogin = async (options: { password: string; account?: string; email?: string }) => {
-    /** 加密 */
-    options.password = encryptPasswordInHttp(options.password)
-    const res = await login(options)
+    const res = await login({
+      ...options,
+      /** 加密 */
+      password: encryptPasswordInHttp(options.password),
+    })
     if (res) {
       authToken.value = res.sign.access_token
       userInfo.value = res.user

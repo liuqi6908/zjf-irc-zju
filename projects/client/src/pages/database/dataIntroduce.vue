@@ -141,11 +141,7 @@ async function confirmRequest() {
 
     <!-- <BaseTable /> -->
     <ZDialog v-model="dialog" title="采购理由" footer @ok="confirmRequest">
-      <q-input
-        v-model="referenceText"
-        filled
-        type="textarea"
-      />
+      <q-input v-model="referenceText" filled type="textarea" />
     </ZDialog>
 
     <DesktopRequestDaialog v-model="requestDesktop" />

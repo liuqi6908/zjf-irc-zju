@@ -18,35 +18,30 @@ onBeforeMount(() => {
         }
       })
     }
-    const rootIds = rootData.value.map(item => item.id)
-    if (rootIds.includes($route.query.database as string)) {
-      databaseId.value = $route.query.database as string
-      return
-    }
+    const { database } = $route.query as Record<string, string>
+    const obj = rootData.value.find(v => v.id === database) || rootData.value[0]
 
-    $router.push({ query: { database: rootData.value[0].id, label: rootData.value[0].nameZH } })
-    databaseId.value = rootData.value[0].id
+    databaseId.value = obj.id
+    $router.push({ query: { database: obj.id, label: obj.nameZH } })
   },
   )
 })
 
-const empty = computed(() => !rootData.value.length || !rootData.value)
+const empty = computed(() => !rootData.value || !rootData.value.length)
 </script>
 
 <template>
   <div flex="~ col" full min-h-4xl items-center bg-grey-1>
-    <header class="database" h-40 w-full flex-center>
-      <div text-grey-1 title-1>
-        数据库
-      </div>
+    <header class="database" w-full flex-center h-40>
+      <div text-grey-1 title-1 v-text="'数据库'" />
     </header>
     <div
-      class="col-grow" flex-start w-limited-1 mt-15 justify-center
+      class="col-grow" justify-center flex-start w-limited-1 mt-15
       flex="~ row gap-10"
     >
       <SliderList :list="rootData" :current-id="databaseId" router @update:current-id="(id) => databaseId = id" />
 
-      <div flex="1" w0 flex-center>
+      <div flex="1" flex-center w0>
         <q-spinner
           v-if="loading"
           color="primary-1"
