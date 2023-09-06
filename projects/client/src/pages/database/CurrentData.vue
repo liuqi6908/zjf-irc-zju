@@ -23,19 +23,15 @@ const tab = computed({
     currentTab.value = val
   },
 })
-const list = computed(() => {
-  if (databaseTab.value) {
-    const res = databaseTab.value.find(i => i.id === tab.value)
-    return res
-  }
-  else { return null }
-})
+const list = computed(() => databaseTab.value.find(i => i.id === tab.value))
 
-watch(() => props.dbId, (database) => {
-  if (!database)
-    return
-  getDataByRootId(database)
-})
+watch(
+  () => props.dbId,
+  (newVal) => {
+    if (newVal)
+      getDataByRootId(newVal)
+  },
+)
 </script>
 
 <template>
