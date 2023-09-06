@@ -11,7 +11,7 @@ const pId = ref('question')
 const comId = ref('questionItem')
 const questionList = ref<Array<ICms<any>>>([])
 
-function currCompontnt() {
+function currComponent() {
   const list = cmsConfig.find(i => i.id === pId.value)?.children
   return list?.find(i => i.id === comId.value)?.component
 }
@@ -46,14 +46,14 @@ watch(() => route.name, async () => {
 
 <template>
   <div flex="~ col" full>
-    <header class="questionTitle" h-40 w-full flex-center>
+    <header class="questionTitle" h60 w-full flex-center>
       <div text-grey-8 title-1>
         常见问题解答(Q&A)
       </div>
     </header>
     <div class="col-grow" mt-15 flex-center>
       <div max-w-6xl min-h-4xl>
-        <component :is="currCompontnt()" v-if="comProps && comProps.length" :list="comProps" />
+        <component :is="currComponent()" v-if="comProps && comProps.length" :list="comProps" />
       </div>
     </div>
   </div>
