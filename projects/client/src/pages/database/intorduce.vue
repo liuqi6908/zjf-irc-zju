@@ -122,20 +122,22 @@ onMounted(() => {
 <template>
   <div flex="~ col  items-center" min-h-4xl bg-grey-1>
     <div full max-w-6xl flex="~ col justify-center items-center">
-      <header flex="~ row items-center" mb-10 font-600 min-w-4xl>
-        <q-btn flat mr-2 text-grey-6 @click="() => $router.back()">
-          <div i-mingcute:left-line h-6 w-6 />
+      <header flex="~ row" mb-10 w-full items-center gap4 font-600>
+        <q-btn flat dense h6 min-h6 w6 p0 text-grey-6 @click="() => $router.back()">
+          <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 12L0 6L6 0L7.4 1.4L2.8 6L7.4 10.6L6 12Z" fill="#6E7686" />
+          </svg>
         </q-btn>
-        <span text-grey-8> 数据库介绍</span>
+        <span text="grey-8 5"> 数据库介绍</span>
       </header>
 
       <Empty v-if="!docHtml" label="暂无数据库介绍" />
-      <div v-else full pn-10 flex="~ row gap-10">
+      <div v-else pn-10 full flex="~ row gap-10">
         <div>
-          <q-list text-grey-8 sticky top-0 h-100vh overflow-x-hidden overflow-y-auto class="navs">
+          <q-list sticky top-0 h-100vh overflow-x-hidden overflow-y-auto text-grey-8 class="navs">
             <q-item
               v-for="(node, index) in navList" :key="index" class="ellipsis"
-              flex="~ col justify-center items-start" clickable font-600 w-50 p-0 min-h-10 :active="link === node.textContent"
+              flex="~ col justify-center items-start" clickable min-h-10 w-50 p-0 font-600 :active="link === node.textContent"
               active-class="text-primary-1 bg-grey-2" @click="scrollTo(node.textContent, index)"
             >
               <q-item-section>
@@ -157,10 +159,6 @@ onMounted(() => {
 .docHtml :deep(table) {
   width: 100%;
   border-collapse: collapse;
-}
-
-.docHtml :deep(tr:nth-child(1)) {
-  background-color: #e0e0e0;
 }
 
 .docHtml :deep(th) {
@@ -200,6 +198,28 @@ onMounted(() => {
     }
   }
 }
+</style>
+
+<style lang="sass">
+.docHtml
+
+  tr:nth-child(1)
+    background-color: #e0e0e0
+  tbody tr:nth-child(1)
+    background-color: unset
+
+  p
+    line-height: 1.8
+    text-align: left
+    text-indent: 2em
+    word-break: break-all
+    margin-bottom: 10px
+
+  img
+    margin: 40px auto
+
+  table p
+    margin-bottom: 0
 </style>
 
 <route lang="yaml">
