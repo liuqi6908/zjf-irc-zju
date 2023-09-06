@@ -91,7 +91,7 @@ async function queryUserList(props: any) {
       item['verification.status'] = userStatus.find(v => v.value === item['verification.status'])?.label || '未认证'
     })
   }
-  catch (_) { }
+  catch (_) {}
   finally {
     // 更新本地分页对象
     pagination.value.page = page
@@ -111,7 +111,7 @@ function checkAttachment(row: any) {
   if (images && images.length) {
     images.forEach((filename: string) => {
       const src = getUrlByToken(`file/private/verify/${row.id}/${filename}`)
-      message += `<img src=${src} /><a href=${src} download>点击下载文件</a><br/>`
+      message += `<img src="${src}"><a href="${src}" download>点击下载文件</a><br/>`
     })
   }
   else {

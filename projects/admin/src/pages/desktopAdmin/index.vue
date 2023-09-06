@@ -1,234 +1,64 @@
 <script setup lang="ts">
+import type { Component } from 'vue'
 import type { TabItem } from 'shared/component/base/tab/Tabs.vue'
 import Tabs from 'shared/component/base/tab/Tabs.vue'
-import { DesktopQueueStatus, type IDesktop, type IQueryConfig, PAGINATION_SIZE_MAX } from 'zjf-types'
-import { cloneDeep } from 'lodash-es'
-import type { QTable } from 'quasar'
-import DesktopAdminTable from '~/view/desktopAdmin/DesktopAdminTable.vue'
 
-import { getDesktopQuery } from '~/api/desktopRequest/getdesktopQuery'
-import { desktopQueryList } from '~/api/desktop/desktopsList'
-
-interface Table {
-  col: QTable['columns']
-  row: QTable['rows']
+interface Tab extends TabItem {
+  component: Component
 }
 
-const requestingTable: Table = {
-  col: [
-    { name: 'status', field: 'status', label: '状态', align: 'center' },
-    { name: 'userAccount', field: 'userAccount', label: '用户名', align: 'center' },
-    { name: 'name', field: 'name', label: '姓名', align: 'center' },
-    { name: 'identify', field: 'identify', label: '身份', align: 'center' },
-    { name: 'roleName', field: 'roleName', label: '权限', align: 'center' },
-    { name: 'createdAt', field: 'createdAt', label: '申请时间', align: 'center' },
-    { name: 'duration', field: 'duration', label: '申请时长', align: 'center' },
-    { name: 'attachments', field: 'attachments', label: '申请材料', align: 'center' },
-    { name: 'operation', field: 'operation', label: '操作', align: 'center' },
-  ],
-  row: [],
-}
-const desktopAssignTable: Table = {
-  col: [
-    { name: 'id', field: 'id', label: '云桌面ID', align: 'center' },
-    { name: 'internalIp', field: 'internalIp', label: '云桌面IP地址', align: 'center' },
-    { name: 'accessUrl', field: 'accessUrl', label: '云桌面访问地址', align: 'center' },
-    { name: 'account', field: 'account', label: '云桌面账号', align: 'center' },
-    { name: 'password', field: 'password', label: '云桌面密码', align: 'center' },
-    { name: 'expiredAt', field: 'expiredAt', label: '到期时间', align: 'center' },
-    { name: 'disabled', field: 'disabled', label: '状态', align: 'center' },
-    { name: 'choseUser', field: 'choseUser', label: '用户', align: 'center' },
-    { name: 'lastUser', field: 'lastUser', label: '历史用户', align: 'center' },
-    { name: 'opSaveChangeExpires', field: 'opSaveChangeExpires', label: '操作', align: 'center' },
-  ],
-  row: [],
-}
-const desktopStopListTable: Table = {
-  col: [
-    { name: 'id', field: 'id', label: '云桌面ID', align: 'center' },
-    { name: 'internalIp', field: 'internalIp', label: '云桌面IP地址', align: 'center' },
-    { name: 'accessUrl', field: 'accessUrl', label: '云桌面访问地址', align: 'center' },
-    { name: 'account', field: 'account', label: '云桌面账号', align: 'center' },
-    { name: 'password', field: 'password', label: '云桌面密码', align: 'center' },
-    { name: 'expiredAt', field: 'expiredAt', label: '到期时间', align: 'center' },
-    { name: 'disabled', field: 'disabled', label: '状态', align: 'center' },
-    { name: 'lastUser', field: 'lastUser', label: '历史用户', align: 'center' },
-    { name: 'opSaveChangeExpires', field: 'opSaveChangeExpires', label: '操作', align: 'center' },
-  ],
-  row: [],
+export interface QueryDesktop {
+  page: number
+  pageSize: number
+  total: number
+  data: any[]
 }
 
-const tabList = ref<TabItem[]>([
-  { id: 'requestingList', label: '审核队列', isRequest: false, tableData: requestingTable },
-  { id: 'desktopAssign', label: '桌面分配', isRequest: false, tableData: desktopAssignTable },
-  { id: 'desktopStopList', label: '已停用列表', isRequest: false, tableData: desktopStopListTable },
+const tabList = ref<Tab[]>([
+  { id: 'AuditQueue', label: '审核队列', isRequest: false, component: markRaw(defineAsyncComponent(() => import('~/view/desktopAdmin/AuditQueue.vue'))) },
+  { id: 'DesktopAllocation', label: '桌面分配', isRequest: false, component: markRaw(defineAsyncComponent(() => import('~/view/desktopAdmin/DesktopAllocation.vue'))) },
+  { id: 'DeactivationList', label: '已停用列表', isRequest: false, component: markRaw(defineAsyncComponent(() => import('~/view/desktopAdmin/DeactivationList.vue'))) },
 ])
-const currentTab = ref<TabItem>()
-const tab = ref()
-const queueingList = ref([])
-
-const status = [
-  { label: '待审核', value: DesktopQueueStatus.Pending },
-  { label: '排队中', value: DesktopQueueStatus.Queueing },
-  { label: '使用中', value: DesktopQueueStatus.Using },
-]
-
-const baseOptions: IQueryConfig<IDesktop> = {
-  pagination: {
-    pageSize: PAGINATION_SIZE_MAX,
-    page: 0,
-  },
-  relations: {
-    user: { verification: true },
-  },
-}
-
-/** 获取云桌面申请需要的参数 */
-const options = computed(() => {
-  const base = cloneDeep(baseOptions)
-  if (tab.value === 'requestingList') {
-    base.sort = [{
-      field: 'createdAt',
-      order: 'ASC',
-    }]
-    base.filters = [
-      {
-        field: 'status',
-        type: 'IN',
-        value: [DesktopQueueStatus.Pending],
-      },
-    ]
-    return base
-  }
-  else if (tab.value === 'desktopAssign') {
-    base.filters = [
-      {
-        field: 'status',
-        type: 'IN',
-        value: [DesktopQueueStatus.Queueing],
-      },
-    ]
-    return base
-  }
-  else {
-    return base
-  }
-})
-
-/** 获取云桌面列表所需要的参数 */
-const listOptions = computed(() => {
-  const base = cloneDeep(baseOptions)
-  base.relations = { lastUser: true }
-  return base
-})
-
-/**
- *
- * @param isDisable 是否停用云桌面
- */
-async function fetchDesktopList(isDisable?: boolean) {
-  listOptions.value.filters = [
-    {
-      field: 'disabled',
-      type: '=',
-      value: isDisable,
-    },
-  ]
-  const desktopList = await desktopQueryList(listOptions.value)
-  if (!currentTab.value || !currentTab.value.tableData)
-    return
-
-  currentTab.value.tableData.row = desktopList.data.map((item: any) => {
-    return {
-      ...item,
-      lastUser: item.lastUser?.id,
-      opSaveChangeExpires: !isDisable,
-    }
-  })
-}
-
-async function fetchDesktopRequest(requestUser?: boolean) {
-  const res = await getDesktopQuery(options.value)
-  if (!currentTab.value || !currentTab.value.tableData)
-    return
-  if (requestUser) {
-    queueingList.value = res.data.map((item: any) => item)
-    return
-  }
-  currentTab.value.tableData.row = res.data.map((item: any) => {
-    return {
-      ...item,
-      status: status.find(v => v.value === item.status)?.label,
-      userAccount: item.user?.account,
-      userId: item.user.id,
-      name: item.user.verification?.name,
-      roleName: item.user?.roleName,
-      identify: item.user?.verification?.identify,
-    }
-  })
-  if (res && res.data)
-    return res.data
-}
-
-onBeforeMount(() => {
-  tab.value = tabList.value[0].id
-})
-
-watch(tab, async (newTab) => {
-  const obj = tabList.value.find(i => i.id === newTab)
-
-  if (obj?.isRequest)
-    return
-
-  if (!currentTab.value || !currentTab.value.tableData)
-    return
-
-  if (newTab === 'requestingList') {
-    await fetchDesktopRequest()
-  }
-  else if (newTab === 'desktopAssign') {
-    await fetchDesktopRequest(true)
-    fetchDesktopList(false)
-  }
-  else if (newTab === 'desktopStopList') {
-    fetchDesktopList(true)
-  }
-
-  if (obj)
-    obj.isRequest = true
-})
+const currentTab = ref<Tab>()
+const tab = ref(tabList.value[0].id)
 </script>
 
 <template>
-  <Tabs v-model="tab" bg-grey-1 :tab-list="tabList" @update:curr-tab-obj="(val) => currentTab = val">
-    <DesktopAdminTable
-      v-if="currentTab?.tableData && (tab === 'requestingList' || tab === 'desktopAssign')"
-      v-model:rows="currentTab.tableData.row"
-      :tab="tab"
-      :queueing-list="queueingList"
-      :cols="currentTab?.tableData?.col"
-      @update:request="fetchDesktopRequest()"
-      @update:desktop-select="fetchDesktopList(false)"
-    />
-
-    <BaseTable
-      v-else-if=" currentTab?.tableData && tab === 'desktopStopList'"
-      v-slot="{ props, col }"
-      :cols="currentTab?.tableData.col"
-      :rows="currentTab?.tableData?.row"
-    >
-      <div v-if="col === 'opSaveChangeExpires'">
-        <q-btn color="grey-8" :disable="true" label="停用" />
-      </div>
-      <div v-else-if="col === 'disabled'">
-        {{ props.row[`${col}`] ? '停用' : '' }}
-      </div>
-      <div v-else>
-        {{ props.row[`${col}`] }}
-      </div>
-    </BaseTable>
+  <Tabs v-model="tab" class="desktop-admin" :tab-list="tabList" @update:curr-tab-obj="val => currentTab = val">
+    <component :is="currentTab?.component" :title="currentTab?.label" />
   </Tabs>
 </template>
+
+<style lang="scss" scoped>
+.desktop-admin {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+
+  :deep(.q-tabs) {
+    background: transparent;
+  }
+
+  :deep(.q-tab-panels) {
+    flex: 1;
+    background: transparent;
+
+    .q-tab-panel>div {
+      height: 100%;
+      padding: 1.5rem;
+
+      .q-table {
+        thead {
+          position: sticky;
+          top: 0;
+          background-color: white;
+          z-index: 1;
+        }
+      }
+    }
+  }
+}
+</style>
 
 <route lang="yaml">
 meta:

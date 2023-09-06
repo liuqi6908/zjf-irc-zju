@@ -3,16 +3,18 @@ import BaseTable from 'shared/component/base/table/BaseTable.vue'
 
 import { cloneDeep } from 'lodash-es'
 import { Notify } from 'quasar'
+import type { QTableProps } from 'quasar'
 import { getDataDownload } from '~/api/data/dataDownloadHandle'
 import { getDataFields } from '~/api/data/getDataDirctoryFields'
 import { getDataPreview } from '~/api/data/dataPreviewHandle'
 import { putSuggest } from '~/api/dataSuggest/putSuggest'
 
 const route = useRoute()
+const $router = useRouter()
 const { isDesktop } = useUser()
 const { $get } = useRequest()
 
-const tableFieldsCol = [
+const tableFieldsCol: QTableProps['columns'] = [
   { label: '字段', name: 'nameZH', field: 'nameZH', align: 'center' },
   { label: '含义', name: 'description', field: 'description', align: 'center' },
 ]
@@ -58,7 +60,7 @@ onBeforeMount(async () => {
 
   previewTable.value = (await getDataPreview(route.query.dataId as string).finally(() => {
     loading.value = false
-  })).filter(row => Object.values(row).some(v => v))
+  })).filter((row: any) => Object.values(row).some(v => v))
 
   let url = getDataDownload(route.query.dataId as string)
   if (url.startsWith('/api'))
@@ -66,6 +68,9 @@ onBeforeMount(async () => {
   downloadUrl.value = await $get(url)
 })
 
+/**
+ * 建议采购申请
+ */
 async function confirmRequest() {
   if (!route.query.dataId)
     return
