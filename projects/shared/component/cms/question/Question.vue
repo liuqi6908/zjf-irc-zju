@@ -54,14 +54,8 @@ onMounted(() => {
         </q-item>
       </div>
     </q-list>
-    <div flex="~ col 1" w0>
-      <div v-for="(item, index) in list" :key="index" 
-        border-grey-3
-        :class="{ 
-          'border-b': index !== list.length - 1,
-          ...(index === 0 ? { 'pb-7.5': true } : { 'py-7.5': true })
-        }"
-      >
+    <div flex="~ col 1" w0 gap-16>
+      <div v-for="(item, index) in list" :key="index" relative>
         <q-item clickable flex="~" items-center gap-2 @click="openState[item.title] = !openState[item.title]">
           <div 
             w6 h6 transition-all flex-center
@@ -77,7 +71,6 @@ onMounted(() => {
           v-model="openState[item.title]"
           header-class="display-none"
           :id="`title${index}`" :label="item.title"
-          
         >
           <div w-150 pl12 pt4>
             <div relative full pl4>
@@ -86,6 +79,10 @@ onMounted(() => {
             </div>
           </div>
         </q-expansion-item>
+
+        <div v-if="index !== 0" w-full px4 absolute left-0 top="-8">
+          <div w-full h1px bg-grey-3 />
+        </div>
       </div>
     </div>
   </div>
