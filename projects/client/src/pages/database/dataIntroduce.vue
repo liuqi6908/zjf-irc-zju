@@ -117,10 +117,13 @@ async function confirmRequest() {
       <div flex="~ col" mt-5 gap-5>
         <span flex="~ row" font-600 text-grey-8>表格字段说明</span>
         <BaseTable
-          v-if="tableFieldRows.length" v-slot="{ props, col }" :loading="loading" :cols="tableFieldsCol"
+          v-if="tableFieldRows.length"
+          v-slot="{ props, col }"
+          :loading="loading"
+          :cols="tableFieldsCol"
           :rows="tableFieldRows"
         >
-          <div>
+          <div text-left>
             {{ props.row[`${col}`] }}
           </div>
         </BaseTable>
