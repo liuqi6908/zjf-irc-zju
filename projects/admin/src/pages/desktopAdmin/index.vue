@@ -3,16 +3,22 @@ import type { TabItem } from 'shared/component/base/tab/Tabs.vue'
 import Tabs from 'shared/component/base/tab/Tabs.vue'
 import { DesktopQueueStatus, type IDesktop, type IQueryConfig, PAGINATION_SIZE_MAX } from 'zjf-types'
 import { cloneDeep } from 'lodash-es'
+import type { QTable } from 'quasar'
 import DesktopAdminTable from '~/view/desktopAdmin/DesktopAdminTable.vue'
 
 import { getDesktopQuery } from '~/api/desktopRequest/getdesktopQuery'
 import { desktopQueryList } from '~/api/desktop/desktopsList'
 
-const requestingTable = {
+interface Table {
+  col: QTable['columns']
+  row: QTable['rows']
+}
+
+const requestingTable: Table = {
   col: [
     { name: 'status', field: 'status', label: '状态', align: 'center' },
-    { name: 'nickname', field: 'nickname', label: '用户名', align: 'center' },
-    { name: 'name', field: 'name', label: '真实姓名', align: 'center' },
+    { name: 'userAccount', field: 'userAccount', label: '用户名', align: 'center' },
+    { name: 'name', field: 'name', label: '姓名', align: 'center' },
     { name: 'identify', field: 'identify', label: '身份', align: 'center' },
     { name: 'roleName', field: 'roleName', label: '权限', align: 'center' },
     { name: 'createdAt', field: 'createdAt', label: '申请时间', align: 'center' },
@@ -22,7 +28,7 @@ const requestingTable = {
   ],
   row: [],
 }
-const desktopAssignTable = {
+const desktopAssignTable: Table = {
   col: [
     { name: 'id', field: 'id', label: '云桌面ID', align: 'center' },
     { name: 'internalIp', field: 'internalIp', label: '云桌面IP地址', align: 'center' },
@@ -30,17 +36,14 @@ const desktopAssignTable = {
     { name: 'account', field: 'account', label: '云桌面账号', align: 'center' },
     { name: 'password', field: 'password', label: '云桌面密码', align: 'center' },
     { name: 'expiredAt', field: 'expiredAt', label: '到期时间', align: 'center' },
-
     { name: 'disabled', field: 'disabled', label: '状态', align: 'center' },
     { name: 'choseUser', field: 'choseUser', label: '用户', align: 'center' },
     { name: 'lastUser', field: 'lastUser', label: '历史用户', align: 'center' },
-
     { name: 'opSaveChangeExpires', field: 'opSaveChangeExpires', label: '操作', align: 'center' },
   ],
   row: [],
 }
-
-const desktopStopListTable = {
+const desktopStopListTable: Table = {
   col: [
     { name: 'id', field: 'id', label: '云桌面ID', align: 'center' },
     { name: 'internalIp', field: 'internalIp', label: '云桌面IP地址', align: 'center' },
@@ -48,10 +51,8 @@ const desktopStopListTable = {
     { name: 'account', field: 'account', label: '云桌面账号', align: 'center' },
     { name: 'password', field: 'password', label: '云桌面密码', align: 'center' },
     { name: 'expiredAt', field: 'expiredAt', label: '到期时间', align: 'center' },
-
     { name: 'disabled', field: 'disabled', label: '状态', align: 'center' },
     { name: 'lastUser', field: 'lastUser', label: '历史用户', align: 'center' },
-
     { name: 'opSaveChangeExpires', field: 'opSaveChangeExpires', label: '操作', align: 'center' },
   ],
   row: [],
@@ -65,6 +66,12 @@ const tabList = ref<TabItem[]>([
 const currentTab = ref<TabItem>()
 const tab = ref()
 const queueingList = ref([])
+
+const status = [
+  { label: '待审核', value: DesktopQueueStatus.Pending },
+  { label: '排队中', value: DesktopQueueStatus.Queueing },
+  { label: '使用中', value: DesktopQueueStatus.Using },
+]
 
 const baseOptions: IQueryConfig<IDesktop> = {
   pagination: {
@@ -151,7 +158,8 @@ async function fetchDesktopRequest(requestUser?: boolean) {
   currentTab.value.tableData.row = res.data.map((item: any) => {
     return {
       ...item,
-      nickname: item.user?.nickname,
+      status: status.find(v => v.value === item.status)?.label,
+      userAccount: item.user?.account,
       userId: item.user.id,
       name: item.user.verification?.name,
       roleName: item.user?.roleName,
