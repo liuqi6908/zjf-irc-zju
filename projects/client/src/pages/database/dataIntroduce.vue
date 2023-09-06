@@ -2,32 +2,32 @@
 import BaseTable from 'shared/component/base/table/BaseTable.vue'
 
 import { cloneDeep } from 'lodash-es'
-import { Notify, useQuasar } from 'quasar'
-import type { QTableProps } from 'quasar'
-import type { IDataField } from 'zjf-types'
+import { Notify } from 'quasar'
+import DesktopRequestDaialog from '~/view/request/DesktopRequestDaialog.vue'
 import { getDataDownload } from '~/api/data/dataDownloadHandle'
 import { getDataFields } from '~/api/data/getDataDirctoryFields'
 import { getDataPreview } from '~/api/data/dataPreviewHandle'
 import { putSuggest } from '~/api/dataSuggest/putSuggest'
 
-const route = useRoute()
-const $router = useRouter()
-const { $get } = useRequest()
-const { userInfo, isDesktop } = useUser()
-const $q = useQuasar()
+import { isDesktop } from '~/api/desktop/isDesktop'
 
-const tableFieldsCol: QTableProps['columns'] = [
+const route = useRoute()
+
+const tableFieldsCol = [
   { label: '字段', name: 'nameZH', field: 'nameZH', align: 'center' },
   { label: '含义', name: 'description', field: 'description', align: 'center' },
 ]
+useDataBase()
 
-const tableFieldRows = ref<IDataField[]>([])
+const tableFieldRows = ref<any[]>([])
 
 const downloadUrl = ref('')
 const previewTable = ref([])
 const referenceText = ref('')
 const dialog = ref(false)
 const loading = ref(false)
+const isClient = ref(false)
+const requestDesktop = ref(false)
 
 const previewTableData = computed(() => {
   let row = [] as any
@@ -40,6 +40,7 @@ const previewTableData = computed(() => {
         name: field,
         field,
         label: field,
+        align: 'center',
       })
     }
     row = cloneDeep(previewTable.value)
@@ -58,38 +59,21 @@ onBeforeMount(async () => {
   const field = await getDataFields(route.query.dataId as string)
   tableFieldRows.value = field
 
-  previewTable.value = await getDataPreview(route.query.dataId as string).finally(() => {
+  previewTable.value = (await getDataPreview(route.query.dataId as string).finally(() => {
     loading.value = false
-  })
+  })).filter(row => Object.values(row).some(v => v))
 
-  let url = getDataDownload(route.query.dataId as string)
-  if (url.startsWith('/api'))
-    url = url.substring(4)
-  downloadUrl.value = await $get(url)
+  downloadUrl.value = getDataDownload(route.query.dataId as string)
+  isClient.value = await isDesktop()
 })
 
-/**
- * 数据申请使用
- */
-function applyForUsing() {
-  if (!userInfo.value) {
-    $q.dialog({
-      title: '数据申请使用',
-      message: '该功能需登录后才可使用，是否立即前往？',
-      cancel: '取消',
-      ok: '立即前往',
-    }).onOk(() => {
-      $router.push('/auth/login')
-    })
-  }
-  else {
-    $router.push('/request')
-  }
+async function openDialog() {
+  dialog.value = true
+
+  // const res = await downloadDescribeByRole('访客')
+  // console.log({ res })
 }
 
-/**
- * 建议申请采购
- */
 async function confirmRequest() {
   if (!route.query.dataId)
     return
@@ -106,33 +90,37 @@ async function confirmRequest() {
 
 <template>
   <div flex="~ col items-center" min-h-4xl bg-grey-1>
-    <div w-3xl>
-      <header flex="~ row" items-center justify-start>
-        <q-btn flat text-grey-6 mr-2 @click="$router.back()">
-          <div h-6 w-6 i-mingcute:left-line />
+    <div w-limited-1>
+      <header flex="~ row" mb-10 w-full items-center gap4 py6 font-600>
+        <q-btn flat dense h6 min-h6 w6 p0 text-grey-6 @click="() => $router.back()">
+          <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 12L0 6L6 0L7.4 1.4L2.8 6L7.4 10.6L6 12Z" fill="#6E7686" />
+          </svg>
         </q-btn>
-        <span font-600 text-grey-8>数据资源介绍</span>
+        <span text="grey-8 5">数据资源介绍</span>
       </header>
 
       <div flex="~ col" mt-5 gap-5>
-        <span flex="~ row" font-600 text-grey-8>表格字段说明</span>
+        <span flex="~ row" text-4 font-600 text-grey-8>表格字段说明</span>
         <BaseTable
-          v-if="tableFieldRows.length"
-          v-slot="{ props, col }"
-          :loading="loading"
-          :cols="tableFieldsCol"
-          :rows="tableFieldRows"
+          v-if="tableFieldRows.length" v-slot="{ props, col }" disable-pagination :loading="loading"
+          :cols="tableFieldsCol" :rows="tableFieldRows"
         >
-          <div text-left>
+          <div>
             {{ props.row[`${col}`] }}
           </div>
         </BaseTable>
       </div>
 
-      <div flex="~ col" mt-5 gap-5>
-        <span flex="~ row" font-600 text-grey-8> 表格数据预览</span>
+      <div class="h-10 w-full" />
 
-        <BaseTable v-slot="{ props, col }" :loading="loading" :cols="previewTableData.col" :rows="previewTableData.row">
+      <div flex="~ col" mt-5 gap-5>
+        <span flex="~ row" text-4 font-600 text-grey-8> 表格数据预览</span>
+
+        <BaseTable
+          v-slot="{ props, col }" disable-pagination :loading="loading" :cols="previewTableData.col"
+          :rows="previewTableData.row"
+        >
           <div>
             {{ props.row[`${col}`] }}
           </div>
@@ -143,17 +131,20 @@ async function confirmRequest() {
     </div>
 
     <div flex="~ row gap-5" my-10>
-      <Btn v-if="!isDesktop && !isPurchased" outline label="数据申请使用" @click="applyForUsing()" />
+      <Btn v-if="!isClient && !isPurchased" outline label="数据申请使用" @click="requestDesktop = true" />
       <a v-else-if="!isPurchased" :href="downloadUrl" download="数据库">
         <Btn label="数据下载" />
       </a>
-      <btn v-if="isPurchased" label="建议采购" @click="dialog = true" />
+
+      <btn v-if="isPurchased" label="建议采购" @click="openDialog()" />
     </div>
 
     <!-- <BaseTable /> -->
     <ZDialog v-model="dialog" title="采购理由" footer @ok="confirmRequest">
       <q-input v-model="referenceText" filled type="textarea" />
     </ZDialog>
+
+    <DesktopRequestDaialog v-model="requestDesktop" />
   </div>
 </template>
 
