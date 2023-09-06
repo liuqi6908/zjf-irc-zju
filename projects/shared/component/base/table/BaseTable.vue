@@ -86,10 +86,9 @@ defineExpose({
   border-radius: 0
 
   .q-table__top,
-  .q-table__bottom,
   thead tr:first-child th
-      background: rgba(2, 92, 185, 0.70)
-      color: #fff
+    background: rgba(2, 92, 185, 0.70)
+    color: #fff
   thead tr,
   tbody tr
     min-height: 40px
@@ -105,4 +104,24 @@ defineExpose({
       border-color: var(--grey-3)
       font-size: 16px
       color: var(--grey-8)
+
+  // 底部分页
+  .q-table__bottom
+    min-height: 30px
+    padding: 0 8px
+    background: var(--grey-2)
+    color: var(--grey-8)
+  .q-table__control .q-btn i
+    font-size: 1rem
+
+  .q-table__control button span.q-btn__content
+    color: var(--grey-5)
+
+  .q-table__control .q-select .q-field__control 
+    span
+      color: var(--grey-7)
+    i
+      color: var(--grey-4)
+
+
 </style>
