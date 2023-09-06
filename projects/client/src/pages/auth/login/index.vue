@@ -19,31 +19,35 @@ function passwordRule(val: string) {
 const logArg = computed(() =>
   validateEmail(userCode.value) ? { password: password.value, account: userCode.value } : { password: password.value, email: userCode.value })
 
-const disable = computed(() => Object.values(acceptObj).includes(false))
+const disable = computed(() => !userCode.value || Object.values(acceptObj).includes(false))
+
+/**
+ * 按下回车键，登录
+ */
+function handleEnter() {
+  if (!disable.value)
+    useLogin(logArg.value)
+}
 </script>
 
 <template>
   <div w-full flex="~ col">
     <header flex="~ flex col items-center justify-center" mb-12>
-      <span text-7 font-600 text-grey-1>登录</span>
+      <span text-7 font-600 text-grey-1 v-text="'登录'" />
     </header>
-    <span m-b-1 font-500 text-grey-1>账号</span>
+    <span text-grey-1 m-b-1 font-500 v-text="'账号'" />
     <UserCodeInput
       v-model:userCode="userCode"
     />
-    <span m-b-1 m-t-4 font-500 text-grey-1>
-      密码
-    </span>
+    <span m-b-1 font-500 text-grey-1 m-t-4 v-text="'密码'" />
     <PasswordInput
       v-model:password="password"
       reactive-rules
       :rules="[(val:string) => passwordRule(val)]"
       @update:accept="(val) => acceptObj.password = val"
+      @keydown.enter="handleEnter()"
     />
-
-    <RouterLink text-3 text-grey-1 :to="{ path: 'forgetPassword' }">
-      忘记密码?
-    </RouterLink>
+    <RouterLink text-grey-1 text-3 :to="{ path: 'forgetPassword' }" v-text="'忘记密码？'" />
 
     <div h-20 />
 
@@ -53,9 +57,7 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
 
     <div m-t-5 flex-center text-grey-3>
       没有账号？
-      <RouterLink text-grey-1 :to="{ path: 'signup' }">
-        立即注册
-      </RouterLink>
+      <RouterLink text-grey-1 :to="{ path: 'signup' }" v-text="'立即注册'" />
     </div>
   </div>
 </template>
