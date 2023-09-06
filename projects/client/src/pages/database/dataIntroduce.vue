@@ -119,16 +119,29 @@ async function confirmRequest() {
         </BaseTable>
       </div>
 
-      <div mt-6 text="primary-1 left" v-text="`引用规范：${route.query.reference || '暂无引用规范'}`" />
+      <div mt-6 text="primary-1 left" text-4 v-text="`引用规范：${route.query.reference || '暂无引用规范'}`" />
     </div>
 
-    <div flex="~ row gap-5" my-10>
-      <Btn v-if="!isDesktop && !isPurchased" outline label="数据申请使用" />
+    <div flex="~ row" my-10 gap-5>
+      <router-link v-if="!isDesktop && !isPurchased" :to="{ path: '/request' }">
+        <q-btn
+          color="primary"
+          square h12 min-w-38 outline
+        >
+          <span text-4 font-600>数据申请使用</span>
+        </q-btn>
+      </router-link>
       <a v-else-if="!isPurchased" :href="downloadUrl" download="数据库">
-        <Btn label="数据下载" />
+        <Btn min-w-38 label="数据下载" />
       </a>
 
-      <btn v-if="isPurchased" label="建议采购" @click="dialog = true" />
+      <q-btn
+        v-if="isPurchased"
+        label="建议采购"
+
+        flat square h12 min-w-38 bg-primary-1 text-4 font-bold text-white
+        @click="dialog = true"
+      />
     </div>
 
     <ZDialog v-model="dialog" title="采购理由" footer @ok="confirmRequest">
