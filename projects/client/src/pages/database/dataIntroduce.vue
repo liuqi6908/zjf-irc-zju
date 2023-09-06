@@ -17,9 +17,9 @@ const tableFieldsCol = [
   { label: '字段', name: 'nameZH', field: 'nameZH', align: 'center' },
   { label: '含义', name: 'description', field: 'description', align: 'center' },
 ]
-const { downloadDescribeByRole, rootData } = useDataBase()
+useDataBase()
 
-const tableFieldRows = ref([])
+const tableFieldRows = ref<any[]>([])
 
 const downloadUrl = ref('')
 const previewTable = ref([])
@@ -40,6 +40,7 @@ const previewTableData = computed(() => {
         name: field,
         field,
         label: field,
+        align: 'center',
       })
     }
     row = cloneDeep(previewTable.value)
@@ -58,9 +59,9 @@ onBeforeMount(async () => {
   const field = await getDataFields(route.query.dataId as string)
   tableFieldRows.value = field
 
-  previewTable.value = await getDataPreview(route.query.dataId as string).finally(() => {
+  previewTable.value = (await getDataPreview(route.query.dataId as string).finally(() => {
     loading.value = false
-  })
+  })).filter(row => Object.values(row).some(v => v))
 
   downloadUrl.value = getDataDownload(route.query.dataId as string)
   isClient.value = await isDesktop()
@@ -89,27 +90,37 @@ async function confirmRequest() {
 
 <template>
   <div flex="~ col items-center" min-h-4xl bg-grey-1>
-    <div w-3xl>
-      <header flex="~ row" items-center justify-start>
-        <q-btn flat text-grey-6 mr-2 @click="$router.back()">
-          <div h-6 w-6 i-mingcute:left-line />
+    <div w-limited-1>
+      <header flex="~ row" mb-10 w-full items-center gap4 py6 font-600>
+        <q-btn flat dense h6 min-h6 w6 p0 text-grey-6 @click="() => $router.back()">
+          <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 12L0 6L6 0L7.4 1.4L2.8 6L7.4 10.6L6 12Z" fill="#6E7686" />
+          </svg>
         </q-btn>
-        <span font-600 text-grey-8>数据资源介绍</span>
+        <span text="grey-8 5">数据资源介绍</span>
       </header>
 
       <div flex="~ col" mt-5 gap-5>
-        <span flex="~ row" font-600 text-grey-8>表格字段说明</span>
-        <BaseTable v-if="tableFieldRows.length" v-slot="{ props, col }" :loading="loading" :cols="tableFieldsCol" :rows="tableFieldRows">
+        <span flex="~ row" text-4 font-600 text-grey-8>表格字段说明</span>
+        <BaseTable
+          v-if="tableFieldRows.length"
+          v-slot="{ props, col }" disable-pagination :loading="loading" :cols="tableFieldsCol" :rows="tableFieldRows"
+        >
           <div>
             {{ props.row[`${col}`] }}
           </div>
         </BaseTable>
       </div>
 
-      <div flex="~ col" mt-5 gap-5>
-        <span flex="~ row" font-600 text-grey-8> 表格数据预览</span>
+      <div class="h-10 w-full" />
 
-        <BaseTable v-slot="{ props, col }" :loading="loading" :cols="previewTableData.col" :rows="previewTableData.row">
+      <div flex="~ col" mt-5 gap-5>
+        <span flex="~ row" text-4 font-600 text-grey-8> 表格数据预览</span>
+
+        <BaseTable
+          v-slot="{ props, col }"
+          disable-pagination :loading="loading" :cols="previewTableData.col" :rows="previewTableData.row"
+        >
           <div>
             {{ props.row[`${col}`] }}
           </div>

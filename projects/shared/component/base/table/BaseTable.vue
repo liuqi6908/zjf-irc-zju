@@ -9,6 +9,8 @@ interface Props {
   cols: QTableProps['columns']
   operation?: Array<OperationType>
   loading?: boolean
+  /** 是否启用分页，禁用后，强制显示全部的数据 */
+  disablePagination?: boolean
 }
 const props = defineProps<Props>()
 const emits = defineEmits(['update:rows'])
@@ -50,31 +52,22 @@ watch(() => props.rows, () => {
 
 defineExpose({
   deleteRow,
+  addRow,
 })
 </script>
 
 <template>
   <q-table 
-  class="my-sticky-dynamic" 
-  :rows="rows" 
-  bordered 
-  separator="cell" 
-  :columns="cols" 
-  :loading="loading" 
-  flat>
-    <!-- <template #top-left>
-      <div w-full flex="~ row justify-between">
-        <q-btn v-if="operation?.includes('addRows')" label="增加一项" push color="primary-1" @click="addRow" />
-      </div>
-    </template> -->
-    <!-- <template #top-right>
-      <q-input v-if="operation?.includes('search')" borderless dense debounce="300" placeholder="搜索">
-        <template #append>
-          <div i-mingcute:search-2-line />
-        </template>
-      </q-input>
-    </template> -->
-
+    class="my-sticky-dynamic" 
+    :rows="rows" 
+    bordered 
+    separator="cell" 
+    :columns="cols" 
+    :loading="loading" 
+    flat
+    :hide-bottom="disablePagination"
+    :pagination="{ rowsPerPage: disablePagination ? 0 : 10 }"
+  >
     <template #body="props">
       <q-tr :props="props">
         <q-td v-for="c in cols" :key="c.name">
@@ -94,8 +87,22 @@ defineExpose({
 
   .q-table__top,
   .q-table__bottom,
-  thead tr:first-child th /* bg color is important for th; just specify one */
+  thead tr:first-child th
       background: rgba(2, 92, 185, 0.70)
       color: #fff
-      height: 20px
+  thead tr,
+  tbody tr
+    min-height: 40px
+    height: auto
+
+  tr
+    min-height: 40px
+    height: auto
+    th,
+    td
+      height: 40px
+      padding: 8px
+      border-color: var(--grey-3)
+      font-size: 16px
+      color: var(--grey-8)
 </style>
