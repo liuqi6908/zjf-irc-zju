@@ -31,7 +31,7 @@ function emailRules(val: string) {
 }
 
 function passwordRule(val: string) {
-  return val === password.value || '两次密码保持一致'
+  return val === password.value || '两次密码不一致'
 }
 function smsCodeRule(val: string) {
   return val.length > 0 || '验证码不能为空'
