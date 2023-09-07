@@ -4,15 +4,15 @@ const { $get } = useRequest()
 
 export interface VMBaseInfo {
   architecture: string
-  cpuNum: string
+  cpuNum: number
   /** 具体的系统名称 */
   guestOsType: string
   hypervisorType: string
   lastOpDate: string
-  memorySize: string
+  memorySize: number
   /** 系统类型 */
   platform: string
-  state: 'Stopped' | 'Running'
+  state: 'Starting' | 'Running' | 'Stopping' | 'Stopped' | 'Rebooting'
   uuid: string
 }
 

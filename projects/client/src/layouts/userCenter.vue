@@ -2,6 +2,8 @@
 import HomeLayout from '~/view/HomeLayout.vue'
 
 const $route = useRoute()
+const $router = useRouter()
+const { isLogin } = useUser()
 
 const userList = ref([
   {
@@ -25,7 +27,12 @@ const userList = ref([
     router: { path: 'myWorks' },
   },
 ])
-const currentId = ref(userList.value.find(v => $route.path.includes(v.router.path))?.id || userList.value[0].id)
+const currentId = computed(() => userList.value.find(v => $route.path.includes(v.router.path))?.id || userList.value[0].id)
+
+onBeforeMount(() => {
+  if (!isLogin.value)
+    $router.push('/')
+})
 </script>
 
 <template>
@@ -54,7 +61,6 @@ const currentId = ref(userList.value.find(v => $route.path.includes(v.router.pat
             </div>
           </router-link>
         </div>
-
         <div style="flex: 1 1 auto;">
           <router-view />
         </div>
@@ -65,6 +71,6 @@ const currentId = ref(userList.value.find(v => $route.path.includes(v.router.pat
 
 <style scoped lang="scss">
 .userCenter {
-     background: no-repeat center / cover url("../assets/layout/userCenter.png");
+  background: no-repeat center / cover url("../assets/layout/userCenter.png");
 }
 </style>
