@@ -223,7 +223,7 @@ onBeforeMount(async () => {
       <div grid gap-10 lg:grid-cols-2 xl:grid-cols-3>
         <div v-for="a in authInfoList" :key="a.label" class="col-grow">
           <div mb2 flex="~ row items-center justify-between">
-            <span font-600 text-gray-8>
+            <span font-500 text-gray-8>
               {{ a.label }}
             </span>
           </div>

@@ -124,100 +124,114 @@ watch(
     @update:model-value="(val) => $emit('update:modelValue', val)"
     @ok="requestVerify"
   >
-    <div mb-2 mt-6>
-      <span text-alert-error>*</span> <span font-500 text-grey-8> 学校名称</span>
-    </div>
-    <UserCodeInput
-      v-model:user-code="verifiInfo.school"
-      :rules="[(val: string) => val.length > 0 || '学校名称必填']"
-      :dark="false" label="请输入学校名称"
-      @update:accept="(val) => veriAccept.school = val"
-    />
-
-    <div mb-2>
-      <span text-alert-error>*</span> <span font-500 text-grey-8> 所在学院</span>
-    </div>
-    <UserCodeInput
-      v-model:user-code="verifiInfo.college"
-      :rules="[(val: string) => val.length > 0 || '学院名称必填']"
-      :dark="false" label="请输入学院名称"
-      @update:accept="(val) => veriAccept.college = val"
-    />
-
-    <div mb-2>
-      <span text-alert-error>*</span> <span font-500 text-grey-8> 身份证号码</span>
-    </div>
-    <UserCodeInput
-      v-model:user-code="verifiInfo.idCard"
-      :rules="[(val: string) => val.length === 18 || '身份证号码必须为18位']"
-      :dark="false"
-      label="请输入身份证号码"
-      @update:accept="(val) => veriAccept.idCard = val"
-    />
-
-    <div mb-2>
-      <span text-alert-error>*</span> <span font-500 text-grey-8> 学号/工号</span>
-    </div>
-    <UserCodeInput
-      v-model:user-code="verifiInfo.number"
-      :dark="false" label="请输入学号/工号"
-      :rules="[(val: string) => val.length > 0 || '学号/工号必填']"
-      @update:accept="(val) => veriAccept.number = val"
-    />
-
-    <div mb-2>
-      <span text-alert-error>*</span> <span font-500 text-grey-8> 姓名</span>
-    </div>
-    <UserCodeInput
-      v-model:user-code="verifiInfo.name"
-      :rules="[(val: string) => val.length > 0 || '姓名必填']"
-      :dark="false" label="请输入您的真实姓名"
-      @update:accept="(val) => veriAccept.name = val"
-    />
-
-    <div mb-2>
-      <span text-alert-error>*</span> <span font-500 text-grey-8>身份 </span>
-    </div>
-
-    <ZSelect v-model="identify" :options="transformedArray()" />
-    <div mb-2 mt-6 flex="~ row justify-between items-center">
-      <div> <span text-alert-error>*</span> <span font-500 text-grey-8>上传资料</span></div>
-
-      <div class="q-gutter-md" style="max-width: 300px">
-        <QFile
-          ref="myFileInput"
-          v-model="files"
-          accept=".jpg, image/*"
-          max-files="8"
-          append multiple
-          style="display:none"
-          type="file"
-          label="Standard"
-          max-file-size="1048576"
+    <div flex="~ col" gap1>
+      <section class="form-item">
+        <span text-grey-8> 学校名称</span>
+        <UserCodeInput
+          v-model:user-code="verifiInfo.school"
+          :rules="[(val: string) => val.length > 0 || '学校名称必填']"
+          :dark="false" label="请输入学校名称"
+          @update:accept="(val) => veriAccept.school = val"
         />
-        <Btn transparent label="选择图片（最多8张）" @click="pickImg" />
-      </div>
-    </div>
+      </section>
 
-    <div text-grey-6 mt-3>
-      学生请上传学生证，教师及其它研究人员请上传校园卡或工作凭证，仅限图片文件，大小不超过2M
-    </div>
+      <section class="form-item">
+        <span text-grey-8> 所在学院</span>
+        <UserCodeInput
+          v-model:user-code="verifiInfo.college"
+          :rules="[(val: string) => val.length > 0 || '学院名称必填']"
+          :dark="false" label="请输入学院名称"
+          @update:accept="(val) => veriAccept.college = val"
+        />
+      </section>
 
-    <div mt-10 flex="~ wrap" items-center grid-cols-2 ml-4 gap-3>
-      <q-img v-for="(f, index) in attachmentsList" :key="index" h-20 no-native-menu w-20 :src="f.previewURL" :alt="f.previewURL">
-        <div
-          class="absolute-top-right"
-          cursor-pointer h-2 w-2
-          style="background-color: rgba(0, 0, 0, 0.30);"
-          @click="deletePreviewImg(index)"
-        >
-          <div style="top:50%;left: 50%;transform: translate(-50%,-50%);" i-material-symbols:close-rounded absolute />
+      <section class="form-item">
+        <span text-grey-8> 身份证号码</span>
+        <UserCodeInput
+          v-model:user-code="verifiInfo.idCard"
+          :rules="[(val: string) => val.length === 18 || '身份证号码必须为18位']"
+          :dark="false"
+          label="请输入身份证号码"
+          @update:accept="(val) => veriAccept.idCard = val"
+        />
+      </section>
+
+      <section class="form-item">
+        <span text-grey-8> 学号/工号</span>
+        <UserCodeInput
+          v-model:user-code="verifiInfo.number"
+          :dark="false" label="请输入学号/工号"
+          :rules="[(val: string) => val.length > 0 || '学号/工号必填']"
+          @update:accept="(val) => veriAccept.number = val"
+        />
+      </section>
+
+      <section class="form-item">
+        <span text-grey-8> 姓名</span>
+        <UserCodeInput
+          v-model:user-code="verifiInfo.name"
+          :rules="[(val: string) => val.length > 0 || '姓名必填']"
+          :dark="false" label="请输入您的真实姓名"
+          @update:accept="(val) => veriAccept.name = val"
+        />
+      </section>
+
+      <section class="form-item" mb5>
+        <span text-grey-8>身份 </span>
+        <ZSelect v-model="identify" :options="transformedArray()" />
+      </section>
+
+      <section class="form-item">
+        <div flex="~ row justify-between items-center">
+          <span class="label" font-500 text-grey-8>上传资料</span>
+          <div class="q-gutter-md" style="max-width: 300px">
+            <QFile
+              ref="myFileInput"
+              v-model="files"
+              accept=".jpg, image/*"
+              max-files="8"
+              append multiple
+              style="display:none"
+              type="file"
+              label="Standard"
+              max-file-size="1048576"
+            />
+            <Btn transparent label="选择图片（最多8张）" @click="pickImg" />
+          </div>
         </div>
-      </q-img>
+
+        <div mt-3 text-grey-6>
+          学生请上传学生证，教师及其它研究人员请上传校园卡或工作凭证，仅限图片文件，大小不超过2M
+        </div>
+
+        <div flex="~ wrap" grid-cols-2 ml-4 items-center gap-3>
+          <q-img v-for="(f, index) in attachmentsList" :key="index" no-native-menu h-20 w-20 :src="f.previewURL" :alt="f.previewURL">
+            <div
+              class="absolute-top-right"
+              h-2 w-2 cursor-pointer
+              style="background-color: rgba(0, 0, 0, 0.30);"
+              @click="deletePreviewImg(index)"
+            >
+              <div style="top:50%;left: 50%;transform: translate(-50%,-50%);" i-material-symbols:close-rounded absolute />
+            </div>
+          </q-img>
+        </div>
+      </section>
     </div>
   </ZDialog>
 </template>
 
-<style lang="">
+<style lang="sass" scoped>
+.form-item
+  display: flex
+  flex-direction: column
+  gap: 8px
 
+  & > span,
+  & span.label
+    position: relative
+    font-weight: 500
+    &::before
+      content: "*"
+      color: #F44336
 </style>
