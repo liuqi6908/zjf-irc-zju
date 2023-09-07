@@ -249,7 +249,6 @@ onBeforeMount(async () => {
           />
           <Btn
             v-if="latestVerifiy?.status === VerificationStatus.CANCELLED || !latestVerifiy"
-            min-w-53
             label="前往认证"
             @click="showVeri = true"
           >
