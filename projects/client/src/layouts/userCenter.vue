@@ -49,7 +49,7 @@ const currentId = ref(userList.value.find(v => $route.path.includes(v.router.pat
             h12 w28 items-center px4 py2.5 hover:bg-gray-2
             class="text-grey-8!"
           >
-            <div text="4" font-600>
+            <div text="4" text-nowrap font-600>
               {{ item.nameZH }}
             </div>
           </router-link>

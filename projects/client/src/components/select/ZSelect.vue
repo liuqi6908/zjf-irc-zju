@@ -4,6 +4,7 @@ interface Props {
   options: Array<{ label: string; id: string | number }>
   label?: string
   chip?: boolean
+  placeholder?: string
 }
 defineProps<Props>()
 defineEmits(['update:modelValue'])
@@ -11,7 +12,7 @@ defineEmits(['update:modelValue'])
 
 <template>
   <q-select
-    dense outlined text-grey-4
+    outlined text-grey-4
     dropdown-icon="fa fa-chevron-down"
     :label="label"
     :options="options"

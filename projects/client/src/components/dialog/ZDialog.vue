@@ -11,6 +11,9 @@ interface Props {
   disableConfirm?: boolean
   cancelText?: string
   confirmText?: string
+  wrapperStyle?: Record<string, any>
+  /** 是否使用滚动区域 */
+  scroll?: boolean
 }
 
 withDefaults(defineProps<Props>(), {
@@ -26,8 +29,13 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
     :model-value="modelValue"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <q-card rounded="!0" flex="~ col" min-w-lg gap-6 p6>
-      <header flex="~ row justify-between items-center" h4>
+    <q-card
+      rounded="!0" flex="~ col" gap-6 py6 :style="{
+        minWidth: '460px',
+        ...wrapperStyle,
+      }"
+    >
+      <header flex="~ row justify-between items-center" h4 px6>
         <div>
           <Btn v-if="back" @click="$emit('update:back')" />
           <div>
@@ -40,11 +48,19 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
         </q-btn>
       </header>
 
-      <div rounded="0!">
+      <div v-if="scroll" flex="~ col 1" rounded="0!" h0 border-y-1>
+        <q-scroll-area full px6>
+          <div py6>
+            <slot />
+          </div>
+        </q-scroll-area>
+      </div>
+
+      <div v-else rounded="0!" px6>
         <slot />
       </div>
 
-      <footer v-if="footer" flex flex-row justify-end>
+      <footer v-if="footer" flex flex-row justify-end px6>
         <div flex="~ row" gap6>
           <q-btn
             v-close-popup

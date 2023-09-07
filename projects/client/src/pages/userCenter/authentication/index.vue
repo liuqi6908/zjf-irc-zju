@@ -240,17 +240,21 @@ onBeforeMount(async () => {
 
     <div flex="~ row" mt-10 w-full justify-center>
       <div flex="~ row items-center gap-5" max-w-sm>
-        <div v-if="latestVerifiy?.status !== VerificationStatus.REJECTED" h-full max-w-sm flex="~ row items-center gap-5">
+        <div
+          v-if="latestVerifiy?.status !== VerificationStatus.REJECTED"
+          h-full max-w-sm flex="~ row items-center gap-5"
+        >
           <VerifyStatus
             :status="latestVerifiy?.status"
           />
           <Btn
             v-if="latestVerifiy?.status === VerificationStatus.CANCELLED || !latestVerifiy"
+            min-w-53
             label="前往认证"
             @click="showVeri = true"
           >
             <template #icon>
-              <div i-material-symbols:arrow-forward />
+              <div i-material-symbols:arrow-forward ml2 />
             </template>
           </Btn>
 
