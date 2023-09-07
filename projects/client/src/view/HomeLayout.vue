@@ -145,7 +145,7 @@ if (typeof document !== 'undefined') {
                   style="--q-primary: var(--grey-2); color: var(--grey-2) !important;"
                   @click="() => u.action?.()"
                 >
-                  <div w-full flex="~" items-center justify-between>
+                  <div flex="~" w-full items-center justify-between>
                     <span text="4 grey-8">{{ u.name }}</span>
                     <div>
                       <svg
