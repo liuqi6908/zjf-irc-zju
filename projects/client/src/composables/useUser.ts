@@ -1,4 +1,5 @@
 import { useStorage } from '@vueuse/core'
+import { VerificationStatus } from 'zjf-types'
 import type { IUser, IVerificationHistory } from 'zjf-types'
 import { encryptPasswordInHttp } from 'zjf-utils'
 import { AUTH_TOKEN_KEY } from 'shared/constants'
@@ -74,6 +75,9 @@ export function useUser($router = useRouter()) {
   /** 用户是否登录 */
   const isLogin = computed(() => Boolean(authToken.value))
 
+  /** 用户是否通过认证 */
+  const isVerify = computed(() => userInfo.value?.verification?.status === VerificationStatus.APPROVED)
+
   onMounted(async () => {
     if (!isDesktopFetched) {
       isDesktopFetched = true
@@ -85,6 +89,7 @@ export function useUser($router = useRouter()) {
     userInfo,
     authToken,
     isLogin,
+    isVerify,
     latestVerifiy,
     isDesktop,
     useLogin,

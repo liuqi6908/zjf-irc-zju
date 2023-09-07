@@ -27,7 +27,7 @@ const userList = ref([
     router: { path: 'myWorks' },
   },
 ])
-const currentId = ref(userList.value.find(v => $route.path.includes(v.router.path))?.id || userList.value[0].id)
+const currentId = computed(() => userList.value.find(v => $route.path.includes(v.router.path))?.id || userList.value[0].id)
 
 onBeforeMount(() => {
   if (!isLogin.value)

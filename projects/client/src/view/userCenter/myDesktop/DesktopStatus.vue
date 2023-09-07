@@ -2,7 +2,7 @@
 import type { DesktopQueueStatus } from 'zjf-types'
 
 interface Props {
-  status: DesktopQueueStatus
+  status?: DesktopQueueStatus
   /** 附加信息（驳回理由，排队人数） */
   queueLength?: string
   duration?: number
