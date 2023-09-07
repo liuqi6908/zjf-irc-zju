@@ -2,6 +2,8 @@
 import HomeLayout from '~/view/HomeLayout.vue'
 
 const $route = useRoute()
+const $router = useRouter()
+const { isLogin } = useUser()
 
 const userList = ref([
   {
@@ -26,22 +28,24 @@ const userList = ref([
   },
 ])
 const currentId = ref(userList.value.find(v => $route.path.includes(v.router.path))?.id || userList.value[0].id)
+
+onBeforeMount(() => {
+  if (!isLogin.value)
+    $router.push('/')
+})
 </script>
 
 <template>
   <HomeLayout>
     <div flex="~ col" class="fit" bg-grey-2>
       <header class="userCenter" h-40 w-full flex-center>
-        <div text-grey-1 title-1>
-          用户中心
-        </div>
+        <div text-grey-1 title-1 v-text="'用户中心'" />
       </header>
 
       <div flex="~ row" flat full rounded-3 bg-grey-1 p-6>
         <div border-r-1 border-grey-3 pr-6 class="col-3">
           <SliderList v-model:current-id="currentId" :list="userList" />
         </div>
-
         <div pl-6 style="flex: 1 1 auto;">
           <router-view />
         </div>
@@ -52,6 +56,6 @@ const currentId = ref(userList.value.find(v => $route.path.includes(v.router.pat
 
 <style scoped lang="scss">
 .userCenter {
-     background: no-repeat center / cover url("../assets/layout/userCenter.png");
+  background: no-repeat center / cover url("../assets/layout/userCenter.png");
 }
 </style>
