@@ -15,16 +15,16 @@ const tabList = reactive<any>([
 const tab = ref('')
 
 onBeforeMount(() => {
-  // if (isDesktop.value && isVerify.value) {
-  tabList.unshift({
-    label: '数据外发',
-    id: 'outgoing',
-  },
-  {
-    label: '历史记录',
-    id: 'history',
-  })
-  // }
+  if (isDesktop.value && isVerify.value) {
+    tabList.unshift({
+      label: '数据外发',
+      id: 'outgoing',
+    },
+    {
+      label: '历史记录',
+      id: 'history',
+    })
+  }
   tab.value = tabList[0].id
 })
 </script>

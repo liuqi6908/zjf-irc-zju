@@ -17,6 +17,7 @@ const toggle: Array<{ label: string; value: FileType }> = [
 ]
 const model = ref<FileType>(toggle[0].value)
 const editDialog = ref(false)
+const loading = ref(false)
 
 const outgoingInfo = reactive<Record<FileType, FileInfoItem>>({
   small: {
@@ -51,7 +52,7 @@ function dropFiles(e: DragEvent) {
 }
 
 function selectedFiles() {
-  const fileList = document.querySelector('.drop-zone-file')?.files as FileList
+  const fileList = document?.querySelector('.drop-zone-file')?.files as FileList
   addFile(fileList)
 }
 
@@ -64,6 +65,7 @@ function addFile(files?: FileList) {
         outgoingInfo[model.value].dropzoneFile = file
     }
   }
+  clearInputFiles()
 }
 
 function checkFile(file: File, size: number) {
@@ -89,31 +91,50 @@ function checkFile(file: File, size: number) {
 }
 
 async function outConfirm() {
-  if (model.value === 'big') {
-    const { dropzoneFile, remark } = outgoingInfo.big
-    const res = await putExportLg(dropzoneFile, remark)
+  loading.value = true
+  const { dropzoneFile, remark } = outgoingInfo[model.value]
+  if (!dropzoneFile)
+    return
+  try {
+    let res, message
+    if (model.value === 'big') {
+      res = await putExportLg(dropzoneFile, remark)
+      message = '外发成功，请等待管理员审核！'
+    }
+    else {
+      res = await putExportSm(dropzoneFile, remark)
+      message = '外发成功，请前往邮箱查看！'
+    }
     if (res) {
       Notify.create({
-        message: '大文件申请外发成功',
+        message,
         type: 'success',
       })
+      outgoingInfo[model.value].dropzoneFile = undefined
     }
   }
-  else if (model.value === 'small') {
-    const { dropzoneFile, remark } = outgoingInfo.small
-    const res = await putExportSm(dropzoneFile, remark)
-    if (res) {
-      Notify.create({
-        message: '小文件外发成功',
-        type: 'success',
-      })
-    }
+  catch (_) {}
+  finally {
+    loading.value = false
   }
+}
+
+function clearInputFiles() {
+  const el = document?.querySelector('.drop-zone-file')
+  if (el)
+    el.value = null
 }
 </script>
 
 <template>
-  <div w-full class="col-grow" p-7 flex="~ col items-start">
+  <div w-full class="col-grow" p-7 flex="~ col items-start" relative>
+    <!-- 加载中 -->
+    <div v-if="loading" full flex-center absolute top-0 z-100 left-0 style="background: rgba(255, 255, 255, 0.6)">
+      <q-spinner
+        color="primary-1" size="5rem" :thickness="2" label-class="text-primary-1"
+        label-style="font-size: 1.1em"
+      />
+    </div>
     <!-- 切换外发类型 -->
     <header mb-6 full flex-center mt-4>
       <q-btn-toggle
@@ -152,19 +173,35 @@ async function outConfirm() {
     </div>
     <DropZone @drop.prevent="dropFiles" @change="selectedFiles">
       <div flex="~ col gap-2">
-        <span v-if="outgoingInfo[model].dropzoneFile" flex="~ row gap-2" text-grey-8>
-          <div text-grey-5 i-material-symbols:note-outline />  {{ outgoingInfo[model].dropzoneFile?.name }}
-        </span>
+        <div v-if="outgoingInfo[model].dropzoneFile" class="file-item" flex="~ row gap-2" text-grey-8 hover:bg-gray-100 p-1>
+          <div text-grey-5 i-material-symbols:note-outline relative top-0.5 />
+          {{ outgoingInfo[model].dropzoneFile?.name }}
+          <q-icon class="remove" name="fas fa-close" relative cursor-pointer top-1 opacity-0 @click="outgoingInfo[model].dropzoneFile = undefined" />
+        </div>
       </div>
     </DropZone>
 
     <div flex="~ row justify-center" mt-10 w-full>
       <div flex="~ row gap-5">
         <btn label="更改邮箱" w-30 outline @click="editDialog = true" />
-        <btn w-30 label="外发" @click="outConfirm()" />
+        <btn w-30 label="外发" :disable="!Boolean(outgoingInfo[model].dropzoneFile)" @click="outConfirm()" />
       </div>
     </div>
 
     <EmailEditDialog v-model:edit-dialog="editDialog" label="邮箱" />
   </div>
 </template>
+
+<style lang="scss" scoped>
+.file-item {
+  transition: all 0.3s ease-in-out;
+  .q-icon {
+    transition: all 0.3s ease-in-out;
+  }
+  &:hover {
+    .q-icon {
+      opacity: 1;
+    }
+  }
+}
+</style>

@@ -85,11 +85,11 @@ function removeFile(index: number) {
         <UploadFile v-model="file" label="提交文件" />
       </div>
 
-      <div v-for="(item, index) in files" :key="index" flex="~ row" text-grey-5 hover:bg-gray-100 items-center justify-between class="file-item">
+      <div v-for="(item, index) in files" :key="index" flex="~ row" text-grey-5 items-center justify-between hover:bg-gray-100 class="file-item">
         <div>
           <q-icon name="far fa-file" mr-1 />{{ item.name }}
         </div>
-        <q-icon class="remove" name="fas fa-close" relative top-1px cursor-pointer hidden @click="removeFile(index)" />
+        <q-icon class="remove" name="fas fa-close" relative cursor-pointer top-1px hidden @click="removeFile(index)" />
       </div>
     </div>
 
