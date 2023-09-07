@@ -9,6 +9,7 @@ import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req } from '@nestjs/common'
 import { DesktopQueueHistoryStatus, DesktopQueueStatus, ErrorCode, PermissionType } from 'zjf-types'
 
+import { IsNull, Not } from 'typeorm'
 import { NotifyService } from '../notify/notify.service'
 import { DesktopService } from './desktop.service'
 import { CreateDesktopBodyDto } from './dto/create-desktop.body.dto'
@@ -118,6 +119,18 @@ export class DesktopController {
     // 确认是否已是排队状态
     if (request.status !== DesktopQueueStatus.Queueing)
       responseError(ErrorCode.DESKTOP_REQUEST_QUEUE_ONLY)
+    const [desktopAssigned, userAssigned] = await Promise.all([
+      // 确认云桌面是否已被分配
+      this._desktopSrv.repo().exist({
+        where: { id: param.desktopId, userId: Not(IsNull()) },
+      }),
+      // 确认用户是否已分配了其他的云桌面
+      this._desktopSrv.repo().exist({ where: { userId: param.userId } }),
+    ])
+    if (desktopAssigned)
+      responseError(ErrorCode.DESKTOP_ALREADY_ASSIGNED)
+    if (userAssigned)
+      responseError(ErrorCode.DESKTOP_USER_ASSIGNED_OTHERS)
     // 将云桌面分配，并更新用户的状态
     await this._desktopSrv.repo().update(
       { id: param.desktopId, disabled: false },
