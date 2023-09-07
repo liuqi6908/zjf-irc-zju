@@ -8,7 +8,7 @@ defineProps<Props>()
 
 <template>
   <div flex="~ col" flex-center>
-    <div h-60 w-60 flex-center rounded-9999 bg-grey-2>
+    <div flex-center bg-grey-2 h-60 w-60 rounded-9999>
       <svg xmlns="http://www.w3.org/2000/svg" width="148" height="132" viewBox="0 0 148 132" fill="none">
         <path d="M0.078125 131.49V15.3965H147.675V131.49H0.078125Z" fill="#A6B1C2" />
         <path d="M9.25977 5.47101L132.299 0.509766V107.673H9.25977V5.47101Z" fill="white" />
@@ -19,7 +19,7 @@ defineProps<Props>()
       </svg>
     </div>
     <div flex="~ col items-center" mt-5>
-      <span text-4.5 text-grey-8>{{ label }}</span>
+      <span text-grey-8 text-4.5>{{ label }}</span>
       <span text-grey-5>{{ captions }}</span>
     </div>
   </div>

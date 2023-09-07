@@ -215,7 +215,7 @@ async function allocationDesktop(id: string) {
             <q-btn v-if="props.row['user.account']" flat no-caps color="primary" :label="props.row['user.account']" @click="checkUserInfo(props.row)" />
           </template>
           <template v-else-if="col.name === 'action'">
-            <q-btn label="分配" color="green" size="sm" mr-2 @click="allocationDesktop(props.row.id)" />
+            <q-btn label="分配" :disable="Boolean(props.row.userId)" color="green" size="sm" mr-2 @click="allocationDesktop(props.row.id)" />
             <q-btn label="编辑" color="primary" size="sm" mr-2 @click="desktopDialog(props.row)" />
             <q-btn label="停用" color="red" size="sm" @click="deleteDesktop(props.row.id)" />
           </template>

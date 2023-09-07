@@ -1,4 +1,5 @@
 import { useStorage } from '@vueuse/core'
+import { VerificationStatus } from 'zjf-types'
 import type { IUser, IVerificationHistory } from 'zjf-types'
 import { encryptPasswordInHttp } from 'zjf-utils'
 import { AUTH_TOKEN_KEY } from 'shared/constants'
@@ -31,7 +32,6 @@ export function useUser($router = useRouter()) {
       authToken.value = res.sign.access_token
       userInfo.value = res.user
     }
-
     $router.replace({ path: '/home' })
   }
 
@@ -55,20 +55,28 @@ export function useUser($router = useRouter()) {
     if (!res)
       return
     authToken.value = null
+    userInfo.value = undefined
     $router.replace({ path: '/auth/login' })
   }
 
-  /** 默认查询当前用户的认证信息 */
+  /** 获取当前登入用户信息 */
   const useGetProfile = async (relation = 'role.permissions,verification') => {
     const res = await getProfile(relation)
     if (res)
       userInfo.value = res
   }
 
+  /** 获取当前登入用户认证信息 */
   const getVerify = async () => {
     latestVerifiy.value = await $get<IVerificationHistory>('/verification/latest')
     return latestVerifiy.value
   }
+
+  /** 用户是否登录 */
+  const isLogin = computed(() => Boolean(authToken.value))
+
+  /** 用户是否通过认证 */
+  const isVerify = computed(() => userInfo.value?.verification?.status === VerificationStatus.APPROVED)
 
   onMounted(async () => {
     if (!isDesktopFetched) {
@@ -78,14 +86,16 @@ export function useUser($router = useRouter()) {
   })
 
   return {
-    useRegister,
-    useLogin,
-    useLogout,
     userInfo,
     authToken,
-    useGetProfile,
-    getVerify,
+    isLogin,
+    isVerify,
     latestVerifiy,
     isDesktop,
+    useLogin,
+    useRegister,
+    useLogout,
+    useGetProfile,
+    getVerify,
   }
 }

@@ -8,35 +8,40 @@ interface Props {
 const props = defineProps<Props>()
 
 const data = reactive({
-  cpu: [{
-    time: [],
-    value: [],
-    label: '使用率',
-  }],
-  storage: [{
-    time: [],
-    value: [],
-    label: '负载率',
-  }],
-  oi: [{
-    time: [],
-    value: [],
-    label: '读取',
-  },
-  {
-    time: [],
-    value: [],
-    label: '写入',
-  }],
-
+  cpu: [
+    {
+      time: [],
+      value: [],
+      label: '使用率',
+    },
+  ],
+  storage: [
+    {
+      time: [],
+      value: [],
+      label: '负载率',
+    },
+  ],
+  oi: [
+    {
+      time: [],
+      value: [],
+      label: '读取',
+    },
+    {
+      time: [],
+      value: [],
+      label: '写入',
+    },
+  ],
 })
 
 /** 定时器的引用 */
 const pollingInterval = ref()
 
-function processData(dataArray, property: string) {
+function processData(dataArray: any, property: string) {
   if (dataArray && dataArray.length) {
-    return dataArray.map((item) => {
+    return dataArray.map((item: any) => {
       const { value, time } = item
       if (time)
         return property === 'value' ? value : time
@@ -102,10 +107,8 @@ onBeforeUnmount(() => {
 <template>
   <div mb-20 mt-10 max-w-6xl w-full>
     <LineEchartsCard :data="data.cpu" legend title="CPU" unit="%" />
-
     <LineEchartsCard :data="data.storage" legend title="内存" unit="%" />
-
-    <LineEchartsCard :data="data.oi" legend title="磁盘" unit="kb" />
+    <LineEchartsCard :data="data.oi" legend title="磁盘" unit="KB/S" />
   </div>
 </template>
 
