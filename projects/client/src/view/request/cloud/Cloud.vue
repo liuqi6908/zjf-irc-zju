@@ -9,14 +9,14 @@ const props = defineProps<Props>()
 
 const data = reactive({
   cpu: [
-    { value: [], time: [], label: '使用率' },
+    { value: [], time: [], label: '使用率：' },
   ],
   network: [
-    { value: [], time: [], label: '上行' },
-    { value: [], time: [], label: '下行' },
+    { value: [], time: [], label: '上行：' },
+    { value: [], time: [], label: '下行：' },
   ],
   disk: [
-    { value: [], time: [], label: '占用率' },
+    { value: [], time: [], label: '占用率：' },
   ],
 })
 
