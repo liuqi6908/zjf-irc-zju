@@ -120,6 +120,7 @@ const baseOption = {
   grid: {
     left: '10%',
     right: '3%',
+    containLabel: true,
   },
 }
 
@@ -190,12 +191,9 @@ watch(() => props.data,
       <Echarts
         class="chart"
         :option="options"
-        autofill h-80 min-w-lg
+
+        autofill autoresize h-80 min-w-lg
       />
     </client-only>
   </div>
 </template>
-
-<style lang="">
-
-</style>

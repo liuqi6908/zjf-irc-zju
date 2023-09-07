@@ -22,7 +22,7 @@ const cpuList = reactive({
   },
 })
 /** 定时器的引用 */
-const pollingInterval = ref()
+let pollingInterval: any = 0
 
 async function fetchDEsktopCpu(uuid?: string) {
   const res = await getDesktopHostCpu(uuid || props.uuid)
@@ -43,13 +43,13 @@ async function fetchDEsktopCpu(uuid?: string) {
 }
 
 function startPolling() {
-  pollingInterval.value = setInterval(() => {
+  pollingInterval = setInterval(() => {
     fetchDEsktopCpu()
   }, 10000)
 }
 function stopPolling() {
-  clearInterval(pollingInterval.value)
-  pollingInterval.value = null
+  clearInterval(pollingInterval)
+  pollingInterval = null
 }
 
 onBeforeUnmount(() => {
@@ -67,7 +67,7 @@ watch(() => props.uuid, async (val) => {
 </script>
 
 <template>
-  <div flex="~ row gap-10">
+  <div flex="~ row gap-10 wrap">
     <RoundEchartsCard class="col-grow" title="CPU分配情况" :value="cpuList.cpu" color="#025CB9" />
     <RoundEchartsCard unit="GB" class="col-grow" title="内存使用率" :value="cpuList.storage" color="#F99E34" />
     <RoundEchartsCard unit="GB" class="col-grow" title="存储使用率" :value="cpuList.disk" color="#8D5FF0" />

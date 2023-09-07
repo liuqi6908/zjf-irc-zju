@@ -4,7 +4,7 @@ import { DesktopQueueHistoryStatus, DesktopQueueStatus, VerificationStatus } fro
 import { getDesktopTimeHostCpu } from '../../api/desktopHost/getDesktopTimeCpu'
 import { getOwnDesktopQuery } from '../../api/desktop/getOwnDesktopQuery'
 import { getDesktopHostList } from '../../api/desktopHost/getDesktopHostList'
-import DesktopRequestDaialog from '../../view/request/DesktopRequestDaialog.vue'
+import DesktopRequestDialog from '../../view/request/DesktopRequestDaialog.vue'
 
 import { getDesktopVm } from '~/api/desktopVm/getDesktopVm'
 import HostPercent from '~/view/request/host/HostPercent.vue'
@@ -92,7 +92,7 @@ watch(model, async (newModel) => {
       </div>
     </header>
     <!-- 未通过身份认证 -->
-    <div v-if="userStatus !== VerificationStatus.APPROVED" flex="~ col items-center" full min-h-4xl bg-grey-1 pt-32>
+    <div v-if="userStatus !== VerificationStatus.APPROVED" flex="~ col items-center" w-limited-1 min-h-4xl bg-grey-1 pt-32>
       <template v-if="!userStatus">
         <EmptyVeri label="您还未登录系统" captions="用户登录并通过认证后，才能申请使用" />
         <Btn
@@ -123,11 +123,15 @@ watch(model, async (newModel) => {
       </template>
     </div>
     <!-- 申请使用云桌面 -->
-    <div v-else>
+    <div v-else w-limited-1>
       <div w-full flex="~ col items-center" bg-grey-1 py-10>
-        <div class="request-flow" h-80 w-6xl />
+        <div class="request-flow" h-80 w-full />
         <!-- 申请状态 -->
-        <div flex="~ row justify-between" style="background:rgba(2, 92, 185, 0.08);" mt-10 w-6xl p-6 text-xl font-600>
+        <div
+          flex="~ row"
+          style="background:rgba(2, 92, 185, 0.08);"
+          mt-10 w-full items-center justify-between p-6 text-xl font-600
+        >
           <!-- 使用中 -->
           <template v-if="requestInfo.status === DesktopQueueStatus.Using">
             <span text-grey-8>
@@ -183,7 +187,12 @@ watch(model, async (newModel) => {
                 您的云桌面已过期，请重新提交申请
               </span>
             </div>
+            <!-- 未申请 -->
+            <div v-else text="4.5 grey-8" font-400>
+              您已经通过身份认证，请点击右侧按钮申请云桌面。注意：前面有 10人 正在排队。
+            </div>
             <Btn
+              text-nowrap
               :label="!requestInfo.status || (Object.values(DesktopQueueStatus) as Array<string>).includes(requestInfo.status)
                 ? '申请使用' : '重新申请'
               "
@@ -193,33 +202,42 @@ watch(model, async (newModel) => {
           </template>
         </div>
       </div>
+    </div>
+    <div w-full bg-grey-2>
+      <div w-limited-1 flex="~ col nowrap" gap10>
+        <div w-limited-1 mt-10 bg-grey-1 p-6>
+          <header flex="~ row" text-grey-8 title-4>
+            云主机情况
+          </header>
+          <div flex="~ wrap" items-center justify-center>
+            <div class="desktopCode" h-60 w-60 />
 
-      <div mt-10 w-6xl bg-grey-1 p-6>
-        <header flex="~ row" text-grey-8 title-4>
-          云主机情况
-        </header>
-        <section flex="~ row items-center justify-around">
-          <div class="desktopCode" ml-20 mt-6 h-60 w-60 />
-          <div flex="~ col" ml-13 max-h-30 p-6 style="background: linear-gradient(135deg, #F5F7FA 0%, rgba(245, 247, 250, 0.00) 100%);">
-            <span text-primary-1 title-2>{{ vmInfo.total }}</span>
-            <span text-4 text-grey-5>总数量</span>
+            <!--  -->
+            <section flex="~ row 1 center" min-w-500px w0 gap10>
+              <div
+                flex="~ col"
+                style="background: linear-gradient(135deg, #F5F7FA 0%, rgba(245, 247, 250, 0.00) 100%);"
+                min-h-34 min-w-34 p-6
+              >
+                <span text-primary-1 title-2>{{ vmInfo.total }}</span>
+                <span text-4 text-grey-5>总数量</span>
+              </div>
+
+              <table min-w-80>
+                <tr min-h-10 bg-grey-2>
+                  <td>运行中</td>
+                  <td>停止</td>
+                </tr>
+                <tr>
+                  <td>{{ vmInfo.running }}</td>
+                  <td>{{ vmInfo.stopped }}</td>
+                </tr>
+              </table>
+            </section>
           </div>
+        </div>
 
-          <table min-w-80>
-            <tr min-h-10 bg-grey-2>
-              <td>运行中</td>
-              <td>停止</td>
-            </tr>
-            <tr>
-              <td>{{ vmInfo.running }}</td>
-              <td>{{ vmInfo.stopped }}</td>
-            </tr>
-          </table>
-        </section>
-      </div>
-
-      <div bg-grey-1>
-        <div mt-10 w-6xl px-6 py-10>
+        <div w-full bg-grey-1 px8 py10>
           <header v-if="model && desktopList" mb-10>
             <q-btn-toggle
               v-model="model"
@@ -230,12 +248,12 @@ watch(model, async (newModel) => {
               :options="desktopList"
             />
           </header>
+          <HostPercent :uuid="model" />
+          <HostTiming :uuid="model" />
         </div>
-        <HostPercent :uuid="model" />
-        <HostTiming :uuid="model" />
       </div>
     </div>
-    <DesktopRequestDaialog v-model="requestDialog" @callback="getRequestInfo()" />
+    <DesktopRequestDialog v-model="requestDialog" @callback="getRequestInfo()" />
   </div>
 </template>
 
@@ -251,8 +269,8 @@ watch(model, async (newModel) => {
 }
 table,
 td {
-  border: 1px solid #F5F7FA;
-  height: 40px;
+  border: 1px solid var(--grey-3);
+  height: 68px;
 }
 
 thead,
