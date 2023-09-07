@@ -72,7 +72,7 @@ export function useUser($router = useRouter()) {
   }
 
   /** 用户是否登录 */
-  const isLogin = computed(() => Boolean(authToken.value && userInfo.value))
+  const isLogin = computed(() => Boolean(authToken.value))
 
   onMounted(async () => {
     if (!isDesktopFetched) {
