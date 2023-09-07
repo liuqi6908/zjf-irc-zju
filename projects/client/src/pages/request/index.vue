@@ -101,7 +101,7 @@ watch(model, async (newModel) => {
           @click="$router.push('/auth/login')"
         >
           <template #icon>
-            <div i-material-symbols:arrow-forward />
+            <div i-material-symbols:arrow-forward ml-2 />
           </template>
         </Btn>
       </template>
@@ -113,13 +113,23 @@ watch(model, async (newModel) => {
           @click="$router.push('/userCenter/authentication')"
         >
           <template #icon>
-            <div i-material-symbols:arrow-forward />
+            <div i-material-symbols:arrow-forward ml-2 />
           </template>
         </Btn>
       </template>
       <template v-else>
         <EmptyVeri label="您的身份认证尚未通过审核" captions="用户认证通过后，才能申请使用" />
-        <VerifyStatus :status="userStatus" mt-10 />
+        <div flex gap-6 mt-10>
+          <VerifyStatus :status="userStatus" />
+          <Btn
+            label="前往认证"
+            @click="$router.push('/userCenter/authentication')"
+          >
+            <template #icon>
+              <div i-material-symbols:arrow-forward ml-2 />
+            </template>
+          </Btn>
+        </div>
       </template>
     </div>
     <!-- 申请使用云桌面 -->
@@ -131,7 +141,9 @@ watch(model, async (newModel) => {
           <!-- 使用中 -->
           <template v-if="requestInfo.status === DesktopQueueStatus.Using">
             <span text-grey-8>
-              您已经成功申请云桌面，前往【用户中心/我的云桌面】查看
+              您已经成功申请云桌面，前往
+              <span text-tab-bottom v-text="'「 用户中心 / 我的云桌面 」'" />
+              查看
             </span>
             <Btn
               label="前往查看"

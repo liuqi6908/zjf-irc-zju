@@ -253,7 +253,7 @@ onBeforeMount(async () => {
             @click="showVeri = true"
           >
             <template #icon>
-              <div i-material-symbols:arrow-forward ml2 />
+              <div i-material-symbols:arrow-forward ml-2 />
             </template>
           </Btn>
 
@@ -263,7 +263,7 @@ onBeforeMount(async () => {
             @click="cancel(latestVerifiy.id)"
           >
             <template #icon>
-              <div i-material-symbols:close-rounded />
+              <div i-material-symbols:close-rounded ml-2 />
             </template>
           </Btn>
         </div>
@@ -276,7 +276,7 @@ onBeforeMount(async () => {
               @click="showVeri = true"
             >
               <template #icon>
-                <div i-material-symbols:arrow-forward />
+                <div i-material-symbols:arrow-forward ml-2 />
               </template>
             </Btn>
           </div>

@@ -271,22 +271,20 @@ function copyText(text: string) {
       </div>
     </div>
     <!-- 未认证/未申请 -->
-    <div v-else flex="~ col" items-center p-10 gap-10>
+    <div v-else flex="~ col" items-center gap-10 py-22>
       <template v-if="!isVerify">
-        <Empty label="您的身份认证尚未通过审核" captions="用户认证通过后，才能申请使用" />
-        <Btn max-w-40 label="前往认证" @click="() => $router.replace({ path: '/userCenter/authentication' })">
-          <template #icon>
-            <div i-material-symbols:arrow-forward />
-          </template>
-        </Btn>
+        <EmptyCloud label="您的身份认证尚未通过审核" />
+        <Btn1 w-53 h-12 @click="() => $router.replace({ path: '/userCenter/authentication' })">
+          前往认证
+          <q-icon name="fas fa-arrow-right" size="16px" ml-2 />
+        </Btn1>
       </template>
       <template v-else>
         <EmptyCloud label="您还未申请云桌面" />
-        <Btn max-w-40 label="前往申请" @click="() => $router.replace({ path: '/request' })">
-          <template #icon>
-            <div i-material-symbols:arrow-forward />
-          </template>
-        </Btn>
+        <Btn1 w-53 h-12 @click="() => $router.replace({ path: '/request' })">
+          前往申请
+          <q-icon name="fas fa-arrow-right" size="16px" ml-2 />
+        </Btn1>
       </template>
     </div>
   </div>

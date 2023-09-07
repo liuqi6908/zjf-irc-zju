@@ -9,7 +9,9 @@ declare module 'vue' {
   export interface GlobalComponents {
     Avatar: typeof import('./components/avatar/Avatar.vue')['default']
     Btn: typeof import('./components/btn/Btn.vue')['default']
+    Btn1: typeof import('./components/btn/Btn1.vue')['default']
     ChangeInput: typeof import('./components/user/ChangeInput.vue')['default']
+    copy: typeof import('./components/btn/Btn copy.vue')['default']
     DbTabs: typeof import('./components/tabs/db-tabs.vue')['default']
     DisplayCard: typeof import('./components/card/DisplayCard.vue')['default']
     DropZone: typeof import('./components/file/DropZone.vue')['default']
