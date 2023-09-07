@@ -35,9 +35,10 @@ function handleEnter() {
     <header flex="~ flex col items-center justify-center" mb-12>
       <span text-7 font-600 text-grey-1 v-text="'登录'" />
     </header>
-    <span text-grey-1 m-b-1 font-500 v-text="'账号'" />
+    <span text-grey-1 m-b-1 font-500 v-text="'账号 / 邮箱'" />
     <UserCodeInput
       v-model:userCode="userCode"
+      label="请输入账号/邮箱"
     />
     <span m-b-1 font-500 text-grey-1 m-t-4 v-text="'密码'" />
     <PasswordInput
@@ -61,6 +62,12 @@ function handleEnter() {
     </div>
   </div>
 </template>
+
+<style scoped>
+:deep(.q-field__label) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+</style>
 
 <route lang="yaml">
 meta:
