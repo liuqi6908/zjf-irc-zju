@@ -40,7 +40,7 @@ const editDialog = ref(false)
     </div>
 
     <ZDialog v-model="editDialog" :title="`修改${label}`" :footer="true" @ok="() => $emit('update:confirm', id)">
-      <div mb-3 text-grey-8>
+      <div mb2 font-bold text-grey-8>
         {{ label }}
       </div>
 
@@ -50,8 +50,8 @@ const editDialog = ref(false)
         @update:user-code="(v) => $emit('update:edit', v)"
       />
 
-      <div v-if="action" mt-6>
-        <div mb-3 text-grey-8>
+      <div v-if="action" mt6>
+        <div mb2 font-bold text-grey-8>
           邮箱验证
         </div>
         <SMSInput

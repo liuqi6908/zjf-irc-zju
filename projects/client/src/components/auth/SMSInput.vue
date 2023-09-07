@@ -59,10 +59,21 @@ watch(() => props.smsCode, () => {
         </div>
         <div
           v-else
-          bg="white/20"
-          hover:bg="white/30"
+          :class="{
+            ...(
+              dark ? {
+                'bg-white/20': true,
+                'text-white': true,
+                'hover:bg-white/30': true,
+              } : {
+                'bg-primary-1/12': true,
+                'text-primary-1': true,
+                'hover:bg-primary-1/16': true,
+              }
+            ),
+          }"
           label="发送验证码"
-          cursor-pointer px2 py1 text-sm text-white
+          cursor-pointer px2 py1 text-sm
           @click="() => validate ? null : getCode()"
         >
           发送验证码
