@@ -12,26 +12,26 @@ const data = reactive({
     {
       time: [],
       value: [],
-      label: '使用率',
+      label: '使用率：',
     },
   ],
   storage: [
     {
       time: [],
       value: [],
-      label: '负载率',
+      label: '负载率：',
     },
   ],
   oi: [
     {
       time: [],
       value: [],
-      label: '读取',
+      label: '读取：',
     },
     {
       time: [],
       value: [],
-      label: '写入',
+      label: '写入：',
     },
   ],
 })

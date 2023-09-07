@@ -39,8 +39,8 @@ onMounted(() => {
 
 <template>
   <div flex="~ row gap-15" w-full>
-    <q-list text-grey-8 sticky top-0>
-      <div>
+    <q-list text-grey-8>
+      <div sticky top-10>
         <q-item
           w-50 v-for="(item, index) in list" class="ellipsis" flex="~ col" justify-center items-start font-600
           clickable @click="scrollTo(item.title, index)" :active="link === item.title"

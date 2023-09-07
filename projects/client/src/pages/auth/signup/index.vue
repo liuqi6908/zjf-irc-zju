@@ -73,6 +73,7 @@ const disable = computed(() => verifyAccept(acceptObj))
       v-model:userCode="userName"
       user-type="user"
       :rules="[(val:string) => usernameRules(val)]"
+      label="请输入用户名称"
       @update:accept="(val) => acceptObj.username = val"
     />
 
@@ -95,6 +96,7 @@ const disable = computed(() => verifyAccept(acceptObj))
       v-model:userCode="email"
       :rules="[(val:string) => emailRules(val)]"
       user-type="email"
+      label="请输入邮箱"
       @update:accept="(val) => acceptObj.email = val"
     />
     <span mb-2 font-500 text-grey-1>邮箱验证</span>
@@ -112,6 +114,12 @@ const disable = computed(() => verifyAccept(acceptObj))
     </client-only>
   </div>
 </template>
+
+<style scoped>
+:deep(.q-field__label) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+</style>
 
 <route lang="yaml">
 meta:

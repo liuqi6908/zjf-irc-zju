@@ -4,19 +4,19 @@ import OutGoing from '~/view/userCenter/myData/OutGoing.vue'
 import UpdateData from '~/view/userCenter/myData/UploadData.vue'
 import History from '~/view/userCenter/myData/History.vue'
 
-const { isDesktop } = useUser()
+const { isDesktop, isVerify } = useUser()
 
-const tab = ref('')
-const { userInfo } = useUser()
-const tabslit = reactive([
+const tabList = reactive<any>([
   {
     label: '数据上传',
     id: 'updating',
   },
 ])
-onBeforeMount(async () => {
-  if (isDesktop.value && userInfo.value?.verification) {
-    tabslit.unshift({
+const tab = ref('')
+
+onBeforeMount(() => {
+  if (isDesktop.value && isVerify.value) {
+    tabList.unshift({
       label: '数据外发',
       id: 'outgoing',
     },
@@ -25,14 +25,13 @@ onBeforeMount(async () => {
       id: 'history',
     })
   }
-
-  tab.value = tabslit[0].id
+  tab.value = tabList[0].id
 })
 </script>
 
 <template>
   <div min-h-2xl>
-    <Tabs v-model="tab" :tab-list="tabslit" align="left">
+    <Tabs v-model="tab" :tab-list="tabList" align="left">
       <OutGoing v-if="tab === 'outgoing'" />
       <UpdateData v-else-if="tab === 'updating'" />
       <History v-else-if="tab === 'history'" />

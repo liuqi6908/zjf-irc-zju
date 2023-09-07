@@ -68,7 +68,11 @@ function fromatterLegend(color: string, data: []) {
       name: item?.name,
       color,
       textStyle: {
+        height: 24,
         rich: {
+          a: {
+            verticalAlign: 'middle',
+          },
           fontStyle: {
             color: '#292D36',
             fontSize: '16px',
@@ -92,7 +96,7 @@ function fromatterLegend(color: string, data: []) {
     icon: 'rect',
     itemWidth: 10,
     itemHeight: 10,
-    left: '10%',
+    left: 0,
     itemStyle: {
       borderType: 'solid',
     },
@@ -118,8 +122,9 @@ const baseOption = {
   ],
   series: [],
   grid: {
-    left: '10%',
-    right: '3%',
+    left: 1,
+    right: 5,
+    bottom: 10,
     containLabel: true,
   },
 }
@@ -191,8 +196,7 @@ watch(() => props.data,
       <Echarts
         class="chart"
         :option="options"
-
-        autofill autoresize h-80 min-w-lg
+        autofill h-80 autoresize
       />
     </client-only>
   </div>

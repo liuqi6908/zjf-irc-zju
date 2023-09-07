@@ -64,6 +64,7 @@ const disable = computed(() => verifyAccept(acceptObj))
       v-model:userCode="email"
       :rules="[(val:string) => emailRules(val)]"
       user-type="email"
+      label="请输入邮箱"
       @update:accept="(val) => acceptObj.email = val"
     />
 
@@ -100,6 +101,12 @@ const disable = computed(() => verifyAccept(acceptObj))
     </client-only>
   </div>
 </template>
+
+<style scoped>
+:deep(.q-field__label) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+</style>
 
 <route lang="yaml">
 meta:
