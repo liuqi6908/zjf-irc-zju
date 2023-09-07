@@ -34,6 +34,14 @@ const _desktopErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.BAD_REQUEST,
     message: '正在进行云桌面过期检查中，无法重复进行',
   },
+  [ErrorCode.DESKTOP_ALREADY_ASSIGNED]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '云桌面已被分配',
+  },
+  [ErrorCode.DESKTOP_USER_ASSIGNED_OTHERS]: {
+    httpStatus: HttpStatus.BAD_REQUEST,
+    message: '用户已分配了其他的云桌面',
+  },
 }
 
 export default _desktopErrors

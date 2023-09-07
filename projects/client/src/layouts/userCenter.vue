@@ -37,16 +37,31 @@ onBeforeMount(() => {
 
 <template>
   <HomeLayout>
-    <div flex="~ col" class="fit" bg-grey-2>
-      <header class="userCenter" h-40 w-full flex-center>
-        <div text-grey-1 title-1 v-text="'用户中心'" />
+    <div flex="~ col" class="fit">
+      <header class="userCenter" h-64 w-full flex-center shrink-0>
+        <div text-grey-1 title-1>
+          用户中心
+        </div>
       </header>
 
-      <div flex="~ row" flat full rounded-3 bg-grey-1 p-6>
-        <div border-r-1 border-grey-3 pr-6 class="col-3">
-          <SliderList v-model:current-id="currentId" :list="userList" />
+      <div flex="~ row" w-limited-1 gap10 py6>
+        <div flex="~ col" gap6>
+          <!-- <SliderList v-model:current-id="currentId" :list="userList" /> -->
+          <router-link
+            v-for="item in userList"
+            :key="item.id"
+            active-class="bg-gray-2 text-primary-1!"
+            :to="item.router"
+            flex="~"
+            h12 w28 items-center px4 py2.5 hover:bg-gray-2
+            class="text-grey-8!"
+          >
+            <div text="4" text-nowrap font-600>
+              {{ item.nameZH }}
+            </div>
+          </router-link>
         </div>
-        <div pl-6 style="flex: 1 1 auto;">
+        <div style="flex: 1 1 auto;">
           <router-view />
         </div>
       </div>

@@ -102,6 +102,10 @@ export enum ErrorCode {
   DESKTOP_NOT_FOUND = 800007,
   /** 正在进行云桌面过期检查中，无法重复进行 */
   DESKTOP_EXPIRE_CHECKING = 800008,
+  /** 云桌面已被分配 */
+  DESKTOP_ALREADY_ASSIGNED = 800009,
+  /** 用户已分配了其他的云桌面 */
+  DESKTOP_USER_ASSIGNED_OTHERS = 800010,
 
   // 外发相关错误
   /** 当日的外发次数已达上限 */

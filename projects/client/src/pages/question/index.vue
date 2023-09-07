@@ -46,7 +46,7 @@ watch(() => route.name, async () => {
 
 <template>
   <div flex="~ col" full>
-    <header class="questionTitle" h60 w-full flex-center>
+    <header class="questionTitle" h64 w-full flex-center>
       <div text-grey-8 title-1>
         常见问题解答(Q&A)
       </div>

@@ -189,12 +189,12 @@ onBeforeMount(async () => {
 <template>
   <div flex flex-col class="col-grow">
     <!-- 基础信息 -->
-    <div flex="~ col" class="baseInfo" pb-10>
+    <div flex="~ col" class="baseInfo">
       <header flex="~ row justify-start" mb-6 text-5 font-600 text-grey-8>
         基础信息
       </header>
 
-      <div flex="~ col gap-10">
+      <div flex="~ col" gap8>
         <ChangeInput
           v-for="b in baseInfoList"
           :id="b.id"
@@ -212,41 +212,49 @@ onBeforeMount(async () => {
       </div>
     </div>
 
+    <div my16 h1px w-full bg-gray-3 />
+
     <!-- 认证信息 -->
-    <div class="col-grow authInfo" border-t-1 pt-10>
+    <div class="col-grow authInfo">
       <header flex="~ row justify-start" mb-6 text-5 font-600 text-grey-8>
         认证信息
       </header>
 
       <div grid gap-10 lg:grid-cols-2 xl:grid-cols-3>
         <div v-for="a in authInfoList" :key="a.label" class="col-grow">
-          <div mb-4 flex="~ row items-center justify-between">
-            <span font-500 text-grey-8>
+          <div mb2 flex="~ row items-center justify-between">
+            <span font-500 text-gray-8>
               {{ a.label }}
             </span>
           </div>
-          <UserCodeInput
-            v-model:user-code="a.inputVal"
-            :dark="false"
-            :disable="a.disable"
-          />
+          <div
+            flex="~ 1"
+            h12 items-center border-1 border-gray-3 bg-gray-2 px3 py2
+            text="4 gray-4 left"
+          >
+            {{ a.inputVal }}
+          </div>
         </div>
       </div>
     </div>
 
     <div flex="~ row" mt-10 w-full justify-center>
       <div flex="~ row items-center gap-5" max-w-sm>
-        <div v-if="latestVerifiy?.status !== VerificationStatus.REJECTED" h-full max-w-sm flex="~ row items-center gap-5">
+        <div
+          v-if="latestVerifiy?.status !== VerificationStatus.REJECTED"
+          h-full max-w-sm flex="~ row items-center gap-5"
+        >
           <VerifyStatus
             :status="latestVerifiy?.status"
           />
           <Btn
             v-if="latestVerifiy?.status === VerificationStatus.CANCELLED || !latestVerifiy"
+            min-w-53
             label="前往认证"
             @click="showVeri = true"
           >
             <template #icon>
-              <div i-material-symbols:arrow-forward />
+              <div i-material-symbols:arrow-forward ml2 />
             </template>
           </Btn>
 
@@ -274,7 +282,7 @@ onBeforeMount(async () => {
             </Btn>
           </div>
 
-          <div v-if="latestVerifiy?.status === VerificationStatus.REJECTED" mt-5 w-full flex="~ col" bg-grey-2 p-4>
+          <div v-if="latestVerifiy?.status === VerificationStatus.REJECTED" flex="~ col" mt-5 w-full bg-grey-2 p-4>
             <div flex="~ row" mb-2 font-500 text-grey-8>
               驳回理由
             </div>

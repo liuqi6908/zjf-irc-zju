@@ -7,3 +7,24 @@
 
 .q-field .q-field__append + .q-field__append
   margin-left: 5px
+
+.q-field .q-field__control
+  height: 48px
+  min-height: 48px
+
+  .q-field__append
+    height: inherit
+
+  .q-field__label
+    top: 14px
+
+
+  // border-color
+  &::before
+    border-color: var(--grey-3)
+
+  &:hover::before
+    border-color: var(--grey-4)
+
+  .q-field__label
+    color: var(--grey-5)
