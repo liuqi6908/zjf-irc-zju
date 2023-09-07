@@ -8,8 +8,9 @@ import { requestVerification } from '../../../api/auth/verification/requestVerif
 import { uploadVerifyFile } from '../../../api/file/uploadVerifyFile'
 
 defineProps<Props>()
-
 const emits = defineEmits(['update:modelValue', 'update:confirm'])
+const PrivacyDoc = defineAsyncComponent(() => import('~/components/protocol/privacy-doc.vue'))
+const UserAgreementDoc = defineAsyncComponent(() => import('~/components/protocol/user-agreement-doc.vue'))
 
 const VerificationInput = defineAsyncComponent(() => import('./VerificationInput.vue'))
 
@@ -21,6 +22,9 @@ const identify = ref<{ label: string; id: VerificationIdentify | '' }>({ label: 
 const files = ref<Array<File>>([])
 // const previewImgs = ref<Array<{ id: number; previewURL: any }>>([])
 const myFileInput = ref<typeof QFile>()
+const showPrivacyDialog = ref(false)
+const showUserAgreementDialog = ref(false)
+const agreeWithProtocol = ref(false)
 
 const verifyInfo = reactive({
   name: '',
@@ -42,7 +46,8 @@ const veriAccept = reactive({
 const disable = computed(() =>
   Object.values(veriAccept).includes(false)
   || !attachmentsList.value.length
-  || !identify.value.id,
+  || !identify.value.id
+  || !agreeWithProtocol.value,
 )
 
 function transformedArray(): { label: string; id: string }[] {
@@ -251,8 +256,40 @@ watch(
             </div>
           </div>
         </div>
+
+        <!-- 用户协议 -->
+        <div flex="~" items-start gap-1>
+          <q-checkbox v-model="agreeWithProtocol" dense class="round style-1" />
+          <div>
+            <span>我已阅读并同意</span>
+            <span
+              text-primary-1
+              @click="showPrivacyDialog = true"
+            >《「智能云科研平台」隐私政策》</span>
+            <span>、</span>
+            <span
+              text-primary-1
+              @click="showUserAgreementDialog = true"
+            >《「智能云科研平台」用户使用协议》</span>
+          </div>
+        </div>
       </section>
     </div>
+
+    <ZDialog
+      v-model="showPrivacyDialog"
+      :wrapper-style="{ maxWidth: '800px' }"
+      title="隐私政策"
+    >
+      <PrivacyDoc />
+    </ZDialog>
+    <ZDialog
+      v-model="showUserAgreementDialog"
+      :wrapper-style="{ maxWidth: '800px' }"
+      title="用户使用协议"
+    >
+      <UserAgreementDoc />
+    </ZDialog>
   </ZDialog>
 </template>
 
