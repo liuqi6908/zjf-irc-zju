@@ -37,7 +37,7 @@ const currentId = ref(userList.value.find(v => $route.path.includes(v.router.pat
         </div>
       </header>
 
-      <div flex="~ row" w-limited-1 rounded-3 bg-grey-1 p-6>
+      <div flex="~ row" w-limited-1 gap10 py6>
         <div flex="~ col" gap6>
           <!-- <SliderList v-model:current-id="currentId" :list="userList" /> -->
           <router-link
@@ -55,7 +55,7 @@ const currentId = ref(userList.value.find(v => $route.path.includes(v.router.pat
           </router-link>
         </div>
 
-        <div pl-6 style="flex: 1 1 auto;">
+        <div style="flex: 1 1 auto;">
           <router-view />
         </div>
       </div>
