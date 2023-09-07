@@ -38,8 +38,21 @@ const currentId = ref(userList.value.find(v => $route.path.includes(v.router.pat
       </header>
 
       <div flex="~ row" w-limited-1 rounded-3 bg-grey-1 p-6>
-        <div border-grey-3 pr-6 class="col-3">
-          <SliderList v-model:current-id="currentId" :list="userList" />
+        <div flex="~ col" gap6>
+          <!-- <SliderList v-model:current-id="currentId" :list="userList" /> -->
+          <router-link
+            v-for="item in userList"
+            :key="item.id"
+            active-class="bg-gray-2 text-primary-1!"
+            :to="item.router"
+            flex="~"
+            h12 w28 items-center px4 py2.5 hover:bg-gray-2
+            class="text-grey-8!"
+          >
+            <div text="4" font-600>
+              {{ item.nameZH }}
+            </div>
+          </router-link>
         </div>
 
         <div pl-6 style="flex: 1 1 auto;">
