@@ -31,7 +31,7 @@ const currentId = ref(userList.value.find(v => $route.path.includes(v.router.pat
 <template>
   <HomeLayout>
     <div flex="~ col" class="fit" bg-grey-2>
-      <header class="userCenter" h-40 w-full flex-center>
+      <header class="userCenter" h-64 w-full flex-center shrink-0>
         <div text-grey-1 title-1>
           用户中心
         </div>

@@ -274,7 +274,7 @@ onBeforeMount(async () => {
             </Btn>
           </div>
 
-          <div v-if="latestVerifiy?.status === VerificationStatus.REJECTED" mt-5 w-full flex="~ col" bg-grey-2 p-4>
+          <div v-if="latestVerifiy?.status === VerificationStatus.REJECTED" flex="~ col" mt-5 w-full bg-grey-2 p-4>
             <div flex="~ row" mb-2 font-500 text-grey-8>
               驳回理由
             </div>
