@@ -21,7 +21,6 @@ declare module 'vue' {
     NavItem: typeof import('./components/nav/NavItem.vue')['default']
     NavItemSection: typeof import('./components/nav/NavItemSection.vue')['default']
     PasswordInput: typeof import('./components/auth/PasswordInput.vue')['default']
-    Privacy: typeof import('./components/protocol/privacy.vue')['default']
     PrivacyDoc: typeof import('./components/protocol/privacy-doc.vue')['default']
     RectAngleCardSection: typeof import('./components/dialog/RectAngleCardSection.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
