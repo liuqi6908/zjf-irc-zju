@@ -196,12 +196,8 @@ watch(() => props.data,
       <Echarts
         class="chart"
         :option="options"
-        autofill h-80
+        autofill h-80 autoresize
       />
     </client-only>
   </div>
 </template>
-
-<style lang="">
-
-</style>

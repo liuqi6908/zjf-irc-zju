@@ -272,6 +272,7 @@ onBeforeMount(async () => {
           <div flex="~ row items-center gap-5" h-full max-w-sm>
             <VerifyStatus :status="latestVerifiy?.status" />
             <Btn
+              min-w-53
               label="前往认证"
               @click="showVeri = true"
             >
