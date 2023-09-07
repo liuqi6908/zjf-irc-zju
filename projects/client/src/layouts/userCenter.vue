@@ -30,15 +30,15 @@ const currentId = ref(userList.value.find(v => $route.path.includes(v.router.pat
 
 <template>
   <HomeLayout>
-    <div flex="~ col" class="fit" bg-grey-2>
+    <div flex="~ col" class="fit">
       <header class="userCenter" h-64 w-full flex-center shrink-0>
         <div text-grey-1 title-1>
           用户中心
         </div>
       </header>
 
-      <div flex="~ row" flat full rounded-3 bg-grey-1 p-6>
-        <div border-r-1 border-grey-3 pr-6 class="col-3">
+      <div flex="~ row" w-limited-1 rounded-3 bg-grey-1 p-6>
+        <div border-grey-3 pr-6 class="col-3">
           <SliderList v-model:current-id="currentId" :list="userList" />
         </div>
 
