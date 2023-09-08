@@ -11,7 +11,7 @@ import { putSuggest } from '~/api/dataSuggest/putSuggest'
 
 const route = useRoute()
 const $router = useRouter()
-const { isDesktop } = useUser()
+const { isDesktop, isLogin } = useUser()
 const { $get } = useRequest()
 
 const tableFieldsCol: QTableProps['columns'] = [
@@ -62,10 +62,12 @@ onBeforeMount(async () => {
     loading.value = false
   })).filter((row: any) => Object.values(row).some(v => v))
 
-  let url = getDataDownload(route.query.dataId as string)
-  if (url.startsWith('/api'))
-    url = url.substring(4)
-  downloadUrl.value = await $get(url)
+  if (isLogin.value) {
+    let url = getDataDownload(route.query.dataId as string)
+    if (url.startsWith('/api'))
+      url = url.substring(4)
+    downloadUrl.value = await $get(url)
+  }
 })
 
 /**
@@ -83,12 +85,23 @@ async function confirmRequest() {
     })
   }
 }
+
+/**
+ * 下载数据
+ * @param url
+ */
+function downloadData(url: string) {
+  const a = document?.createElement('a')
+  a.href = url
+  a.click()
+  a.remove()
+}
 </script>
 
 <template>
   <div flex="~ col items-center" min-h-4xl bg-grey-1>
     <div w-limited-1>
-      <header flex="~ row" mb-10 w-full items-center gap4 py6 font-600>
+      <header flex="~ row" mb-10 w-full items-center py6 font-600 gap4>
         <q-btn flat dense h6 min-h6 w6 p0 text-grey-6 @click="() => $router.back()">
           <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M6 12L0 6L6 0L7.4 1.4L2.8 6L7.4 10.6L6 12Z" fill="#6E7686" />
@@ -109,7 +122,7 @@ async function confirmRequest() {
         </BaseTable>
       </div>
 
-      <div class="h-10 w-full" />
+      <div class="w-full h-10" />
 
       <div flex="~ col" mt-5 gap-5>
         <span flex="~ row" text-4 font-600 text-grey-8> 表格数据预览</span>
@@ -127,24 +140,21 @@ async function confirmRequest() {
       <div text="primary-1 left" mt-6 text-4 v-text="`引用规范：${route.query.reference || '暂无引用规范'}`" />
     </div>
 
-    <div flex="~ row" my-10 gap-5>
+    <div flex="~ row" gap-5 my-10>
       <router-link v-if="!isDesktop && !isPurchased" :to="{ path: '/request' }">
         <q-btn
           color="primary"
-          square h12 min-w-38 outline
+          square h12 outline min-w-38
         >
           <span text-4 font-600>数据申请使用</span>
         </q-btn>
       </router-link>
-      <a v-else-if="!isPurchased" :href="downloadUrl" download="数据库">
-        <Btn min-w-38 label="数据下载" />
-      </a>
+      <Btn1 v-else-if="!isPurchased" min-w-38 h-12 label="数据下载" :disable="!isLogin || !downloadUrl" @click="downloadData(downloadUrl)" />
 
       <q-btn
         v-if="isPurchased"
         label="建议采购"
-
-        flat square h12 min-w-38 bg-primary-1 text-4 font-bold text-white
+        flat square h12 min-w-38 bg-primary-1 text-4 text-white font-bold
         @click="dialog = true"
       />
     </div>
