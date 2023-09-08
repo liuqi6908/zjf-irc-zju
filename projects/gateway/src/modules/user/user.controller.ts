@@ -169,7 +169,8 @@ export class UserController {
   @HasPermission(PermissionType.ACCOUNT_UPDATE_ROLE)
   @Patch(':userId/role/:roleName')
   public async updateUserRole(@Param() param: UpdateUserRoleParamDto) {
-    const { userId, roleName = null } = param
+    const { userId } = param
+    const roleName = param.roleName || null
     try {
       return (await this._userSrv.repo().update({ id: userId }, { roleName })).affected
     }
@@ -191,7 +192,8 @@ export class UserController {
   public async updateUserDataRole(
     @Param() param: UpdateUserDataRoleParamDto,
   ) {
-    const { userId, dataRoleName = null } = param
+    const { userId } = param
+    const dataRoleName = param.dataRoleName || null
     try {
       return (await this._userSrv.repo().update({ id: userId }, { dataRoleName })).affected
     }
