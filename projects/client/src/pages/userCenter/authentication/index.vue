@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 
-import type { IDesktop, IQueryConfig } from 'zjf-types'
-import { CodeAction, PAGINATION_SIZE_MAX, VerificationStatus } from 'zjf-types'
+import { CodeAction, VerificationStatus } from 'zjf-types'
+import type { IUser, IVerificationHistory } from 'zjf-types'
 import { Notify } from 'quasar'
 import { useUser } from '../../../composables/useUser'
 
@@ -12,15 +12,10 @@ import { changeNickname } from '~/api/user/chnageNickname'
 import { changeEmail } from '~/api/auth/user/changeEmail'
 import { changePassword } from '~/api/user/changePassword'
 import { cancelVerification } from '~/api/auth/verification/cancelVerification'
-import { desktopQueryList } from '~/api/desktop/desktopsList'
 
 const { useGetProfile, userInfo, getVerify, latestVerifiy } = useUser()
 
 const showVeri = ref(false)
-const desktop = ref(false)
-
-// if (!userInfo.value)
-//   useGetProfile()
 
 const baseInfoList = reactive([
   {
@@ -46,7 +41,7 @@ const baseInfoList = reactive([
     edit: '',
     smsCode: '',
     bizId: '',
-    caption: '设置密码已确保账户安全',
+    caption: '设置密码以确保账户安全',
     action: CodeAction.CHANGE_PASSWORD,
     inputVal: '*********',
   },
@@ -90,18 +85,6 @@ const authInfoList = reactive([
   },
 ])
 
-const baseOpts: IQueryConfig<IDesktop> = {
-  pagination: {
-    page: 0,
-    pageSize: PAGINATION_SIZE_MAX,
-  },
-  filters: [],
-  sort: [],
-  relations: {
-    user: { desktop: true },
-  },
-}
-
 async function confirmEdit(id: string) {
   const obj = baseInfoList.find(i => i.id === id)
 
@@ -126,7 +109,7 @@ function notify(res: any, message: string) {
   if (res) {
     Notify.create({
       message: `${message}成功`,
-      type: 'sucesss',
+      type: 'success',
     })
   }
   else {
@@ -140,17 +123,20 @@ function notify(res: any, message: string) {
 async function cancel(verificationId: string) {
   const res = await cancelVerification(verificationId)
   if (res)
-    checkoutVerifiy()
+    checkoutVerify()
 }
 
-async function checkoutVerifiy() {
+/**
+ * 重新获取用户信息
+ */
+async function checkoutVerify() {
   await useGetProfile()
   await getVerify()
 
   for (const key in userInfo.value) {
     const user = baseInfoList.find(i => i.id === key)
-    if (user && userInfo.value[key])
-      user.inputVal = userInfo.value[key]
+    if (user && userInfo.value[key as keyof IUser])
+      user.inputVal = userInfo.value[key as keyof IUser] as string
   }
 
   if (latestVerifiy.value?.status !== VerificationStatus.APPROVED)
@@ -159,30 +145,13 @@ async function checkoutVerifiy() {
   // 认证
   for (const key in latestVerifiy.value) {
     const obj = authInfoList.find(i => i.id === key)
-    if (latestVerifiy.value[key] && obj)
-      obj.inputVal = latestVerifiy.value[key]
+    if (obj && latestVerifiy.value[key as keyof IVerificationHistory])
+      obj.inputVal = latestVerifiy.value[key as keyof IVerificationHistory] as string
   }
 }
 
-// function change
-onBeforeMount(async () => {
-  await checkoutVerifiy().finally(async () => {
-    const options = { ...baseOpts }
-    if (userInfo.value) {
-      options.filters = [
-        {
-          field: 'user.id',
-          type: '=',
-          value: userInfo.value.id,
-        },
-      ]
-      const res = await desktopQueryList(options)
-      if (res.data && res.data.length)
-        desktop.value = res.data[0].user.desktop && !res.data[0].user.desktop.disable
-
-      desktop.value = false
-    }
-  })
+onBeforeMount(() => {
+  checkoutVerify()
 })
 </script>
 
@@ -193,7 +162,6 @@ onBeforeMount(async () => {
       <header flex="~ row justify-start" mb-6 text-5 font-600 text-grey-8>
         基础信息
       </header>
-
       <div flex="~ col" gap8>
         <ChangeInput
           v-for="b in baseInfoList"
@@ -211,15 +179,13 @@ onBeforeMount(async () => {
         />
       </div>
     </div>
-
-    <div my16 h1px w-full bg-gray-3 />
-
+    <!-- 分割线 -->
+    <div my-16 w-full bg-gray-3 h-1px />
     <!-- 认证信息 -->
     <div class="col-grow authInfo">
       <header flex="~ row justify-start" mb-6 text-5 font-600 text-grey-8>
         认证信息
       </header>
-
       <div grid gap-10 lg:grid-cols-2 xl:grid-cols-3>
         <div v-for="a in authInfoList" :key="a.label" class="col-grow">
           <div mb2 flex="~ row items-center justify-between">
@@ -237,7 +203,7 @@ onBeforeMount(async () => {
         </div>
       </div>
     </div>
-
+    <!-- 用户状态 -->
     <div flex="~ row" mt-10 w-full justify-center>
       <div flex="~ row items-center gap-5" max-w-sm>
         <div
@@ -258,7 +224,7 @@ onBeforeMount(async () => {
           </Btn>
 
           <Btn
-            v-else-if="latestVerifiy?.status === VerificationStatus.PENDING && desktop"
+            v-else-if="latestVerifiy?.status === VerificationStatus.PENDING"
             label="取消认证"
             @click="cancel(latestVerifiy.id)"
           >
@@ -293,7 +259,8 @@ onBeforeMount(async () => {
         </div>
       </div>
     </div>
-    <VerificationDialog v-model="showVeri" @update:confirm="checkoutVerifiy()" />
+    <!-- 认证弹窗 -->
+    <VerificationDialog v-model="showVeri" @update:confirm="checkoutVerify()" />
   </div>
 </template>
 

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { DesktopQueueStatus } from 'zjf-types'
-import type { IDesktop, IQueryConfig } from 'zjf-types'
+import type { IDesktop } from 'zjf-types'
 import { formatFileSize } from 'zjf-utils'
 import { Notify } from 'quasar'
 import moment from 'moment'
 
-import { desktopQueryList } from '~/api/desktop/desktopsList'
+import { desktopQuery } from '~/api/desktop/desktopsQuery'
 import { getOwnDesktopQuery } from '~/api/desktop/getOwnDesktopQuery'
 import { openDesktop } from '~/api/desktopVm/openDesktop'
 import { resetDesktop } from '~/api/desktopVm/resetDesktop'
@@ -15,12 +15,7 @@ import { getDesktopVmStatus } from '~/api/desktopVm/getDesktopVmStatus'
 import DesktopStatus from '~/view/userCenter/myDesktop/DesktopStatus.vue'
 import Cloud from '~/view/request/cloud/Cloud.vue'
 
-interface QueryDesktop {
-  total: number
-  data: IDesktop[]
-}
-
-const { userInfo, isVerify, useGetProfile } = useUser()
+const { isVerify, useGetProfile } = useUser()
 const $router = useRouter()
 const { pause, resume } = useIntervalFn(() => getVmInfo(), 3000, { immediate: false })
 const { copy } = useClipboard()
@@ -96,24 +91,8 @@ async function getRequestStatus() {
  * 获取云桌面信息
  */
 async function getDesktopInfo() {
-  const body: IQueryConfig<IDesktop> = {
-    pagination: {
-      page: 1,
-      pageSize: 1,
-    },
-    filters: [
-      {
-        field: 'userId',
-        type: '=',
-        value: userInfo.value?.id,
-      },
-    ],
-    sort: [],
-    relations: {},
-  }
-  const { total, data } = await desktopQueryList(body) as QueryDesktop
-  if (total)
-    desktopInfo.value = data[0]
+  const data = await desktopQuery()
+  desktopInfo.value = data
 }
 
 /**
