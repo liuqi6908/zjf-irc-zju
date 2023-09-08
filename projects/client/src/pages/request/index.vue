@@ -91,7 +91,7 @@ watch(model, async (newModel) => {
         申请使用
       </div>
     </header>
-    <!-- 未通过身份认证 -->
+    <!-- 未登录 / 未认证 -->
     <div v-if="userStatus !== VerificationStatus.APPROVED" flex="~ col items-center" w-limited-1 min-h-4xl bg-grey-1 pt-32>
       <template v-if="!userStatus">
         <EmptyVeri label="您还未登录系统" captions="用户登录并通过认证后，才能申请使用" />
@@ -119,7 +119,7 @@ watch(model, async (newModel) => {
       </template>
       <template v-else>
         <EmptyVeri label="您的身份认证尚未通过审核" captions="用户认证通过后，才能申请使用" />
-        <div flex gap-6 mt-10>
+        <div mt-10 flex gap-6>
           <VerifyStatus :status="userStatus" />
           <Btn
             label="前往认证"
@@ -135,20 +135,20 @@ watch(model, async (newModel) => {
     <!-- 申请使用云桌面 -->
     <div v-else w-limited-1>
       <div w-full flex="~ col items-center" bg-grey-1 py-10>
-        <div class="request-flow" h-80 w-full />
+        <div class="request-flow" w-full h-80 />
         <!-- 申请状态 -->
         <div
           flex="~ row"
           style="background:rgba(2, 92, 185, 0.08);"
-          mt-10 w-full items-center justify-between p-6 text-xl font-600
+          mt-10 w-full items-center justify-between p-6 font-600 text="xl grey-8"
         >
           <!-- 使用中 -->
           <template v-if="requestInfo.status === DesktopQueueStatus.Using">
-            <span text-grey-8>
+            <div>
               您已经成功申请云桌面，前往
               <span text-tab-bottom v-text="'「 用户中心 / 我的云桌面 」'" />
               查看
-            </span>
+            </div>
             <Btn
               label="前往查看"
               @click="$router.push('/userCenter/cloudDesktop')"
@@ -161,47 +161,40 @@ watch(model, async (newModel) => {
           <template v-else>
             <!-- 排队中 -->
             <div v-if="requestInfo.status === DesktopQueueStatus.Queueing">
-              <span text-grey-8>
+              <template v-if="requestInfo.queueLength">
                 云桌面排队情况：前面有
-              </span>
-              <span text-tab-bottom v-text="`${requestInfo.queueLength} 人`" />
-              <span text-grey-8>
+                <span text-tab-bottom v-text="`${requestInfo.queueLength} 人`" />
                 在排队
-              </span>
+              </template>
+              <template v-else>
+                管理员正在为您创建云桌面，请耐心等待并留意邮件通知
+              </template>
             </div>
             <!-- 待审核 -->
             <div v-else-if="requestInfo.status === DesktopQueueStatus.Pending">
-              <span text-grey-8>
-                云桌面正在审核中
-              </span>
+              云桌面正在审核中
             </div>
             <!-- 已驳回 -->
             <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Rejected">
-              <span text-grey-8>
-                您的申请已被驳回，请重新提交
-              </span>
+              您的申请已被驳回，请重新提交
               <div flex="~ col" mt-2 w-75 bg-grey-2 p-4 text-sm font-500>
                 <div flex="~ row" mb-2 text-grey-8>
                   驳回理由
                 </div>
-                <div flex="~ row" text-left indent-0 text-grey-8 v-text="requestInfo.rejectReason" />
+                <div flex="~ row" text-grey-8 text-left indent-0 v-text="requestInfo.rejectReason" />
               </div>
             </div>
             <!-- 已取消 -->
             <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Canceled">
-              <span text-grey-8>
-                您的申请已取消，请重新提交
-              </span>
+              您的申请已取消，请重新提交
             </div>
             <!-- 已过期 -->
             <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Expired">
-              <span text-grey-8>
-                您的云桌面已过期，请重新提交申请
-              </span>
+              您的云桌面已过期，请重新提交申请
             </div>
             <!-- 未申请 -->
-            <div v-else text="4.5 grey-8" font-400>
-              您已经通过身份认证，请点击右侧按钮申请云桌面。注意：前面有 10人 正在排队。
+            <div v-else>
+              您已经通过身份认证，请点击右侧按钮申请云桌面
             </div>
             <Btn
               text-nowrap
@@ -225,18 +218,18 @@ watch(model, async (newModel) => {
             <div class="desktopCode" h-60 w-60 />
 
             <!--  -->
-            <section flex="~ row 1 center" min-w-500px w0 gap10>
+            <section flex="~ row 1 center" gap10 min-w-500px w0>
               <div
                 flex="~ col"
                 style="background: linear-gradient(135deg, #F5F7FA 0%, rgba(245, 247, 250, 0.00) 100%);"
-                min-h-34 min-w-34 p-6
+                p-6 min-h-34 min-w-34
               >
                 <span text-primary-1 title-2>{{ vmInfo.total }}</span>
                 <span text-4 text-grey-5>总数量</span>
               </div>
 
               <table min-w-80>
-                <tr min-h-10 bg-grey-2>
+                <tr bg-grey-2 min-h-10>
                   <td>运行中</td>
                   <td>停止</td>
                 </tr>
