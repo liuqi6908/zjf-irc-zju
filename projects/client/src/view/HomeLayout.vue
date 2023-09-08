@@ -2,6 +2,7 @@
 import { AUTH_TOKEN_KEY } from 'shared/constants'
 import { objectPick, useEventListener } from '@vueuse/core'
 
+import { getUsername } from 'shared'
 import { useCms } from '~/composables/useCms'
 
 const router = useRouter()
@@ -121,7 +122,7 @@ if (typeof document !== 'undefined') {
             ref="avatarRef"
             flex="~ row gap-2 items-center"
             :avatar-url="userInfo?.avatar"
-            :nickname="userInfo?.account"
+            :nickname="getUsername(userInfo)"
           >
             <div v-if="!isToken">
               {{ '登录' }}
@@ -139,7 +140,6 @@ if (typeof document !== 'undefined') {
                   v-for="u in userList"
                   :key="u.id"
                   v-close-popup
-
                   :to="u.to"
                   dense clickable h12
                   style="--q-primary: var(--grey-2); color: var(--grey-2) !important;"

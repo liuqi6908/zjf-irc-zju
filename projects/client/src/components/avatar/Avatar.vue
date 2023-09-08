@@ -16,7 +16,7 @@ const dropDown = ref(false)
 function subStr(name: string) {
   if (!name)
     return ''
-  const sub = name.substring(0, 1)
+  const sub = Array.from(name)[0]
   return sub
 }
 
@@ -39,7 +39,7 @@ function getImageUrl(url: string) {
         v-if="avatarUrl" overflow-hidden
         :style="{ width: `${size}px`, height: `${size}px`, background: `${getImageUrl(avatarUrl)} cover` }"
       />
-      <span v-else-if="nickname" h0 text-5 style="line-height: 0">
+      <span v-else-if="nickname" class="show-first-char-only" h0 text-5 style="line-height: 0">
         {{ subStr(nickname) }}
       </span>
       <div v-else i-mingcute:user-2-fill />
@@ -47,3 +47,10 @@ function getImageUrl(url: string) {
     <slot />
   </div>
 </template>
+
+<style lang="sass" scoped>
+.show-first-char-only
+  visibility: hidden
+  &::first-letter
+    visibility: visible
+</style>
