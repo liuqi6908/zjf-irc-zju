@@ -6,10 +6,11 @@ const $router = useRouter()
   <div class="confirmation" full flex="~ row">
     <!-- <img src="../assets/auth/authRect.svg"> -->
     <div class="confirmation-bgImg col-grow">
-      <header flex="~ row items-center" text-grey-1 absolute top-8 left-8 cursor-pointer @click="$router.push('/')">
+      <header flex="~ row items-center" gap-2 text-grey-1 absolute cursor-pointer top-12 left-12 @click="$router.push('/')">
         <img h-12 w-12 src="../assets/auth/couldTitle.png">
-        <span text-7 font-600>智能云科研平台 |</span>
-        <span text-4 font-400>&nbsp;CloudResearch</span>
+        <span text-7 font-600>智能云科研平台</span>
+        <span text-7 font-600>|</span>
+        <span font-400 text-lg relative top-3px>CloudResearch</span>
       </header>
     </div>
 
