@@ -13,7 +13,8 @@ const props = withDefaults(defineProps<Props>(), {
 <template>
   <q-btn
     v-bind="props"
-    square size="16px"
+    square size="16px" unelevated font-600
+    style="font-family: PingFang SC;"
   >
     <slot />
   </q-btn>
