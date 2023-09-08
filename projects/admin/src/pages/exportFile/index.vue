@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import type { Component } from 'vue'
-import type { TabItem } from 'shared/component/base/tab/Tabs.vue'
-import Tabs from 'shared/component/base/tab/Tabs.vue'
-
-interface Tab extends TabItem {
-  component: Component
-}
+import type { TabItem } from '~/components/tab/Tabs.vue'
 
 const cols = [
   /** 用户信息 */
@@ -29,48 +23,25 @@ const cols = [
   { name: 'operation', field: 'operation', label: '操作' },
 ]
 
-const tabList = ref<Tab[]>([
-  { id: 'LargeFileAudit', label: '大文件外发待审核', isRequest: false, component: markRaw(defineAsyncComponent(() => import('~/view/exportFile/LargeFileAudit.vue'))) },
-  { id: 'LargeFileRecord', label: '大文件外发审核记录', isRequest: false, component: markRaw(defineAsyncComponent(() => import('~/view/exportFile/LargeFileRecord.vue'))) },
-  { id: 'SmallFileRecord', label: '小文件自动外发记录', isRequest: false, component: markRaw(defineAsyncComponent(() => import('~/view/exportFile/SmallFileRecord.vue'))) },
+const tabList = ref<TabItem[]>([
+  { id: 0, label: '大文件外发待审核', component: markRaw(defineAsyncComponent(() => import('~/view/exportFile/LargeFileAudit.vue'))), params: { cols } },
+  { id: 1, label: '大文件外发审核记录', component: markRaw(defineAsyncComponent(() => import('~/view/exportFile/LargeFileRecord.vue'))), params: { cols } },
+  { id: 2, label: '小文件自动外发记录', component: markRaw(defineAsyncComponent(() => import('~/view/exportFile/SmallFileRecord.vue'))), params: { cols } },
 ])
-const currentTab = ref<Tab>()
 const tab = ref(tabList.value[0].id)
 </script>
 
 <template>
-  <Tabs v-model="tab" class="export-file" :tab-list="tabList" @update:curr-tab-obj="val => currentTab = val">
-    <component
-      :is="currentTab?.component"
-      :title="currentTab?.label"
-      :cols="cols"
-    />
-  </Tabs>
+  <Tabs v-model="tab" :tab-list="tabList" absolute />
 </template>
 
 <style lang="scss" scoped>
-.export-file {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  :deep(.q-tabs) {
-    background: transparent;
-  }
-  :deep(.q-tab-panels) {
-    flex: 1;
-    background: transparent;
-    .q-tab-panel > div {
-      height: 100%;
-      padding: 1.5rem;
-      .q-table {
-        thead {
-          position: sticky;
-          top: 0;
-          background-color: white;
-          z-index: 1;
-        }
-      }
-    }
+:deep(.q-table) {
+  thead {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
   }
 }
 </style>
