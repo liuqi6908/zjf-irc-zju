@@ -22,7 +22,6 @@ useDataBase()
 
 const tableFieldRows = ref<any[]>([])
 
-const downloadUrl = ref('')
 const previewTable = ref([])
 const referenceText = ref('')
 const dialog = ref(false)
@@ -61,13 +60,6 @@ onBeforeMount(async () => {
   previewTable.value = (await getDataPreview(route.query.dataId as string).finally(() => {
     loading.value = false
   })).filter((row: any) => Object.values(row).some(v => v))
-
-  if (isLogin.value) {
-    let url = getDataDownload(route.query.dataId as string)
-    if (url.startsWith('/api'))
-      url = url.substring(4)
-    downloadUrl.value = await $get(url)
-  }
 })
 
 /**
@@ -90,9 +82,12 @@ async function confirmRequest() {
  * 下载数据
  * @param url
  */
-function downloadData(url: string) {
+async function downloadData() {
+  let url = getDataDownload(route.query.dataId as string)
+  if (url.startsWith('/api'))
+    url = url.substring(4)
   const a = document?.createElement('a')
-  a.href = url
+  a.href = await $get(url)
   a.click()
   a.remove()
 }
@@ -149,8 +144,7 @@ function downloadData(url: string) {
           <span text-4 font-600>数据申请使用</span>
         </q-btn>
       </router-link>
-      <Btn1 v-else-if="!isPurchased" min-w-38 h-12 label="数据下载" :disable="!isLogin || !downloadUrl" @click="downloadData(downloadUrl)" />
-
+      <Btn1 v-else-if="!isPurchased" min-w-38 h-12 label="数据下载" :disable="!isLogin" @click="downloadData()" />
       <q-btn
         v-if="isPurchased"
         label="建议采购"
