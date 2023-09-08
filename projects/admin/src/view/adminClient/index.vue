@@ -126,18 +126,24 @@ function checkAttachment(row: any) {
 }
 
 /**
- * 分配管理员
+ * 分配/取消 管理员
  * @param row
  */
-function approveAdmin(row: any) {
+function approveAdmin(row: any, root: string) {
+  let message
+  if (root)
+    message = '是否给当前用户分配管理员？'
+  else
+    message = '是否取消当前用户的管理员？'
   $q.dialog({
-    message: '是否给当前用户分配管理员？',
+    title: `${root ? '分配' : '取消'}确认`,
+    message,
     cancel: true,
   }).onOk(async () => {
-    const res = await updateRole(row.id, 'root')
+    const res = await updateRole(row.id, root)
     if (res) {
       Notify.create({
-        message: '分配管理员操作成功',
+        message: '操作成功',
         type: 'success',
       })
     }
@@ -178,7 +184,8 @@ function approveAdmin(row: any) {
               <q-btn flat color="primary" label="查看认证材料" @click="checkAttachment(props.row)" />
             </template>
             <template v-else-if="col.name === 'action'">
-              <q-btn label="分配管理员" :disable="Boolean(props.row.roleName)" color="primary" size="sm" @click="approveAdmin(props.row)" />
+              <q-btn label="分配" :disable="Boolean(props.row.roleName)" color="primary" mr-2 size="sm" @click="approveAdmin(props.row, 'root')" />
+              <q-btn label="取消" :disable="!Boolean(props.row.roleName)" color="red" size="sm" @click="approveAdmin(props.row, '')" />
             </template>
             <template v-else>
               {{ props.row[col.field as string] }}
