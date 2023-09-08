@@ -36,7 +36,7 @@ const empty = computed(() => !rootData.value || !rootData.value.length)
       <div text-grey-1 title-1 v-text="'数据库'" />
     </header>
     <div
-      class="col-grow" flex-start w-limited-1 mt-15 justify-center
+      class="col-grow" flex-start w-limited-1 mt-10 justify-center
       flex="~ row gap-10"
     >
       <SliderList :list="rootData" :current-id="databaseId" router @update:current-id="(id) => databaseId = id" />
