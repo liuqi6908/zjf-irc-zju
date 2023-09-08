@@ -17,14 +17,19 @@ const route = useRoute()
 <template>
   <!-- 两个层级 -->
   <div bg="grey-2" p3>
-    <q-expansion-item
+    <db-expansion
       dense-toggle
       switch-toggle-side
       header-class="font-600 text-5"
       :label="nameZH"
     >
+      <template #label>
+        <div text-5 font-bold text-gray-8>
+          {{ nameZH }}
+        </div>
+      </template>
       <div class="divider" flex="~ col" gap6 pl10 pt4>
-        <q-expansion-item
+        <db-expansion
           v-for="child in children"
           :key="child.id"
           dense-toggle
@@ -32,6 +37,11 @@ const route = useRoute()
           :label="child.nameZH"
           header-class="font-600 text-4.5"
         >
+          <template #label>
+            <div text-4.5 font-bold text-gray-8>
+              {{ nameZH }}
+            </div>
+          </template>
           <div
             v-if="child.children"
             gap4 py2 pl4
@@ -41,7 +51,7 @@ const route = useRoute()
               v-for="i in child.children"
               :key="i.nameEN"
               :to="{ path: '/database/dataIntroduce', query: { dataId: i.id, rootId: route.query.database, reference, label: props.label } }"
-              clickable dense text-nowrap text-grey-8 rounded-0 text-left
+              clickable dense rounded-0 text-left text-nowrap text-grey-8
               :title="i.nameZH"
               @click="$emit('update:id', i.id)"
             >
@@ -52,9 +62,9 @@ const route = useRoute()
               </q-item-section>
             </q-item>
           </div>
-        </q-expansion-item>
+        </db-expansion>
       </div>
-    </q-expansion-item>
+    </db-expansion>
   </div>
 </template>
 

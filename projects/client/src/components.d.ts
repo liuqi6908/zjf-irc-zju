@@ -12,6 +12,7 @@ declare module 'vue' {
     Btn1: typeof import('./components/btn/Btn1.vue')['default']
     ChangeInput: typeof import('./components/user/ChangeInput.vue')['default']
     'Confirm.dialog': typeof import('./components/dialog/confirm.dialog.vue')['default']
+    DbExpansion: typeof import('./components/tree/DbExpansion.vue')['default']
     DbTabs: typeof import('./components/tabs/db-tabs.vue')['default']
     DisplayCard: typeof import('./components/card/DisplayCard.vue')['default']
     DropZone: typeof import('./components/file/DropZone.vue')['default']
