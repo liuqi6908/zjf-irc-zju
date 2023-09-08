@@ -120,37 +120,36 @@ onMounted(() => {
 </script>
 
 <template>
-  <div flex="~ col  items-center" min-h-4xl bg-grey-1>
-    <div full max-w-6xl flex="~ col justify-center items-center">
-      <header flex="~ row" mb-10 w-full items-center gap4 font-600>
-        <q-btn flat dense h6 min-h6 w6 p0 text-grey-6 @click="() => $router.back()">
-          <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 12L0 6L6 0L7.4 1.4L2.8 6L7.4 10.6L6 12Z" fill="#6E7686" />
-          </svg>
-        </q-btn>
-        <span text="grey-8 5"> 数据库介绍</span>
-      </header>
+  <div w-limited-1 flex="~ col justify-center items-center">
+    <header flex="~ row" w-full items-center gap4 py6 font-600>
+      <q-btn flat dense h6 min-h6 w6 p0 text-grey-6 @click="() => $router.back()">
+        <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 12L0 6L6 0L7.4 1.4L2.8 6L7.4 10.6L6 12Z" fill="#6E7686" />
+        </svg>
+      </q-btn>
+      <span text="grey-8 5"> 数据库介绍</span>
+    </header>
 
-      <Empty v-if="!docHtml" label="暂无数据库介绍" />
-      <div v-else pn-10 full flex="~ row gap-10">
-        <div>
-          <q-list sticky top-0 h-100vh overflow-x-hidden overflow-y-auto text-grey-8 class="navs">
-            <q-item
-              v-for="(node, index) in navList" :key="index" class="ellipsis"
-              flex="~ col justify-center items-start" clickable min-h-10 w-50 p-0 font-600 :active="link === node.textContent"
-              active-class="text-primary-1 bg-grey-2" @click="scrollTo(node.textContent, index)"
-            >
-              <q-item-section>
-                <q-item-label lines="1">
-                  {{ node.textContent }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </div>
-
-        <div class="docHtml" flex="~ col justify-start items-start" v-html="navHtml?.article.innerHTML" />
+    <Empty v-if="!docHtml" label="暂无数据库介绍" />
+    <div v-else pn-10 full flex="~ row gap-10">
+      <div>
+        <q-list sticky top-0 h-100vh overflow-x-hidden overflow-y-auto text-grey-8 class="navs">
+          <q-item
+            v-for="(node, index) in navList"
+            :key="index" class="ellipsis"
+            flex="~ col justify-center items-start" clickable min-h-10 w-50 p-0 px2 font-600 :active="link === node.textContent"
+            active-class="text-primary-1 bg-grey-2" @click="scrollTo(node.textContent, index)"
+          >
+            <q-item-section>
+              <q-item-label lines="1">
+                {{ node.textContent }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
       </div>
+
+      <div class="docHtml" pb4 flex="~ col justify-start items-start" v-html="navHtml?.article.innerHTML" />
     </div>
   </div>
 </template>
