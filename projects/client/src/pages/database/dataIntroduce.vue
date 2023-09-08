@@ -124,7 +124,7 @@ async function confirmRequest() {
         </BaseTable>
       </div>
 
-      <div mt-6 text="primary-1 left" text-4 v-text="`引用规范：${route.query.reference || '暂无引用规范'}`" />
+      <div text="primary-1 left" mt-6 text-4 v-text="`引用规范：${route.query.reference || '暂无引用规范'}`" />
     </div>
 
     <div flex="~ row" my-10 gap-5>

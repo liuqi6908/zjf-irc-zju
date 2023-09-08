@@ -190,9 +190,9 @@ function copyText(text: string) {
 </script>
 
 <template>
-  <div min-h-2xl relative>
+  <div relative min-h-2xl>
     <!-- 加载中 -->
-    <div v-if="loading" full flex-center absolute z-100 style="background: rgba(255, 255, 255, 0.6)">
+    <div v-if="loading" absolute z-100 full flex-center style="background: rgba(255, 255, 255, 0.6)">
       <q-spinner
         color="primary-1" size="5rem" :thickness="2" label-class="text-primary-1"
         label-style="font-size: 1.1em"
@@ -222,7 +222,7 @@ function copyText(text: string) {
         </div>
       </header>
       <!-- 云桌面信息 -->
-      <div flex w-full mt-10 border="1 solid grey-3" text="base left">
+      <div mt-10 w-full flex border="1 solid grey-3" text="base left">
         <div
           v-for="(item, index) in desktopTable"
           :key="index"
@@ -233,9 +233,9 @@ function copyText(text: string) {
             borderRightWidth: `${index === desktopTable.length - 1 ? 0 : 1}px`,
           }"
         >
-          <div px-6 py-3 bg-grey-2 whitespace-nowrap overflow-hidden text-ellipsis v-text="item.label" />
-          <div px-6 py-3 flex justify-between>
-            <div w-0 flex-1 whitespace-nowrap overflow-hidden text-ellipsis v-text="item.value" />
+          <div overflow-hidden text-ellipsis whitespace-nowrap bg-grey-2 px-6 py-3 v-text="item.label" />
+          <div flex justify-between px-6 py-3>
+            <div w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap v-text="item.value" />
             <div flex gap-2 text-grey-4>
               <q-btn v-if="item.hide" :icon="`fas fa-${hidePassword ? 'eye-slash' : 'eye'}`" flat size="sm" px-2 @click="hidePassword = !hidePassword" />
               <q-btn icon="fas fa-clone" flat size="sm" px-2 @click="copyText(item.value || '')" />
@@ -244,10 +244,10 @@ function copyText(text: string) {
         </div>
       </div>
       <!-- 虚拟机信息 -->
-      <div flex mt-20 gap-10 text="base left">
+      <div mt-20 flex gap-10 text="base left">
         <!-- 基本信息 -->
         <div flex="~ 1 col" w-0 border="1 solid grey-3">
-          <header p-4 bg-grey-2 font-600 v-text="'基本信息'" />
+          <header bg-grey-2 p-4 font-600 v-text="'基本信息'" />
           <div px-4>
             <div
               v-for="(item, index) in vmInfo"
@@ -265,7 +265,7 @@ function copyText(text: string) {
         </div>
         <!-- 监控数据 -->
         <div flex="~ 1 col" w-0 border="1 solid grey-3">
-          <header p-4 bg-grey-2 font-600 v-text="'监控数据'" />
+          <header bg-grey-2 p-4 font-600 v-text="'监控数据'" />
           <Cloud :uuid="desktopId" />
         </div>
       </div>
@@ -274,7 +274,7 @@ function copyText(text: string) {
     <div v-else flex="~ col" items-center gap-10 py-22>
       <template v-if="!isVerify">
         <EmptyCloud label="您的身份认证尚未通过审核" />
-        <Btn1 w-53 h-12 @click="() => $router.replace({ path: '/userCenter/authentication' })">
+        <Btn1 h-12 w-53 @click="() => $router.replace({ path: '/userCenter/authentication' })">
           前往认证
           <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg" ml-2>
             <path d="M10 12L8.6 10.55L12.15 7H0V5H12.15L8.6 1.45L10 0L16 6L10 12Z" fill="white" />
@@ -283,12 +283,12 @@ function copyText(text: string) {
       </template>
       <template v-else>
         <EmptyCloud label="您还未申请云桌面" />
-        <Btn1 w-53 h-12 @click="() => $router.replace({ path: '/request' })">
+        <q-btn :to="{ path: '/request' }" flat square h-12 w-53 bg-primary-1 text-white>
           前往申请
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg" ml-2>
+          <svg ml2 width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M10 12L8.6 10.55L12.15 7H0V5H12.15L8.6 1.45L10 0L16 6L10 12Z" fill="white" />
           </svg>
-        </Btn1>
+        </q-btn>
       </template>
     </div>
   </div>

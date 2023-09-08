@@ -83,7 +83,7 @@ defineExpose({
 
 <style lang="sass">
 .my-sticky-dynamic
-  border-radius: 0
+  border-radius: 0 !important
 
   .q-table__top,
   thead tr:first-child th
@@ -122,6 +122,4 @@ defineExpose({
       color: var(--grey-7)
     i
       color: var(--grey-4)
-
-
 </style>

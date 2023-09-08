@@ -193,8 +193,11 @@ watch(model, async (newModel) => {
               您的云桌面已过期，请重新提交申请
             </div>
             <!-- 未申请 -->
-            <div v-else>
-              您已经通过身份认证，请点击右侧按钮申请云桌面
+            <div v-else text="4.5 grey-8" font-400>
+              您已经通过身份认证，请点击右侧按钮申请云桌面。注意：前面有
+              <span
+                text-tab-bottom v-text="`${requestInfo.queueLength} 人`"
+              />正在排队。
             </div>
             <Btn
               text-nowrap
