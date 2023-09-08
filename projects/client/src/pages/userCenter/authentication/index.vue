@@ -213,7 +213,7 @@ onBeforeMount(() => {
       </div>
     </div>
     <!-- 分割线 -->
-    <div my-16 w-full bg-gray-3 h-1px />
+    <div my-16 h-1px w-full bg-gray-3 />
     <!-- 认证信息 -->
     <div class="col-grow authInfo">
       <header flex="~ row justify-start" mb-6 text-5 font-600 text-grey-8>
