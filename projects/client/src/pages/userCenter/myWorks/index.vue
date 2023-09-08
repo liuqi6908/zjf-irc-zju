@@ -3,6 +3,7 @@ import BaseTable from 'shared/component/base/table/BaseTable.vue'
 import { Notify } from 'quasar'
 import type { IQueryConfig, IVerificationHistory } from 'zjf-types'
 import { PAGINATION_SIZE_MAX } from 'zjf-types'
+import { useDialog } from '../../../components/dialog/use-dialog'
 import UploadFile from '~/components/file/UploadFile.vue'
 
 import Btn from '~/components/btn/Btn.vue'
@@ -12,7 +13,9 @@ import { upsertWork } from '~/api/work/upsertWork'
 import { searchMyWorks } from '~/api/work/searchMyWorks'
 import { deleteWork } from '~/api/work/deleteWrok'
 
-const router = useRouter()
+// const router = useRouter()
+
+const { showConfirmDialog } = useDialog()
 const uploadDialog = ref(false)
 const loading = ref(false)
 const editType = ref<'add' | 'upsert'>()
@@ -51,14 +54,7 @@ const workCol = [
     label: '操作',
   },
 ]
-const rows = ref([
-  // {
-  //   title: '',
-  //   author: '',
-  //   filename: '',
-  //   operation: '',
-  // },
-])
+const rows = ref<any[]>([])
 
 const baseOptions = {
   filters: [],
@@ -103,11 +99,19 @@ async function confirmWork() {
 }
 
 async function deleteRow(id: string) {
-  editInfo.id = id
-  const res = await deleteWork(editInfo.id)
-  if (res)
-    succNotify('删除作品')
-  await fetchSearchMyWorks()
+  const dialog = await showConfirmDialog({
+    title: '确认删除',
+    color: '#F44336',
+    okText: '删除',
+    content: '确认删除该作品？删除后不可恢复',
+  })
+  dialog.onOk(async () => {
+    editInfo.id = id
+    const res = await deleteWork(editInfo.id)
+    if (res)
+      succNotify('删除作品')
+    await fetchSearchMyWorks()
+  })
 }
 
 function resetWork(id: string) {
@@ -138,13 +142,13 @@ function succNotify(message: string) {
 
     <div flex="~ col">
       <div flex="~ row" mb-5 text-grey-8>
-        <span font-600>我的作品</span>
+        <span font-600 text="4 grey-8">我的作品</span>
       </div>
 
       <BaseTable v-slot="{ props, col }" :loading="loading" :cols="workCol" :rows="rows">
         <div v-if="col === 'operation'" flex="~ row justify-center">
-          <Btn mr-4 outline label="重新上传" @click="resetWork(props.row.id)" />
-          <Btn outline label="删除" bg-color="alert-error" @click="deleteRow(props.row.id)" />
+          <Btn mr-4 min-w-22 outline label="重新上传" @click="resetWork(props.row.id)" />
+          <Btn min-w-22 text-alert-error outline label="删除" bg-color="alert-error" @click="deleteRow(props.row.id)" />
         </div>
         <div v-else>
           {{ props.row[`${col}`] }}
