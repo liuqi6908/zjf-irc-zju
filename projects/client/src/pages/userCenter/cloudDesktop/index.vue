@@ -276,7 +276,9 @@ function copyText(text: string) {
         <EmptyCloud label="您的身份认证尚未通过审核" />
         <Btn1 h-12 w-53 @click="() => $router.replace({ path: '/userCenter/authentication' })">
           前往认证
-          <q-icon name="fas fa-arrow-right" size="16px" ml-2 />
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg" ml-2>
+            <path d="M10 12L8.6 10.55L12.15 7H0V5H12.15L8.6 1.45L10 0L16 6L10 12Z" fill="white" />
+          </svg>
         </Btn1>
       </template>
       <template v-else>
