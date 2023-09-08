@@ -45,7 +45,7 @@ onBeforeMount(() => {
       </header>
 
       <div flex="~ row" w-limited-1 gap10 py6>
-        <div flex="~ col" gap6>
+        <div flex="~ col" gap2>
           <!-- <SliderList v-model:current-id="currentId" :list="userList" /> -->
           <router-link
             v-for="item in userList"

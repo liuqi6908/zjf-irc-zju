@@ -36,7 +36,7 @@ watch(() => props.currentId, (id) => {
 </script>
 
 <template>
-  <q-list flex="~ col" gap-1 text-grey-8>
+  <q-list flex="~ col" gap2 text-grey-8>
     <q-item
       v-for="item in list"
       :key="item.id"
@@ -47,8 +47,8 @@ watch(() => props.currentId, (id) => {
         'text-grey-#292D36': !item.clicked,
         'text-primary-1': item.clicked,
       }"
-      clickable max-w-200px px-16px py-10px text-left text-nowrap font-600
-      active-class="bg-grey-2"
+      clickable max-w-200px px-16px py-10px text-left text-nowrap text-4 font-600
+      active-class="bg-gray-2"
       @click="updateId(item)"
     >
       {{ item. nameZH }}

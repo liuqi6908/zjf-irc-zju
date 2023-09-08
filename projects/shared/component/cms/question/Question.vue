@@ -40,11 +40,17 @@ onMounted(() => {
 <template>
   <div flex="~ row gap-15" w-full>
     <q-list text-grey-8>
-      <div sticky top-10>
+      <div sticky top-10 flex="~ col" gap2>
         <q-item
-          w-50 v-for="(item, index) in list" class="ellipsis" flex="~ col" justify-center items-start font-600
-          clickable @click="scrollTo(item.title, index)" :active="link === item.title"
-          active-class="text-primary-1 bg-grey-2"
+          w-50 v-for="(item, index) in list" 
+          class="ellipsis" 
+          flex="~ col" 
+          text-4
+          justify-center items-start font-600
+          clickable @click="scrollTo(item.title, index)" 
+          :active="link === item.title"
+          active-class="text-primary-1 bg-gray-2"
+
         >
           <q-item-section>
             <q-item-label lines="1">
