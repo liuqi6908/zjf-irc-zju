@@ -174,17 +174,15 @@ function clearInputFiles() {
       选择文件<span text-grey-5>（将需要外发的文件，拖拽至此框内，或点击一下按钮上传文件）</span>
     </div>
     <DropZone @drop.prevent="dropFiles" @change="selectedFiles">
-      <div flex="~ col gap-2">
-        <div v-if="outgoingInfo[model].dropzoneFile" flex="~ row gap-2" text-grey-8>
-          <div text-grey-5 relative i-material-symbols:note-outline top-0.5 />
-          {{ outgoingInfo[model].dropzoneFile?.name }}
-          <q-icon
-            name="fas fa-close" size="7px"
-            relative cursor-pointer top-1 bg-gray-4 text-white
-            p-1 rounded="1/2" ml-4 hover:bg-grey-5 transition
-            @click="outgoingInfo[model].dropzoneFile = undefined"
-          />
-        </div>
+      <div v-if="outgoingInfo[model].dropzoneFile" mt-6 flex="~ row gap-2" text-grey-8>
+        <div text-grey-5 relative i-material-symbols:note-outline top-0.5 />
+        {{ outgoingInfo[model].dropzoneFile?.name }}
+        <q-icon
+          name="fas fa-close" size="7px"
+          relative cursor-pointer top-1 bg-gray-4 text-white
+          p-1 rounded="1/2" ml-4 hover:bg-grey-5 transition
+          @click="outgoingInfo[model].dropzoneFile = undefined"
+        />
       </div>
     </DropZone>
 
