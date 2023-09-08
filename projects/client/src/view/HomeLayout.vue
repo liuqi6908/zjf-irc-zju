@@ -106,7 +106,7 @@ if (typeof document !== 'undefined') {
   >
     <div w-limited-1 bg-white>
       <div flex="~ row justify-between items-center">
-        <div mx-8 my-4 flex="~ row">
+        <div my-4 flex="~ row">
           <img mr-2 h-6 src="../assets/layout/cloud.png">
           <div>
             <span text-xl font-600 text-primary-1>
