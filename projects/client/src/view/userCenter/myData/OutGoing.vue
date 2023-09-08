@@ -127,23 +127,25 @@ function clearInputFiles() {
 </script>
 
 <template>
-  <div w-full class="col-grow" p-7 flex="~ col items-start" relative>
+  <div class="col-grow" flex="~ col items-start" w-full relative p-7>
     <!-- 加载中 -->
-    <div v-if="loading" full flex-center absolute top-0 z-100 left-0 style="background: rgba(255, 255, 255, 0.6)">
+    <div v-if="loading" full flex-center absolute z-100 top-0 left-0 style="background: rgba(255, 255, 255, 0.6)">
       <q-spinner
         color="primary-1" size="5rem" :thickness="2" label-class="text-primary-1"
         label-style="font-size: 1.1em"
       />
     </div>
     <!-- 切换外发类型 -->
-    <header mb-6 full flex-center mt-4>
+    <header full flex-center mb-6 mt-4>
       <q-btn-toggle
         v-model="model"
         no-caps unelevated spread rounded-0
         toggle-color="primary-1"
-        color="white"
-        text-color="black"
+        toggle-text-color="grey-1"
+        color="grey-2"
+        text-color="grey-8"
         :options="toggle"
+        size="16px" padding="8px 48px"
       />
     </header>
     <!-- 外发提示信息 -->
@@ -154,7 +156,7 @@ function clearInputFiles() {
       <span text-alert-error>注：您的所有数据外发行为将被保留，用于平台行为审查，请严格遵守平台外发规则！</span>
     </div>
     <div
-      mb-5 mt-10 w-full px-4 py-2 text="alert-error left"
+      mt-10 w-full px-4 mb-5 py-2 text="alert-error left"
       style="background: rgba(244, 67, 54, 0.08);white-space: normal"
     >
       您申请外发的文件，可能被误认为垃圾邮件。
@@ -174,7 +176,7 @@ function clearInputFiles() {
     <DropZone @drop.prevent="dropFiles" @change="selectedFiles">
       <div flex="~ col gap-2">
         <div v-if="outgoingInfo[model].dropzoneFile" class="file-item" flex="~ row gap-2" text-grey-8 hover:bg-gray-100 p-1>
-          <div text-grey-5 i-material-symbols:note-outline relative top-0.5 />
+          <div text-grey-5 relative i-material-symbols:note-outline top-0.5 />
           {{ outgoingInfo[model].dropzoneFile?.name }}
           <q-icon class="remove" name="fas fa-close" relative cursor-pointer top-1 opacity-0 @click="outgoingInfo[model].dropzoneFile = undefined" />
         </div>
@@ -193,6 +195,11 @@ function clearInputFiles() {
 </template>
 
 <style lang="scss" scoped>
+.q-btn-toggle {
+  :deep(.q-btn) {
+    font-weight: 600;
+  }
+}
 .file-item {
   transition: all 0.3s ease-in-out;
   .q-icon {

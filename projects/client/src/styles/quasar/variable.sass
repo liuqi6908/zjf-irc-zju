@@ -1,2 +1,6 @@
 :root
   --q-primary: #025CB9
+
+@for $i from 1 through 8
+  .text-grey-#{$i}
+    color: var(--grey-#{$i}) !important
