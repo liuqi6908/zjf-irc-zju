@@ -16,7 +16,7 @@ export class DataRoleNameDto {
   dataRoleName: DataRole['name']
 }
 
-export class RoleNameOptionalDto {
+export class DataRoleNameOptionalDto {
   @decorate(Decorator(true))
   dataRoleName?: DataRoleNameDto['dataRoleName']
 }
