@@ -194,10 +194,13 @@ watch(model, async (newModel) => {
             </div>
             <!-- 未申请 -->
             <div v-else text="4.5 grey-8" font-400>
-              您已经通过身份认证，请点击右侧按钮申请云桌面。注意：前面有
-              <span
-                text-tab-bottom v-text="`${requestInfo.queueLength} 人`"
-              />正在排队。
+              您已经通过身份认证，请点击右侧按钮申请云桌面。
+              <template v-if="requestInfo.queueLength">
+                注意：前面有
+                <span
+                  text-tab-bottom v-text="`${requestInfo.queueLength} 人`"
+                />正在排队。
+              </template>
             </div>
             <Btn
               text-nowrap
