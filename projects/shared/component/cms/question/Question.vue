@@ -54,7 +54,7 @@ onMounted(() => {
         </q-item>
       </div>
     </q-list>
-    <div flex="~ col 1" w0 gap-16>
+    <div flex="~ col 1" w0 gap-16 pb16>
       <div v-for="(item, index) in list" :key="index" relative>
         <q-item clickable flex="~" items-center gap-2 @click="openState[item.title] = !openState[item.title]">
           <div 
