@@ -34,7 +34,11 @@ function pickImg() {
       max-file-size="1048576"
       @update:model-value="(val) => $emit('update:modelValue', val)"
     />
-    <Btn transparent :label="label" @click="pickImg" />
+    <div @click="pickImg">
+      <slot>
+        <Btn transparent :label="label" />
+      </slot>
+    </div>
   </div>
 </template>
 
