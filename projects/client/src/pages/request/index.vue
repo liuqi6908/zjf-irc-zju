@@ -11,6 +11,9 @@ import HostPercent from '~/view/request/host/HostPercent.vue'
 import HostTiming from '~/view/request/host/HostTiming.vue'
 import { useUser } from '~/composables/useUser'
 
+const { y } = useScroll(document)
+y.value = 0
+
 const requestDialog = ref(false)
 const hostList = ref()
 

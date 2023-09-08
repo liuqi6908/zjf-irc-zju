@@ -13,6 +13,8 @@ const route = useRoute()
 const $router = useRouter()
 const { isDesktop, isLogin } = useUser()
 const { $get } = useRequest()
+const { y } = useScroll(document)
+y.value = 0
 
 const tableFieldsCol: QTableProps['columns'] = [
   { label: '字段', name: 'nameZH', field: 'nameZH', align: 'center' },
