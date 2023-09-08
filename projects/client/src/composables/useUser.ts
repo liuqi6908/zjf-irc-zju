@@ -53,7 +53,7 @@ export function useUser($router = useRouter()) {
     logout()
     authToken.value = null
     userInfo.value = undefined
-    $router.replace({ path: '/auth/login' })
+    $router.replace({ path: '/' })
   }
 
   /** 获取当前登入用户信息 */
