@@ -74,13 +74,14 @@ const historyCol = [
     align: 'center',
   },
 ]
-const select = ref()
+
 const searchFilename = ref('')
 const selectList = ref([
-  { label: '已完成', id: FileExportLargeStatus.Approved },
-  { label: '失败', id: FileExportLargeStatus.Rejected },
-  { label: '审核中', id: FileExportLargeStatus.Pending },
+  { label: '已通过', id: FileExportLargeStatus.Approved },
+  { label: '待审核', id: FileExportLargeStatus.Pending },
+  { label: '已驳回', id: FileExportLargeStatus.Rejected },
 ])
+const select = ref(selectList.value)
 
 const rows = ref([])
 
@@ -108,6 +109,7 @@ async function getSmExport(options: IQueryDto<IFileExportSmall>) {
     }
   })
 }
+
 async function getLgExport(options: IQueryDto<IFileExportLarge>) {
   loading.value = true
   const res = await getOwnExportLg(options).finally(() => {
@@ -139,7 +141,6 @@ function fetchRejectReason(reason: string) {
 watch(model, (newModel) => {
   if (newModel === 'small') {
     rows.value = []
-
     getSmExport(baseOpts)
   }
   else if (newModel === 'big') {
@@ -197,20 +198,22 @@ watch(select, (selectOptions) => {
 </script>
 
 <template>
-  <div p-5>
+  <div p-7>
     <header flex="~ col" mb-5>
       <div flex="~ row justify-center" my-4>
         <q-btn-toggle
           v-model="model"
           unelevated spread no-caps rounded-0
           toggle-color="primary-1"
-          color="white"
-          text-color="black"
+          toggle-text-color="grey-1"
+          color="grey-2"
+          text-color="grey-8"
           :options="toggle"
+          size="16px" padding="6.3px 48px"
         />
       </div>
 
-      <div flex="~ row justify-between items-center">
+      <div flex="~ row justify-between items-center" mt-4>
         <div text-4 font-600 text-grey-8>
           外发记录
         </div>
@@ -221,24 +224,24 @@ watch(select, (selectOptions) => {
             v-slot="{ scope }"
             v-model="select"
             input-debounce="0"
-
             multiple use-chips chip min-w-20
             :options="selectList"
           >
             <q-chip
-              dense removable ml-2
+              removable
               :tabindex="scope.tabindex"
               color="grey-2"
               text-color="grey-8"
               class="q-ma-none pa-3"
+              size="16px"
               @remove="scope.removeAtIndex(scope.index)"
             >
               {{ scope.opt.label }}
             </q-chip>
           </ZSelect>
-          <UserCodeInput v-model:user-code="searchFilename" :dark="false" label="搜索文件名">
+          <UserCodeInput v-model:user-code="searchFilename" class="w-60!" :dark="false" label="搜索文件名">
             <template #prepend>
-              <div i-material-symbols:search-rounded h-5 w-5 bg-grey-5 />
+              <div w-5 i-material-symbols:search-rounded bg-grey-5 relative top-5px />
             </template>
           </UserCodeInput>
         </div>
@@ -274,6 +277,29 @@ watch(select, (selectOptions) => {
   </div>
 </template>
 
-<style lang="scss">
-
+<style lang="scss" scoped>
+.q-btn-toggle {
+  :deep(.q-btn) {
+    font-weight: 600;
+  }
+}
+:deep(.q-field) {
+  .q-field__native {
+    min-height: inherit !important;
+    gap: 1rem;
+  }
+  .q-field__label {
+    font-size: 16px;
+  }
+  .q-icon {
+    font-size: 12px;
+  }
+}
+:deep(.q-chip) {
+  .q-icon {
+    font-size: 14px;
+    margin-left: 2px;
+    color: var(--grey-4);
+  }
+}
 </style>

@@ -145,7 +145,7 @@ function clearInputFiles() {
         color="grey-2"
         text-color="grey-8"
         :options="toggle"
-        size="16px" padding="8px 48px"
+        size="16px" padding="6.3px 48px"
       />
     </header>
     <!-- 外发提示信息 -->
