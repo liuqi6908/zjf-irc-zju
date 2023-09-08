@@ -58,7 +58,7 @@ watch(() => route.name, async () => {
 
     <component :is="currCom('homeDataIntroduce')" v-if="comProps('homeDataIntroduce') && comProps('homeDataIntroduce')?.length" :list="comProps('homeDataIntroduce')" />
 
-    <div flex-center>
+    <div flex-center bg-grey-2>
       <div grid my-20 max-w-4xl gap-12 lg:grid-cols-1 xl:grid-cols-2>
         <RouterLink
           v-for="(item, index) in questionProps"
