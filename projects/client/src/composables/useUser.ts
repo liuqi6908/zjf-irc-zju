@@ -43,17 +43,14 @@ export function useUser($router = useRouter()) {
     bizId: string,
     code: string,
   ) => {
-    password = encryptPasswordInHttp(password)
-    const res = await register(account, email, password, bizId, code)
+    const res = await register(account, email, encryptPasswordInHttp(password), bizId, code)
     if (res)
       await useLogin({ password, account, email })
   }
 
   /** 登出 */
-  const useLogout = async () => {
-    const res = await logout()
-    if (!res)
-      return
+  const useLogout = () => {
+    logout()
     authToken.value = null
     userInfo.value = undefined
     $router.replace({ path: '/auth/login' })

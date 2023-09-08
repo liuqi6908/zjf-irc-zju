@@ -35,17 +35,17 @@ defineEmits(['update:modelValue'])
 $error-color:#FF8080;
 
 .q-field :deep(.q-field__inner){
-    .q-field__control {
-      border-radius: 0px !important;
-      border-color: 1px solid var(--grey-3, #D4DDEA);
-    }
-    .q-field__bottom .q-field__messages{
-      color: $error-color  !important;
-      color: $error-color !important
-    }
+  .q-field__control {
+    border-radius: 0px !important;
+    border-color: 1px solid var(--grey-3, #D4DDEA);
+  }
+  .q-field__bottom .q-field__messages{
+    color: $error-color  !important;
+    color: $error-color !important
+  }
 }
 .q-input :deep(.text-negative) {
-      color: $error-color !important
+  color: $error-color !important
 }
 </style>
 
