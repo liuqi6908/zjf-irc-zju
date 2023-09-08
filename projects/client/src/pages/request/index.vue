@@ -119,7 +119,7 @@ watch(model, async (newModel) => {
       </template>
       <template v-else>
         <EmptyVeri label="您的身份认证尚未通过审核" captions="用户认证通过后，才能申请使用" />
-        <div flex gap-6 mt-10>
+        <div mt-10 flex gap-6>
           <VerifyStatus :status="userStatus" />
           <Btn
             label="前往认证"
@@ -201,7 +201,10 @@ watch(model, async (newModel) => {
             </div>
             <!-- 未申请 -->
             <div v-else text="4.5 grey-8" font-400>
-              您已经通过身份认证，请点击右侧按钮申请云桌面。注意：前面有 10人 正在排队。
+              您已经通过身份认证，请点击右侧按钮申请云桌面。注意：前面有
+              <span
+                text-tab-bottom v-text="`${requestInfo.queueLength} 人`"
+              />正在排队。
             </div>
             <Btn
               text-nowrap
