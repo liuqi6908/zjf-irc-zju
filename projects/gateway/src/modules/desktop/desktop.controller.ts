@@ -1,17 +1,19 @@
+import { IsNull, Not } from 'typeorm'
 import { getQuery } from 'src/utils/query'
+import { IsLogin } from 'src/guards/login.guard'
 import type { Desktop } from 'src/entities/desktop'
 import { DesktopIdDto } from 'src/dto/id/desktop.dto'
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { QueryDto, QueryResDto } from 'src/dto/query.dto'
 import { HasPermission } from 'src/guards/permission.guard'
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req } from '@nestjs/common'
 import { DesktopQueueHistoryStatus, DesktopQueueStatus, ErrorCode, PermissionType } from 'zjf-types'
 
-import { IsNull, Not } from 'typeorm'
 import { NotifyService } from '../notify/notify.service'
 import { DesktopService } from './desktop.service'
+import { DesktopResDto } from './dto/desktop.res.dto'
 import { CreateDesktopBodyDto } from './dto/create-desktop.body.dto'
 import { UpdateDesktopBodyDto } from './dto/update-desktop.body.dto'
 import { AssignDesktopParamDto } from './dto/assign-desktop.param.dto'
@@ -167,5 +169,14 @@ export class DesktopController {
       responseError(ErrorCode.PERMISSION_DENIED)
     this._desktopSrv.checkExpiredDesktop()
     return true
+  }
+
+  @ApiOperation({ summary: '查询当前用户分配的云桌面的信息' })
+  @IsLogin()
+  @ApiSuccessResponse(DesktopResDto)
+  @Get('own')
+  public async getOwnDesktop(@Req() req: FastifyRequest) {
+    const user = req.raw.user
+    return await this._desktopSrv.repo().findOne({ where: { userId: user.id } })
   }
 }
