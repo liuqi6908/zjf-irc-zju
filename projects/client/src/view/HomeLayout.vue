@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { AUTH_TOKEN_KEY } from 'shared/constants'
 import { objectPick, useEventListener } from '@vueuse/core'
 
 import { useCms } from '~/composables/useCms'
@@ -15,7 +14,7 @@ const footerProps = ref<any[]>([])
 const avatarRef = ref<any>()
 
 /** hooks */
-const { userInfo, useGetProfile, useLogout } = useUser()
+const { userInfo, useGetProfile, useLogout, isLogin } = useUser()
 
 const navList = [
   {
@@ -65,22 +64,13 @@ const userList: Array<any> = [
   },
 ]
 
-const isToken = computed(() => {
-  let tokenStr: any = null
-  if (typeof window !== 'undefined') {
-  // Perform localStorage action
-    tokenStr = localStorage.getItem(AUTH_TOKEN_KEY) || null
-  }
-  return tokenStr
-})
-
 onMounted(async () => {
   useGetProfile()
   footerProps.value = await cmsProps('footer')
 })
 
 useEventListener(avatarRef, 'click', (e: PointerEvent) => {
-  if (isToken.value) {
+  if (isLogin.value) {
     userCenter.value.clientX = e.clientX - 60
     userCenter.value.clientY = e.clientY + 40
     userDropdown.value = !userDropdown.value
@@ -93,8 +83,6 @@ if (typeof document !== 'undefined') {
       userDropdown.value = false
   })
 }
-
-// cleanup()
 </script>
 
 <template>
@@ -113,7 +101,6 @@ if (typeof document !== 'undefined') {
             </span>
             <span text-primary-1>CloudResearch</span>
           </div>
-          <!-- <Icon text-grey-8 icon="mdi-light:home" /> -->
         </div>
 
         <div flex flex-row items-center text-primary-1>
@@ -123,7 +110,7 @@ if (typeof document !== 'undefined') {
             :avatar-url="userInfo?.avatar"
             :nickname="userInfo?.account"
           >
-            <div v-if="!isToken">
+            <div v-if="!isLogin">
               {{ '登录' }}
             </div>
             <q-menu
