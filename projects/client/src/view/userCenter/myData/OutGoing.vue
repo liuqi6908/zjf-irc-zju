@@ -184,9 +184,9 @@ function clearInputFiles() {
     </DropZone>
 
     <div flex="~ row justify-center" mt-10 w-full>
-      <div flex="~ row gap-5">
-        <btn label="更改邮箱" w-30 outline @click="editDialog = true" />
-        <btn w-30 label="外发" :disable="!Boolean(outgoingInfo[model].dropzoneFile)" @click="outConfirm()" />
+      <div flex h-12 gap-8>
+        <Btn1 w-36 outline label="更改邮箱" @click="editDialog = true" />
+        <Btn1 w-36 label="外发" :disable="!Boolean(outgoingInfo[model].dropzoneFile)" @click="outConfirm()" />
       </div>
     </div>
 
