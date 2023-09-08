@@ -1,19 +1,19 @@
 <script lang="ts" setup>
-
+const $router = useRouter()
 </script>
 
 <template>
   <div class="confirmation" full flex="~ row">
     <!-- <img src="../assets/auth/authRect.svg"> -->
     <div class="confirmation-bgImg col-grow">
-      <header flex="~ row items-center" p-8 text-grey-1>
+      <header flex="~ row items-center" text-grey-1 absolute top-8 left-8 cursor-pointer @click="$router.push('/')">
         <img h-12 w-12 src="../assets/auth/couldTitle.png">
-        <span text-7 font-600>智能云科研平台 |</span><span text-4 font-400>&nbsp;CloudResearch</span>
+        <span text-7 font-600>智能云科研平台 |</span>
+        <span text-4 font-400>&nbsp;CloudResearch</span>
       </header>
     </div>
 
     <!-- auth card  -->
-
     <div class="col-5 flex-center" mr-40>
       <div
         flex="~ col" class="confirmation-card"

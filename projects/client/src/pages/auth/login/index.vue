@@ -33,9 +33,9 @@ function handleEnter() {
 <template>
   <div w-full flex="~ col">
     <header flex="~ flex col items-center justify-center" mb-12>
-      <span text-7 font-600 text-grey-1 v-text="'登录'" />
+      <span font-600 text-7 text-grey-1 v-text="'登录'" />
     </header>
-    <span text-grey-1 m-b-1 font-500 v-text="'账号 / 邮箱'" />
+    <span text-grey-1 font-500 m-b-1 v-text="'账号 / 邮箱'" />
     <UserCodeInput
       v-model:userCode="userCode"
       label="请输入账号/邮箱"
@@ -56,7 +56,7 @@ function handleEnter() {
       <Btn color="primary-1" bg-color="grey-1" :disable="disable" label="登录" @click="useLogin(logArg)" />
     </client-only>
 
-    <div m-t-5 flex-center text-grey-3>
+    <div flex-center m-t-5 text-grey-3>
       没有账号？
       <RouterLink text-grey-1 :to="{ path: 'signup' }" v-text="'立即注册'" />
     </div>
