@@ -118,7 +118,7 @@ function exportTable() {
 </script>
 
 <template>
-  <div class="log-admin" p-6>
+  <div p-4>
     <QTable
       ref="tableRef"
       v-model:pagination="pagination"
@@ -155,14 +155,12 @@ function exportTable() {
 </template>
 
 <style lang="scss" scoped>
-.log-admin {
-  :deep(.q-table) {
-    thead {
-      position: sticky;
-      top: 0;
-      background-color: white;
-      z-index: 1;
-    }
+:deep(.q-table) {
+  thead {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
   }
 }
 </style>
