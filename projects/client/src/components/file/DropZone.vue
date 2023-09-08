@@ -20,8 +20,8 @@ function toggleActive(event: Event) {
     @drop.prevent="toggleActive"
   >
     <label mt-5 cursor-pointer for="dropZoneFile">
-      <div class="label-box" mb-2 border-1 border-primary-1 p-5 text-primary-1>
-        <div i-material-symbols:add />
+      <div class="label-box" mb-2 border-1 text-primary-1 border-primary-1 w-14 h-14 flex items-center justify-center>
+        <q-icon name="far fa-plus" />
       </div>
       <span font-500 text-primary-1>选择文件</span>
     </label>

@@ -175,10 +175,15 @@ function clearInputFiles() {
     </div>
     <DropZone @drop.prevent="dropFiles" @change="selectedFiles">
       <div flex="~ col gap-2">
-        <div v-if="outgoingInfo[model].dropzoneFile" class="file-item" flex="~ row gap-2" text-grey-8 hover:bg-gray-100 p-1>
+        <div v-if="outgoingInfo[model].dropzoneFile" flex="~ row gap-2" text-grey-8>
           <div text-grey-5 relative i-material-symbols:note-outline top-0.5 />
           {{ outgoingInfo[model].dropzoneFile?.name }}
-          <q-icon class="remove" name="fas fa-close" relative cursor-pointer top-1 opacity-0 @click="outgoingInfo[model].dropzoneFile = undefined" />
+          <q-icon
+            name="fas fa-close" size="7px"
+            relative cursor-pointer top-1 bg-gray-4 text-white
+            p-1 rounded="1/2" ml-4 hover:bg-grey-5 transition
+            @click="outgoingInfo[model].dropzoneFile = undefined"
+          />
         </div>
       </div>
     </DropZone>
@@ -198,17 +203,6 @@ function clearInputFiles() {
 .q-btn-toggle {
   :deep(.q-btn) {
     font-weight: 600;
-  }
-}
-.file-item {
-  transition: all 0.3s ease-in-out;
-  .q-icon {
-    transition: all 0.3s ease-in-out;
-  }
-  &:hover {
-    .q-icon {
-      opacity: 1;
-    }
   }
 }
 </style>
