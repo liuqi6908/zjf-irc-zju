@@ -131,9 +131,9 @@ async function allocationDesktop() {
 <template>
   <QDialog v-model="dialog" class="allocation-dialog">
     <QCard p-6 relative w-50vw min-w-100 class="max-w-inherit!">
-      <header text-lg mb-5 relative>
+      <header relative text-lg mb-5>
         分配云桌面
-        <q-btn v-close-popup size="10px" icon="fas fa-times" absolute top-0 right-0 flat px-1 />
+        <q-btn v-close-popup size="10px" icon="fas fa-times" absolute flat top-0 right-0 px-1 />
       </header>
       <QTable
         ref="tableRef"
@@ -143,7 +143,7 @@ async function allocationDesktop() {
         :columns="cols"
         :rows="rows"
         :loading="tableLoading"
-        :rows-per-page-options="[50, 60, 70]"
+        :rows-per-page-options="rowsPerPageOptions"
         selection="single"
         row-key="userId"
         @request="queryData"

@@ -179,7 +179,7 @@ function download(name: string, id: string) {
     :columns="columns"
     :rows="rows"
     :loading="loading"
-    :rows-per-page-options="[50, 60, 70]"
+    :rows-per-page-options="rowsPerPageOptions"
     @request="queryData"
   >
     <template #body="prop">
