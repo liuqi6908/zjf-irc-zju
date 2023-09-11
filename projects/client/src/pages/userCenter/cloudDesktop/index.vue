@@ -182,18 +182,18 @@ function copyText(text: string) {
       <!-- 状态及操作 -->
       <header flex="~ row justify-between">
         <DesktopStatus :status="requestStatus" :duration="remainingTime" />
-        <div flex="~ row gap-5">
-          <Btn label="开机" :disable="vmStatus !== '已关机'" @click="desktopOperate('开机')">
+        <div flex="~ row gap-5" class="desktop-operation-buttons">
+          <Btn w28 label="开机" :disable="vmStatus !== '已关机'" @click="desktopOperate('开机')">
             <template #icon>
               <q-icon name="fas fa-power-off" size="16px" relative top="-0.5" ml-2 />
             </template>
           </Btn>
-          <Btn label="关机" :disable="vmStatus !== '运行中'" @click="desktopOperate('关机')">
+          <Btn w28 label="关机" :disable="vmStatus !== '运行中'" @click="desktopOperate('关机')">
             <template #icon>
               <q-icon name="fas fa-power-off" size="16px" relative top="-0.5" ml-2 />
             </template>
           </Btn>
-          <Btn label="重启" :disable="vmStatus !== '运行中'" @click="desktopOperate('重启')">
+          <Btn w28 label="重启" :disable="vmStatus !== '运行中'" @click="desktopOperate('重启')">
             <template #icon>
               <q-icon name="fas fa-sync" size="16px" relative top="-0.5" ml-2 />
             </template>
@@ -272,6 +272,13 @@ function copyText(text: string) {
     </div>
   </div>
 </template>
+
+<style lang="sass">
+.desktop-operation-buttons
+  .q-btn.disabled
+    opacity: 1 !important
+    background: var(--grey-4)
+</style>
 
 <route lang="yaml">
 meta:
