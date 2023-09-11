@@ -68,7 +68,9 @@ async function queryData(props: any) {
         },
       ],
       relations: {
-        founder: true,
+        founder: {
+          verification: true,
+        },
         desktop: true,
       },
     }

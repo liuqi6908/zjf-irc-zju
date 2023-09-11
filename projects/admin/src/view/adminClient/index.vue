@@ -19,10 +19,12 @@ const tableRef = ref<QTable>()
 
 const columns: QTableProps['columns'] = reactive([
   { name: 'account', field: 'account', label: '用户' },
-  { name: 'name', field: 'verification.name', label: '姓名' },
   { name: 'email', field: 'email', label: '邮箱' },
+  { name: 'name', field: 'verification.name', label: '姓名' },
   { name: 'school', field: 'verification.school', label: '学校' },
   { name: 'college', field: 'verification.college', label: '学院' },
+  { name: 'college', field: 'verification.number', label: '学号' },
+  { name: 'college', field: 'verification.idCard', label: '身份证' },
   { name: 'identify', field: 'verification.identify', label: '身份' },
   { name: 'dataRoleName', field: 'dataRoleName', label: '角色' },
   { name: 'roleName', field: 'roleName', label: '权限' },
