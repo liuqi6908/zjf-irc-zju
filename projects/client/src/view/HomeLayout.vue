@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { objectPick, useEventListener } from '@vueuse/core'
 
-import { getUsername } from 'shared'
+import { getUsername } from 'shared/utils'
 import { useCms } from '~/composables/useCms'
 
 const router = useRouter()
