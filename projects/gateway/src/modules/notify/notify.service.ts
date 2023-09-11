@@ -146,14 +146,13 @@ export class NotifyService {
   }
 
   public async notifyNewFileExportLg(info: FileExportLarge) {
-    const { desktop, ip } = info
-    const desktopName = desktop?.id ? `${desktop.id}` : `未知IP (${ip})`
+    const { desktop } = info
     const emails = await this.getUserEmailsThatHasPermission([
       PermissionType.EXPORT_LG_QUERY_ALL,
     ])
     return this._emailSrv.send({
       to: emails,
-      ...getNewExportLgHTML(desktopName),
+      ...getNewExportLgHTML({ ...desktop, user: info.founder }),
     })
   }
 }
