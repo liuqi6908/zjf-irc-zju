@@ -46,13 +46,9 @@ const textClass = computed(() => {
 </script>
 
 <template>
-  <div :style="currentStyle" flex="~ row nowrap" items-center px6 py2.5>
-    <span text-nowrap font-600 text-grey-8>认证状态: </span>
-    <div ml4 mr1 flex-center text-nowrap text-4 v-html="textClass?.icon" />
-    <span text-nowrap font-600 text-grey-8>{{ textClass?.text }}</span>
+  <div :style="currentStyle" flex="~ row nowrap" text="base nowrap" font-600 items-center px6 py2.5>
+    <span text-grey-8>认证状态: </span>
+    <div flex-center text-lg ml4 mr1 v-html="textClass?.icon" />
+    <span text-grey-8>{{ textClass?.text }}</span>
   </div>
 </template>
-
-<style lang="">
-
-</style>
