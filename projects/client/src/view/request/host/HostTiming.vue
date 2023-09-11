@@ -8,37 +8,87 @@ interface Props {
 const props = defineProps<Props>()
 
 const data = reactive({
-  cpu: [
-    {
-      time: [],
-      value: [],
-      label: '使用率：',
-    },
-  ],
-  storage: [
-    {
-      time: [],
-      value: [],
-      label: '负载率：',
-    },
-  ],
-  oi: [
-    {
-      time: [],
-      value: [],
-      label: '读取：',
-    },
-    {
-      time: [],
-      value: [],
-      label: '写入：',
-    },
-  ],
+  cpu: {
+    title: 'CPU',
+    unit: '%',
+    value: [
+      {
+        time: [],
+        value: [],
+        label: '使用率：',
+      },
+    ],
+  },
+  storage: {
+    title: '内存',
+    unit: '%',
+    value: [
+      {
+        time: [],
+        value: [],
+        label: '负载率：',
+      },
+    ],
+  },
+  oi: {
+    title: '磁盘',
+    unit: 'KB/S',
+    value: [
+      {
+        time: [],
+        value: [],
+        label: '读取：',
+      },
+      {
+        time: [],
+        value: [],
+        label: '写入：',
+      },
+    ],
+  },
 })
 
-/** 定时器的引用 */
-const pollingInterval = ref()
+const { pause, resume } = useIntervalFn(() => pollApi(), 10000)
 
+/**
+ * 调用接口
+ * @param uuid
+ */
+async function pollApi(uuid?: string) {
+  try {
+    const res = await getDesktopTimeHostCpu(uuid || props.uuid)
+    if (!res)
+      throw new Error('Error')
+
+    const { CPUUtilization, memUsed, diskWrite, diskRead } = res
+    const { cpu, storage, oi } = data
+    if (CPUUtilization && CPUUtilization.length) {
+      cpu.value[0].value = processData(CPUUtilization, 'value')
+      cpu.value[0].time = processData(CPUUtilization, 'time')
+    }
+    if (memUsed && memUsed.length) {
+      storage.value[0].value = processData(memUsed, 'value')
+      storage.value[0].time = processData(memUsed, 'time')
+    }
+    if (diskWrite && diskWrite.length) {
+      oi.value[0].value = processData(diskWrite, 'value')
+      oi.value[0].time = processData(diskWrite, 'time')
+    }
+    if (diskRead && diskRead.length) {
+      oi.value[1].value = processData(diskRead, 'value')
+      oi.value[1].time = processData(diskRead, 'time')
+    }
+  }
+  catch (_) {
+    pause()
+  }
+}
+
+/**
+ * 处理数据
+ * @param dataArray
+ * @param property
+ */
 function processData(dataArray: any, property: string) {
   if (dataArray && dataArray.length) {
     return dataArray.map((item: any) => {
@@ -51,64 +101,33 @@ function processData(dataArray: any, property: string) {
   return []
 }
 
-async function pollApi(uuid?: string) {
-  const res = await getDesktopTimeHostCpu(uuid || props.uuid)
-
-  if (!res) {
-    stopPolling()
-    return 'stop'
-  }
-
-  if (res.CPUUtilization) {
-    data.cpu[0].value = processData(res.CPUUtilization, 'value')
-    data.cpu[0].time = processData(res.CPUUtilization, 'time')
-  }
-  if (res.memUsed && res.memUsed.length) {
-    data.storage[0].value = processData(res.memUsed, 'value')
-    data.storage[0].time = processData(res.memUsed, 'time')
-  }
-
-  if (res.diskWrite && res.diskWrite.length && res.diskRead && res.diskRead.length) {
-    data.oi[0].value = processData(res.diskWrite, 'value')
-    data.oi[0].time = processData(res.diskWrite, 'time')
-
-    data.oi[1].value = processData(res.diskRead, 'value')
-    data.oi[1].time = processData(res.diskRead, 'time')
-  }
-}
-
-function startPolling() {
-  pollingInterval.value = setInterval(() => {
-    pollApi()
-  }, 10000)
-}
-
-function stopPolling() {
-  clearInterval(pollingInterval.value)
-  pollingInterval.value = null
-}
-
-watch(() => props.uuid, async (newUuid) => {
-  if (newUuid) {
-    const res = await pollApi(newUuid)
-
-    if (res === 'stop')
-      return
-
-    startPolling()
-  }
-}, { immediate: true })
-
-onBeforeUnmount(() => {
-  stopPolling()
-})
+watch(
+  () => props.uuid,
+  (newVal) => {
+    if (newVal) {
+      pollApi(newVal)
+      resume()
+    }
+    else {
+      pause()
+    }
+  },
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <template>
   <div mb-20 mt-10 max-w-6xl w-full>
-    <LineEchartsCard :data="data.cpu" legend title="CPU" unit="%" />
-    <LineEchartsCard :data="data.storage" legend title="内存" unit="%" />
-    <LineEchartsCard :data="data.oi" legend title="磁盘" unit="KB/S" />
+    <LineEchartsCard
+      v-for="(item, index) in data"
+      :key="index"
+      :data="item.value"
+      legend
+      :title="item.title"
+      :unit="item.unit"
+    />
   </div>
 </template>
 

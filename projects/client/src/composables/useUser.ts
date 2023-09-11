@@ -68,7 +68,7 @@ export function useUser($router = useRouter()) {
   }
 
   /** 用户是否登录 */
-  const isLogin = computed(() => !!userInfo.value)
+  const isLogin = computed(() => !!authToken.value)
 
   /** 用户是否通过认证 */
   const isVerify = computed(() => userInfo.value?.verification?.status === VerificationStatus.APPROVED)

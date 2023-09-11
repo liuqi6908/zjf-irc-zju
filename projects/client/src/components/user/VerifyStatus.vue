@@ -2,7 +2,7 @@
 import { VerificationStatus } from 'zjf-types'
 
 interface Props {
-  status: VerificationStatus
+  status?: VerificationStatus
 }
 const props = defineProps<Props>()
 
