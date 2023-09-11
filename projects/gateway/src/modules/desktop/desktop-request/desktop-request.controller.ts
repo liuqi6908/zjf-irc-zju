@@ -101,10 +101,18 @@ export class DesktopRequestController {
       }) ?? null
 
     const res: any = { queue, queueLength }
-    if (lastRejected.createdAt > lastExpired.expiredAt)
+    if (lastRejected && lastExpired) {
+      if (lastRejected.createdAt > lastExpired.expiredAt)
+        res.lastRejected = lastRejected
+      else
+        res.lastExpired = lastExpired
+    }
+    else if (lastRejected) {
       res.lastRejected = lastRejected
-    else
+    }
+    else if (lastExpired) {
       res.lastExpired = lastExpired
+    }
     return res
   }
 
