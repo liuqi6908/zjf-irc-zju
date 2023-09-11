@@ -30,7 +30,7 @@ const columns: QTableProps['columns'] = reactive([
   { name: 'rejectReason', field: 'rejectReason', label: '驳回原因' },
   { name: 'handleAt', field: 'handleAt', label: '审核时间' },
   { name: 'handlerAccount', field: 'handler.account', label: '审核人账号' },
-  { name: 'handlerNickname', field: 'handler.verification.name', label: '审核人姓名' },
+  { name: 'handlerName', field: 'handler.verification.name', label: '审核人姓名' },
 ])
 const rows: Array<any> = reactive([])
 const pagination = ref({

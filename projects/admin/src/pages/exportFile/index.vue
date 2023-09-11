@@ -5,7 +5,7 @@ const cols = [
   /** 用户信息 */
   { name: 'account', field: 'founder.account', label: '用户' },
   { name: 'email', field: 'email', label: '邮箱' },
-  { name: 'nickname', field: 'founder.verification.name', label: '姓名' },
+  { name: 'name', field: 'founder.verification.name', label: '姓名' },
   { name: 'dataRoleName', field: 'founder.dataRoleName', label: '角色' },
   { name: 'roleName', field: 'founder.roleName', label: '权限' },
   /** 云桌面信息 */
