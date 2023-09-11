@@ -13,16 +13,16 @@ const statusOptions = {
   pending: {
     text: '待审核',
     icon: 'material-symbols:alarm',
-    color: 'alert-warning',
+    color: 'var(--alert-warning)',
   },
   queueing: {
     text: '排队中',
     icon: 'i-mdi:dots-horizontal',
-    color: 'alert-warning',
+    color: 'var(--alert-warning)',
   },
   using: {
     icon: 'i-mdi:check-circle',
-    color: 'alert-success',
+    color: 'var(--alert-success)',
     text: '使用中',
   },
 }
@@ -41,11 +41,14 @@ const statusClass = computed(() => {
 </script>
 
 <template>
-  <div border-1 border-primary-1 p2 class="~ row items-center justify-center">
-    <span text-4 text-grey-8> 状态：</span>
-    <div :class="`text-${statusClass?.color} ${statusClass?.icon}`" mx-1 />
-    <span text-4 text-grey-8>{{ statusClass?.text }}</span>
-    <span text-4 text-grey-8>{{ statusClass?.caption }}</span>
+  <div flex=" ~ row" h12 items-center justify-center border-1 border-primary-1 px6 py2.5 font-bold text="4 grey-8">
+    <span> 状态：</span>
+    <div
+      :style="{ color: statusClass?.color }"
+      :class="`${statusClass?.icon}`" mx-1
+    />
+    <span>{{ statusClass?.text }}</span>
+    <span>{{ statusClass?.caption }}</span>
   </div>
 </template>
 
