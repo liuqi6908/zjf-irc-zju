@@ -10,6 +10,7 @@ declare global {
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const carouselOpts: typeof import('./constants/trade.constant')['carouselOpts']
+  const checkAttachment: typeof import('./utils/tool')['checkAttachment']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -126,6 +127,7 @@ declare global {
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
   const roleOpts: typeof import('./constants/trade.constant')['roleOpts']
+  const rowsPerPageOptions: typeof import('./constants/table.constant')['rowsPerPageOptions']
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
@@ -321,7 +323,9 @@ declare global {
   const useWindowSize: typeof import('@vueuse/core')['useWindowSize']
   const userIdentify: typeof import('./constants/user.constant')['userIdentify']
   const userStatus: typeof import('./constants/user.constant')['userStatus']
+  const userTableCols: typeof import('./constants/table.constant')['userTableCols']
   const valueFormatter: typeof import('./constants/map.constant')['valueFormatter']
+  const verifyTableCols: typeof import('./constants/table.constant')['verifyTableCols']
   const watch: typeof import('vue')['watch']
   const watchArray: typeof import('@vueuse/core')['watchArray']
   const watchAtMost: typeof import('@vueuse/core')['watchAtMost']
@@ -357,6 +361,7 @@ declare module 'vue' {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
+    readonly checkAttachment: UnwrapRef<typeof import('./utils/tool')['checkAttachment']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -436,6 +441,7 @@ declare module 'vue' {
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
+    readonly rowsPerPageOptions: UnwrapRef<typeof import('./constants/table.constant')['rowsPerPageOptions']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
@@ -628,6 +634,8 @@ declare module 'vue' {
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
     readonly userIdentify: UnwrapRef<typeof import('./constants/user.constant')['userIdentify']>
     readonly userStatus: UnwrapRef<typeof import('./constants/user.constant')['userStatus']>
+    readonly userTableCols: UnwrapRef<typeof import('./constants/table.constant')['userTableCols']>
+    readonly verifyTableCols: UnwrapRef<typeof import('./constants/table.constant')['verifyTableCols']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchArray: UnwrapRef<typeof import('@vueuse/core')['watchArray']>
     readonly watchAtMost: UnwrapRef<typeof import('@vueuse/core')['watchAtMost']>
@@ -651,6 +659,7 @@ declare module '@vue/runtime-core' {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
+    readonly checkAttachment: UnwrapRef<typeof import('./utils/tool')['checkAttachment']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -730,6 +739,7 @@ declare module '@vue/runtime-core' {
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
+    readonly rowsPerPageOptions: UnwrapRef<typeof import('./constants/table.constant')['rowsPerPageOptions']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
@@ -922,6 +932,8 @@ declare module '@vue/runtime-core' {
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
     readonly userIdentify: UnwrapRef<typeof import('./constants/user.constant')['userIdentify']>
     readonly userStatus: UnwrapRef<typeof import('./constants/user.constant')['userStatus']>
+    readonly userTableCols: UnwrapRef<typeof import('./constants/table.constant')['userTableCols']>
+    readonly verifyTableCols: UnwrapRef<typeof import('./constants/table.constant')['verifyTableCols']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchArray: UnwrapRef<typeof import('@vueuse/core')['watchArray']>
     readonly watchAtMost: UnwrapRef<typeof import('@vueuse/core')['watchAtMost']>

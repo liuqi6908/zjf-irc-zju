@@ -6,7 +6,6 @@ import type { IDesktop, IQueryConfig } from 'zjf-types'
 import moment from 'moment'
 import { getDesktopQuery } from '~/api/desktopRequest/getdesktopQuery'
 import type { QueryDesktop } from '~/pages/desktopAdmin/index.vue'
-import { getUrlByToken } from '~/api/file/getUrl'
 import { approveDesktop } from '~/api/desktopRequest/approveDesktop'
 import { rejectDesktop } from '~/api/desktopRequest/rejectDesktop'
 
@@ -23,10 +22,12 @@ const tableRef = ref<QTable>()
 
 const cols: QTableProps['columns'] = reactive([
   { name: 'account', field: 'user.account', label: '用户' },
-  { name: 'name', field: 'user.verification.name', label: '姓名' },
   { name: 'email', field: 'user.email', label: '邮箱' },
+  { name: 'name', field: 'user.verification.name', label: '姓名' },
   { name: 'school', field: 'user.verification.school', label: '学校' },
   { name: 'college', field: 'user.verification.college', label: '学院' },
+  { name: 'number', field: 'user.verification.number', label: '学号' },
+  { name: 'idCard', field: 'user.verification.idCard', label: '身份证' },
   { name: 'identify', field: 'user.verification.identify', label: '身份' },
   { name: 'dataRoleName', field: 'user.dataRoleName', label: '角色' },
   { name: 'roleName', field: 'user.roleName', label: '权限' },
@@ -99,31 +100,6 @@ async function queryData(props: any) {
     pagination.value.rowsPerPage = rowsPerPage
     loading.value = false
   }
-}
-
-/**
- * 查看申请材料
- * @param row
- */
-function checkAttachment(row: any) {
-  const images = row.attachments
-  let message = ''
-
-  if (images && images.length) {
-    images.forEach((filename: string) => {
-      const src = getUrlByToken(`file/private/desktop-request/${row['user.id']}/${filename}`)
-      message += `<img src="${src}"><a href="${src}" download>点击下载文件</a><br/>`
-    })
-  }
-  else {
-    message = '当前用户暂无申请材料'
-  }
-
-  $q.dialog({
-    title: '查看申请材料',
-    message,
-    html: true,
-  })
 }
 
 /**
@@ -203,7 +179,7 @@ function reject(id: string) {
     :columns="cols"
     :rows="rows"
     :loading="loading"
-    :rows-per-page-options="[50, 60, 70]"
+    :rows-per-page-options="rowsPerPageOptions"
     @request="queryData"
   >
     <template #loading>
@@ -213,7 +189,7 @@ function reject(id: string) {
       <q-tr :props="props">
         <q-td v-for="col in cols" :key="col.name">
           <template v-if="col.name === 'attachments'">
-            <q-btn flat color="primary" label="查看申请材料" @click="checkAttachment(props.row)" />
+            <q-btn flat color="primary" label="查看申请材料" @click="checkAttachment(props.row.attachments, props.row['user.id'], 'desktop-request')" />
           </template>
           <template v-else-if="col.name === 'action'">
             <q-btn label="通过" color="green" size="sm" mr-2 @click="approve(props.row['user.id'])" />

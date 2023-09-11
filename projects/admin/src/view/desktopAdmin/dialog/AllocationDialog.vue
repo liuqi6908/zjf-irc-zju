@@ -19,10 +19,12 @@ const tableRef = ref<QTable>()
 
 const cols: QTableProps['columns'] = reactive([
   { name: 'account', field: 'user.account', label: '用户' },
-  { name: 'name', field: 'user.verification.name', label: '姓名' },
   { name: 'email', field: 'user.email', label: '邮箱' },
+  { name: 'name', field: 'user.verification.name', label: '姓名' },
   { name: 'school', field: 'user.verification.school', label: '学校' },
   { name: 'college', field: 'user.verification.college', label: '学院' },
+  { name: 'number', field: 'user.verification.number', label: '学号' },
+  { name: 'idCard', field: 'user.verification.idCard', label: '身份证' },
   { name: 'identify', field: 'user.verification.identify', label: '身份' },
   { name: 'dataRoleName', field: 'user.dataRoleName', label: '角色' },
   { name: 'roleName', field: 'user.roleName', label: '权限' },
@@ -131,9 +133,9 @@ async function allocationDesktop() {
 <template>
   <QDialog v-model="dialog" class="allocation-dialog">
     <QCard p-6 relative w-50vw min-w-100 class="max-w-inherit!">
-      <header text-lg mb-5 relative>
+      <header relative text-lg mb-5>
         分配云桌面
-        <q-btn v-close-popup size="10px" icon="fas fa-times" absolute top-0 right-0 flat px-1 />
+        <q-btn v-close-popup size="10px" icon="fas fa-times" absolute flat top-0 right-0 px-1 />
       </header>
       <QTable
         ref="tableRef"
@@ -143,7 +145,7 @@ async function allocationDesktop() {
         :columns="cols"
         :rows="rows"
         :loading="tableLoading"
-        :rows-per-page-options="[50, 60, 70]"
+        :rows-per-page-options="rowsPerPageOptions"
         selection="single"
         row-key="userId"
         @request="queryData"

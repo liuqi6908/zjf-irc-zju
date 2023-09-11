@@ -193,7 +193,7 @@ async function allocationDesktop(id: string) {
     :columns="cols"
     :rows="rows"
     :loading="loading"
-    :rows-per-page-options="[50, 60, 70]"
+    :rows-per-page-options="rowsPerPageOptions"
     @request="queryData"
   >
     <template #top-right>
