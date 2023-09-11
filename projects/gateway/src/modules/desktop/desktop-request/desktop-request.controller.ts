@@ -10,6 +10,7 @@ import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common'
 import { DesktopQueueHistoryStatus, DesktopQueueStatus, ErrorCode, PermissionType } from 'zjf-types'
 
+import { DesktopService } from '../desktop.service'
 import { DesktopQueueHistoryService } from '../desktop-queue-history/desktop-queue-history.service'
 import { DesktopRequestService } from './desktop-request.service'
 import { GetOwnDesktopReqResDto } from './dto/get-own-desktop-req.res.dto'
@@ -20,6 +21,7 @@ import { CreateDesktopRequestBodyDto } from './dto/create-desktop-req.body.dto'
 @Controller('desktop-request')
 export class DesktopRequestController {
   constructor(
+    private readonly _desktopSrv: DesktopService,
     private readonly _desktopReqSrv: DesktopRequestService,
     private readonly _desktopReqHistorySrv: DesktopQueueHistoryService,
   ) {}
@@ -91,11 +93,19 @@ export class DesktopRequestController {
         where: { userId: user.id, status: DesktopQueueHistoryStatus.Rejected },
         order: { createdAt: 'DESC' },
       }) ?? null
-    return {
-      queue,
-      queueLength,
-      lastRejected,
-    }
+    const lastExpired = queue
+      ? null
+      : await this._desktopSrv.repo().findOne({
+        where: { lastUserId: user.id },
+        order: { expiredAt: 'DESC' },
+      }) ?? null
+
+    const res: any = { queue, queueLength }
+    if (lastRejected.createdAt > lastExpired.expiredAt)
+      res.lastRejected = lastRejected
+    else
+      res.lastExpired = lastExpired
+    return res
   }
 
   @ApiOperation({ summary: '查询云桌面申请' })

@@ -1,3 +1,4 @@
+import { Desktop } from 'src/entities/desktop'
 import { SuccessDto } from 'src/dto/success.dto'
 import { DesktopQueue } from 'src/entities/desktop-queue'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -17,11 +18,17 @@ export class GetOwnDesktopReqResData implements IGetOwnDesktopReqResData {
   })
   queueLength?: number
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: '当前用户最近一次被驳回的申请信息，当 `queue` 存在时，该字段不存在',
     type: () => DesktopQueueHistory,
   })
-  lastRejected: DesktopQueueHistory
+  lastRejected?: DesktopQueueHistory
+
+  @ApiPropertyOptional({
+    description: '用户上一次过期的云桌面，与 `lastRejected` 二选一',
+    type: () => Desktop,
+  })
+  lastExpired?: Desktop
 }
 
 export class GetOwnDesktopReqResDto
