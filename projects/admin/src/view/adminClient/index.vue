@@ -154,6 +154,15 @@ function approveAdmin(row: any, root: string) {
       background-color: white;
       z-index: 1;
     }
+    thead, tbody {
+      > tr {
+        th:last-child, td:last-child {
+          position: sticky;
+          right: 0;
+          background-color: white;
+        }
+      }
+    }
   }
 }
 </style>
