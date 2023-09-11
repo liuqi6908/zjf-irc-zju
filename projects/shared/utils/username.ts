@@ -6,5 +6,5 @@ export function getUsername(user?: IUser) {
   if (nameInVerification) 
     return nameInVerification;
 
-  return user?.nickname || user?.account || user?.email || "未知用户"
+  return user?.nickname || user?.account || user?.email
 }

@@ -59,6 +59,7 @@ $http.interceptors.response.use(
       // showNotify('登录过期，请重新登录')
       // ctx.router?.replace({ path: 'auth/login' })
       localStorage.removeItem(AUTH_TOKEN_KEY)
+      userInfo.value = undefined
       return Promise.reject(error)
     }
 

@@ -1,6 +1,6 @@
 import { useStorage } from '@vueuse/core'
 import { VerificationStatus } from 'zjf-types'
-import type { IUser, IVerificationHistory } from 'zjf-types'
+import type { IVerificationHistory } from 'zjf-types'
 import { encryptPasswordInHttp } from 'zjf-utils'
 import { AUTH_TOKEN_KEY } from 'shared/constants'
 import { getProfile } from '~/api/auth/getProfile'
@@ -9,9 +9,7 @@ import { logout } from '~/api/auth/logout'
 import { register } from '~/api/auth/register'
 
 /** 用户token */
-const authToken = useStorage(AUTH_TOKEN_KEY, '')
-/** 用户信息 */
-const userInfo = ref<IUser>()
+export const authToken = useStorage(AUTH_TOKEN_KEY, '')
 /** 认证信息 */
 const latestVerifiy = ref<IVerificationHistory>()
 /** 是否云桌面 */
@@ -70,7 +68,7 @@ export function useUser($router = useRouter()) {
   }
 
   /** 用户是否登录 */
-  const isLogin = computed(() => Boolean(authToken.value))
+  const isLogin = computed(() => !!userInfo.value)
 
   /** 用户是否通过认证 */
   const isVerify = computed(() => userInfo.value?.verification?.status === VerificationStatus.APPROVED)
