@@ -127,7 +127,7 @@ function exportTable() {
       :columns="columns"
       :rows="rows"
       :loading="loading"
-      :rows-per-page-options="[50, 60, 70, 100]"
+      :rows-per-page-options="rowsPerPageOptions"
       :filter="filter"
       @request="queryLogData"
     >

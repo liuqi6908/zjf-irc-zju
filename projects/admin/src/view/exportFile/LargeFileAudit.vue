@@ -68,7 +68,9 @@ async function queryData(props: any) {
         },
       ],
       relations: {
-        founder: true,
+        founder: {
+          verification: true,
+        },
         desktop: true,
       },
     }
@@ -198,7 +200,7 @@ function reject(id: string) {
     :columns="columns"
     :rows="rows"
     :loading="loading"
-    :rows-per-page-options="[50, 60, 70]"
+    :rows-per-page-options="rowsPerPageOptions"
     @request="queryData"
   >
     <template #body="prop">

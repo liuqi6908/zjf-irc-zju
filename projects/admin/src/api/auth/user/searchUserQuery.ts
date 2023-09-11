@@ -1,8 +1,7 @@
-import type { IQueryDto, IUser } from 'zjf-types'
-import { useRequest } from '~/composables/request'
+import type { IPaginatedResData, IQueryDto, IUser } from 'zjf-types'
 
 const { $post } = useRequest()
 
-export function searchUserQuery(options: IQueryDto<IUser>) {
-  return $post('user/query', options)
+export function searchUserQuery(body: IQueryDto<IUser>) {
+  return $post<IPaginatedResData<IUser>>('/user/query', body)
 }

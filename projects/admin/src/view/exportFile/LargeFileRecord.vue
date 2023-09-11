@@ -30,7 +30,7 @@ const columns: QTableProps['columns'] = reactive([
   { name: 'rejectReason', field: 'rejectReason', label: '驳回原因' },
   { name: 'handleAt', field: 'handleAt', label: '审核时间' },
   { name: 'handlerAccount', field: 'handler.account', label: '审核人账号' },
-  { name: 'handlerNickname', field: 'handler.nickname', label: '审核人姓名' },
+  { name: 'handlerName', field: 'handler.verification.name', label: '审核人姓名' },
 ])
 const rows: Array<any> = reactive([])
 const pagination = ref({
@@ -113,9 +113,13 @@ async function queryData(props: any) {
         },
       ],
       relations: {
-        founder: true,
+        founder: {
+          verification: true,
+        },
         desktop: true,
-        handler: true,
+        handler: {
+          verification: true,
+        },
       },
     }
     const { total, data } = await queryExportLg(body) as QueryLg
@@ -179,7 +183,7 @@ function download(name: string, id: string) {
     :columns="columns"
     :rows="rows"
     :loading="loading"
-    :rows-per-page-options="[50, 60, 70]"
+    :rows-per-page-options="rowsPerPageOptions"
     @request="queryData"
   >
     <template #body="prop">
