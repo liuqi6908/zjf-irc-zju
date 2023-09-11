@@ -1,3 +1,6 @@
+import { Dialog } from 'quasar'
+import { getUrlByToken } from '~/api/file/getUrl'
+
 /**
  * 展开json对象
  * @param json
@@ -34,4 +37,30 @@ export function downloadFile(stream: string, filename: string) {
   link.click()
   // 清理创建的对象 URL
   URL.revokeObjectURL(url)
+}
+
+/**
+ * 查看证明材料
+ * @param images
+ * @param id
+ * @param url
+ */
+export function checkAttachment(images: Array<string>, id: string, url = 'verify') {
+  let message = ''
+
+  if (images && images.length) {
+    images.forEach((filename: string) => {
+      const src = getUrlByToken(`file/private/${url}/${id}/${filename}`)
+      message += `<img src="${src}"><a href="${src}" download>点击下载文件</a><br/>`
+    })
+  }
+  else {
+    message = '当前用户暂无认证材料'
+  }
+
+  Dialog.create({
+    title: '查看认证材料',
+    message,
+    html: true,
+  })
 }

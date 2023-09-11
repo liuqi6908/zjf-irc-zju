@@ -6,7 +6,6 @@ import type { IDesktop, IQueryConfig } from 'zjf-types'
 import moment from 'moment'
 import { getDesktopQuery } from '~/api/desktopRequest/getdesktopQuery'
 import type { QueryDesktop } from '~/pages/desktopAdmin/index.vue'
-import { getUrlByToken } from '~/api/file/getUrl'
 import { approveDesktop } from '~/api/desktopRequest/approveDesktop'
 import { rejectDesktop } from '~/api/desktopRequest/rejectDesktop'
 
@@ -104,31 +103,6 @@ async function queryData(props: any) {
 }
 
 /**
- * 查看申请材料
- * @param row
- */
-function checkAttachment(row: any) {
-  const images = row.attachments
-  let message = ''
-
-  if (images && images.length) {
-    images.forEach((filename: string) => {
-      const src = getUrlByToken(`file/private/desktop-request/${row['user.id']}/${filename}`)
-      message += `<img src="${src}"><a href="${src}" download>点击下载文件</a><br/>`
-    })
-  }
-  else {
-    message = '当前用户暂无申请材料'
-  }
-
-  $q.dialog({
-    title: '查看申请材料',
-    message,
-    html: true,
-  })
-}
-
-/**
  * 通过申请
  * @param id
  */
@@ -215,7 +189,7 @@ function reject(id: string) {
       <q-tr :props="props">
         <q-td v-for="col in cols" :key="col.name">
           <template v-if="col.name === 'attachments'">
-            <q-btn flat color="primary" label="查看申请材料" @click="checkAttachment(props.row)" />
+            <q-btn flat color="primary" label="查看申请材料" @click="checkAttachment(props.row.attachments, props.row['user.id'], 'desktop-request')" />
           </template>
           <template v-else-if="col.name === 'action'">
             <q-btn label="通过" color="green" size="sm" mr-2 @click="approve(props.row['user.id'])" />
