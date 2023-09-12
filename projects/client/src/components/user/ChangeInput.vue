@@ -1,18 +1,18 @@
 <script setup lang="ts">
 interface Props {
   id: string
-  userCode: string
-  edit: string
-  smsCode: string
-  bizId: string
+  edit?: string
+  userCode?: string
+  smsCode?: string
+  bizId?: string
   label?: string
   captions?: string
   action?: string
 }
 defineProps<Props>()
-const emits = defineEmits(['update:userCode', 'update:edit', 'update:confirm', 'update:bizId'])
+defineEmits(['update:userCode', 'update:edit', 'update:confirm', 'update:bizId', 'update:smsCode'])
 const { userInfo } = useUser()
-const editDialog = ref(false)
+const dialog = ref(false)
 </script>
 
 <template>
@@ -35,11 +35,11 @@ const editDialog = ref(false)
         {{ userCode }}
       </div>
       <div min-w-20>
-        <Btn v-if="label !== '用户名'" outline label="修改" @click="editDialog = true" />
+        <Btn v-if="label !== '用户名'" outline label="修改" :disable="label === '密码' && !userInfo?.email" @click="dialog = true" />
       </div>
     </div>
 
-    <ZDialog v-model="editDialog" :title="`修改${label}`" :footer="true" @ok="() => $emit('update:confirm', id)">
+    <ZDialog v-model="dialog" :title="`修改${label}`" :footer="true" @ok="() => $emit('update:confirm', id)">
       <div mb2 font-bold text-grey-8>
         {{ label }}
       </div>
