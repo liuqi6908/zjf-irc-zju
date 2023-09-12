@@ -31,7 +31,7 @@ const cpuList = reactive({
   },
 })
 
-const { pause, resume } = useIntervalFn(() => fetchDEsktopCpu(), 10000)
+const { pause, resume } = useIntervalFn(() => fetchDEsktopCpu(), 30000)
 
 async function fetchDEsktopCpu(uuid?: string) {
   try {

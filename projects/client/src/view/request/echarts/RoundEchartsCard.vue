@@ -80,6 +80,7 @@ watch(() => props.value,
         <Echarts
           class="chart"
           :option="options"
+          :update-options="{ notMerge: false }"
           autoresize h-60 w-40
         />
       </client-only>

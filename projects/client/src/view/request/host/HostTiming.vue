@@ -48,7 +48,7 @@ const data = reactive({
   },
 })
 
-const { pause, resume } = useIntervalFn(() => pollApi(), 10000)
+const { pause, resume } = useIntervalFn(() => pollApi(), 30000)
 
 /**
  * 调用接口
