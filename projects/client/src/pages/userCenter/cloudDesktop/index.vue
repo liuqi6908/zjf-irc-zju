@@ -36,7 +36,7 @@ const hidePassword = ref(true)
 const desktopTable = computed(() => {
   return [
     { label: '云桌面账号', value: desktopInfo.value?.account },
-    { label: '云桌面密码', value: hidePassword.value ? '********' : desktopInfo.value?.password, hide: true },
+    { label: '云桌面密码', value: desktopInfo.value?.password, hide: true },
     { label: '云桌面访问地址', value: desktopInfo.value?.accessUrl },
   ]
 })
@@ -231,7 +231,7 @@ function copyText(text: string) {
         >
           <div overflow-hidden bg-grey-2 px-6 text-ellipsis whitespace-nowrap py-3 v-text="item.label" />
           <div flex justify-between px-6 py-3>
-            <div w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap v-text="item.value" />
+            <div w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap v-text="item.hide && hidePassword ? '********' : item.value" />
             <div flex gap-2 text-grey-4>
               <q-btn v-if="item.hide" :icon="`fas fa-${hidePassword ? 'eye-slash' : 'eye'}`" flat size="sm" px-2 @click="hidePassword = !hidePassword" />
               <q-btn icon="fas fa-clone" flat size="sm" px-2 @click="copyText(item.value || '')" />
