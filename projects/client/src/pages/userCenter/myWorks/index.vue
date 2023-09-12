@@ -24,7 +24,7 @@ const editInfo = reactive({
   id: '',
   title: '',
   author: '',
-  file: null,
+  file: null as any,
   read: false,
 })
 
@@ -95,6 +95,7 @@ async function confirmWork() {
       succNotify('修改作品')
   }
 
+  resetForm()
   await fetchSearchMyWorks()
 }
 
@@ -114,10 +115,13 @@ async function deleteRow(id: string) {
   })
 }
 
-function resetWork(id: string) {
+function resetWork(row: any) {
+  editInfo.title = row.title
+  editInfo.author = row.author
+
   uploadDialog.value = true
   editType.value = 'upsert'
-  editInfo.id = id
+  editInfo.id = row.id
 }
 
 function succNotify(message: string) {
@@ -125,6 +129,13 @@ function succNotify(message: string) {
     message: `${message}成功`,
     type: 'success',
   })
+}
+
+function resetForm() {
+  editInfo.id = ''
+  editInfo.title = ''
+  editInfo.author = ''
+  editInfo.file = null
 }
 </script>
 
@@ -151,7 +162,7 @@ function succNotify(message: string) {
 
       <BaseTable v-slot="{ props, col }" :loading="loading" :cols="workCol" :rows="rows">
         <div v-if="col === 'operation'" flex="~ row justify-center">
-          <Btn mr-4 min-w-22 outline label="重新上传" @click="resetWork(props.row.id)" />
+          <Btn mr-4 min-w-22 outline label="重新上传" @click="resetWork(props.row)" />
           <Btn min-w-22 text-alert-error outline label="删除" bg-color="alert-error" @click="deleteRow(props.row.id)" />
         </div>
         <div v-else>
@@ -181,7 +192,12 @@ function succNotify(message: string) {
       </div>
     </div>
 
-    <ZDialog v-model="uploadDialog" title="添加作品" footer :disable-confirm="!editInfo.read" @ok="confirmWork">
+    <ZDialog
+      v-model="uploadDialog"
+      title="添加作品" footer :disable-confirm="!editInfo.read"
+      @update:model-value="(val) => !val && resetForm()"
+      @ok="confirmWork"
+    >
       <div bg-grey-1 flex="~ col gap-2">
         <span font-500 text-grey-8>题目</span>
         <UserCodeInput v-model:user-code="editInfo.title" label="输入题目" :dark="false" />
