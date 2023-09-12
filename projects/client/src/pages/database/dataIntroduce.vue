@@ -98,7 +98,7 @@ async function downloadData() {
 <template>
   <div flex="~ col items-center" min-h-4xl bg-grey-1>
     <div w-limited-1>
-      <header flex="~ row" mb-10 w-full items-center py6 font-600 gap4>
+      <header flex="~ row" mb-10 w-full items-center font-600 py6 gap4>
         <q-btn flat dense h6 min-h6 w6 p0 text-grey-6 @click="() => $router.back()">
           <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M6 12L0 6L6 0L7.4 1.4L2.8 6L7.4 10.6L6 12Z" fill="#6E7686" />
@@ -137,7 +137,7 @@ async function downloadData() {
       <div text="primary-1 left" mt-6 text-4 v-text="`引用规范：${route.query.reference || '暂无引用规范'}`" />
     </div>
 
-    <div flex="~ row" gap-5 my-10>
+    <div flex="~ col" my-10 gap-4 items-center>
       <router-link v-if="!isDesktop && !isPurchased" :to="{ path: '/request' }">
         <q-btn
           color="primary"
@@ -146,7 +146,10 @@ async function downloadData() {
           <span text-4 font-600>数据申请使用</span>
         </q-btn>
       </router-link>
-      <Btn1 v-else-if="!isPurchased" min-w-38 h-12 label="数据下载" :disable="!isLogin" @click="downloadData()" />
+      <template v-else-if="!isPurchased">
+        <Btn1 w-36 label="数据下载" :disable="!isLogin" :color="!isLogin ? 'grey-5' : undefined" @click="downloadData()" />
+        <div v-if="!isLogin" text="base grey-5" v-text="'您尚未登录请登录后重试'" />
+      </template>
       <q-btn
         v-if="isPurchased"
         label="建议采购"
