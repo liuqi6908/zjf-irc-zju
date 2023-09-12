@@ -1,6 +1,13 @@
 import type { QTableProps } from 'quasar'
 
-const rowsPerPageOptions = [10, 50, 100, 300, 500, 1000]
+const rowsPerPageOptions = [50, 100, 300, 500, 1000]
+function tablePagination() {
+  return ref({
+    page: 1,
+    rowsPerPage: 50,
+    rowsNumber: 0,
+  })
+}
 
 /** 用户表格字段 */
 const userTableCols: QTableProps['columns'] = [
@@ -41,6 +48,7 @@ const verifyTableCols: QTableProps['columns'] = [
 
 export {
   rowsPerPageOptions,
+  tablePagination,
   userTableCols,
   verifyTableCols,
 }

@@ -33,11 +33,7 @@ const cols: QTableProps['columns'] = reactive([
   { name: 'createdAt', field: 'createdAt', label: '申请时间' },
 ])
 const rows: Array<any> = reactive([])
-const pagination = ref({
-  page: 1,
-  rowsPerPage: 10,
-  rowsNumber: 0,
-})
+const pagination = tablePagination()
 const selected = ref()
 
 const dialog = ref(true)

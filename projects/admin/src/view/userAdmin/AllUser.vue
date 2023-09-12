@@ -9,11 +9,7 @@ const tableRef = ref<QTable>()
 
 const cols = userTableCols?.filter((_, i) => i !== userTableCols!.length - 1)
 const rows: Array<any> = reactive([])
-const pagination = ref({
-  page: 1,
-  rowsPerPage: 10,
-  rowsNumber: 0,
-})
+const pagination = tablePagination()
 const loading = ref(true)
 const filter = ref('')
 

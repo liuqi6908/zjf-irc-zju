@@ -38,11 +38,7 @@ const cols: QTableProps['columns'] = reactive([
   { name: 'action', field: 'action', label: '操作' },
 ])
 const rows: Array<any> = reactive([])
-const pagination = ref({
-  page: 1,
-  rowsPerPage: 10,
-  rowsNumber: 0,
-})
+const pagination = tablePagination()
 const loading = ref(true)
 
 onMounted(async () => {
