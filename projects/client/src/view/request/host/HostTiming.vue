@@ -32,7 +32,7 @@ const data = reactive({
   },
   oi: {
     title: '磁盘',
-    unit: 'KB/S',
+    unit: 'KB/s',
     value: [
       {
         time: [],
@@ -78,6 +78,15 @@ async function pollApi(uuid?: string) {
       oi.value[1].value = processData(diskRead, 'value')
       oi.value[1].time = processData(diskRead, 'time')
     }
+    const max = Math.max(...oi.value[0].value, ...oi.value[1].value)
+    if (max > 1024 * 1024 * 1024)
+      oi.unit = 'GB/s'
+    else if (max > 1024 * 1024)
+      oi.unit = 'MB/s'
+    else if (max > 1024)
+      oi.unit = 'KB/s'
+    else
+      oi.unit = 'B/s'
   }
   catch (_) {
     pause()
