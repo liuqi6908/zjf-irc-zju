@@ -4,6 +4,7 @@ import { FileExportLargeStatus, PAGINATION_SIZE_MAX } from 'zjf-types'
 import type { IFileExportLarge, IFileExportSmall, IQueryDto } from 'zjf-types'
 import moment from 'moment'
 import { useQuasar } from 'quasar'
+import type { QTableProps } from 'quasar'
 
 import HistoryStatus from './history/HistoryStatus.vue'
 import { getOwnExportLg } from '~/api/exportLg/getOwnExportLg'
@@ -30,7 +31,7 @@ const baseOpts: IQueryDto<IFileExportSmall> = {
   },
 }
 
-const historyCol = [
+const historyCol: QTableProps['columns'] = [
   {
     name: 'fileName',
     label: '文件名',
@@ -248,7 +249,11 @@ watch(select, (selectOptions) => {
       </div>
     </header>
 
-    <BaseTable v-slot="{ col, props }" :cols="historyCol" :rows="rows">
+    <BaseTable
+      v-slot="{ col, props }"
+      :cols="historyCol.filter(v => model === 'big' || !['status', 'rejectReason'].includes(v.name))"
+      :rows="rows"
+    >
       <div v-if="col === 'status'" flex-center>
         <HistoryStatus v-if="model === 'small'" :status="FileExportLargeStatus.Approved" />
         <HistoryStatus v-else :status="props.row[`${col}`]" />
