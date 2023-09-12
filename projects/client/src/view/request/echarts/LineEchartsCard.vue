@@ -37,9 +37,6 @@ const baseOption = {
         type: 'dashed',
       },
     },
-    axisLabel: {
-      formatter: `{value} ${props.unit}`,
-    },
   },
   series: [],
 }
@@ -59,9 +56,11 @@ function timestampToTime(timestamp: number) {
  * @param color
  */
 function formatterSeries(data: number[], color: string) {
-  if (props.unit.toLowerCase().includes('kb')) {
+  const index = ['kb', 'mb', 'gb'].findIndex(v => props.unit.toLowerCase().includes(v))
+
+  if (index >= 0) {
     data = data.map(item =>
-      Number(item) / 1024,
+      Number(item) / 1024 ** (index + 1),
     )
   }
 
@@ -73,7 +72,7 @@ function formatterSeries(data: number[], color: string) {
     emphasis: {
       focus: 'series',
     },
-    name: props.legend ? data[data.length - 1].toString() : '',
+    name: props.legend ? data[data.length - 1]?.toString() : '',
     data,
   }
 }
@@ -118,9 +117,6 @@ function formatterLegend(data: any[]) {
     itemWidth: 10,
     itemHeight: 10,
     left: 0,
-    itemStyle: {
-      borderType: 'solid',
-    },
   }
 }
 
@@ -129,7 +125,7 @@ watch(
   (newVal) => {
     options.value = cloneDeep(baseOption)
     if (newVal) {
-      const { xAxis, series } = options.value
+      const { xAxis, yAxis, series } = options.value
 
       const timeArr = newVal[0].time.map(item => timestampToTime(item))
       /** 坐标轴上显示4个x的刻度值 */
@@ -144,6 +140,8 @@ watch(
       xAxis.axisLabel = {
         interval: interval - 1,
       }
+
+      yAxis.axisLabel = { formatter: `{value} ${props.unit}` }
 
       series.push(...newVal.map((item, index) => {
         const color = index === 0 ? 'rgba(2, 92, 185, 0.12)' : 'rgba(249, 158, 52, 0.12)'
@@ -168,7 +166,7 @@ watch(
 
 <template>
   <div bg-grey-1 p-6>
-    <header mb-4 text-grey-8 title-4>
+    <header mb-4 text="grey-8 left" title-4>
       {{ title }}
     </header>
     <client-only>

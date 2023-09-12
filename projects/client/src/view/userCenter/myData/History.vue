@@ -4,6 +4,7 @@ import { FileExportLargeStatus, PAGINATION_SIZE_MAX } from 'zjf-types'
 import type { IFileExportLarge, IFileExportSmall, IQueryDto } from 'zjf-types'
 import moment from 'moment'
 import { useQuasar } from 'quasar'
+import type { QTableProps } from 'quasar'
 
 import HistoryStatus from './history/HistoryStatus.vue'
 import { getOwnExportLg } from '~/api/exportLg/getOwnExportLg'
@@ -24,13 +25,18 @@ const baseOpts: IQueryDto<IFileExportSmall> = {
     pageSize: PAGINATION_SIZE_MAX,
   },
   filters: [],
-  sort: [],
+  sort: [
+    {
+      field: 'createdAt',
+      order: 'DESC',
+    },
+  ],
   relations: {
     founder: { verification: true },
   },
 }
 
-const historyCol = [
+const historyCol: QTableProps['columns'] = [
   {
     name: 'fileName',
     label: '文件名',
@@ -248,10 +254,13 @@ watch(select, (selectOptions) => {
       </div>
     </header>
 
-    <BaseTable v-slot="{ col, props }" :cols="historyCol" :rows="rows">
+    <BaseTable
+      v-slot="{ col, props }"
+      :cols="historyCol.filter(v => model === 'big' || !['status', 'rejectReason'].includes(v.name))"
+      :rows="rows"
+    >
       <div v-if="col === 'status'" flex-center>
-        <HistoryStatus v-if="model === 'small'" :status="FileExportLargeStatus.Approved" />
-        <HistoryStatus v-else :status="props.row[`${col}`]" />
+        <HistoryStatus :status="props.row[`${col}`]" />
       </div>
 
       <div v-else-if="col === 'createdAt'">
@@ -260,7 +269,7 @@ watch(select, (selectOptions) => {
 
       <div v-else-if="col === 'rejectReason'">
         <div v-if="props.row[`${col}`]">
-          <div text-primary-1 @click="fetchRejectReason(props.row[`${col}`])">
+          <div text-primary-1 cursor-pointer @click="fetchRejectReason(props.row[`${col}`])">
             点击查看
           </div>
         </div>
