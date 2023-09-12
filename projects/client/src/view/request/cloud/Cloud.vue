@@ -8,16 +8,28 @@ interface Props {
 const props = defineProps<Props>()
 
 const data = reactive({
-  cpu: [
-    { value: [], time: [], label: '使用率：' },
-  ],
-  network: [
-    { value: [], time: [], label: '上行：' },
-    { value: [], time: [], label: '下行：' },
-  ],
-  disk: [
-    { value: [], time: [], label: '占用率：' },
-  ],
+  cpu: {
+    title: 'CPU',
+    unit: '%',
+    value: [
+      { value: [], time: [], label: '使用率：' },
+    ],
+  },
+  network: {
+    title: '网卡读取速率',
+    unit: 'KB/s',
+    value: [
+      { value: [], time: [], label: '上行：' },
+      { value: [], time: [], label: '下行：' },
+    ],
+  },
+  disk: {
+    title: '磁盘',
+    unit: '%',
+    value: [
+      { value: [], time: [], label: '占用率：' },
+    ],
+  },
 })
 
 /** 定时器的引用 */
@@ -29,25 +41,36 @@ async function fetchDesktopVm() {
     if (!res)
       return pause()
     let { CPU, Disk, NetworkIn, NetworkOut } = res
+    const { cpu, network, disk } = data
     if (!CPU || !CPU.length)
       CPU = defaultData()
-    data.cpu[0].value = CPU.map((item: any) => Number(item.value) * 100)
-    data.cpu[0].time = CPU.map((item: any) => item.time)
+    cpu.value[0].value = CPU.map((item: any) => Number(item.value) * 100)
+    cpu.value[0].time = CPU.map((item: any) => item.time)
 
     if (!Disk || !Disk.length)
       Disk = defaultData()
-    data.disk[0].value = Disk.map((item: any) => Number(item.value) * 100)
-    data.disk[0].time = Disk.map((item: any) => item.time)
+    disk.value[0].value = Disk.map((item: any) => Number(item.value) * 100)
+    disk.value[0].time = Disk.map((item: any) => item.time)
 
     if (!NetworkIn || !NetworkIn.length)
       NetworkIn = defaultData()
-    data.network[0].value = NetworkIn.map((item: any) => item.value)
-    data.network[0].time = NetworkIn.map((item: any) => item.time)
+    network.value[0].value = NetworkIn.map((item: any) => item.value)
+    network.value[0].time = NetworkIn.map((item: any) => item.time)
 
     if (!NetworkOut || !NetworkOut.length)
       NetworkOut = defaultData()
-    data.network[1].value = NetworkOut.map((item: any) => item.value)
-    data.network[1].time = NetworkOut.map((item: any) => item.time)
+    network.value[1].value = NetworkOut.map((item: any) => item.value)
+    network.value[1].time = NetworkOut.map((item: any) => item.time)
+
+    const max = Math.max(...network.value[0].value, ...network.value[1].value)
+    if (max > 1024 * 1024 * 1024)
+      network.unit = 'GB/s'
+    else if (max > 1024 * 1024)
+      network.unit = 'MB/s'
+    else if (max > 1024)
+      network.unit = 'KB/s'
+    else
+      network.unit = 'B/s'
   }
   catch (_) {
     pause()
@@ -68,8 +91,13 @@ watch(() => props.uuid, async (desktopId) => {
 
 <template>
   <div flex="~ col">
-    <LineEchartsCard :data="data.cpu" title="CPU" unit="%" legend />
-    <LineEchartsCard :data="data.network" title="网卡读取速率" unit="KB/S" legend />
-    <LineEchartsCard :data="data.disk" title="磁盘" unit="%" legend />
+    <LineEchartsCard
+      v-for="(item, index) in data"
+      :key="index"
+      :data="item.value"
+      :title="item.title"
+      :unit="item.unit"
+      legend
+    />
   </div>
 </template>
