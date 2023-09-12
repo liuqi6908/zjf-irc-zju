@@ -43,7 +43,7 @@ const baseOption = {
   },
   series: [],
 }
-const options = shallowRef()
+const options = ref()
 
 /**
  * 时间戳转时间
@@ -172,7 +172,12 @@ watch(
       {{ title }}
     </header>
     <client-only>
-      <Echarts class="chart" :option="options" autofill h-80 autoresize />
+      <Echarts
+        class="chart"
+        :option="options"
+        :update-options="{ notMerge: false }"
+        autofill h-80 autoresize
+      />
     </client-only>
   </div>
 </template>

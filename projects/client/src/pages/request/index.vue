@@ -65,8 +65,8 @@ async function getRequestInfo() {
   try {
     const res = await getOwnDesktopQuery()
     if (res) {
-      const { lastRejected, queue, queueLength } = res
-      requestInfo.status = queue?.status || lastRejected?.status || ''
+      const { lastExpired, lastRejected, queue, queueLength } = res
+      requestInfo.status = queue?.status || lastRejected?.status || (lastExpired?.id ? DesktopQueueHistoryStatus.Expired : '')
       requestInfo.queueLength = queueLength || 0
       requestInfo.rejectReason = lastRejected?.rejectReason
     }
