@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { validateEmail, validatePassword } from 'zjf-utils'
+
 interface Props {
   id: string
   edit?: string
@@ -9,10 +11,31 @@ interface Props {
   captions?: string
   action?: string
 }
-defineProps<Props>()
+const props = defineProps<Props>()
 defineEmits(['update:userCode', 'update:edit', 'update:confirm', 'update:bizId', 'update:smsCode'])
 const { userInfo } = useUser()
 const dialog = ref(false)
+
+/**
+ * 校验邮箱
+ * @param val
+ */
+function emailRules(val = '') {
+  return validateEmail(val) || true
+}
+
+/**
+ * 校验密码
+ * @param val
+ */
+function passwordRules(val = '') {
+  return validatePassword(val) || true
+}
+
+const disable = computed(() => {
+  const { label, edit, smsCode, bizId } = props
+  return (label === '邮箱' ? emailRules(edit) : passwordRules(edit)) !== true || !smsCode || !bizId
+})
 </script>
 
 <template>
@@ -39,7 +62,13 @@ const dialog = ref(false)
       </div>
     </div>
 
-    <ZDialog v-model="dialog" :title="`修改${label}`" :footer="true" @ok="() => $emit('update:confirm', id)">
+    <ZDialog
+      v-model="dialog"
+      :title="`修改${label}`"
+      :footer="true"
+      :disable-confirm="disable"
+      @ok="() => $emit('update:confirm', id)"
+    >
       <div mb2 font-bold text-grey-8>
         {{ label }}
       </div>
@@ -47,6 +76,8 @@ const dialog = ref(false)
       <UserCodeInput
         :dark="false"
         :user-code="edit"
+        :label="`请输入${label}`"
+        :rules="[(val: string) => label === '邮箱' ? emailRules(val) : passwordRules(val)]"
         @update:user-code="(v) => $emit('update:edit', v)"
       />
 

@@ -196,6 +196,7 @@ onBeforeMount(() => {
           :captions="b.caption"
           class="col-grow"
           :label="b.label"
+          :biz-id="b.bizId"
           @update:sms-code="(val) => b.smsCode = val"
           @update:biz-id="(val) => b.bizId = val"
           @update:confirm="confirmEdit(b.id)"
