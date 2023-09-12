@@ -25,7 +25,12 @@ const baseOpts: IQueryDto<IFileExportSmall> = {
     pageSize: PAGINATION_SIZE_MAX,
   },
   filters: [],
-  sort: [],
+  sort: [
+    {
+      field: 'createdAt',
+      order: 'DESC',
+    },
+  ],
   relations: {
     founder: { verification: true },
   },
@@ -255,8 +260,7 @@ watch(select, (selectOptions) => {
       :rows="rows"
     >
       <div v-if="col === 'status'" flex-center>
-        <HistoryStatus v-if="model === 'small'" :status="FileExportLargeStatus.Approved" />
-        <HistoryStatus v-else :status="props.row[`${col}`]" />
+        <HistoryStatus :status="props.row[`${col}`]" />
       </div>
 
       <div v-else-if="col === 'createdAt'">
@@ -265,7 +269,7 @@ watch(select, (selectOptions) => {
 
       <div v-else-if="col === 'rejectReason'">
         <div v-if="props.row[`${col}`]">
-          <div text-primary-1 @click="fetchRejectReason(props.row[`${col}`])">
+          <div text-primary-1 cursor-pointer @click="fetchRejectReason(props.row[`${col}`])">
             点击查看
           </div>
         </div>
