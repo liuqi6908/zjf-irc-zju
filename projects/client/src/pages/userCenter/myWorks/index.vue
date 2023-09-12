@@ -133,7 +133,6 @@ function succNotify(message: string) {
     <header flex="~ row" mb-8>
       <client-only>
         <q-btn
-
           flat square h12 bg-primary-1 text-white
           @click="uploadDialog = true, editType = 'add'"
         >
@@ -159,45 +158,6 @@ function succNotify(message: string) {
           {{ props.row[`${col}`] }}
         </div>
       </BaseTable>
-
-      <ZDialog v-model="uploadDialog" title="添加作品" footer :disable-confirm="!editInfo.read" @ok="confirmWork">
-        <div bg-grey-1 flex="~ col gap-2">
-          <span font-500 text-grey-8>题目</span>
-          <UserCodeInput v-model:user-code="editInfo.title" label="输入题目" :dark="false" />
-
-          <span font-500 text-grey-8>作者</span>
-          <UserCodeInput v-model:user-code="editInfo.author" label="输入作者" :dark="false" />
-
-          <div flex="~ col" my-5>
-            <div flex="~ row justify-between items-center">
-              <span text-grey-8>上传资料（必须为PDF格式）</span>
-              <UploadFile v-model="editInfo.file" label="选择文件" accept-file=".pdf" />
-            </div>
-
-            <div text-grey-8>
-              {{ editInfo.file?.name }}
-            </div>
-          </div>
-
-          <div flex="~ row">
-            <!-- checked-icon="i-material-symbols:check-circle"
-              unchecked-icon="i-material-symbols:lens-outline" -->
-            <q-checkbox
-              v-model="editInfo.read"
-            />
-            <div>
-              <span text-grey-5>我已阅读并同意</span>
-              <RouterLink cursor-pointer text-primary-1 :to="{ path: '/protocol/private' }">
-                《「社科大数据平台」隐私政策》
-              </RouterLink>
-
-              <RouterLink cursor-pointer text-primary-1 :to="{ path: '/protocol/use' }">
-                《「社科大数据平台」用户使用协议》
-              </RouterLink>
-            </div>
-          </div>
-        </div>
-      </zdialog>
     </div>
 
     <div v-else flex="~ col" items-center justify-center gap6>
@@ -220,6 +180,29 @@ function succNotify(message: string) {
         </div>
       </div>
     </div>
+
+    <ZDialog v-model="uploadDialog" title="添加作品" footer :disable-confirm="!editInfo.read" @ok="confirmWork">
+      <div bg-grey-1 flex="~ col gap-2">
+        <span font-500 text-grey-8>题目</span>
+        <UserCodeInput v-model:user-code="editInfo.title" label="输入题目" :dark="false" />
+
+        <span font-500 text-grey-8>作者</span>
+        <UserCodeInput v-model:user-code="editInfo.author" label="输入作者" :dark="false" />
+
+        <div flex="~ col" my-5>
+          <div flex="~ row justify-between items-center">
+            <span text-grey-8>上传资料（必须为PDF格式）</span>
+            <UploadFile v-model="editInfo.file" label="选择文件" accept-file=".pdf" />
+          </div>
+
+          <div text-grey-8>
+            {{ editInfo.file?.name }}
+          </div>
+        </div>
+
+        <ProtocolFooter v-model="editInfo.read" />
+      </div>
+    </ZDialog>
   </div>
 </template>
 
