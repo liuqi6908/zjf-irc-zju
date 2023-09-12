@@ -35,9 +35,9 @@ const desktopInfo = ref<IDesktop>()
 const hidePassword = ref(true)
 const desktopTable = computed(() => {
   return [
+    { label: '云桌面访问地址', value: desktopInfo.value?.accessUrl },
     { label: '云桌面账号', value: desktopInfo.value?.account },
     { label: '云桌面密码', value: desktopInfo.value?.password, hide: true },
-    { label: '云桌面访问地址', value: desktopInfo.value?.accessUrl },
   ]
 })
 /** 云桌面ID */
@@ -188,7 +188,7 @@ function copyText(text: string) {
 <template>
   <div relative min-h-2xl>
     <!-- 加载中 -->
-    <div v-if="loading" full flex-center absolute z-100 style="background: rgba(255, 255, 255, 0.6)">
+    <div v-if="loading" absolute z-100 full flex-center style="background: rgba(255, 255, 255, 0.6)">
       <q-spinner
         color="primary-1" size="5rem" :thickness="2" label-class="text-primary-1"
         label-style="font-size: 1.1em"
@@ -229,7 +229,7 @@ function copyText(text: string) {
             borderRightWidth: `${index === desktopTable.length - 1 ? 0 : 1}px`,
           }"
         >
-          <div overflow-hidden bg-grey-2 px-6 text-ellipsis whitespace-nowrap py-3 v-text="item.label" />
+          <div overflow-hidden text-ellipsis whitespace-nowrap bg-grey-2 px-6 py-3 v-text="item.label" />
           <div flex justify-between px-6 py-3>
             <div w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap v-text="item.hide && hidePassword ? '********' : item.value" />
             <div flex gap-2 text-grey-4>
@@ -240,7 +240,7 @@ function copyText(text: string) {
         </div>
       </div>
       <!-- 虚拟机信息 -->
-      <div flex mt-20 gap-10 text="base left">
+      <div mt-20 flex gap-10 text="base left">
         <!-- 基本信息 -->
         <div flex="~ 1 col" w-0 border="1 solid grey-3">
           <header bg-grey-2 p-4 font-600 v-text="'基本信息'" />
@@ -311,7 +311,7 @@ function copyText(text: string) {
         <!-- 已驳回 -->
         <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Rejected">
           <EmptyCloud label="您的申请已被驳回，请重新提交" />
-          <div flex="~ col" mt-2 bg-grey-2 p-4 text="sm left" font-500 w-80>
+          <div flex="~ col" text="sm left" mt-2 w-80 bg-grey-2 p-4 font-500>
             <div mb-2>
               驳回理由
             </div>
