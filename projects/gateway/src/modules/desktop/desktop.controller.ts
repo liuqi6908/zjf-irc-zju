@@ -73,7 +73,7 @@ export class DesktopController {
 
     const updateRes = await this._desktopSrv.repo().update(
       { id: param.desktopId },
-      { disabled: true, userId: null, lastUserId: desktop.userId, expiredAt: Date.now() },
+      { disabled: true, userId: null, lastUserId: desktop.userId, expiredAt: new Date() },
     )
     return updateRes.affected > 0
   }
