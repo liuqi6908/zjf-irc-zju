@@ -9,71 +9,80 @@ const props = defineProps<Props>()
 
 const cpuList = reactive({
   cpu: {
+    title: 'CPU分配情况',
+    unit: undefined,
+    color: '#025CB9',
     used: 0,
     total: 0,
   },
   storage: {
+    title: '内存使用率',
+    unit: 'GB',
+    color: '#F99E34',
     used: 0,
     total: 0,
   },
   disk: {
+    title: '存储使用率',
+    unit: 'GB',
+    color: '#8D5FF0',
     used: 0,
     total: 0,
   },
 })
-/** 定时器的引用 */
-let pollingInterval: any = 0
+
+const { pause, resume } = useIntervalFn(() => fetchDEsktopCpu(), 10000)
 
 async function fetchDEsktopCpu(uuid?: string) {
-  const res = await getDesktopHostCpu(uuid || props.uuid)
+  try {
+    const res = await getDesktopHostCpu(uuid || props.uuid)
+    if (!res)
+      throw new Error('Error')
 
-  if (!res) {
-    stopPolling()
-    return 'stop'
+    cpuList.cpu.used = Number(res.CPUUsedCount[0].value)
+    cpuList.cpu.total = cpuList.cpu.used + Number(res.CPUAvailableCount[0].value)
+
+    cpuList.storage.used = Number(res.memUsed[0].value)
+    cpuList.storage.total = cpuList.storage.used + Number(res.memAvailable[0].value)
+
+    cpuList.disk.used = Number(res.diskUsed[0].value)
+    cpuList.disk.total = cpuList.storage.used + Number(res.diskTotal[0].value)
   }
-
-  cpuList.cpu.used = Number(res.CPUUsedCount[0].value)
-  cpuList.cpu.total = cpuList.cpu.used + Number(res.CPUAvailableCount[0].value)
-
-  cpuList.storage.used = Number(res.memUsed[0].value)
-  cpuList.storage.total = cpuList.storage.used + Number(res.memAvailable[0].value)
-
-  cpuList.disk.used = Number(res.diskUsed[0].value)
-  cpuList.disk.total = cpuList.storage.used + Number(res.diskTotal[0].value)
-}
-
-function startPolling() {
-  pollingInterval = setInterval(() => {
-    fetchDEsktopCpu()
-  }, 10000)
-}
-function stopPolling() {
-  clearInterval(pollingInterval)
-  pollingInterval = null
-}
-
-onBeforeUnmount(() => {
-  stopPolling()
-})
-
-watch(() => props.uuid, async (val) => {
-  if (val) {
-    const res = await fetchDEsktopCpu(val)
-    if (res === 'stop')
-      return
-    startPolling()
+  catch (_) {
+    pause()
   }
-}, { immediate: true })
+}
+
+watch(
+  () => props.uuid,
+  (newVal) => {
+    if (newVal) {
+      fetchDEsktopCpu(newVal)
+      resume()
+    }
+    else {
+      pause()
+    }
+  },
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <template>
   <div flex="~ row gap-10 wrap">
-    <RoundEchartsCard class="col-grow" title="CPU分配情况" :value="cpuList.cpu" color="#025CB9" />
-    <RoundEchartsCard unit="GB" class="col-grow" title="内存使用率" :value="cpuList.storage" color="#F99E34" />
-    <RoundEchartsCard unit="GB" class="col-grow" title="存储使用率" :value="cpuList.disk" color="#8D5FF0" />
+    <RoundEchartsCard
+      v-for="(item, index) in cpuList"
+      :key="index"
+      class="col-grow"
+      :title="item.title"
+      :value="{
+        used: item.used,
+        total: item.total,
+      }"
+      :unit="item.unit"
+      :color="item.color"
+    />
   </div>
 </template>
-
-<style lang="">
-
-</style>
