@@ -158,8 +158,12 @@ watch(desktopList, (newVal) => {
                   正在排队。
                 </template>
               </div>
+              <!-- 待审核 -->
+              <div v-else-if="requestInfo.status === DesktopQueueStatus.Pending">
+                您的云桌面使用申请正在审核中，请耐心等待
+              </div>
               <!-- 排队中 -->
-              <div v-if="requestInfo.status === DesktopQueueStatus.Queueing">
+              <div v-else-if="requestInfo.status === DesktopQueueStatus.Queueing">
                 <template v-if="requestInfo.queueLength">
                   云桌面排队情况：前面有
                   <span text-tab-bottom v-text="`${requestInfo.queueLength} 人`" />
@@ -168,10 +172,6 @@ watch(desktopList, (newVal) => {
                 <template v-else>
                   管理员正在为您创建云桌面，请耐心等待并留意邮件通知
                 </template>
-              </div>
-              <!-- 待审核 -->
-              <div v-else-if="requestInfo.status === DesktopQueueStatus.Pending">
-                您的云桌面使用申请正在审核中，请耐心等待
               </div>
               <!-- 已驳回 -->
               <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Rejected" text-left>

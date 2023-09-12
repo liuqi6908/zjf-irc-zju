@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DesktopQueueStatus } from 'zjf-types'
+import { DesktopQueueHistoryStatus, DesktopQueueStatus } from 'zjf-types'
 import type { IDesktop } from 'zjf-types'
 import { formatFileSize } from 'zjf-utils'
 import { Notify } from 'quasar'
@@ -12,17 +12,24 @@ import { resetDesktop } from '~/api/desktopVm/resetDesktop'
 import { closeDesktop } from '~/api/desktopVm/closeDesktop'
 import type { VMBaseInfo } from '~/api/desktopVm/getDesktopVmStatus'
 import { getDesktopVmStatus } from '~/api/desktopVm/getDesktopVmStatus'
+
 import DesktopStatus from '~/view/userCenter/myDesktop/DesktopStatus.vue'
 import Cloud from '~/view/request/cloud/Cloud.vue'
 
-const { isVerify, useGetProfile } = useUser()
+const { isVerify, useGetProfile, getVerify, latestVerifiy } = useUser()
 const $router = useRouter()
 const { pause, resume } = useIntervalFn(() => getVmInfo(), 3000, { immediate: false })
 const { copy } = useClipboard()
 
+/** 用户认证状态 */
+const userStatus = computed(() => latestVerifiy.value?.status)
 const loading = ref(false)
-/** 云桌面申请状态 */
-const requestStatus = ref<DesktopQueueStatus>()
+/** 云桌面申请信息 */
+const requestInfo = reactive({
+  status: '',
+  queueLength: 0,
+  rejectReason: '',
+})
 /** 云桌面信息 */
 const desktopInfo = ref<IDesktop>()
 const hidePassword = ref(true)
@@ -62,12 +69,12 @@ const vmStatus = computed(() => vmInfo.state.value)
 onMounted(async () => {
   await useGetProfile()
   if (!isVerify.value)
-    return
+    return getVerify()
 
   loading.value = true
   try {
-    await getRequestStatus()
-    if (requestStatus.value === DesktopQueueStatus.Using) {
+    await getRequestInfo()
+    if (requestInfo.status === DesktopQueueStatus.Using) {
       await getDesktopInfo()
       getVmInfo()
       resume()
@@ -80,19 +87,29 @@ onMounted(async () => {
 })
 
 /**
- * 获取云桌面申请状态
+ * 获取云桌面申请信息
  */
-async function getRequestStatus() {
-  const { lastRejected, queue } = await getOwnDesktopQuery()
-  requestStatus.value = queue?.status || lastRejected?.status || ''
+async function getRequestInfo() {
+  try {
+    const res = await getOwnDesktopQuery()
+    if (res) {
+      const { lastExpired, lastRejected, queue, queueLength } = res
+      requestInfo.status = queue?.status || lastRejected?.status || (lastExpired?.id ? DesktopQueueHistoryStatus.Expired : '')
+      requestInfo.queueLength = queueLength || 0
+      requestInfo.rejectReason = lastRejected?.rejectReason
+    }
+    else {
+      requestInfo.status = ''
+    }
+  }
+  catch (_) {}
 }
 
 /**
  * 获取云桌面信息
  */
 async function getDesktopInfo() {
-  const data = await desktopQuery()
-  desktopInfo.value = data
+  desktopInfo.value = await desktopQuery()
 }
 
 /**
@@ -171,7 +188,7 @@ function copyText(text: string) {
 <template>
   <div relative min-h-2xl>
     <!-- 加载中 -->
-    <div v-if="loading" absolute z-100 full flex-center style="background: rgba(255, 255, 255, 0.6)">
+    <div v-if="loading" full flex-center absolute z-100 style="background: rgba(255, 255, 255, 0.6)">
       <q-spinner
         color="primary-1" size="5rem" :thickness="2" label-class="text-primary-1"
         label-style="font-size: 1.1em"
@@ -181,7 +198,7 @@ function copyText(text: string) {
     <div v-if="desktopId">
       <!-- 状态及操作 -->
       <header flex="~ row justify-between">
-        <DesktopStatus :status="requestStatus" :duration="remainingTime" />
+        <DesktopStatus :status="requestInfo.status as DesktopQueueStatus" :duration="remainingTime" />
         <div flex="~ row gap-5" class="desktop-operation-buttons">
           <Btn w28 label="开机" :disable="vmStatus !== '已关机'" @click="desktopOperate('开机')">
             <template #icon>
@@ -212,7 +229,7 @@ function copyText(text: string) {
             borderRightWidth: `${index === desktopTable.length - 1 ? 0 : 1}px`,
           }"
         >
-          <div overflow-hidden text-ellipsis whitespace-nowrap bg-grey-2 px-6 py-3 v-text="item.label" />
+          <div overflow-hidden bg-grey-2 px-6 text-ellipsis whitespace-nowrap py-3 v-text="item.label" />
           <div flex justify-between px-6 py-3>
             <div w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap v-text="item.value" />
             <div flex gap-2 text-grey-4>
@@ -223,7 +240,7 @@ function copyText(text: string) {
         </div>
       </div>
       <!-- 虚拟机信息 -->
-      <div mt-20 flex gap-10 text="base left">
+      <div flex mt-20 gap-10 text="base left">
         <!-- 基本信息 -->
         <div flex="~ 1 col" w-0 border="1 solid grey-3">
           <header bg-grey-2 p-4 font-600 v-text="'基本信息'" />
@@ -251,23 +268,70 @@ function copyText(text: string) {
     </div>
     <!-- 未认证/未申请 -->
     <div v-else flex="~ col" items-center gap-10 py-22>
+      <!-- 未认证 -->
       <template v-if="!isVerify">
-        <EmptyCloud label="您的身份认证尚未通过审核" />
-        <Btn1 h-12 w-53 @click="() => $router.replace({ path: '/userCenter/authentication' })">
-          前往认证
-          <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg" ml-2>
-            <path d="M10 12L8.6 10.55L12.15 7H0V5H12.15L8.6 1.45L10 0L16 6L10 12Z" fill="white" />
-          </svg>
-        </Btn1>
+        <template v-if="!userStatus">
+          <EmptyVeri label="您还未进行身份认证" captions="用户认证通过后，才能申请使用" />
+          <Btn1
+            label="前往认证" icon w-53
+            @click="$router.push('/userCenter/authentication')"
+          />
+        </template>
+        <template v-else>
+          <EmptyVeri label="您的身份认证尚未通过审核" captions="用户认证通过后，才能申请使用" />
+          <div flex gap-6>
+            <VerifyStatus :status="userStatus" />
+            <Btn1
+              label="前往认证" icon w-53
+              @click="$router.push('/userCenter/authentication')"
+            />
+          </div>
+        </template>
       </template>
       <template v-else>
-        <EmptyCloud label="您还未申请云桌面" />
-        <q-btn :to="{ path: '/request' }" flat square h-12 w-53 bg-primary-1 text-white>
-          前往申请
-          <svg ml2 width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 12L8.6 10.55L12.15 7H0V5H12.15L8.6 1.45L10 0L16 6L10 12Z" fill="white" />
-          </svg>
-        </q-btn>
+        <!-- 未申请 -->
+        <EmptyCloud
+          v-if="!requestInfo.status"
+          label="您还未申请云桌面"
+        />
+        <!-- 待审核 -->
+        <EmptyCloud
+          v-else-if="requestInfo.status === DesktopQueueStatus.Pending"
+          label="您的云桌面使用申请正在审核中，请耐心等待"
+        />
+        <!-- 排队中 -->
+        <EmptyCloud
+          v-else-if="requestInfo.status === DesktopQueueStatus.Queueing"
+          :label="
+            requestInfo.queueLength
+              ? `云桌面排队情况：前面有 ${requestInfo.queueLength}人 在排队`
+              : '管理员正在为您创建云桌面，请耐心等待并留意邮件通知'
+          "
+        />
+        <!-- 已驳回 -->
+        <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Rejected">
+          <EmptyCloud label="您的申请已被驳回，请重新提交" />
+          <div flex="~ col" mt-2 bg-grey-2 p-4 text="sm left" font-500 w-80>
+            <div mb-2>
+              驳回理由
+            </div>
+            <div break-all v-text="requestInfo.rejectReason" />
+          </div>
+        </div>
+        <!-- 已取消 -->
+        <EmptyCloud
+          v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Canceled"
+          label="您的申请已取消，请重新提交"
+        />
+        <!-- 已过期 -->
+        <EmptyCloud
+          v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Expired"
+          label="您的云桌面已过期，请重新提交申请"
+        />
+        <Btn1
+          label="前往申请" icon w-53
+          @click="$router.push('/request')"
+        />
       </template>
     </div>
   </div>
