@@ -21,7 +21,7 @@ const data = reactive({
 })
 
 /** 定时器的引用 */
-const { pause, resume } = useIntervalFn(() => fetchDesktopVm(), 10000, { immediate: false })
+const { pause, resume } = useIntervalFn(() => fetchDesktopVm(), 30000, { immediate: false })
 
 async function fetchDesktopVm() {
   try {
@@ -55,7 +55,7 @@ async function fetchDesktopVm() {
 }
 
 function defaultData() {
-  return [{ value: 0, time: new Date().getTime() }]
+  return [{ value: 0, time: new Date().getTime() / 1000 }]
 }
 
 watch(() => props.uuid, async (desktopId) => {
