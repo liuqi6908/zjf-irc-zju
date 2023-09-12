@@ -15,7 +15,7 @@ const VerificationInput = defineAsyncComponent(() => import('./VerificationInput
 interface Props {
   modelValue: boolean
 }
-const identify = ref<{ label: string; id: VerificationIdentify | '' }>({ label: '', id: '' })
+const identify = ref<{ label: string; id: VerificationIdentify | '' } | undefined>()
 
 const files = ref<Array<File>>([])
 // const previewImgs = ref<Array<{ id: number; previewURL: any }>>([])
@@ -42,7 +42,7 @@ const veriAccept = reactive({
 const disable = computed(() =>
   Object.values(veriAccept).includes(false)
   || !attachmentsList.value.length
-  || !identify.value.id
+  || !identify.value?.id
   || !agreeWithProtocol.value,
 )
 
@@ -58,7 +58,7 @@ async function requestVerify() {
   const options = {
     ...verifyInfo,
     attachments,
-    ...{ identify: identify.value.id },
+    ...{ identify: identify.value?.id },
   } as ICreateVerificationBodyDto
 
   // 请求认证
@@ -205,7 +205,7 @@ watch(
               v-model="files"
               accept=".jpg, image/*"
               max-files="8"
-              append multiple
+              multiple append
               style="display:none"
               type="file"
               label="Standard"
@@ -226,7 +226,7 @@ watch(
           学生请上传学生证，教师及其它研究人员请上传校园卡或工作凭证，仅限图片文件，大小不超过2M
         </div>
 
-        <div grid grid-cols-8 items-center gap1>
+        <div grid items-center gap1 grid-cols-8>
           <div
             v-for="(f, index) in attachmentsList"
             :key="f.name"
@@ -238,7 +238,7 @@ watch(
           >
             <div
               class="absolute-top-right"
-              h-5 w-5 cursor-pointer
+              w-5 cursor-pointer h-5
               bg="black/30"
               @click="deletePreviewImg(index)"
             >

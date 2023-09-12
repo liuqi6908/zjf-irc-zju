@@ -1,11 +1,7 @@
 <script lang="ts" setup>
+import { Notify } from 'quasar'
 import type { CodeAction } from 'zjf-types'
 import { smsCodeByEmail } from '~/api/auth/email/smsCodeByEmail'
-
-const props = withDefaults(defineProps<Props>(), {
-  dark: true,
-})
-const emits = defineEmits(['update:smsCode', 'update:accept', 'update:bizId'])
 
 interface Props {
   smsCode: string
@@ -13,24 +9,35 @@ interface Props {
   action: CodeAction
   dark?: boolean
 }
+
+const props = withDefaults(defineProps<Props>(), {
+  dark: true,
+})
+const emits = defineEmits(['update:smsCode', 'update:accept', 'update:bizId'])
+
 const wait = ref(0)
 
 const inputRef = ref<any>(null)
 const validate = ref(null)
 
-let timer: any
-
 async function getCode() {
+  if (!props.email) {
+    return Notify.create({
+      type: 'danger',
+      message: '请先输入邮箱',
+    })
+  }
   const res = await smsCodeByEmail(props.email, props.action)
   if (!res)
     return
   emits('update:bizId', res.bizId)
   wait.value = 60
-  timer = setInterval(() => {
+  const { pause, resume } = useIntervalFn(() => {
     wait.value--
     if (wait.value <= 0)
-      clearInterval(timer)
+      pause()
   }, 1000)
+  resume()
 }
 
 watch(() => props.smsCode, () => {
@@ -74,7 +81,7 @@ watch(() => props.smsCode, () => {
           }"
           label="发送验证码"
           cursor-pointer px2 py1 text-sm
-          @click="() => validate ? null : getCode()"
+          @click="getCode()"
         >
           发送验证码
         </div>
