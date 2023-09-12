@@ -26,11 +26,7 @@ const tableRef = ref<QTable>()
 
 const columns: QTableProps['columns'] = reactive([...cloneDeep(props.cols!)])
 const rows: Array<any> = reactive([])
-const pagination = ref({
-  page: 1,
-  rowsPerPage: 10,
-  rowsNumber: 0,
-})
+const pagination = tablePagination()
 const loading = ref(true)
 
 onMounted(async () => {

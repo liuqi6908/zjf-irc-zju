@@ -33,11 +33,7 @@ const columns: QTableProps['columns'] = reactive([
   { name: 'handlerName', field: 'handler.verification.name', label: '审核人姓名' },
 ])
 const rows: Array<any> = reactive([])
-const pagination = ref({
-  page: 1,
-  rowsPerPage: 10,
-  rowsNumber: 0,
-})
+const pagination = tablePagination()
 const loading = ref(true)
 
 const statusArr: Record<string, any> = reactive([

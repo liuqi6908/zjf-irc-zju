@@ -18,6 +18,7 @@ const $q = useQuasar()
 const tableRef = ref<QTable>()
 
 const cols: QTableProps['columns'] = reactive([
+  { name: 'index', field: 'index', label: '序号' },
   { name: 'account', field: 'user.account', label: '用户' },
   { name: 'email', field: 'user.email', label: '邮箱' },
   { name: 'name', field: 'user.verification.name', label: '姓名' },
@@ -28,16 +29,11 @@ const cols: QTableProps['columns'] = reactive([
   { name: 'identify', field: 'user.verification.identify', label: '身份' },
   { name: 'dataRoleName', field: 'user.dataRoleName', label: '角色' },
   { name: 'roleName', field: 'user.roleName', label: '权限' },
-  { name: 'createdAt', field: 'createdAt', label: '申请时间' },
   { name: 'duration', field: 'duration', label: '申请时长' },
-  { name: 'status', field: 'status', label: '状态' },
+  { name: 'createdAt', field: 'createdAt', label: '申请时间' },
 ])
 const rows: Array<any> = reactive([])
-const pagination = ref({
-  page: 1,
-  rowsPerPage: 10,
-  rowsNumber: 0,
-})
+const pagination = tablePagination()
 const selected = ref()
 
 const dialog = ref(true)
@@ -88,7 +84,8 @@ async function queryData(props: any) {
     const { total, data } = await getDesktopQuery(body) as QueryDesktop
     pagination.value.rowsNumber = total
     rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
-    rows.forEach((item) => {
+    rows.forEach((item, index) => {
+      item.index = index + 1
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
       item['user.verification.identify'] = userIdentify.find(v => v.value === item['user.verification.identify'])?.label || '无'
       item.status = desktopStatus.find(v => v.value === item.status)?.label || ''
@@ -171,6 +168,15 @@ async function allocationDesktop() {
       top: 0;
       background-color: white;
       z-index: 1;
+    }
+    thead, tbody {
+      > tr {
+        th:last-child, td:last-child {
+          position: sticky;
+          right: 0;
+          background-color: white;
+        }
+      }
     }
   }
 }
