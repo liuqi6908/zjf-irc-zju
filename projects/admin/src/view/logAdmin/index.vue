@@ -22,6 +22,7 @@ const tableRef = ref<QTable>()
 const columns: QTableProps['columns'] = reactive([
   { name: 'account', label: '用户', field: 'user.account' },
   { name: 'email', label: '邮箱', field: 'user.email' },
+  { name: 'name', label: '姓名', field: 'user.verification.name' },
   { name: 'ip', label: 'IP 地址', field: 'ip' },
   { name: 'rootId', label: '类', field: 'targetInfo.root.nameZH' },
   { name: 'dbId', label: '数据库', field: 'targetInfo.db.nameZH' },

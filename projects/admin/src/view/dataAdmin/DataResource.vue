@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { cloneDeep } from 'lodash-es'
 import { Notify } from 'quasar'
-import type { DataRoot, IDataDirectory } from 'zjf-types'
+import type { QTableProps } from 'quasar'
+import type { IDataDirectory } from 'zjf-types'
 import { getDataDescribe } from '~/api/file/dataDescribe'
 import { updateReference } from '~/api/file/updateReference'
 
@@ -10,23 +11,24 @@ interface Describe { id: string; enName: string; file: any }
 
 interface Props {
   midTable: File | undefined
-  dataRootId: DataRoot
+  dataRootId: string
   describe?: Describe
   treeData?: { data: IDataDirectory[] }
   dataBase?: IDataDirectory[]
   loading?: boolean
 }
+
 const props = defineProps<Props>()
 const emits = defineEmits(['update:midTable', 'update:describe', 'update:reference'])
 
 const midTable = ref<File>()
 const refDialog = ref(false)
 const reference = reactive<Reference>({ id: '', text: '' })
-const rowData = ref([])
+const rowData = ref<any>([])
 const uploadTab = ref('uploadMid')
 const fileOssList = ref<string[]>([])
 
-const mideTableCol = [
+const tableCol: QTableProps['columns'] = reactive([
   {
     name: 'DATABASE',
     label: '库',
@@ -67,18 +69,20 @@ const mideTableCol = [
     label: '表（英文）',
     field: 'TABLE_ENG',
   },
-]
+])
 
-function emitDescribe(val: any, enName: string, id?: string) {
+onMounted(() => {
+  tableCol.forEach(item => item.align = 'center')
+})
+
+function emitDescribe(val: any, enName: string, id = '') {
   const desc = {} as Describe
 
   desc.file = val
   desc.id = id
   desc.enName = enName
 
-  // console.log('describe', props.describe)
   fetchFileIsExist(enName)
-
   emits('update:describe', desc)
 }
 
@@ -191,7 +195,7 @@ watch(uploadTab, (currTab) => {
 </script>
 
 <template>
-  <div full flex="~ row gap-7" p-10>
+  <div full flex="~ row gap-7" p-4>
     <div>
       <q-tabs
         v-model="uploadTab"
@@ -204,90 +208,100 @@ watch(uploadTab, (currTab) => {
       </q-tabs>
     </div>
 
-    <q-tab-panels v-model="uploadTab" vertical animated class="col-grow">
-      <q-tab-panel name="uploadMid">
-        <div min-h-2xl>
-          <header flex="~ row items-center gap-10" mb-5>
-            <span font-600 text-grey-8 title-4>
-              上传中间表
-            </span>
+    <q-tab-panels v-model="uploadTab" vertical animated class="col-grow" flex-1 w-0>
+      <q-tab-panel name="uploadMid" p-0 flex="~ col" gap-2>
+        <header flex="~ row items-center gap-10">
+          <span title-4>
+            上传中间表
+          </span>
+          <q-file
+            :model-value="midTable"
+            bg-color="primary"
+            dense filled w-30
+            label-color="white"
+            label="上传中间表"
+            @update:model-value="(val) => $emit('update:midTable', val)"
+          />
+        </header>
 
-            <q-file
-              :model-value="midTable"
-              bg-color="primary"
-              dense
-              filled
-              label-color="white"
-              label="上传中间表"
-              @update:model-value="(val) => $emit('update:midTable', val)"
-            />
-          </header>
-
-          <base-table v-slot="{ props, col }" :loading="loading" :cols="mideTableCol" :rows="tableData">
-            <div flex="~ row">
-              {{ props.row[`${col}`] }}
-            </div>
-          </base-table>
-        </div>
+        <base-table
+          v-slot="{ props, col }"
+          :loading="loading"
+          :cols="tableCol"
+          :rows="tableData"
+          flex-1
+          class="h-0!"
+        >
+          <div flex="~ row">
+            {{ props.row[`${col}`] }}
+          </div>
+        </base-table>
       </q-tab-panel>
 
-      <q-tab-panel name="uploadDataIntroduce">
+      <q-tab-panel name="uploadDataIntroduce" p-0 text-left>
         <div min-h-2xl>
-          <header font-600 text-grey-8 title-4 flex="~ row justify-start">
+          <header title-4>
             数据库介绍
           </header>
 
-          <div v-if="empty" text-alert-error>
+          <div v-if="empty" text-alert-error mt-4>
             编辑数据库介绍前请先上传中间表
           </div>
 
-          <div v-for="data in dataBase" v-else :key="data.id" my-4 flex="~ row items-center justify-between">
-            <div font-600 text-grey-5>
-              {{ data.nameZH }}
+          <template v-else>
+            <div
+              v-for="data in dataBase"
+              :key="data.id"
+              my-4 text="base grey-8"
+              flex="~ row items-center justify-between"
+            >
+              <div v-text="data.nameZH" />
+              <div flex="~ row justify-between gap-5 items-center">
+                <span font-600>文件名:</span>
+                <span>{{ fileOssList.includes(data.nameEN) ? `${data.nameEN}.docx` : '暂未上传文件' }}</span>
+                <q-file
+                  bg-color="primary"
+                  class="w-34!"
+                  label="上传数据库介绍"
+                  filled
+                  accept=".docx"
+                  dense
+                  label-color="white"
+                  :model-value="describe?.file[`${data.id}`]"
+                  @update:model-value="(val) => emitDescribe(val, data.nameEN, data.rootId)"
+                />
+                <q-btn
+                  color="teal" h-10
+                  label="下载数据库介绍"
+                  :href="downLoadDescribe(data.nameEN)"
+                />
+              </div>
             </div>
-
-            <div flex="~ row justify-between gap-5 items-center">
-              <span font-600 text-grey-8>文件名:</span><span class="text-grey-8">{{ fileOssList.includes(data.nameEN) ? `${data.nameEN}.docx` : '暂未上传文件' }}</span>
-
-              <!-- <q-btn label="预览已上传的数据库介绍" /> -->
-
-              <q-file
-                bg-color="primary"
-                label="上传当前数据库介绍"
-                filled
-                accept=".docx"
-                dense
-                label-color="white"
-                :model-value="describe?.file[`${data.id}`]"
-                @update:model-value="(val) => emitDescribe(val, data.nameEN, data.rootId)"
-              />
-              <q-btn
-                color="teal"
-                label="下载当前数据库介绍"
-                :href="downLoadDescribe(data.nameEN)"
-              />
-            </div>
-          </div>
+          </template>
         </div>
       </q-tab-panel>
 
-      <q-tab-panel name="uploadRefrence">
+      <q-tab-panel name="uploadRefrence" p-0 text-left>
         <div min-h-2xl>
-          <header flex="~ row justify-start" mb-5 font-600 text-grey-8 title-4>
+          <header title-4>
             引用规范
           </header>
 
-          <div v-if="empty" min-h-2xl text-alert-error>
+          <div v-if="empty" text-alert-error mt-4>
             编辑引用规范前请先上传中间表
           </div>
 
-          <div v-for="data in dataBase" v-else :key="data.id" flex="~ row items-center justify-between" mb-2>
-            <div font-600 text-grey-5>
-              {{ data.nameZH }}
+          <template v-else>
+            <div
+              v-for="data in dataBase"
+              :key="data.id"
+              flex="~ row items-center justify-between"
+              my-4 text="base grey-8"
+            >
+              <div v-text="data.nameZH" />
+              <q-btn color="primary" label="编辑引用规范" @click="editReference(data.id)" />
             </div>
-
-            <q-btn color="primary" label="编辑引用规范" @click="editReference(data.id)" />
-          </div>
+          </template>
         </div>
       </q-tab-panel>
     </q-tab-panels>
@@ -309,3 +323,23 @@ watch(uploadTab, (currTab) => {
     </q-dialog>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.q-tab {
+  :deep(.q-tab__indicator) {
+    width: 4px !important;
+    height: auto !important;
+  }
+}
+:deep(.q-table__container) {
+  .q-table__top {
+    padding: 0 !important;
+  }
+  thead {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+  }
+}
+</style>

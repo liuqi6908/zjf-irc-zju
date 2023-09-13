@@ -1,4 +1,5 @@
 const { $delete } = useRequest()
-export function deleteRootData(dataRootId: string) {
-  return $delete(`data/root/${dataRootId}`)
+
+export function deleteRootData(id: string) {
+  return $delete(`data/root/${id}`)
 }
