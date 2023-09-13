@@ -1,11 +1,7 @@
-<script setup lang="ts">
-const { t } = useI18n()
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div>
-    {{ t('not-found') }}
-  </div>
+  <div v-text="'未找到该页面'" />
 </template>
 
 <route lang="yaml">

@@ -4,18 +4,17 @@ const $router = useRouter()
 
 <template>
   <div class="confirmation" full flex="~ row">
-    <!-- <img src="../assets/auth/authRect.svg"> -->
-    <div class="confirmation-bgImg col-grow">
-      <header flex="~ row items-center" gap-2 text-grey-1 absolute cursor-pointer top-12 left-12 @click="$router.push('/')">
+    <div class="col-grow confirmation-bgImg">
+      <header flex="~ row items-center" text-grey-1 absolute cursor-pointer gap-2 left-12 top-10 @click="$router.push('/')">
         <img h-12 w-12 src="../assets/auth/couldTitle.png">
         <span text-7 font-600>智能云科研平台</span>
         <span text-7 font-600>|</span>
-        <span font-400 text-lg relative top-3px>CloudResearch</span>
+        <span text-lg relative font-400 top-3px>CloudResearch</span>
       </header>
     </div>
 
     <!-- auth card  -->
-    <div class="col-5 flex-center" mr-40>
+    <div class="flex-center col-5" mr-40>
       <div
         flex="~ col" class="confirmation-card"
         min-w-sm p-10 backdrop-blur-md

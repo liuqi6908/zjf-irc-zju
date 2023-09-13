@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { cmsConfig } from 'shared/constants/cms.constant'
 import { getCms } from '~/api/cms/getCms'
-import { useCms } from '~/composables/useCms'
 
 const cmsId = ref('home')
-const homeList = ref([])
+const homeList = ref<any>([])
 const questionProps = ref<[{ title: string; svg: string; richText: string }]>()
 const route = useRoute()
 const { cmsProps } = useCms()
@@ -18,7 +17,7 @@ function currCom(id: string) {
 const comProps = computed(() => (currId: string) => {
   const json: any[] = []
   if (homeList.value.length) {
-    const clone = homeList.value.find(i => i.id === currId)
+    const clone = homeList.value.find((i: any) => i.id === currId)
     if (!clone)
       return
     const jsons = clone.json

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import HomeLayout from '~/view/HomeLayout.vue'
+import HomeLayout from './home.vue'
 
-const $route = useRoute()
 const $router = useRouter()
 const { isLogin } = useUser()
 
@@ -27,7 +26,6 @@ const userList = ref([
     router: { path: 'myWorks' },
   },
 ])
-const currentId = computed(() => userList.value.find(v => $route.path.includes(v.router.path))?.id || userList.value[0].id)
 
 onBeforeMount(() => {
   if (!isLogin.value)
@@ -36,7 +34,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <HomeLayout>
+  <HomeLayout layout>
     <div flex="~ col" class="fit">
       <header class="userCenter" h-64 w-full flex-center shrink-0>
         <div text-grey-1 title-1>
@@ -46,7 +44,6 @@ onBeforeMount(() => {
 
       <div flex="~ row" w-limited-1 gap10 pb20 pt10>
         <div flex="~ col" gap2>
-          <!-- <SliderList v-model:current-id="currentId" :list="userList" /> -->
           <router-link
             v-for="item in userList"
             :key="item.id"
