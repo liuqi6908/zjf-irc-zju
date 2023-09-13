@@ -1,18 +1,13 @@
 <script setup lang="ts">
-const router = useRouter()
-const { t } = useI18n()
+const $router = useRouter()
 </script>
 
 <template>
-  <main p="x4 y10" text="center teal-700 dark:gray-200">
-    <div text-4xl>
+  <main p="x4 y10" text="base center primary-1">
+    <div text-5xl>
       <div i-carbon:warning inline-block />
     </div>
     <RouterView />
-    <div>
-      <button btn text-sm m="3 t8" @click="router.back()">
-        {{ t('button.back') }}
-      </button>
-    </div>
+    <q-btn label="返回首页" color="primary-1" mt-3 @click="$router.push('/')" />
   </main>
 </template>

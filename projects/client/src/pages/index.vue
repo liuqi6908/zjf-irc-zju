@@ -4,10 +4,6 @@ defineOptions({
 })
 </script>
 
-<template>
-  <div full bg-grey-2 />
-</template>
-
 <route lang="yaml">
 redirect: /home
 meta:
