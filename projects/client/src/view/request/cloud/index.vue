@@ -48,7 +48,7 @@ async function fetchDesktopVm() {
     const { cpu, network, storage } = data
     if (!CPU || !CPU.length)
       CPU = defaultData()
-    cpu.value[0].value = CPU.map((item: any) => Number(item.value) * 100)
+    cpu.value[0].value = CPU.map((item: any) => Number(item.value) > 1 ? 100 : Number(item.value) * 100)
     cpu.value[0].time = CPU.map((item: any) => item.time)
 
     if (!memUsed || !memUsed.length)
