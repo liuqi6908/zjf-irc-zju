@@ -196,7 +196,7 @@ const disable = computed(() => !editInfo.nameZH || !editInfo.nameEN)
 
 <template>
   <div absolute full p-4 class="data-admin">
-    <q-card full>
+    <q-card full overflow-hidden>
       <Tabs
         v-model="tab"
         v-model:curr-tab-obj="currentTabObj"
@@ -253,7 +253,7 @@ const disable = computed(() => !editInfo.nameZH || !editInfo.nameEN)
       </q-card>
     </q-dialog>
 
-    <QList ref="editRef" style="display: none" bordered absolute top-12 bg-grey-1 shadow>
+    <QList ref="editRef" style="display: none" bordered absolute top-12 bg-grey-1 z-100 shadow-lg>
       <q-item clickable>
         <q-item-section @click="dialog = true">
           编辑
