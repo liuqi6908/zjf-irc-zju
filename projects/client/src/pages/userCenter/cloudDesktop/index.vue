@@ -23,7 +23,7 @@ const { copy } = useClipboard()
 
 /** 用户认证状态 */
 const userStatus = computed(() => latestVerifiy.value?.status)
-const loading = ref(false)
+const loading = ref(true)
 /** 云桌面申请信息 */
 const requestInfo = reactive({
   status: '',
@@ -68,22 +68,21 @@ const vmStatus = computed(() => vmInfo.state.value)
 
 onMounted(async () => {
   await useGetProfile()
-  if (!isVerify.value)
-    return getVerify()
-
-  loading.value = true
-  try {
-    await getRequestInfo()
-    if (requestInfo.status === DesktopQueueStatus.Using) {
-      await getDesktopInfo()
-      getVmInfo()
-      resume()
+  if (!isVerify.value) {
+    await getVerify()
+  }
+  else {
+    try {
+      await getRequestInfo()
+      if (requestInfo.status === DesktopQueueStatus.Using) {
+        await getDesktopInfo()
+        getVmInfo()
+        resume()
+      }
     }
+    catch (_) { }
   }
-  catch (_) { }
-  finally {
-    loading.value = false
-  }
+  loading.value = false
 })
 
 /**
@@ -199,7 +198,7 @@ function copyText(text: string) {
       />
     </div>
     <!-- 主要内容 -->
-    <div v-if="desktopId">
+    <div v-else-if="desktopId">
       <!-- 状态及操作 -->
       <header flex="~ row justify-between">
         <DesktopStatus :status="requestInfo.status as DesktopQueueStatus" :duration="remainingTime" />
@@ -233,8 +232,8 @@ function copyText(text: string) {
             borderRightWidth: `${index === desktopTable.length - 1 ? 0 : 1}px`,
           }"
         >
-          <div overflow-hidden text-ellipsis whitespace-nowrap bg-grey-2 px-6 py-3 v-text="item.label" />
-          <div flex px-6 justify-between items-center py-1>
+          <div overflow-hidden bg-grey-2 text-ellipsis whitespace-nowrap px-6 py-3 v-text="item.label" />
+          <div flex px-6 items-center justify-between py-1>
             <div w-0 overflow-hidden text-ellipsis whitespace-nowrap flex-1 v-text="item.hide && hidePassword ? '********' : item.value" />
             <div flex gap-2 text-grey-4>
               <q-btn v-if="item.hide" flat px-2 @click="hidePassword = !hidePassword">
@@ -242,7 +241,7 @@ function copyText(text: string) {
                 <div v-else text-lg i-mingcute:eye-2-line />
               </q-btn>
               <q-btn flat px-2 @click="copyText(item.value || '')">
-                <div i-mingcute:copy-2-line text-lg />
+                <div text-lg i-mingcute:copy-2-line />
               </q-btn>
             </div>
           </div>
@@ -257,7 +256,7 @@ function copyText(text: string) {
             <div
               v-for="(item, index) in vmInfo"
               :key="index"
-              flex gap-2 py-8 px-4
+              flex gap-2 px-4 py-8
             >
               <div w-30 v-text="`${item.label}：`" />
               <div flex-1 v-text="item.value" />
@@ -316,7 +315,7 @@ function copyText(text: string) {
         <!-- 已驳回 -->
         <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Rejected">
           <EmptyCloud label="您的申请已被驳回，请重新提交" />
-          <div flex="~ col" text="sm left" bg-grey-2 p-4 mt-2 w-80 font-500>
+          <div flex="~ col" text="sm left" bg-grey-2 p-4 mt-2 font-500 w-80>
             <div mb-2>
               驳回理由
             </div>
