@@ -90,14 +90,16 @@ watch(() => props.uuid, async (desktopId) => {
 </script>
 
 <template>
-  <div flex="~ col">
+  <div flex="~ col" gap-4>
     <LineEchartsCard
       v-for="(item, index) in data"
       :key="index"
       :data="item.value"
       :title="item.title"
       :unit="item.unit"
-      legend
+      symbol="none"
+      legend class="p-4! pb-2!"
+      :h="item.value.length > 1 ? 77 : 58.5"
     />
   </div>
 </template>

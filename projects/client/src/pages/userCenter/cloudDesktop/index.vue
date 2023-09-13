@@ -14,7 +14,7 @@ import type { VMBaseInfo } from '~/api/desktopVm/getDesktopVmStatus'
 import { getDesktopVmStatus } from '~/api/desktopVm/getDesktopVmStatus'
 
 import DesktopStatus from '~/view/userCenter/myDesktop/DesktopStatus.vue'
-import Cloud from '~/view/request/cloud/Cloud.vue'
+import Cloud from '~/view/request/cloud/index.vue'
 
 const { isVerify, useGetProfile, getVerify, latestVerifiy } = useUser()
 const $router = useRouter()
@@ -35,9 +35,9 @@ const desktopInfo = ref<IDesktop>()
 const hidePassword = ref(true)
 const desktopTable = computed(() => {
   return [
-    { label: '云桌面访问地址', value: desktopInfo.value?.accessUrl },
     { label: '云桌面账号', value: desktopInfo.value?.account },
     { label: '云桌面密码', value: desktopInfo.value?.password, hide: true },
+    { label: '云桌面访问地址', value: desktopInfo.value?.accessUrl },
   ]
 })
 /** 云桌面ID */
@@ -222,7 +222,7 @@ function copyText(text: string) {
         </div>
       </header>
       <!-- 云桌面信息 -->
-      <div mt-10 w-full flex border="1 solid grey-3" text="base left">
+      <div w-full flex mt-6 border="1 solid grey-3" text="base left">
         <div
           v-for="(item, index) in desktopTable"
           :key="index"
@@ -234,29 +234,30 @@ function copyText(text: string) {
           }"
         >
           <div overflow-hidden text-ellipsis whitespace-nowrap bg-grey-2 px-6 py-3 v-text="item.label" />
-          <div flex px-6 py-3 justify-between>
+          <div flex px-6 justify-between items-center py-1>
             <div w-0 overflow-hidden text-ellipsis whitespace-nowrap flex-1 v-text="item.hide && hidePassword ? '********' : item.value" />
             <div flex gap-2 text-grey-4>
-              <q-btn v-if="item.hide" :icon="`fas fa-${hidePassword ? 'eye-slash' : 'eye'}`" flat size="sm" px-2 @click="hidePassword = !hidePassword" />
-              <q-btn icon="fas fa-clone" flat size="sm" px-2 @click="copyText(item.value || '')" />
+              <q-btn v-if="item.hide" flat px-2 @click="hidePassword = !hidePassword">
+                <div v-if="hidePassword" text-lg i-mingcute:eye-close-line />
+                <div v-else text-lg i-mingcute:eye-2-line />
+              </q-btn>
+              <q-btn flat px-2 @click="copyText(item.value || '')">
+                <div i-mingcute:copy-2-line text-lg />
+              </q-btn>
             </div>
           </div>
         </div>
       </div>
       <!-- 虚拟机信息 -->
-      <div flex mt-20 gap-10 text="base left">
+      <div flex mt-10 gap-10 text="base left">
         <!-- 基本信息 -->
         <div flex="~ 1 col" w-0 border="1 solid grey-3">
           <header bg-grey-2 p-4 font-600 v-text="'基本信息'" />
-          <div px-4>
+          <div class="base-info">
             <div
               v-for="(item, index) in vmInfo"
               :key="index"
-              flex gap-2.5 py-11.5
-              border-b="solid grey-3"
-              :style="{
-                borderBottomWidth: `${index === Object.keys(vmInfo).pop() ? 0 : 1}px`,
-              }"
+              flex gap-2 py-8 px-4
             >
               <div w-30 v-text="`${item.label}：`" />
               <div flex-1 v-text="item.value" />
@@ -346,6 +347,9 @@ function copyText(text: string) {
   .q-btn.disabled
     opacity: 1 !important
     background: var(--grey-4)
+.base-info
+  > div:nth-child(2n)
+    background: rgba(2, 92, 185, 0.06)
 </style>
 
 <route lang="yaml">

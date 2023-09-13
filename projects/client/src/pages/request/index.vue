@@ -86,13 +86,13 @@ watch(desktopList, (newVal) => {
 <template>
   <div full flex="~ col items-center">
     <!-- header -->
-    <header class="request" h-64 w-full flex-center shrink-0>
+    <header class="request" w-full flex-center h-64 shrink-0>
       <div text-grey-8 title-1>
         申请使用
       </div>
     </header>
     <!-- 未登录 / 未认证 -->
-    <div v-if="!isVerify" flex="~ col items-center" w-limited-1 min-h-4xl bg-grey-1 pt-32>
+    <div v-if="!isVerify" flex="~ col items-center" bg-grey-1 w-limited-1 min-h-4xl pt-32>
       <!-- 未登录 -->
       <template v-if="!isLogin">
         <EmptyVeri label="您还未登录系统" captions="用户登录并通过认证后，才能申请使用" />
@@ -133,8 +133,8 @@ watch(desktopList, (newVal) => {
           <!-- 申请状态 -->
           <div
             flex="~ row" style="background:rgba(2, 92, 185, 0.08);"
-            mt-10 w-full items-center justify-between py-4 px-6
-            font-600 text="lg grey-8"
+
+            mt-10 w-full items-center justify-between px-6 font-600 py-4 text="lg grey-8"
           >
             <!-- 使用中 -->
             <template v-if="requestInfo.status === DesktopQueueStatus.Using">
@@ -176,7 +176,7 @@ watch(desktopList, (newVal) => {
               <!-- 已驳回 -->
               <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Rejected" text-left>
                 您的申请已被驳回，请重新提交
-                <div flex="~ col" mt-2 bg-grey-2 p-4 text-sm font-500 w-80>
+                <div flex="~ col" mt-2 bg-grey-2 p-4 font-500 w-80 text-sm>
                   <div mb-2>
                     驳回理由
                   </div>
@@ -210,13 +210,13 @@ watch(desktopList, (newVal) => {
             <header flex="~ row" text-grey-8 title-4>
               云主机情况
             </header>
-            <div flex="~ wrap" items-center justify-center mt-6>
+            <div flex="~ wrap" items-center mt-6 justify-center>
               <div class="desktopCode" flex-1 h-60 />
               <section flex="~ 2 row center" min-w-500px gap-40 mr-10>
                 <div
                   flex="~ col"
                   style="background: linear-gradient(135deg, #F5F7FA 0%, rgba(245, 247, 250, 0.00) 100%);"
-                  p-6 min-h-34 min-w-34 justify-center
+                  p-6 justify-center min-h-34 min-w-34
                 >
                   <span text-primary-1 title-2>{{ vmInfo.total }}</span>
                   <span text-4 text-grey-5>总数量</span>
