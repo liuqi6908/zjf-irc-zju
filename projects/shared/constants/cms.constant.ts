@@ -34,7 +34,7 @@ export const cmsConfig = [
                 label: '联系方式',
                 parentId: 'footer',
                 component: markRaw(Footer),
-                col: ['title', 'richText','delete','add',],
+                col: ['title', 'richText','delete', 'sort', 'add',],
                 rows: []
             },
             {
