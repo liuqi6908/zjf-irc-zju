@@ -131,7 +131,7 @@ function onReset() {
           :rules="[val => val && val.length > 0 || '请选择云桌面到期时间']"
         />
         <div text-right mt-4>
-          <q-btn label="重置" type="reset" color="primary" flat class="q-ml-sm" />
+          <q-btn label="重置" type="reset" color="primary" flat />
           <q-btn label="提交" :disable="disable" type="submit" color="primary" ml-2 />
         </div>
       </q-form>

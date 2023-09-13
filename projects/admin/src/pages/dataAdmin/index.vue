@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import type { DataRoot, IDataDirectory } from 'zjf-types'
+import type { IDataDirectory } from 'zjf-types'
 import { fileToFormData } from 'zjf-utils'
-
 import Tabs from 'shared/component/base/tab/Tabs.vue'
-import { Notify } from 'quasar'
+import { Notify, QList } from 'quasar'
 import DataResource from '~/view/dataAdmin/DataResource.vue'
 
 import { uploadDataByRootId } from '~/api/data/uploadDataByRootId'
 import { uploadDataDescribe } from '~/api/file/dataDescribe'
 import { putRootData } from '~/api/data/putRootData'
-
-import { useDataBase } from '~/composables/useDataBase'
 import { deleteRootData } from '~/api/data/delecteRootData'
 import { updateRootData } from '~/api/data/updateRootData'
 
@@ -18,28 +15,125 @@ const { getDataByRootId, geRootData, rootTabList, loading } = useDataBase()
 
 const tab = ref('')
 const currentTabObj = ref()
-const EditRef = ref()
-const midTable = ref<File>()
-const describe = ref()
-const item = ref(false)
-const editDialog = ref(false)
-const editStatus = ref<'add' | 'update'>()
+
+const editRef = ref<typeof QList>()
+const dialog = ref(false)
 const editInfo = reactive({
   id: '',
   nameEN: '',
   nameZH: '',
+  order: undefined,
 })
 
-async function uploadFile(tab: string, file: File) {
+const midTable = ref<File>()
+const describe = ref()
+
+onBeforeMount(async () => {
+  await geRootData()
+  if (rootTabList.value.length)
+    tab.value = rootTabList.value[0].id
+})
+
+onMounted(() => {
+  document.addEventListener('click', () => {
+    if (editRef.value)
+      editRef.value.$el.style.display = 'none'
+  })
+})
+
+/**
+ * 右击菜单
+ * @param params
+ */
+function rightEvent(params: any) {
+  const { val, event } = params
+  editInfo.id = val.id
+  editInfo.nameZH = val.label
+  editInfo.nameEN = val.nameEN
+  editInfo.order = val.order
+  const el = editRef.value?.$el
+  if (el) {
+    el.style.left = `${event.clientX - 250}px`
+    el.style.display = el.style.display === 'none' ? 'block' : 'none'
+  }
+}
+
+/**
+ * 打开新增对话框
+ */
+function openAddDialog() {
+  dialog.value = true
+  editInfo.id = ''
+  editInfo.nameZH = ''
+  editInfo.nameEN = ''
+  editInfo.order = undefined
+}
+
+/**
+ * 新建/更新数据大类
+ */
+async function confirmEditInfo() {
+  let res
+  const body = {
+    nameZH: editInfo.nameZH,
+    nameEN: editInfo.nameEN,
+    order: Number(editInfo.order),
+  }
+  if (editInfo.id)
+    res = await updateRootData(editInfo.id, body)
+  else
+    res = await putRootData(body)
+  dialog.value = false
+
+  if (res) {
+    await geRootData()
+    Notify.create({
+      message: `${editInfo.id ? '编辑' : '新增'}成功`,
+      type: 'success',
+    })
+  }
+}
+
+/**
+ * 删除数据大类
+ */
+async function deleteDataBase() {
+  const res = await deleteRootData(editInfo.id)
+  if (res) {
+    Notify.create({
+      message: '删除成功',
+      type: 'success',
+    })
+    await geRootData()
+  }
+}
+
+/**
+ * 获取指定分类的数据
+ * @param id
+ */
+async function getRootDataById(id: string) {
+  const res = await getDataByRootId(id)
+  if (res && currentTabObj.value)
+    currentTabObj.value.data = res
+}
+
+/**
+ * 上传中间表
+ * @param id
+ * @param file
+ */
+async function uploadFile(id: string, file: File) {
   const fromData = new FormData()
   fromData.append('file', file)
 
-  const res = await uploadDataByRootId(tab, fromData)
+  const res = await uploadDataByRootId(id, fromData)
   if (res) {
     Notify.create({
       message: '上传成功',
       type: 'success',
     })
+    await getRootDataById(id)
   }
 }
 
@@ -59,195 +153,132 @@ function findLevelObjects(tree: IDataDirectory[], targetLevel: number, currentLe
   return levelObjects
 }
 
-async function confirmEditInfo() {
-  if (!editInfo.nameEN || !editInfo.nameZH)
-    return
-
-  if (editStatus.value === 'add') {
-    const res = await putRootData(editInfo.nameZH, editInfo.nameEN)
-    if (!res)
-      return
-
-    await geRootData()
-    Notify.create({
-      message: '添加成功',
-      type: 'success',
-    })
-  }
-  else if (editStatus.value === 'update') {
-    const res = await updateRootData(editInfo.id, editInfo.nameZH)
-    await geRootData()
-    if (res) {
-      Notify.create({
-        message: '修改成功',
-        type: 'success',
-      })
-    }
-  }
-  editInfo.id = ''
-  editInfo.nameEN = ''
-  editInfo.nameZH = ''
-  editDialog.value = false
-}
-
-// async function editDataBase() {
-//   editDialog.value = true
-//   editStatus.value = 'update'
-//   editInfo.id = id
-// }
-async function deleteDataBase() {
-  const res = await deleteRootData(editInfo.id)
-  if (res) {
-    Notify.create({
-      message: '删除成功',
-      type: 'success',
-    })
-    await geRootData()
-  }
-  else {
-    Notify.create({
-      message: '删除失败',
-      type: 'error',
-    })
-  }
-}
-
-function rightEvent({ val, event }) {
-  item.value = true
-  editInfo.id = val.id
-  editStatus.value = 'update'
-  EditRef.value.$el.style.left = `${event.clientX - 250}px`
-  EditRef.value.$el.style.display = EditRef.value.$el.style.display === 'none' ? 'block' : 'none'
-}
-
-async function getRootDataById(tab: string) {
-  const res = await getDataByRootId(tab)
-  if (res && currentTabObj.value)
-    currentTabObj.value.data = res
-}
-
 const dataBase = computed(() => {
   if (currentTabObj.value.data && currentTabObj.value.data.length)
     return findLevelObjects(currentTabObj.value.data, 1)
 })
 
-onBeforeMount(() => {
-  geRootData().finally(() => {
-    if (rootTabList)
-      tab.value = rootTabList.value[0].id
-  })
-})
+watch(
+  tab,
+  async (newVal) => {
+    if (newVal)
+      getRootDataById(newVal)
+  },
+)
 
-watch(tab, async (newTab) => {
-  tab.value = newTab
+watch(
+  midTable,
+  async (newVal) => {
+    if (newVal)
+      await uploadFile(tab.value, newVal)
+  },
+)
 
-  if (!newTab)
-    return
-  getRootDataById(newTab)
-})
-
-watch(midTable, async (newMid) => {
-  if (newMid) {
-    await uploadFile((tab.value as DataRoot), newMid)
-    await getRootDataById(tab.value as DataRoot)
-  }
-})
-
-watch(describe, async (newDescribe) => {
-  if (newDescribe && newDescribe.file) {
-    const formData = fileToFormData(newDescribe.file)
-    const filename = `${newDescribe.enName}.docx`
-    const res = await uploadDataDescribe(tab.value, filename, formData)
-    if (!res) {
-      Notify.create({
-        type: 'warning',
-        message: '上传失败',
-      })
+watch(
+  describe,
+  async (newVal) => {
+    if (newVal && newVal.file) {
+      const formData = fileToFormData(newVal.file)
+      const filename = `${newVal.enName}.docx`
+      const res = await uploadDataDescribe(tab.value, filename, formData)
+      if (res) {
+        Notify.create({
+          type: 'success',
+          message: '上传成功',
+        })
+      }
     }
-  }
-})
-onMounted(() => {
-  document.addEventListener('click', (event) => {
-    if (!EditRef.value)
-      return
-    const element = EditRef.value.$el
+  },
+)
 
-    if (!element.contains(event.target))
-      element.style.display = 'none'
-  })
-})
+const disable = computed(() => !editInfo.nameZH || !editInfo.nameEN)
 </script>
 
 <template>
-  <div flex="~ row" bg-grey-1>
-    <!-- <div flex="~ col" class="col-4" m-10>
-      <q-btn label="增加一个自定义数据库" flat color="primary-1" />
-      <div flex="~ col">
-        <q-chip
-          v-for="(data, index) in rootTabList" :key="index"
-          removable
-          clickable
-          color="primary-1"
-          text-color="white"
-          @click="editDataBase(data.id)"
-          @remove="deleteDataBase(data.id)"
-        >
-          {{ data.label }}
-        </q-chip>
-      </div>
-    </div> -->
+  <div absolute full p-4 class="data-admin">
+    <q-card full>
+      <Tabs
+        v-model="tab"
+        v-model:curr-tab-obj="currentTabObj"
+        flex="~ col"
+        showcaption items-center
+        :tab-list="rootTabList"
+        @update:right-event="rightEvent"
+      >
+        <template #right>
+          <q-btn flat text-primary-1 @click="openAddDialog()">
+            <div i-material-symbols:add />
+          </q-btn>
+        </template>
+        <DataResource
+          v-model:mid-table="midTable"
+          v-model:describe="describe"
+          :loading="loading"
+          :data-root-id="tab"
+          :data-base="dataBase"
+          :tree-data="currentTabObj"
+        />
+      </Tabs>
+    </q-card>
 
-    <q-dialog v-model="editDialog">
+    <q-dialog v-model="dialog">
       <q-card min-w-100 p-5>
+        <div title-4 v-text="editInfo.id ? '编辑' : '新增'" />
         <q-card-section>
-          <q-input v-if="editStatus === 'add'" v-model="editInfo.nameEN" label="请输入英文字段" />
-          <q-input v-model="editInfo.nameZH" label="请输入中文字段" />
+          <q-input
+            v-model="editInfo.nameZH"
+            label="中文名"
+            filled
+            lazy-rules
+            :rules="[val => val && val.length > 0 || '请输入中文名']"
+          />
+          <q-input
+            v-model="editInfo.nameEN"
+            label="英文名"
+            filled
+            lazy-rules
+            :rules="[val => val && val.length > 0 || '请输入英文名']"
+          />
+          <q-input
+            v-model="editInfo.order"
+            label="排序字段"
+            filled
+            type="number"
+          />
         </q-card-section>
-
-        <div mt-10 w-full flex="~ row gap-10 justify-end">
-          <q-btn label="确认" color="primary-1" @click="confirmEditInfo" />
-          <q-btn label="取消" color="red" @click="editDialog = false" />
+        <div text-right>
+          <q-btn label="取消" color="primary" flat mr-2 @click="dialog = false" />
+          <q-btn label="确认" color="primary" :disable="disable" @click="confirmEditInfo" />
         </div>
       </q-card>
     </q-dialog>
 
-    <Tabs
-      v-model="tab"
-      v-model:curr-tab-obj="currentTabObj"
-      class="col-grow"
-      showcaption items-start
-      :tab-list="rootTabList"
-      @update:rightEvent="rightEvent"
-    >
-      <template #right>
-        <q-btn flat text-primary-1 @click=" editDialog = true, editStatus = 'add'">
-          <div i-material-symbols:add />
-        </q-btn>
-      </template>
-      <DataResource
-        v-model:mid-table="midTable"
-        v-model:describe="describe"
-        :loading="loading"
-        :data-root-id="tab"
-        :data-base="dataBase"
-        :tree-data="currentTabObj"
-      />
-    </Tabs>
-
-    <q-list ref="EditRef" style="display: none;" bordered absolute top-12 bg-grey-1>
+    <QList ref="editRef" style="display: none" bordered absolute top-12 bg-grey-1 shadow>
       <q-item clickable>
-        <q-item-section @click="editDialog = true">
-          编辑当前数据库的中文名称
+        <q-item-section @click="dialog = true">
+          编辑
         </q-item-section>
       </q-item>
       <q-item clickable>
         <q-item-section @click="deleteDataBase()">
-          删除当前数据库
+          删除
         </q-item-section>
       </q-item>
-    </q-list>
+    </QList>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.data-admin {
+  :deep(.q-tab-panels) {
+    width: 100%;
+    flex: 1;
+    .q-tab-panel > div {
+      height: 100%;
+    }
+  }
+}
+</style>
 
 <route lang="yaml">
 meta:

@@ -1,14 +1,13 @@
-import { useRequest } from '../../composables/request'
 import { getUrlByToken } from './getUrl'
 
 const { $put } = useRequest()
 
 /** filename 为DATABASE_ENG + .doc */
-export function getDataDescribe(dataRootId: string, filename: string) {
-  return getUrlByToken(`file/private/db/${dataRootId}/${filename}`)
+export function getDataDescribe(id: string, filename: string) {
+  return getUrlByToken(`file/private/db/${id}/${filename}`)
 }
 
-export function uploadDataDescribe(dataRootId: string, filename: string, file: FormData) {
-  const res = $put(`file/private/db/${dataRootId}/${filename}`, file)
+export function uploadDataDescribe(id: string, filename: string, file: FormData) {
+  const res = $put(`file/private/db/${id}/${filename}`, file)
   return res
 }
