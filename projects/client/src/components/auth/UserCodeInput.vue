@@ -1,8 +1,5 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<Props>(), {
-  dark: true,
-})
-const emits = defineEmits(['update:userCode', 'update:accept'])
+import { QInput } from 'quasar'
 
 interface Props {
   userCode: string
@@ -12,31 +9,35 @@ interface Props {
   dark?: boolean
 }
 
-const inputRef = ref(null)
-
-watch(() => props.userCode, () => {
-  if (inputRef.value) {
-    const validate = inputRef.value.validate(props.userCode)
-    emits('update:accept', validate)
-  }
+const props = withDefaults(defineProps<Props>(), {
+  dark: true,
 })
+const emits = defineEmits(['update:userCode', 'update:accept'])
+
+const inputRef = ref<typeof QInput>()
+
+watch(
+  () => props.userCode,
+  () => {
+    emits('update:accept', inputRef.value?.validate(props.userCode))
+  },
+)
 </script>
 
 <template>
-  <q-input
+  <QInput
     ref="inputRef"
     :disable="disable"
     :model-value="userCode"
     dense outlined
     :dark="dark"
     :rules="rule"
-    @input="debounce ? handleDebounceInput($event) : handleInput($event)"
-    @update:model-value="(v) => $emit('update:userCode', v)"
+    @update:model-value="v => $emit('update:userCode', v)"
   >
     <template #prepend>
       <slot name="prepend" />
     </template>
-  </q-input>
+  </QInput>
 </template>
 
 <style lang="scss" scoped>

@@ -1,21 +1,24 @@
 <script setup lang="ts">
 import { QInput } from 'quasar'
 
-const props = defineProps<Props>()
-const emits = defineEmits(['update:password', 'update:accept'])
-
-const inputRef = ref<typeof QInput>()
-const isPwd = ref(true)
-
 interface Props {
   password: string
   rules?: Array<any>
   reactiveRules?: boolean
 }
 
-watch(() => props.password, () => {
-  emits('update:accept', inputRef.value?.validate(props.password))
-})
+const props = defineProps<Props>()
+const emits = defineEmits(['update:password', 'update:accept'])
+
+const inputRef = ref<typeof QInput>()
+const isPwd = ref(true)
+
+watch(
+  () => props.password,
+  () => {
+    emits('update:accept', inputRef.value?.validate(props.password))
+  },
+)
 </script>
 
 <template>

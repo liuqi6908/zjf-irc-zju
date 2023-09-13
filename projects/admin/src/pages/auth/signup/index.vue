@@ -21,7 +21,7 @@ const acceptObj = reactive({
   sms: false,
 })
 
-/** 校验邮箱 */
+/** 输入校验 */
 function usernameRules(val: string) {
   return validateAccount(val) || true
 }

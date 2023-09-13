@@ -28,16 +28,16 @@ function handleEnter() {
 </script>
 
 <template>
-  <div w-full flex="~ col">
+  <div w-full flex="~ col" font-500 text-grey-8>
     <header flex="~ flex col items-center justify-center" mb-2>
       <span font-600 text-grey-8 text-5 v-text="'智能云科研平台'" />
     </header>
-    <span m-b-1 font-500 text-grey-8 v-text="'账号 / 邮箱'" />
+    <span mb-1 v-text="'账号 / 邮箱'" />
     <UserCodeInput
       v-model:userCode="userCode"
-      label="请输入账号或邮箱"
+      label="请输入账号/邮箱"
     />
-    <span m-b-1 m-t-4 font-500 text-grey-8 v-text="'密码'" />
+    <span mb-1 mt-4 v-text="'密码'" />
     <PasswordInput
       v-model:password="password"
       reactive-rules
@@ -46,14 +46,13 @@ function handleEnter() {
       @keydown.enter="handleEnter()"
     />
 
-    <RouterLink text-3 text-grey-5 :to="{ path: 'forgetPassword' }" v-text="'忘记密码?'" />
+    <RouterLink text-grey-5 text-xs :to="{ path: 'forgetPassword' }" v-text="'忘记密码?'" />
 
-    <div h-15 />
     <client-only>
-      <Btn :disable="disable" label="登录" @click="useLogin(logArg)" />
+      <Btn mt-15 :disable="disable" label="登录" @click="useLogin(logArg)" />
     </client-only>
 
-    <div m-t-5 flex-center text-grey-5>
+    <div mt-5 flex-center text-grey-5>
       没有账号？
       <RouterLink text-primary-1 :to="{ path: 'signup' }" v-text="'立即注册'" />
     </div>
