@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString, MaxLength } from 'class-validator'
+import { IsNumber, IsOptional, IsString, MaxLength } from 'class-validator'
 import type { ICreateRootBodyDto } from 'zjf-types'
 
 export class CreateRootBodyDto implements ICreateRootBodyDto {
@@ -19,4 +19,9 @@ export class CreateRootBodyDto implements ICreateRootBodyDto {
   @IsString()
   @MaxLength(40, { message: '英文名最大长度为40个字符' })
   nameEN: string
+
+  @ApiProperty({ required: false, description: '排序', example: 1 })
+  @IsNumber()
+  @IsOptional()
+  order?: number
 }

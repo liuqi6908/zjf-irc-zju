@@ -17,9 +17,12 @@ import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { createDataDirectoryTree } from 'src/utils/data-directory-tree'
 import { Body, Controller, Delete, Get, Logger, Param, Patch, Put, Query, Req } from '@nestjs/common'
 
+import { responseParamsError } from 'src/utils/response/validate-exception-factory'
+import { objectPick } from '@vueuse/core'
 import { FileService } from '../file/file.service'
 import { DataService } from './data.service'
 import { CreateRootBodyDto } from './dto/create-root.body.dto'
+import { UpdateRootBodyDto } from './dto/update-root.body.dto'
 import { GetDataListResDto } from './dto/get-data-list.res.dto'
 import { GetDataFieldListResDto } from './dto/get-field-list.res.dto'
 import { UpdateReferenceBodyDto } from './dto/update-reference.body.dto'
@@ -71,11 +74,20 @@ export class DataController {
   @ApiOperation({ summary: '更新一个根节点（数据大类）的信息' })
   @HasPermission(PermissionType.DATA_ROOT_UPDATE)
   @Patch('root/:dataRootId')
-  public async updateRoot(@Body() body: CreateRootBodyDto,
-  @Param() param: DataRootIdDto) {
+  public async updateRoot(
+    @Body() body: UpdateRootBodyDto,
+    @Param() param: DataRootIdDto,
+  ) {
+    const allowedKeys: Array<keyof UpdateRootBodyDto> = ['nameZH', 'nameEN', 'order']
+    if (allowedKeys.every(k => body[k] === undefined)) {
+      responseParamsError([{
+        property: 'body',
+        constraints: { body: '至少需要一个参数' },
+      }])
+    }
     const updateRes = await this._dataSrv.dirRepo().update(
       { id: param.dataRootId },
-      { nameZH: body.nameZH },
+      { ...objectPick(body, allowedKeys) },
     )
     this._dataSrv.cacheDir()
     return updateRes.affected
