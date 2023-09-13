@@ -1,8 +1,7 @@
-import type { IDataSuggestion, IQueryDto } from '../../../../../packages/zjf-types/dist/esm'
-import { useRequest } from '../../composables/request'
+import type { IDataSuggestion, IPaginatedResData, IQueryDto } from 'zjf-types'
 
 const { $post } = useRequest()
 
 export function queryDataRequest(options: IQueryDto<IDataSuggestion>) {
-  return $post('data-suggest/query', options)
+  return $post<IPaginatedResData<IDataSuggestion>>('data-suggest/query', options)
 }

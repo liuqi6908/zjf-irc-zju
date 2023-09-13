@@ -11,7 +11,7 @@ import { putSuggest } from '~/api/dataSuggest/putSuggest'
 
 const route = useRoute()
 const $router = useRouter()
-const { isDesktop, isLogin } = useUser()
+const { isDesktop, isLogin, isVerify } = useUser()
 const { $get } = useRequest()
 const { y } = useScroll(document)
 y.value = 0
@@ -99,7 +99,7 @@ async function downloadData() {
   <div flex="~ col items-center" min-h-4xl bg-grey-1>
     <div w-limited-1>
       <header flex="~ row" mb-10 w-full items-center font-600 py6 gap4>
-        <q-btn flat dense h6 min-h6 w6 p0 text-grey-6 @click="() => $router.back()">
+        <q-btn flat dense text-grey-6 h6 min-h6 w6 p0 @click="() => $router.back()">
           <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M6 12L0 6L6 0L7.4 1.4L2.8 6L7.4 10.6L6 12Z" fill="#6E7686" />
           </svg>
@@ -134,35 +134,46 @@ async function downloadData() {
         </BaseTable>
       </div>
 
-      <div text="primary-1 left" mt-6 text-4 v-text="`引用规范：${route.query.reference || '暂无引用规范'}`" />
+      <div text="primary-1 left" text-4 mt-6 v-text="`引用规范：${route.query.reference || '暂无引用规范'}`" />
     </div>
 
-    <div flex="~ col" my-10 gap-4 items-center>
-      <router-link v-if="!isDesktop && !isPurchased" :to="{ path: '/request' }">
-        <q-btn
-          color="primary"
-          square h12 outline min-w-38
-        >
-          <span text-4 font-600>数据申请使用</span>
-        </q-btn>
-      </router-link>
-      <template v-else-if="!isPurchased">
-        <Btn1 w-36 label="数据下载" :disable="!isLogin" :color="!isLogin ? 'grey-5' : undefined" @click="downloadData()" />
-        <div v-if="!isLogin" text="base grey-5" v-text="'您尚未登录请登录后重试'" />
+    <div flex="~ col" items-center my-10 gap-4>
+      <template v-if="!isPurchased">
+        <router-link v-if="!isDesktop" :to="{ path: '/request' }">
+          <q-btn
+            color="primary"
+            h12 outline square w-36
+          >
+            <span text-4 font-600>数据申请使用</span>
+          </q-btn>
+        </router-link>
+        <template v-else>
+          <Btn1
+            w-36 label="数据下载"
+            :disable="!isLogin"
+            :color="!isLogin ? 'grey-5' : undefined"
+            @click="downloadData()"
+          />
+          <div v-if="!isLogin" text="base grey-5" v-text="'您尚未登录请登录后重试'" />
+        </template>
       </template>
-      <q-btn
-        v-if="isPurchased"
-        label="建议采购"
-        flat square h12 min-w-38 bg-primary-1 text-4 text-white font-bold
-        @click="dialog = true"
-      />
+      <template v-else>
+        <Btn1
+          w-36 label="建议采购"
+          :disable="!isLogin || !isVerify"
+          :color="!isLogin || !isVerify ? 'grey-5' : undefined"
+          @click="dialog = true"
+        />
+        <div v-if="!isLogin" text="base grey-5" v-text="'您尚未登录请登录后重试'" />
+        <div v-else-if="!isVerify" text="base grey-5" v-text="'您尚未通过身份认证申请'" />
+      </template>
     </div>
 
     <ZDialog v-model="dialog" title="采购理由" footer @ok="confirmRequest">
       <q-input
         v-model="referenceText"
         placeholder="请输入采购理由"
-        class="advice-input" filled type="textarea" :rows="6"
+        class="advice-input" filled
       />
     </ZDialog>
   </div>

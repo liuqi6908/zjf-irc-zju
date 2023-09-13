@@ -11,31 +11,30 @@ interface Props {
   captions?: string
   action?: string
 }
-const props = defineProps<Props>()
+
+defineProps<Props>()
 defineEmits(['update:userCode', 'update:edit', 'update:confirm', 'update:bizId', 'update:smsCode'])
 const { userInfo } = useUser()
 const dialog = ref(false)
 
-/**
- * 校验邮箱
- * @param val
- */
+/** 需要校验的input */
+const acceptObj = reactive({
+  edit: false,
+  sms: false,
+})
+
+/** 输入校验 */
 function emailRules(val = '') {
   return validateEmail(val) || true
 }
-
-/**
- * 校验密码
- * @param val
- */
 function passwordRules(val = '') {
   return validatePassword(val) || true
 }
+function smsCodeRules(val = '') {
+  return val.length === 6 || '请输入 6 位验证码'
+}
 
-const disable = computed(() => {
-  const { label, edit, smsCode, bizId } = props
-  return (label === '邮箱' ? emailRules(edit) : passwordRules(edit)) !== true || !smsCode || !bizId
-})
+const disable = computed(() => Object.values(acceptObj).includes(false))
 </script>
 
 <template>
@@ -77,8 +76,9 @@ const disable = computed(() => {
         :dark="false"
         :user-code="edit"
         :label="`请输入${label}`"
-        :rules="[(val: string) => label === '邮箱' ? emailRules(val) : passwordRules(val)]"
+        :rules="[(val: string) => id === 'email' ? emailRules(val) : passwordRules(val)]"
         @update:user-code="(v) => $emit('update:edit', v)"
+        @update:accept="(val) => acceptObj.edit = val"
       />
 
       <div v-if="action" mt6>
@@ -86,12 +86,15 @@ const disable = computed(() => {
           邮箱验证
         </div>
         <SMSInput
-          :email="id === 'email' ? edit : userInfo?.email"
-          :action="action"
-          :dark="false"
           :sms-code="smsCode"
-          @update:sms-code="(val) => $emit('update:smsCode', val)"
+          :action="action"
+          :email="id === 'email' ? edit : userInfo?.email"
+          :dark="false"
+          :rules="[(val: string) => smsCodeRules(val)]"
+          :disable="id === 'email' && !acceptObj.edit"
           @update:biz-id="(val) => $emit('update:bizId', val)"
+          @update:sms-code="(val) => $emit('update:smsCode', val)"
+          @update:accept="(val) => acceptObj.sms = val"
         />
       </div>
     </ZDialog>

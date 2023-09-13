@@ -128,12 +128,13 @@ watch(
 </script>
 
 <template>
-  <div mb-20 mt-10 max-w-6xl w-full>
+  <div mt-10 w-full mb-20 max-w-6xl>
     <LineEchartsCard
       v-for="(item, index) in data"
       :key="index"
       :data="item.value"
-      legend
+      symbol="none"
+      legend h-65
       :title="item.title"
       :unit="item.unit"
     />

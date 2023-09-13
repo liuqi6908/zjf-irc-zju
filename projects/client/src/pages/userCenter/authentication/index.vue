@@ -87,7 +87,7 @@ const authInfoList = reactive([
 async function confirmEdit(id: string) {
   const obj = baseInfoList.find(v => v.id === id)
 
-  if (!obj || !obj.edit || !obj.bizId || !obj.smsCode)
+  if (!obj || !obj.edit || !obj.smsCode)
     return
 
   try {
@@ -181,7 +181,7 @@ onBeforeMount(() => {
   <div flex flex-col class="col-grow">
     <!-- 基础信息 -->
     <div flex="~ col" class="baseInfo">
-      <header flex="~ row justify-start" mb-6 text-5 font-600 text-grey-8>
+      <header flex="~ row justify-start" text-5 font-600 text-grey-8 mb-6>
         基础信息
       </header>
       <div flex="~ col" gap8>
@@ -204,7 +204,7 @@ onBeforeMount(() => {
       </div>
     </div>
     <!-- 分割线 -->
-    <div my-16 h-1px w-full bg-gray-3 />
+    <div w-full my-16 h-1px bg-gray-3 />
     <!-- 认证信息 -->
     <div class="col-grow authInfo">
       <header flex="~ row justify-start" mb-6 text-5 font-600 text-grey-8>
@@ -219,7 +219,7 @@ onBeforeMount(() => {
           </div>
           <div
             flex="~ 1"
-            h12 items-center border-1 border-gray-3 bg-gray-2 px3 py2
+            h12 items-center py2 border-1 border-gray-3 bg-gray-2 px3
             text="4 gray-4 left"
           >
             {{ a.inputVal }}
@@ -228,7 +228,7 @@ onBeforeMount(() => {
       </div>
     </div>
     <!-- 用户状态 -->
-    <div flex="~ row" mt-10 w-full justify-center items-center gap-5>
+    <div flex="~ row" w-full justify-center items-center mt-10 gap-5>
       <!-- 已拒绝 -->
       <div v-if="latestVerifiy?.status === VerificationStatus.REJECTED" flex="~ col items-center" w-full>
         <div flex="~ row" justify-center items-center gap-5>

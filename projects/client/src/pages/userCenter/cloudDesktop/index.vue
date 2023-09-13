@@ -14,7 +14,7 @@ import type { VMBaseInfo } from '~/api/desktopVm/getDesktopVmStatus'
 import { getDesktopVmStatus } from '~/api/desktopVm/getDesktopVmStatus'
 
 import DesktopStatus from '~/view/userCenter/myDesktop/DesktopStatus.vue'
-import Cloud from '~/view/request/cloud/Cloud.vue'
+import Cloud from '~/view/request/cloud/index.vue'
 
 const { isVerify, useGetProfile, getVerify, latestVerifiy } = useUser()
 const $router = useRouter()
@@ -35,9 +35,9 @@ const desktopInfo = ref<IDesktop>()
 const hidePassword = ref(true)
 const desktopTable = computed(() => {
   return [
-    { label: '云桌面访问地址', value: desktopInfo.value?.accessUrl },
     { label: '云桌面账号', value: desktopInfo.value?.account },
     { label: '云桌面密码', value: desktopInfo.value?.password, hide: true },
+    { label: '云桌面访问地址', value: desktopInfo.value?.accessUrl },
   ]
 })
 /** 云桌面ID */
@@ -110,6 +110,10 @@ async function getRequestInfo() {
  */
 async function getDesktopInfo() {
   desktopInfo.value = await desktopQuery()
+  if (new Date(desktopInfo.value?.expiredAt).getTime() < new Date().getTime()) {
+    requestInfo.status = DesktopQueueHistoryStatus.Expired
+    desktopInfo.value = undefined
+  }
 }
 
 /**
@@ -188,7 +192,7 @@ function copyText(text: string) {
 <template>
   <div relative min-h-2xl>
     <!-- 加载中 -->
-    <div v-if="loading" absolute z-100 full flex-center style="background: rgba(255, 255, 255, 0.6)">
+    <div v-if="loading" absolute full z-100 flex-center style="background: rgba(255, 255, 255, 0.6)">
       <q-spinner
         color="primary-1" size="5rem" :thickness="2" label-class="text-primary-1"
         label-style="font-size: 1.1em"
@@ -218,7 +222,7 @@ function copyText(text: string) {
         </div>
       </header>
       <!-- 云桌面信息 -->
-      <div mt-10 w-full flex border="1 solid grey-3" text="base left">
+      <div w-full flex mt-6 border="1 solid grey-3" text="base left">
         <div
           v-for="(item, index) in desktopTable"
           :key="index"
@@ -230,29 +234,30 @@ function copyText(text: string) {
           }"
         >
           <div overflow-hidden text-ellipsis whitespace-nowrap bg-grey-2 px-6 py-3 v-text="item.label" />
-          <div flex justify-between px-6 py-3>
-            <div w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap v-text="item.hide && hidePassword ? '********' : item.value" />
+          <div flex px-6 justify-between items-center py-1>
+            <div w-0 overflow-hidden text-ellipsis whitespace-nowrap flex-1 v-text="item.hide && hidePassword ? '********' : item.value" />
             <div flex gap-2 text-grey-4>
-              <q-btn v-if="item.hide" :icon="`fas fa-${hidePassword ? 'eye-slash' : 'eye'}`" flat size="sm" px-2 @click="hidePassword = !hidePassword" />
-              <q-btn icon="fas fa-clone" flat size="sm" px-2 @click="copyText(item.value || '')" />
+              <q-btn v-if="item.hide" flat px-2 @click="hidePassword = !hidePassword">
+                <div v-if="hidePassword" text-lg i-mingcute:eye-close-line />
+                <div v-else text-lg i-mingcute:eye-2-line />
+              </q-btn>
+              <q-btn flat px-2 @click="copyText(item.value || '')">
+                <div i-mingcute:copy-2-line text-lg />
+              </q-btn>
             </div>
           </div>
         </div>
       </div>
       <!-- 虚拟机信息 -->
-      <div mt-20 flex gap-10 text="base left">
+      <div flex mt-10 gap-10 text="base left">
         <!-- 基本信息 -->
         <div flex="~ 1 col" w-0 border="1 solid grey-3">
           <header bg-grey-2 p-4 font-600 v-text="'基本信息'" />
-          <div px-4>
+          <div class="base-info">
             <div
               v-for="(item, index) in vmInfo"
               :key="index"
-              flex gap-2.5 py-11.5
-              border-b="solid grey-3"
-              :style="{
-                borderBottomWidth: `${index === Object.keys(vmInfo).pop() ? 0 : 1}px`,
-              }"
+              flex gap-2 py-8 px-4
             >
               <div w-30 v-text="`${item.label}：`" />
               <div flex-1 v-text="item.value" />
@@ -267,7 +272,7 @@ function copyText(text: string) {
       </div>
     </div>
     <!-- 未认证/未申请 -->
-    <div v-else flex="~ col" items-center gap-10 py-22>
+    <div v-else flex="~ col" gap-10 items-center py-22>
       <!-- 未认证 -->
       <template v-if="!isVerify">
         <template v-if="!userStatus">
@@ -311,7 +316,7 @@ function copyText(text: string) {
         <!-- 已驳回 -->
         <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Rejected">
           <EmptyCloud label="您的申请已被驳回，请重新提交" />
-          <div flex="~ col" text="sm left" mt-2 w-80 bg-grey-2 p-4 font-500>
+          <div flex="~ col" text="sm left" bg-grey-2 p-4 mt-2 w-80 font-500>
             <div mb-2>
               驳回理由
             </div>
@@ -342,6 +347,9 @@ function copyText(text: string) {
   .q-btn.disabled
     opacity: 1 !important
     background: var(--grey-4)
+.base-info
+  > div:nth-child(2n)
+    background: rgba(2, 92, 185, 0.06)
 </style>
 
 <route lang="yaml">

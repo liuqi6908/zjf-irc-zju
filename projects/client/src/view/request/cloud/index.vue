@@ -23,11 +23,15 @@ const data = reactive({
       { value: [], time: [], label: '下行：' },
     ],
   },
-  disk: {
-    title: '磁盘',
+  storage: {
+    title: '内存',
     unit: '%',
     value: [
-      { value: [], time: [], label: '占用率：' },
+      {
+        time: [],
+        value: [],
+        label: '负载率：',
+      },
     ],
   },
 })
@@ -40,17 +44,17 @@ async function fetchDesktopVm() {
     const res = await getDesktopVmDetail(props.uuid)
     if (!res)
       return pause()
-    let { CPU, Disk, NetworkIn, NetworkOut } = res
-    const { cpu, network, disk } = data
+    let { CPU, memUsed, NetworkIn, NetworkOut } = res
+    const { cpu, network, storage } = data
     if (!CPU || !CPU.length)
       CPU = defaultData()
-    cpu.value[0].value = CPU.map((item: any) => Number(item.value) * 100)
+    cpu.value[0].value = CPU.map((item: any) => Number(item.value) > 1 ? 100 : Number(item.value) * 100)
     cpu.value[0].time = CPU.map((item: any) => item.time)
 
-    if (!Disk || !Disk.length)
-      Disk = defaultData()
-    disk.value[0].value = Disk.map((item: any) => Number(item.value) * 100)
-    disk.value[0].time = Disk.map((item: any) => item.time)
+    if (!memUsed || !memUsed.length)
+      memUsed = defaultData()
+    storage.value[0].value = memUsed.map((item: any) => Number(item.value) * 100)
+    storage.value[0].time = memUsed.map((item: any) => item.time)
 
     if (!NetworkIn || !NetworkIn.length)
       NetworkIn = defaultData()
@@ -90,14 +94,16 @@ watch(() => props.uuid, async (desktopId) => {
 </script>
 
 <template>
-  <div flex="~ col">
+  <div flex="~ col" gap-4>
     <LineEchartsCard
       v-for="(item, index) in data"
       :key="index"
       :data="item.value"
       :title="item.title"
       :unit="item.unit"
-      legend
+      symbol="none"
+      legend class="p-4! pb-2!"
+      :h="item.value.length > 1 ? 77 : 58.5"
     />
   </div>
 </template>

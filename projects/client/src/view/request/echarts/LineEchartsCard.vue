@@ -8,6 +8,7 @@ interface Props {
   data: { value: number[]; time: number[]; label: string }[]
   unit: string
   legend?: boolean
+  symbol?: string
 }
 
 const props = defineProps<Props>()
@@ -17,7 +18,8 @@ const baseOption = {
   grid: {
     left: 1,
     right: 5,
-    bottom: 10,
+    top: 45,
+    bottom: 1,
     containLabel: true,
   },
   xAxis: {
@@ -66,8 +68,10 @@ function formatterSeries(data: number[], color: string) {
 
   return {
     type: 'line',
+    symbol: props.symbol || 'emptyCircle',
     areaStyle: {
       color,
+      opacity: 0.5,
     },
     emphasis: {
       focus: 'series',
@@ -142,6 +146,10 @@ watch(
       }
 
       yAxis.axisLabel = { formatter: `{value} ${props.unit}` }
+      if (!props.title.includes('网卡'))
+        yAxis.splitNumber = 2
+      else
+        yAxis.splitNumber = 4
 
       series.push(...newVal.map((item, index) => {
         const color = index === 0 ? 'rgba(2, 92, 185, 0.12)' : 'rgba(249, 158, 52, 0.12)'
@@ -165,8 +173,8 @@ watch(
 </script>
 
 <template>
-  <div bg-grey-1 p-6>
-    <header mb-4 text="grey-8 left" title-4>
+  <div bg-grey-1 p-6 flex="~ col">
+    <header mb-2 text="grey-8 left" title-4>
       {{ title }}
     </header>
     <client-only>
@@ -174,7 +182,7 @@ watch(
         class="chart"
         :option="options"
         :update-options="{ notMerge: false }"
-        autofill h-80 autoresize
+        autofill flex-1 autoresize h-0
       />
     </client-only>
   </div>
