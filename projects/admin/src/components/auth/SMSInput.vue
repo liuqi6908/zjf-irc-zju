@@ -1,60 +1,63 @@
 <script lang="ts" setup>
 import type { CodeAction } from 'zjf-types'
+import { Notify, QInput } from 'quasar'
 import { smsCodeByEmail } from '~/api/auth/email/smsCodeByEmail'
-import Btn from '~/components/btn/Btn.vue'
-
-const props = defineProps<Props>()
-const emits = defineEmits(['update:smsCode', 'update:accept', 'update:bizId'])
 
 interface Props {
   smsCode: string
   email: string
-  action: CodeAction.REGISTER | CodeAction.LOGIN | CodeAction.CHANGE_PASSWORD
+  action: CodeAction
 }
+
+const props = defineProps<Props>()
+const emits = defineEmits(['update:smsCode', 'update:accept', 'update:bizId'])
+
+const inputRef = ref<typeof QInput>()
 const wait = ref(0)
-
-const inputRef = ref(null)
-
-let timer: any
 
 async function getCode() {
   const res = await smsCodeByEmail(props.email, props.action)
-  if (!res)
-    return
-  emits('update:bizId', res.bizId)
-  wait.value = 60
-  timer = setInterval(() => {
-    wait.value--
-    if (wait.value <= 0)
-      clearInterval(timer)
-  }, 1000)
+  if (res) {
+    Notify.create({
+      type: 'success',
+      message: '发送成功',
+    })
+    emits('update:bizId', res.bizId)
+    wait.value = 60
+    const { pause, resume } = useIntervalFn(() => {
+      wait.value--
+      if (wait.value <= 0)
+        pause()
+    }, 1000)
+    resume()
+  }
 }
 
-watch(() => props.smsCode, () => {
-  if (inputRef.value) {
-    const validate = inputRef.value?.validate(props.smsCode)
-    emits('update:accept', validate)
-  }
-})
+watch(
+  () => props.smsCode,
+  () => {
+    emits('update:accept', inputRef.value?.validate(props.smsCode))
+  },
+)
 </script>
 
 <template>
-  <q-input
+  <QInput
     ref="inputRef"
     dense
     label="请输入验证码"
     :model-value="smsCode"
     outlined
     lazy-rules="ondemand"
-    @update:model-value="(v: string) => $emit('update:smsCode', v)"
+    @update:model-value="v => $emit('update:smsCode', v)"
   >
     <template #append>
       <div v-if="wait" text-4>
         {{ wait }}
       </div>
-      <Btn v-else dense label="发送验证码" transparent @click="getCode" />
+      <Btn v-else dense label="发送验证码" transparent @click="getCode()" />
     </template>
-  </q-input>
+  </QInput>
 </template>
 
 <style lang="scss" scoped>

@@ -1,5 +1,4 @@
 import type { ILoginSuccessResData } from 'zjf-types'
-import { useRequest } from '../../composables/request'
 
 const { $put } = useRequest()
 

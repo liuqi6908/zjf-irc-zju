@@ -3,6 +3,7 @@ import { VerificationStatus } from 'zjf-types'
 import type { IVerificationHistory } from 'zjf-types'
 import { encryptPasswordInHttp } from 'zjf-utils'
 import { AUTH_TOKEN_KEY } from 'shared/constants'
+
 import { getProfile } from '~/api/auth/getProfile'
 import { login } from '~/api/auth/login'
 import { logout } from '~/api/auth/logout'
@@ -29,8 +30,8 @@ export function useUser($router = useRouter()) {
     if (res) {
       authToken.value = res.sign.access_token
       userInfo.value = res.user
+      $router.replace({ path: '/' })
     }
-    $router.replace({ path: '/home' })
   }
 
   /** 注册 */

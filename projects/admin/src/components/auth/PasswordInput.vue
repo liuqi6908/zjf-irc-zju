@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { QInput } from 'quasar'
+
 const props = defineProps<Props>()
 const emits = defineEmits(['update:password', 'update:accept'])
 
+const inputRef = ref<typeof QInput>()
 const isPwd = ref(true)
-const inputRef = ref(null)
 
 interface Props {
   password: string
@@ -12,15 +14,12 @@ interface Props {
 }
 
 watch(() => props.password, () => {
-  if (inputRef.value) {
-    const validate = inputRef.value?.validate(props.password)
-    emits('update:accept', validate)
-  }
+  emits('update:accept', inputRef.value?.validate(props.password))
 })
 </script>
 
 <template>
-  <q-input
+  <QInput
     ref="inputRef"
     :reactive-rules="reactiveRules"
     :rules="rules"
@@ -29,17 +28,16 @@ watch(() => props.password, () => {
     dense
     :type="isPwd ? 'password' : 'text'"
     label="请输入密码"
-    @update:model-value="(v: string) => $emit('update:password', v)"
+    @update:model-value="v => $emit('update:password', v)"
   >
     <template #append>
       <div
-
         :class="isPwd ? 'i-mingcute:eye-close-line' : 'i-mingcute:eye-2-line' "
         cursor-pointer text-grey-5
         @click="isPwd = !isPwd"
       />
     </template>
-  </q-input>
+  </QInput>
 </template>
 
 <style lang="scss" scoped>

@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
 import { validateEmail, validatePassword } from 'zjf-utils'
-import { useUser } from '../../../composables/useUser'
 
-// const { $post } = useRequest()
-const password = ref('')
+const { useLogin } = useUser()
+
 const userCode = ref('')
+const password = ref('')
 const acceptObj = reactive({
   password: false,
 })
-
-const { useLogin } = useUser()
 
 function passwordRule(val: string) {
   return validatePassword(val) || true
@@ -35,9 +32,10 @@ function handleEnter() {
     <header flex="~ flex col items-center justify-center" mb-2>
       <span font-600 text-grey-8 text-5 v-text="'智能云科研平台'" />
     </header>
-    <span m-b-1 font-500 text-grey-8 v-text="'账号'" />
+    <span m-b-1 font-500 text-grey-8 v-text="'账号 / 邮箱'" />
     <UserCodeInput
       v-model:userCode="userCode"
+      label="请输入账号或邮箱"
     />
     <span m-b-1 m-t-4 font-500 text-grey-8 v-text="'密码'" />
     <PasswordInput
@@ -50,7 +48,7 @@ function handleEnter() {
 
     <RouterLink text-3 text-grey-5 :to="{ path: 'forgetPassword' }" v-text="'忘记密码?'" />
 
-    <div h-20 />
+    <div h-15 />
     <client-only>
       <Btn :disable="disable" label="登录" @click="useLogin(logArg)" />
     </client-only>

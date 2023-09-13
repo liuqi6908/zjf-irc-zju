@@ -40,7 +40,6 @@ const finalProps = computed(() => ({ props }))
     :label="label"
     :outline="outline === true"
     :class="btnClass"
-
     :disable="disable"
     :dense="dense"
     unelevated rounded-2
