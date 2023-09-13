@@ -1,76 +1,74 @@
 <script setup lang="ts">
-import { validateAccount, validateEmail } from 'zjf-utils'
+import { validateAccount, validateEmail, validatePassword } from 'zjf-utils'
 import { CodeAction } from 'zjf-types'
 
-// import { register } from '~/api/auth/register'
-// import { login } from '~/api/auth/login'
-import { computed, reactive, ref } from 'vue'
-import { useUser } from '../../../composables/useUser'
-
-const password = ref<string>('')
-const email = ref<string>('')
-const bizId = ref('')
-const repeatPassword = ref ('')
 const userName = ref('')
+const password = ref('')
+const repeatPassword = ref ('')
+const email = ref('')
 const smsCode = ref('')
-const repeatPasswordInput = ref()
+const bizId = ref('')
 
-// const $route = useRoute()
-// const $router = useRouter()
-
+const $router = useRouter()
 const { useRegister } = useUser()
 
 /** 需要校验的input */
 const acceptObj = reactive({
   username: false,
+  password: false,
   repeatPassword: false,
   email: false,
   sms: false,
 })
 
-function emailRules(val: string) {
-  return validateEmail(val) || true
-}
+/** 校验邮箱 */
 function usernameRules(val: string) {
   return validateAccount(val) || true
 }
-
+function emailRules(val: string) {
+  return validateEmail(val) || true
+}
+function passwordRules(val: string) {
+  return validatePassword(val) || true
+}
 function passwordRule(val: string) {
   return val === password.value || '两次密码不一致'
 }
 function smsCodeRule(val: string) {
-  return val.length > 0 || '验证码不能为空'
-}
-
-function verifyAccept(obj: any) {
-  return Object.values(obj).includes(false)
+  return val.length === 6 || '请输入 6 位验证码'
 }
 
 async function signUp() {
   useRegister(userName.value, email.value, password.value, bizId.value, smsCode.value)
 }
-const disable = computed(() => verifyAccept(acceptObj))
+
+const disable = computed(() => Object.values(acceptObj).includes(false))
 </script>
 
 <template>
-  <div flex="~ col">
-    <header flex="~ flex col items-center justify-center">
-      <span text-5 font-600 text-grey-8>智能云科研平台</span>
+  <div w-full flex="~ col" text="14px grey-8" font-500>
+    <header flex="~ flex items-center justify-center" mb-10 relative>
+      <div i-mingcute:left-line cursor-pointer absolute left-0 text-xl top-0.5 @click="$router.replace({ path: 'login' })" />
+      <span text-5 font-600>智能云科研平台</span>
     </header>
-    <span mb-1 font-500 text-grey-8>用户名称</span>
+
+    <span mb-1 v-text="'用户名称'" />
     <UserCodeInput
       v-model:userCode="userName"
+      label="请输入用户名称"
       user-type="user"
       :rules="[(val:string) => usernameRules(val)]"
       @update:accept="(val) => acceptObj.username = val"
     />
 
-    <div m-b-5 flex flex-col>
-      <span mb-1 font-500 text-grey-8>密码</span>
-      <PasswordInput v-model:password="password" />
-    </div>
+    <span mb-1 v-text="'密码'" />
+    <PasswordInput
+      v-model:password="password"
+      :rules="[(val: string) => passwordRules(val)]"
+      @update:accept="(val) => acceptObj.password = val"
+    />
 
-    <span mb-1 font-500 text-grey-8>确认密码</span>
+    <span mb-1 v-text="'确认密码'" />
     <PasswordInput
       v-model:password="repeatPassword"
       reactive-rules
@@ -78,23 +76,26 @@ const disable = computed(() => verifyAccept(acceptObj))
       @update:accept="(val) => acceptObj.repeatPassword = val"
     />
 
-    <span mb-1 font-500 text-grey-8>邮箱</span>
+    <span mb-1 v-text="'邮箱'" />
     <UserCodeInput
-      ref="repeatPasswordInput"
       v-model:userCode="email"
+      label="请输入邮箱"
       :rules="[(val:string) => emailRules(val)]"
       user-type="email"
       @update:accept="(val) => acceptObj.email = val"
     />
-    <span mb-1 font-500 text-grey-8>短信验证</span>
+
+    <span mb-1 v-text="'邮箱验证'" />
     <SMSInput
       v-model:smsCode="smsCode"
       :action="CodeAction.REGISTER"
       :email="email"
       :rules="[(val:string) => smsCodeRule(val)]"
+      :disable="!acceptObj.email"
       @update:biz-id="(val) => bizId = val"
       @update:accept="(val) => acceptObj.sms = val"
     />
+
     <client-only>
       <Btn mt-5 w-full label="注册" :disable="disable" @click="signUp" />
     </client-only>

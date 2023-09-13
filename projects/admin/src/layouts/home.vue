@@ -1,14 +1,16 @@
 <script setup lang="ts">
-const router = useRouter()
-
+const $router = useRouter()
+const { isLogin, useLogout } = useUser()
 const drawer = ref(false)
-
 const routerLink = ref('')
 
-/** hooks */
+onBeforeMount(() => {
+  if (!isLogin.value)
+    $router.push('/auth/login')
+})
 
 const link = computed({
-  get: () => { return router.currentRoute.value.name as string },
+  get: () => { return $router.currentRoute.value.name as string },
   set: (val: string) => {
     routerLink.value = val
   },
@@ -85,8 +87,14 @@ const navList = [
             <span text-xl font-600 text-grey-8>
               管理后台
             </span>
-            <!-- <Icon text-grey-8 icon="mdi-light:home" /> -->
           </div>
+          <q-btn
+            label="退出登录"
+            color="primary"
+            @click="useLogout()"
+          >
+            <div i-mingcute:exit-fill ml-2 />
+          </q-btn>
         </q-toolbar>
       </q-header>
 

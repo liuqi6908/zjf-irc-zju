@@ -1,100 +1,98 @@
 <script lang="ts" setup>
-import { validateEmail } from 'zjf-utils'
+import { validateEmail, validatePassword } from 'zjf-utils'
 import { CodeAction } from 'zjf-types'
-
-import { computed, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
 
 import { Notify } from 'quasar'
 import { changePasswordBySms } from '~/api/auth/user/changePasswordBySms'
 
-const password = ref<string>('')
-const email = ref<string>('')
-const bizId = ref('')
-const repeatPassword = ref ('')
+const email = ref('')
 const smsCode = ref('')
+const bizId = ref('')
+const password = ref('')
+const repeatPassword = ref ('')
 
-// const $route = useRoute()
-// const $router = useRouter()
-
-const router = useRouter()
+const $router = useRouter()
 
 /** 需要校验的input */
 const acceptObj = reactive({
-  repeatPassword: false,
   email: false,
   sms: false,
+  password: false,
+  repeatPassword: false,
 })
 
+/** 输入校验 */
 function emailRules(val: string) {
   return validateEmail(val) || true
 }
-
+function smsCodeRule(val: string) {
+  return val.length === 6 || '请输入 6 位验证码'
+}
+function passwordRules(val: string) {
+  return validatePassword(val) || true
+}
 function passwordRule(val: string) {
   return val === password.value || '两次密码不一致'
-}
-function smsCodeRule(val: string) {
-  return val.length > 0 || '验证码不能为空'
-}
-
-function verifyAccept(obj: any) {
-  return Object.values(obj).includes(false)
 }
 
 async function finish() {
   const res = await changePasswordBySms(email.value, password.value, bizId.value, smsCode.value)
-  if (!res)
-    return
-  Notify.create({ type: 'success', message: '修改密码完成' })
-  router.replace('/auth/login')
+  if (res) {
+    Notify.create({
+      type: 'success',
+      message: '修改密码成功',
+    })
+    $router.replace('/auth/login')
+  }
 }
 
-const disable = computed(() => verifyAccept(acceptObj))
+const disable = computed(() => Object.values(acceptObj).includes(false))
 </script>
 
 <template>
-  <div w-full flex="~ col">
-    <header flex="~ flex row items-center justify-between " mb-10>
-      <div class="i-mingcute:left-line" h-6 w-6 cursor-pointer text-grey-8 @click="router.replace({ path: 'login' })" />   <span text-5 font-600 text-grey-8>邮箱找回</span> <span />
+  <div w-full flex="~ col" text="14px grey-8" font-500>
+    <header flex="~ flex items-center justify-center " mb-10 relative>
+      <div i-mingcute:left-line cursor-pointer absolute left-0 text-xl top-0.5 @click="$router.replace({ path: 'login' })" />
+      <span text-5 font-600>邮箱找回</span>
     </header>
-    <span m-b-1 text-14px font-500 text-grey-8>
-      邮箱
-    </span>
+
+    <span mb-1 v-text="'邮箱'" />
     <UserCodeInput
       v-model:userCode="email"
+      label="请输入邮箱"
       :rules="[(val:string) => emailRules(val)]"
       user-type="email"
       @update:accept="(val) => acceptObj.email = val"
     />
 
-    <span m-b-1 text-14px font-500 text-grey-8>
-      邮箱验证
-    </span>
+    <span mb-1 v-text="'邮箱验证'" />
     <SMSInput
       v-model:smsCode="smsCode"
       :action="CodeAction.CHANGE_PASSWORD"
       :email="email"
       :rules="[(val:string) => smsCodeRule(val)]"
+      :disable="!acceptObj.email"
       @update:biz-id="(val) => bizId = val"
       @update:accept="(val) => acceptObj.sms = val"
     />
 
-    <div m-b-5 flex flex-col>
-      <span mb-1 font-500 text-grey-8>密码</span>
-      <PasswordInput v-model:password="password" />
-    </div>
+    <span mb-1 v-text="'密码'" />
+    <PasswordInput
+      v-model:password="password"
+      :rules="[(val: string) => passwordRules(val)]"
+      @update:accept="(val) => acceptObj.password = val"
+    />
 
-    <span m-b-1 text-14px font-500 text-grey-8>
-      确认密码
-    </span>
+    <span mb-1 v-text="'确认密码'" />
     <PasswordInput
       v-model:password="repeatPassword"
       reactive-rules
       :rules="[(val:string) => passwordRule(val)]"
       @update:accept="(val) => acceptObj.repeatPassword = val"
     />
+
     <client-only>
-      <Btn mt-5 w-full label="完成" :disable="disable" @click="finish" />
+      <Btn w-full mt-5 label="完成" :disable="disable" @click="finish" />
     </client-only>
   </div>
 </template>
