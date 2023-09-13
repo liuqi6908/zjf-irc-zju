@@ -110,6 +110,10 @@ async function getRequestInfo() {
  */
 async function getDesktopInfo() {
   desktopInfo.value = await desktopQuery()
+  if (new Date(desktopInfo.value?.expiredAt).getTime() < new Date().getTime()) {
+    requestInfo.status = DesktopQueueHistoryStatus.Expired
+    desktopInfo.value = undefined
+  }
 }
 
 /**
@@ -188,7 +192,7 @@ function copyText(text: string) {
 <template>
   <div relative min-h-2xl>
     <!-- 加载中 -->
-    <div v-if="loading" absolute z-100 full flex-center style="background: rgba(255, 255, 255, 0.6)">
+    <div v-if="loading" absolute full z-100 flex-center style="background: rgba(255, 255, 255, 0.6)">
       <q-spinner
         color="primary-1" size="5rem" :thickness="2" label-class="text-primary-1"
         label-style="font-size: 1.1em"
@@ -230,8 +234,8 @@ function copyText(text: string) {
           }"
         >
           <div overflow-hidden text-ellipsis whitespace-nowrap bg-grey-2 px-6 py-3 v-text="item.label" />
-          <div flex justify-between px-6 py-3>
-            <div w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap v-text="item.hide && hidePassword ? '********' : item.value" />
+          <div flex px-6 py-3 justify-between>
+            <div w-0 overflow-hidden text-ellipsis whitespace-nowrap flex-1 v-text="item.hide && hidePassword ? '********' : item.value" />
             <div flex gap-2 text-grey-4>
               <q-btn v-if="item.hide" :icon="`fas fa-${hidePassword ? 'eye-slash' : 'eye'}`" flat size="sm" px-2 @click="hidePassword = !hidePassword" />
               <q-btn icon="fas fa-clone" flat size="sm" px-2 @click="copyText(item.value || '')" />
@@ -240,7 +244,7 @@ function copyText(text: string) {
         </div>
       </div>
       <!-- 虚拟机信息 -->
-      <div mt-20 flex gap-10 text="base left">
+      <div flex mt-20 gap-10 text="base left">
         <!-- 基本信息 -->
         <div flex="~ 1 col" w-0 border="1 solid grey-3">
           <header bg-grey-2 p-4 font-600 v-text="'基本信息'" />
@@ -267,7 +271,7 @@ function copyText(text: string) {
       </div>
     </div>
     <!-- 未认证/未申请 -->
-    <div v-else flex="~ col" items-center gap-10 py-22>
+    <div v-else flex="~ col" gap-10 items-center py-22>
       <!-- 未认证 -->
       <template v-if="!isVerify">
         <template v-if="!userStatus">
@@ -311,7 +315,7 @@ function copyText(text: string) {
         <!-- 已驳回 -->
         <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Rejected">
           <EmptyCloud label="您的申请已被驳回，请重新提交" />
-          <div flex="~ col" text="sm left" mt-2 w-80 bg-grey-2 p-4 font-500>
+          <div flex="~ col" text="sm left" bg-grey-2 p-4 mt-2 w-80 font-500>
             <div mb-2>
               驳回理由
             </div>
