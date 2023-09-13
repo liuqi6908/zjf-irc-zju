@@ -136,7 +136,10 @@ export class DesktopController {
     // 将云桌面分配，并更新用户的状态
     await this._desktopSrv.repo().update(
       { id: param.desktopId, disabled: false },
-      { userId: param.userId },
+      {
+        userId: param.userId,
+        expiredAt: new Date(Date.now() + request.duration * 1000 * 60 * 60 * 24),
+      },
     )
     await this._desktopReqSrv.repo().update(
       { userId: param.userId },
