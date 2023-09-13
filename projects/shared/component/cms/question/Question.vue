@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref, reactive } from 'vue';
+import { onMounted, ref, reactive, nextTick } from 'vue';
 import { useRoute,useRouter }  from 'vue-router'
 
 interface Question {
@@ -19,15 +19,19 @@ const route = useRoute()
 const router = useRouter()
 
 function scrollTo(title: string, index: number) {
-  link.value = title
-  if(typeof document !=='undefined'){
-    const target = document.querySelector(`#title${index}`)
-    if (target) {
-      target.scrollIntoView({
-        behavior: 'smooth'
-      });
-      router.replace({query:{title,index}})
-    }
+  openState[title] = true
+
+  if (typeof document !=='undefined'){
+    nextTick(() => {
+      link.value = title
+      const target = document.querySelector(`#title${index}`)
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+        });
+        router.replace({query:{title,index}})
+      }
+    })
   }
 }
 
@@ -61,7 +65,10 @@ onMounted(() => {
       </div>
     </q-list>
     <div flex="~ col 1" w0 gap-16 pb16>
-      <div v-for="(item, index) in list" :key="index" relative>
+      <div
+        :id="`title${index}`" :label="item.title"
+        v-for="(item, index) in list" :key="index" relative
+      >
         <q-item clickable flex="~" items-center gap-2 @click="openState[item.title] = !openState[item.title]">
           <div 
             w6 h6 transition-all flex-center
@@ -76,7 +83,6 @@ onMounted(() => {
         <q-expansion-item
           v-model="openState[item.title]"
           header-class="display-none"
-          :id="`title${index}`" :label="item.title"
         >
           <div w-150 pl12 pt4>
             <div relative full pl4>
