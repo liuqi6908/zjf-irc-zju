@@ -253,7 +253,7 @@ const disable = computed(() => !editInfo.nameZH || !editInfo.nameEN)
       </q-card>
     </q-dialog>
 
-    <QList ref="editRef" style="display: none" bordered absolute top-12 bg-grey-1 shadow>
+    <QList ref="editRef" style="display: none" bordered absolute top-12 bg-grey-1 z-100 shadow-lg>
       <q-item clickable>
         <q-item-section @click="dialog = true">
           编辑
