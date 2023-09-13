@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { Notify } from 'quasar'
 import type { CodeAction } from 'zjf-types'
+import { Notify, QInput } from 'quasar'
 import { smsCodeByEmail } from '~/api/auth/email/smsCodeByEmail'
 
 interface Props {
@@ -15,41 +15,37 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const emits = defineEmits(['update:smsCode', 'update:accept', 'update:bizId'])
 
+const inputRef = ref<typeof QInput>()
 const wait = ref(0)
 
-const inputRef = ref<any>(null)
-const validate = ref(null)
-
 async function getCode() {
-  if (!props.email) {
-    return Notify.create({
-      type: 'danger',
-      message: '请先输入邮箱',
-    })
-  }
   const res = await smsCodeByEmail(props.email, props.action)
-  if (!res)
-    return
-  emits('update:bizId', res.bizId)
-  wait.value = 60
-  const { pause, resume } = useIntervalFn(() => {
-    wait.value--
-    if (wait.value <= 0)
-      pause()
-  }, 1000)
-  resume()
+  if (res) {
+    Notify.create({
+      type: 'success',
+      message: '发送成功',
+    })
+    emits('update:bizId', res.bizId)
+    wait.value = 60
+    const { pause, resume } = useIntervalFn(() => {
+      wait.value--
+      if (wait.value <= 0)
+        pause()
+    }, 1000)
+    resume()
+  }
 }
 
-watch(() => props.smsCode, () => {
-  if (inputRef.value) {
-    validate.value = inputRef.value?.validate(props.smsCode)
-    emits('update:accept', validate.value)
-  }
-})
+watch(
+  () => props.smsCode,
+  () => {
+    emits('update:accept', inputRef.value?.validate(props.smsCode))
+  },
+)
 </script>
 
 <template>
-  <q-input
+  <QInput
     ref="inputRef"
     dense
     label="请输入验证码"
@@ -90,7 +86,7 @@ watch(() => props.smsCode, () => {
     <template #error>
       <div>error</div>
     </template>
-  </q-input>
+  </QInput>
 </template>
 
 <style lang="scss" scoped>

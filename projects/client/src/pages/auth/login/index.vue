@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
 import { validateEmail, validatePassword } from 'zjf-utils'
-import { useUser } from '../../../composables/useUser'
 
-// const { $post } = useRequest()
-const password = ref('')
+const { useLogin } = useUser()
+
 const userCode = ref('')
+const password = ref('')
 const acceptObj = reactive({
   password: false,
 })
-
-const { useLogin } = useUser()
 
 function passwordRule(val: string) {
   return validatePassword(val) || true
@@ -31,16 +28,16 @@ function handleEnter() {
 </script>
 
 <template>
-  <div w-full flex="~ col">
+  <div w-full flex="~ col" text-grey-1 font-500>
     <header flex="~ flex col items-center justify-center" mb-12>
-      <span font-600 text-7 text-grey-1 v-text="'登录'" />
+      <span font-600 text-7 v-text="'登录'" />
     </header>
-    <span text-grey-1 font-500 m-b-1 v-text="'账号 / 邮箱'" />
+    <span mb-1 v-text="'账号 / 邮箱'" />
     <UserCodeInput
       v-model:userCode="userCode"
       label="请输入账号/邮箱"
     />
-    <span m-b-1 font-500 text-grey-1 m-t-4 v-text="'密码'" />
+    <span mb-1 mt-4 v-text="'密码'" />
     <PasswordInput
       v-model:password="password"
       reactive-rules
@@ -48,12 +45,10 @@ function handleEnter() {
       @update:accept="(val) => acceptObj.password = val"
       @keydown.enter="handleEnter()"
     />
-    <RouterLink text-grey-1 text-3 :to="{ path: 'forgetPassword' }" v-text="'忘记密码？'" />
-
-    <div h-20 />
+    <RouterLink text-xs text-grey-1 :to="{ path: 'forgetPassword' }" v-text="'忘记密码？'" />
 
     <client-only>
-      <Btn color="primary-1" bg-color="grey-1" :disable="disable" label="登录" @click="useLogin(logArg)" />
+      <Btn color="primary-1" mt-20 bg-color="grey-1" :disable="disable" label="登录" @click="useLogin(logArg)" />
     </client-only>
 
     <div flex-center m-t-5 text-grey-3>

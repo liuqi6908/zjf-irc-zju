@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { QInput } from 'quasar'
 
-const props = defineProps<Props>()
-const emits = defineEmits(['update:userCode', 'update:accept'])
-
 interface Props {
   userCode: string
   accept?: boolean
@@ -11,11 +8,17 @@ interface Props {
   disable?: boolean
 }
 
+const props = defineProps<Props>()
+const emits = defineEmits(['update:userCode', 'update:accept'])
+
 const inputRef = ref<typeof QInput>()
 
-watch(() => props.userCode, () => {
-  emits('update:accept', inputRef.value?.validate(props.userCode))
-})
+watch(
+  () => props.userCode,
+  () => {
+    emits('update:accept', inputRef.value?.validate(props.userCode))
+  },
+)
 </script>
 
 <template>

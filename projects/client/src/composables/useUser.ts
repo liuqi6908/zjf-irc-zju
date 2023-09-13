@@ -3,6 +3,7 @@ import { VerificationStatus } from 'zjf-types'
 import type { IVerificationHistory } from 'zjf-types'
 import { encryptPasswordInHttp } from 'zjf-utils'
 import { AUTH_TOKEN_KEY } from 'shared/constants'
+import { Notify } from 'quasar'
 
 import { getProfile } from '~/api/auth/getProfile'
 import { login } from '~/api/auth/login'
@@ -43,8 +44,13 @@ export function useUser($router = useRouter()) {
     code: string,
   ) => {
     const res = await register(account, email, encryptPasswordInHttp(password), bizId, code)
-    if (res)
+    if (res) {
+      Notify.create({
+        type: 'success',
+        message: '注册成功',
+      })
       await useLogin({ password, account, email })
+    }
   }
 
   /** 登出 */
