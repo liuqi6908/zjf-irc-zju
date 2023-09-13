@@ -196,7 +196,7 @@ const disable = computed(() => !editInfo.nameZH || !editInfo.nameEN)
 
 <template>
   <div absolute full p-4 class="data-admin">
-    <q-card full>
+    <q-card full overflow-hidden>
       <Tabs
         v-model="tab"
         v-model:curr-tab-obj="currentTabObj"
