@@ -1,4 +1,5 @@
 import { IsLogin } from 'src/guards/login.guard'
+import { SkipThrottle } from '@nestjs/throttler'
 import { FilenameDto } from 'src/dto/filename.dto'
 import { FilePathDto } from 'src/dto/file-path.dto'
 import { ErrorCode, PermissionType } from 'zjf-types'
@@ -14,6 +15,7 @@ import { FileService } from './file.service'
 import { UploadDataIntroParamDto } from './dto/upload-data-intro.param.dto'
 import { GetVerifyAttachmentParamDto } from './dto/get-verify-attachment.param.dto'
 
+@SkipThrottle()
 @ApiTags('File | 文件服务')
 @Controller('file')
 export class FileController {
