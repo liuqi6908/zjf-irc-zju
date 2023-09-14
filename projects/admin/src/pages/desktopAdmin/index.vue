@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import type { TabItem } from '~/components/tab/Tabs.vue'
 
-export interface QueryDesktop {
-  total: number
-  data: any[]
-}
-
 const tabList = ref<TabItem[]>([
   { id: 0, label: '审核队列', component: markRaw(defineAsyncComponent(() => import('~/view/desktopAdmin/AuditQueue.vue'))) },
   { id: 1, label: '桌面分配', component: markRaw(defineAsyncComponent(() => import('~/view/desktopAdmin/DesktopAllocation.vue'))) },

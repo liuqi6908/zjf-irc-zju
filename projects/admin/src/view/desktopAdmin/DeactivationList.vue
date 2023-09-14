@@ -3,8 +3,7 @@ import { QTable, useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 import type { IDesktop, IQueryConfig } from 'zjf-types'
 import moment from 'moment'
-import { desktopQueryList } from '~/api/desktop/desktopsList'
-import type { QueryDesktop } from '~/pages/desktopAdmin/index.vue'
+import { desktopQueryList } from '~/api/desktop/index'
 
 interface Props {
   title?: string
@@ -70,7 +69,7 @@ async function queryData(props: any) {
         },
       },
     }
-    const { total, data } = await desktopQueryList(body) as QueryDesktop
+    const { total, data } = await desktopQueryList(body)
     pagination.value.rowsNumber = total
     rows.splice(0, rows.length, ...data.map((v) => {
       v.user = v.lastUser

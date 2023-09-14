@@ -2,11 +2,10 @@
 import { QTable, useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 import { DesktopQueueStatus } from 'zjf-types'
-import type { IDesktop, IQueryConfig } from 'zjf-types'
+import type { IDesktopQueue, IQueryConfig } from 'zjf-types'
 import moment from 'moment'
-import { getDesktopQuery } from '~/api/desktopRequest/getdesktopQuery'
-import { assignDesktop } from '~/api/desktop/assignDesktop'
-import type { QueryDesktop } from '~/pages/desktopAdmin/index.vue'
+import { desktopRequestQueryList } from '~/api/desktop/request'
+import { assignDesktop } from '~/api/desktop/index'
 
 interface Props {
   id: string
@@ -40,7 +39,7 @@ const dialog = ref(true)
 const dialogLoading = ref(false)
 const tableLoading = ref(false)
 
-onMounted(async () => {
+onMounted(() => {
   cols.forEach((item) => {
     item.align = 'center'
   })
@@ -57,7 +56,7 @@ async function queryData(props: any) {
   tableLoading.value = true
 
   try {
-    const body: IQueryConfig<IDesktop> = {
+    const body: IQueryConfig<IDesktopQueue> = {
       pagination: {
         page,
         pageSize: rowsPerPage,
@@ -81,7 +80,7 @@ async function queryData(props: any) {
         },
       },
     }
-    const { total, data } = await getDesktopQuery(body) as QueryDesktop
+    const { total, data } = await desktopRequestQueryList(body)
     pagination.value.rowsNumber = total
     rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
     rows.forEach((item, index) => {
@@ -91,7 +90,7 @@ async function queryData(props: any) {
       item.status = desktopStatus.find(v => v.value === item.status)?.label || ''
     })
   }
-  catch (e) { }
+  catch (_) {}
   finally {
     // 更新本地分页对象
     pagination.value.page = page

@@ -3,9 +3,7 @@ import { QTable, useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 import type { IDesktop, IQueryConfig } from 'zjf-types'
 import moment from 'moment'
-import { desktopQueryList } from '~/api/desktop/desktopsList'
-import { stopDesktop } from '~/api/desktop/stopDesktop'
-import type { QueryDesktop } from '~/pages/desktopAdmin/index.vue'
+import { desktopQueryList, stopDesktop } from '~/api/desktop/index'
 
 interface Props {
   title?: string
@@ -33,11 +31,20 @@ const rows: Array<any> = reactive([])
 const pagination = tablePagination()
 const loading = ref(true)
 
-onMounted(async () => {
+const file = ref<File>()
+
+onMounted(() => {
   cols.forEach((item) => {
     item.align = 'center'
   })
   tableRef.value?.requestServerInteraction()
+  watch(
+    file,
+    (newVal) => {
+      if (newVal)
+        uploadFile()
+    },
+  )
 })
 
 /**
@@ -72,7 +79,7 @@ async function queryData(props: any) {
         },
       },
     }
-    const { total, data } = await desktopQueryList(body) as QueryDesktop
+    const { total, data } = await desktopQueryList(body)
     pagination.value.rowsNumber = total
     rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
     rows.forEach((item) => {
@@ -128,12 +135,7 @@ function deleteDesktop(id: string) {
         throw new Error('停用失败！')
       }
     }
-    catch (_) {
-      $q.notify({
-        message: '停用失败！',
-        type: 'danger',
-      })
-    }
+    catch (_) {}
     finally {
       loading.value = false
     }
@@ -178,6 +180,44 @@ async function allocationDesktop(id: string) {
     },
   })
 }
+
+/**
+ * 上传文件
+ */
+async function uploadFile() {
+  if (!file.value)
+    return
+  loading.value = true
+
+  try {
+    const fromData = new FormData()
+    fromData.append('file', file.value)
+    file.value = undefined
+    $q.notify({
+      type: 'warn',
+      message: '敬请期待',
+    })
+    /* const res = await uploadFileCreateDesktop(fromData)
+    if (res) {
+      $q.notify({
+        type: 'success',
+        message: '上传成功',
+      })
+      tableRef.value?.requestServerInteraction()
+    } */
+  }
+  catch (_) {}
+  finally {
+    loading.value = false
+  }
+}
+
+function onRejected() {
+  $q.notify({
+    type: 'danger',
+    message: '只能上传 CSV 格式文件',
+  })
+}
 </script>
 
 <template>
@@ -193,6 +233,18 @@ async function allocationDesktop(id: string) {
     @request="queryData"
   >
     <template #top-right>
+      <q-file
+        v-model="file"
+        class="mr-4! w-30!"
+        standout label-color="grey-1" bg-color="green"
+        label="上传CSV" input-style="color: transparent"
+        max-files="1" accept="text/csv"
+        @rejected="onRejected"
+      >
+        <template #append>
+          <q-icon name="fas fa-cloud-upload" size="18px" color="grey-1" />
+        </template>
+      </q-file>
       <q-btn
         color="primary"
         @click="desktopDialog()"
@@ -223,3 +275,23 @@ async function allocationDesktop(id: string) {
     </template>
   </QTable>
 </template>
+
+<style lang="scss" scoped>
+.q-file {
+  height: 36px;
+  :deep(.q-field__control) {
+    min-height: 36px;
+    .q-field__control-container {
+      padding-top: 0;
+      .q-field__label {
+        font-size: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+    .q-field__append {
+      height: 36px;
+    }
+  }
+}
+</style>

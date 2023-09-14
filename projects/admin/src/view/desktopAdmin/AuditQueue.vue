@@ -2,12 +2,9 @@
 import { QTable, useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 import { DesktopQueueStatus } from 'zjf-types'
-import type { IDesktop, IQueryConfig } from 'zjf-types'
+import type { IDesktopQueue, IQueryConfig } from 'zjf-types'
 import moment from 'moment'
-import { getDesktopQuery } from '~/api/desktopRequest/getdesktopQuery'
-import type { QueryDesktop } from '~/pages/desktopAdmin/index.vue'
-import { approveDesktop } from '~/api/desktopRequest/approveDesktop'
-import { rejectDesktop } from '~/api/desktopRequest/rejectDesktop'
+import { approveDesktop, desktopRequestQueryList, rejectDesktop } from '~/api/desktop/request'
 
 interface Props {
   title?: string
@@ -41,7 +38,7 @@ const rows: Array<any> = reactive([])
 const pagination = tablePagination()
 const loading = ref(true)
 
-onMounted(async () => {
+onMounted(() => {
   cols.forEach((item) => {
     item.align = 'center'
   })
@@ -56,7 +53,7 @@ async function queryData(props: any) {
   loading.value = true
 
   try {
-    const body: IQueryConfig<IDesktop> = {
+    const body: IQueryConfig<IDesktopQueue> = {
       pagination: {
         page,
         pageSize: rowsPerPage,
@@ -80,7 +77,7 @@ async function queryData(props: any) {
         },
       },
     }
-    const { total, data } = await getDesktopQuery(body) as QueryDesktop
+    const { total, data } = await desktopRequestQueryList(body)
     pagination.value.rowsNumber = total
     rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
     rows.forEach((item) => {
@@ -89,7 +86,7 @@ async function queryData(props: any) {
       item.status = desktopStatus.find(v => v.value === item.status)?.label || ''
     })
   }
-  catch (e) {}
+  catch (_) {}
   finally {
     // 更新本地分页对象
     pagination.value.page = page
@@ -117,12 +114,7 @@ function approve(id: string) {
       })
       tableRef.value?.requestServerInteraction()
     }
-    catch (_) {
-      $q.notify({
-        message: '通过失败！',
-        type: 'danger',
-      })
-    }
+    catch (_) {}
     finally {
       loading.value = false
     }
@@ -153,12 +145,7 @@ function reject(id: string) {
       })
       tableRef.value?.requestServerInteraction()
     }
-    catch (_) {
-      $q.notify({
-        message: '驳回失败！',
-        type: 'danger',
-      })
-    }
+    catch (_) {}
     finally {
       loading.value = false
     }
