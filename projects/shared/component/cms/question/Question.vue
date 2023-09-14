@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { onMounted, ref, reactive, nextTick } from 'vue';
+import { onMounted, ref, reactive, nextTick, computed } from 'vue';
 import { useRoute,useRouter }  from 'vue-router'
+import { RichTextProcessor } from '../../../utils/rich-text.processor';
 
 interface Question {
   title: string
@@ -10,7 +11,7 @@ interface Question {
 interface Props {
   list: Question[]
 }
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const link = ref('')
 const openState = reactive<Record<string, boolean>>({})
@@ -39,6 +40,11 @@ onMounted(() => {
   const { title, index } = route.query
   scrollTo(String(title), Number(index))
 })
+
+const processedList = computed(() => props.list.map(q => ({
+  ...q,
+  richText: RichTextProcessor.from(q.richText).lazyLoadImages().html
+})))
 </script>
 
 <template>
@@ -46,7 +52,7 @@ onMounted(() => {
     <q-list text-grey-8>
       <div sticky top-10 flex="~ col" gap2>
         <q-item
-          w-50 v-for="(item, index) in list" 
+          w-50 v-for="(item, index) in processedList" 
           class="ellipsis" 
           flex="~ col" 
           text-4
@@ -67,7 +73,7 @@ onMounted(() => {
     <div flex="~ col 1" w0 gap-16 pb16>
       <div
         :id="`title${index}`" :label="item.title"
-        v-for="(item, index) in list" :key="index" relative
+        v-for="(item, index) in processedList" :key="index" relative
       >
         <q-item clickable flex="~" items-center gap-2 @click="openState[item.title] = !openState[item.title]">
           <div 
