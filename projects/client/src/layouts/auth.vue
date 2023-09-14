@@ -40,7 +40,8 @@ $linear: linear-gradient(135deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 25
         width:100%
     }
     &-bgImg {
-      background: no-repeat center / cover url("../assets/auth/authBgRect.svg");
+      background: no-repeat url(~/assets/auth/authBgRect.webp);
+      background-size: cover;
     }
     &-card {
       border: 1px solid transparent;

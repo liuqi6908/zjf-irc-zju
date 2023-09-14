@@ -47,7 +47,7 @@ async function assignRoles() {
 
 <template>
   <QDialog v-model="dialog">
-    <QCard p-6 relative min-w-80 w-30vw class="max-w-inherit!">
+    <QCard relative p-6 min-w-80 w-30vw class="max-w-inherit!">
       <header relative text-lg mb-5>
         分配角色
         <q-btn v-close-popup size="10px" icon="fas fa-times" absolute flat top-0 right-0 px-1 />
