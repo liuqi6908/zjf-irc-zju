@@ -3,14 +3,14 @@ import { fileToFormData } from 'zjf-utils'
 import { getPublicFileUrl, putPublicFile } from '~/api/file/handlePublicFile'
 
 /** toolBar配置 */
-const toolbarConfig: Partial<IToolbarConfig> = {
+const toolbarConfig: Partial<IToolbarConfig> = {}
 
-}
-
-// 自定义校验链接
-function customCheckLinkFn(text: string, url: string): string | boolean | undefined {
-  // function customCheckLinkFn(text, url) {
-
+/**
+ * 自定义校验链接
+ * @param _
+ * @param url
+ */
+function customCheckLinkFn(_: string, url: string): string | boolean | undefined {
   if (!url)
     return
 
@@ -20,10 +20,11 @@ function customCheckLinkFn(text: string, url: string): string | boolean | undefi
   return true
 }
 
-// 自定义转换链接 url
+/**
+ * 自定义转换链接 url
+ * @param url
+ */
 function customParseLinkUrl(url: string): string {
-  // function customParseLinkUrl(url) {
-
   if (url.indexOf('http') !== 0)
     return `http://${url}`
 
@@ -60,16 +61,10 @@ const uploadImage = {
 const editorConfig: Partial<IEditorConfig> = {
   MENU_CONF: {
     uploadImage,
+    uploadVideo: uploadImage,
     insertLink,
     lineHeight,
   },
 }
-
-// type ImageElement = SlateElement & {
-//   src: string
-//   alt: string
-//   url: string
-//   href: string
-// }
 
 export { toolbarConfig, editorConfig }
