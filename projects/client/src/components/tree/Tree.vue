@@ -39,7 +39,7 @@ const route = useRoute()
         >
           <template #label>
             <div text-4.5 font-bold text-gray-8>
-              {{ nameZH }}
+              {{ child.nameZH }}
             </div>
           </template>
           <div
