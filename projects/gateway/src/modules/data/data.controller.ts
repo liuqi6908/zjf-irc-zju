@@ -107,7 +107,7 @@ export class DataController {
       : dataRole
         .viewDirectories
         .map(d => d.rootId)
-    return createDataDirectoryTree(roots, allowedScopes)
+    return createDataDirectoryTree(roots, allowedScopes, ['children', 'path', 'rootId', 'level', 'parentId'])
   }
 
   @ApiOperation({ summary: '上传中间表' })
