@@ -52,12 +52,15 @@ defineEmits(['update:modelValue'])
           p-0
         >
           <component
-            :is="tab.component" full
+            :is="tab.component"
+            v-if="tab.component"
+            full
             v-bind="{
               title: tab.label,
               ...tab.params,
             }"
           />
+          <slot />
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
