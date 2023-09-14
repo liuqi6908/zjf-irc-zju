@@ -4,12 +4,12 @@ import type { DesktopQueueStatus } from 'zjf-types'
 interface Props {
   status?: DesktopQueueStatus
   /** 附加信息（驳回理由，排队人数） */
-  queueLength?: string
+  queueLength?: string | number
   duration?: number
 }
 const props = defineProps<Props>()
 
-const statusOptions = {
+const statusOptions: Record<DesktopQueueStatus, Record<string, string>> = {
   pending: {
     text: '待审核',
     icon: 'material-symbols:alarm',
@@ -30,8 +30,12 @@ const statusOptions = {
 const statusClass = computed(() => {
   if (!props.status)
     return
-  if (props.duration || props.duration === 0)
-    statusOptions[`${props.status}`].caption = `（倒计时${props.duration}天）`
+  if (typeof props.duration === 'number') {
+    if (props.duration >= 0 && props.duration < 360)
+      statusOptions[`${props.status}`].caption = `（倒计时${props.duration}天）`
+    else if (props.duration >= 360)
+      statusOptions[`${props.status}`].caption = '（长期）'
+  }
 
   if (props.queueLength || props.queueLength === 0)
     statusOptions[`${props.status}`].caption = `前面有${props.queueLength}人在排队`
@@ -41,7 +45,7 @@ const statusClass = computed(() => {
 </script>
 
 <template>
-  <div flex=" ~ row" h12 items-center justify-center border-1 border-primary-1 px6 py2.5 font-bold text="4 grey-8">
+  <div flex=" ~ row" h12 items-center justify-center py2.5 font-bold border-1 border-primary-1 px6 text="4 grey-8">
     <span> 状态：</span>
     <div
       :style="{ color: statusClass?.color }"
