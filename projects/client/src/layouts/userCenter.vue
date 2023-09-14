@@ -36,7 +36,7 @@ onBeforeMount(() => {
 <template>
   <HomeLayout layout>
     <div flex="~ col" class="fit">
-      <header class="userCenter" h-64 w-full flex-center shrink-0>
+      <header class="userCenter" w-full flex-center h-64 shrink-0>
         <div text-grey-1 title-1>
           用户中心
         </div>
@@ -50,10 +50,10 @@ onBeforeMount(() => {
             active-class="bg-gray-2 text-primary-1!"
             :to="item.router"
             flex="~"
-            h12 w28 items-center px4 py2.5 hover:bg-gray-2
+            w28 items-center h12 px4 py2.5 hover:bg-gray-2
             class="text-grey-8!"
           >
-            <div text="4" text-nowrap font-600>
+            <div text="4" font-600 text-nowrap>
               {{ item.nameZH }}
             </div>
           </router-link>

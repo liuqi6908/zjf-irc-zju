@@ -88,14 +88,14 @@ if (typeof document !== 'undefined') {
         <div my-4 flex="~ row">
           <img mr-2 h-6 src="../assets/layout/cloud.png">
           <div>
-            <span text-xl font-600 text-primary-1>
+            <span font-600 text-xl text-primary-1>
               智能云科研平台 |
             </span>
             <span text-primary-1>CloudResearch</span>
           </div>
         </div>
 
-        <div flex flex-row items-center text-primary-1>
+        <div flex items-center text-primary-1 flex-row>
           <Avatar
             ref="avatarRef"
             flex="~ row gap-2 items-center"
@@ -119,7 +119,7 @@ if (typeof document !== 'undefined') {
                   :key="u.id"
                   v-close-popup
                   :to="u.to"
-                  dense clickable h12
+                  h12 dense clickable
                   style="--q-primary: var(--grey-2); color: var(--grey-2) !important;"
                   @click="() => u.action?.()"
                 >
@@ -141,7 +141,7 @@ if (typeof document !== 'undefined') {
         </div>
       </div>
       <!-- Navigation -->
-      <div flex="~" mb4 w-full justify-center border-b-1 border-b-grey-3>
+      <div flex="~" w-full mb4 justify-center border-b-1 border-b-grey-3>
         <q-tabs v-model="nav" class="home-layout-tabs" text-bold>
           <q-route-tab
             v-for="tab in navList"
@@ -149,7 +149,7 @@ if (typeof document !== 'undefined') {
             px8
             v-bind="objectPick(tab, ['to'])"
           >
-            <span text-16px font-bold text-primary-1>{{ tab.label }}</span>
+            <span text-primary-1 text-16px font-bold>{{ tab.label }}</span>
           </q-route-tab>
         </q-tabs>
       </div>
