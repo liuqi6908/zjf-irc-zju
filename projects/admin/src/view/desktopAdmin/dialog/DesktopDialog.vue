@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import { createDesktop } from '~/api/desktop/createDesktop'
-import { updateDesktop } from '~/api/desktop/updateDesktop'
+import { createDesktop, updateDesktop } from '~/api/desktop/index'
 
 interface Props {
   type: 'update' | 'add'
