@@ -222,11 +222,9 @@ watch(
           </div>
         </div>
 
-        <div text-grey-6>
-          学生请上传学生证，教师及其它研究人员请上传校园卡或工作凭证，仅限图片文件，大小不超过2M
-        </div>
+        <div text-grey-6 v-text="'请上传身份证、学生证或教师证、校园卡等凭证，仅限图片格式文件，单个图片不超过2MB'" />
 
-        <div grid items-center gap1 grid-cols-8>
+        <div items-center gap1 grid grid-cols-8>
           <div
             v-for="(f, index) in attachmentsList"
             :key="f.name"
@@ -238,7 +236,7 @@ watch(
           >
             <div
               class="absolute-top-right"
-              w-5 cursor-pointer h-5
+              cursor-pointer w-5 h-5
               bg="black/30"
               @click="deletePreviewImg(index)"
             >
@@ -246,8 +244,7 @@ watch(
                 left="1/2" top="1/2"
                 translate-x="-1/2"
                 translate-y="-1/2"
-
-                i-material-symbols:close-rounded absolute text-white
+                absolute i-material-symbols:close-rounded text-white
               />
             </div>
           </div>

@@ -164,8 +164,26 @@ async function downloadData() {
           :color="!isLogin || !isVerify ? 'grey-5' : undefined"
           @click="dialog = true"
         />
-        <div v-if="!isLogin" text="base grey-5" v-text="'您尚未登录请登录后重试'" />
-        <div v-else-if="!isVerify" text="base grey-5" v-text="'您尚未通过身份认证申请'" />
+        <div v-if="!isLogin" text="base grey-5">
+          您尚未登录请
+          <span
+            font-600 text-primary-1 cursor-pointer
+            underline="~ offset-2" decoration-2
+            @click="$router.push('/auth/login')"
+            v-text="'登录'"
+          />
+          后重试
+        </div>
+        <div v-else-if="!isVerify" text="base grey-5">
+          用户认证通过后才能建议采购，请先前往
+          <span
+            font-600 text-primary-1 cursor-pointer
+            underline="~ offset-2" decoration-2
+            @click="$router.push('/userCenter/authentication')"
+            v-text="'用户中心'"
+          />
+          进行认证
+        </div>
       </template>
     </div>
 
