@@ -63,7 +63,7 @@ function onReset() {
 
 <template>
   <QDialog v-model="dialog">
-    <QCard p-6 min-w-100 relative>
+    <QCard p-6 relative min-w-100>
       <header text-lg mb-5 relative>
         {{ type === 'add' ? '添加角色' : '编辑角色' }}
         <q-btn v-close-popup size="10px" icon="fas fa-times" absolute top-0 right-0 flat px-1 />
