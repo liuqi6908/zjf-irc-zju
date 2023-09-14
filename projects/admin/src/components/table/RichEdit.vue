@@ -1,21 +1,17 @@
 <script lang="ts" setup>
 import * as WangEditor from '@wangeditor/editor-for-vue'
-
-// import '@wangeditor/editor/dist/css/style.css'
-import { editorConfig } from './richConfig'
+import { editorConfig, toolbarConfig } from './richConfig'
 
 interface Props {
   modelValue: string
 }
+
 const props = defineProps<Props>()
 const emits = defineEmits(['update:modelValue'])
 
-const mode = ref('simple')
-
 const { Editor, Toolbar } = WangEditor
-
 const editorRef = shallowRef()
-const toolbarConfig = {}
+const mode = ref('simple')
 
 onMounted(() => {
   setTimeout(() => {
@@ -31,8 +27,9 @@ onBeforeUnmount(() => {
   editor.destroy()
 })
 
+// 记录 editor 实例，重要！
 function handleCreated(editor: any) {
-  editorRef.value = editor // 记录 editor 实例，重要！
+  editorRef.value = editor
 }
 </script>
 
@@ -45,15 +42,17 @@ function handleCreated(editor: any) {
     />
     <Editor
       :model-value="modelValue"
-      style="height: 400px; overflow-y: hidden;"
       :default-config="editorConfig"
-      :mode="mode"
+      :mode="mode" overflow-hidden
+      class="h-100!"
       @update:model-value="(val:any) => $emit('update:modelValue', val)"
       @onCreated="handleCreated"
     />
   </div>
 </template>
 
-<style>
-
+<style scoped>
+.w-e-full-screen-container {
+  z-index: 10000;
+}
 </style>

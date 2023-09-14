@@ -236,7 +236,7 @@ function onRejected() {
       <q-file
         v-model="file"
         class="mr-4! w-30!"
-        standout label-color="grey-1" bg-color="green"
+        standout dense label-color="grey-1" bg-color="green"
         label="上传CSV" input-style="color: transparent"
         max-files="1" accept="text/csv"
         @rejected="onRejected"
@@ -284,7 +284,6 @@ function onRejected() {
     .q-field__control-container {
       padding-top: 0;
       .q-field__label {
-        font-size: 14px;
         top: 50%;
         transform: translateY(-50%);
       }
