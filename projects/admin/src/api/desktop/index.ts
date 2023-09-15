@@ -14,8 +14,8 @@ export function desktopQueryList(body: IQueryConfig<IDesktop>) {
  * 新建云桌面
  * @param body
  */
-export function createDesktop(body: ICreateDesktopBodyDto) {
-  return $put('desktop', body)
+export function createDesktop(body: ICreateDesktopBodyDto, config?: any) {
+  return $put('desktop', body, null, config)
 }
 
 /**

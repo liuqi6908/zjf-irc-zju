@@ -34,6 +34,9 @@ $http.interceptors.response.use(
   (error) => {
     if (!error.response)
       return
+    if (error.config.headers.dialog === false)
+      return Promise.reject(error)
+
     const errorDetailList = error.response.data.detail
 
     /** 判断是否有权限 */

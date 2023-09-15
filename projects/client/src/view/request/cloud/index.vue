@@ -16,7 +16,7 @@ const data = reactive({
     ],
   },
   network: {
-    title: '网卡读取速率',
+    title: '网卡',
     unit: 'KB/s',
     value: [
       { value: [], time: [], label: '上行：' },
