@@ -40,7 +40,7 @@ async function bootstrap() {
   app.register(fmp, {
     attachFieldsToBody: true,
     limits: {
-      fileSize: 100 * 1024 * 1024,
+      fileSize: 1024 * 1024 * 1024,
     },
   })
 
