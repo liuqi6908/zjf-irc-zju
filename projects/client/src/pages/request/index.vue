@@ -207,7 +207,7 @@ watch(desktopList, (newVal) => {
       <div w-full bg-grey-2>
         <div w-limited-1 flex="~ col nowrap" gap10>
           <div w-limited-1 mt-10 bg-grey-1 p-6>
-            <header flex="~ row" text-grey-8 title-4>
+            <header flex="~ row" title-4 text-black>
               云主机情况
             </header>
             <div flex items-center mt-6 justify-between>
