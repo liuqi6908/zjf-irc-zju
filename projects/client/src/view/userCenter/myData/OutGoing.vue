@@ -207,7 +207,7 @@ function clearInputFiles() {
       <UserCodeInput v-model:user-code="outgoingInfo[model].remark" w-full :dark="false" />
     </div>
     <div flex="~ row" mb-2 font-500 text-grey-8>
-      选择文件<span text-grey-5>（将需要外发的文件，拖拽至此框内，或点击一下按钮上传文件）</span>
+      选择文件<span text-grey-5 font-400>（将需要外发的文件，拖拽至此框内，或点击一下按钮上传文件）</span>
     </div>
     <DropZone @drop.prevent="dropFiles" @change="selectedFiles">
       <div v-if="outgoingInfo[model].dropzoneFile" mt-6 flex="~ row gap-2" text-grey-8>
