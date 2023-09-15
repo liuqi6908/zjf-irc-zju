@@ -164,7 +164,7 @@ if (typeof document !== 'undefined') {
     <component
       :is="currComponent('home', 'footer')"
       v-if="footerProps && footerProps.length"
-      w-full :list="footerProps "
+      w-full :list="footerProps" text-left
     />
 
     <ZDialog
