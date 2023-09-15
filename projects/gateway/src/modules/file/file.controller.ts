@@ -51,7 +51,7 @@ export class FileController {
     const filename = query.path.split('/').pop()
     const ext = filename.split('.').pop()
     if (range) {
-      res.status = 206
+      res.status(206)
       res.header('Content-Type', `video/${ext}`)
       res.header('Content-Length', _range.end - _range.start + 1)
       res.header('Accept-Ranges', 'bytes')
