@@ -204,7 +204,7 @@ watch(select, (selectOptions) => {
 </script>
 
 <template>
-  <div p-7>
+  <div>
     <header flex="~ col" mb-5>
       <div flex="~ row justify-center" my-4>
         <q-btn-toggle

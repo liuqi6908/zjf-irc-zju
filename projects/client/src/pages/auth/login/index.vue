@@ -45,7 +45,7 @@ function handleEnter() {
       @update:accept="(val) => acceptObj.password = val"
       @keydown.enter="handleEnter()"
     />
-    <RouterLink text-xs text-grey-1 :to="{ path: 'forgetPassword' }" v-text="'忘记密码？'" />
+    <RouterLink text-grey-1 text-xs :to="{ path: 'forgetPassword' }" v-text="'忘记密码？'" />
 
     <client-only>
       <Btn color="primary-1" mt-20 bg-color="grey-1" :disable="disable" label="登录" @click="useLogin(logArg)" />
