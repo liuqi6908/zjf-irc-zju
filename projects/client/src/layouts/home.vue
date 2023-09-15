@@ -57,7 +57,8 @@ const userList: Array<any> = [
 ]
 
 onMounted(async () => {
-  useGetProfile()
+  if (isLogin.value)
+    useGetProfile()
   footerProps.value = await cmsProps('footer')
 })
 

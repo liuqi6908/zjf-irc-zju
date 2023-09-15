@@ -1,18 +1,14 @@
 import axios from 'axios'
 import { Notify } from 'quasar'
-import { AUTH_TOKEN_KEY } from 'shared/constants'
-
-// import router from '@/router/index'
+import { ErrorCode } from 'zjf-types'
 
 const $http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE,
-  // headers: { 'Access-Control-Allow-Origin': '*' },
 })
 
 $http.interceptors.request.use((config) => {
-  const token = localStorage.getItem(AUTH_TOKEN_KEY)
-  if (token && !config.headers.Authorization)
-    config.headers.Authorization = token ? `Bearer ${token?.trim()}` : ''
+  if (authToken.value && !config.headers.Authorization)
+    config.headers.Authorization = `Bearer ${authToken.value.trim()}`
 
   const baseURLWhiteList = ['http', '//']
   if (
@@ -30,40 +26,20 @@ $http.interceptors.request.use((config) => {
 
 $http.interceptors.response.use(
   (response) => {
-    // if (
-    //   [
-    //     ErrorCode.LOGIN_EXPIRED,
-    //     ErrorCode.LOGIN_REQUIRED,
-    //     ErrorCode.PERMISSION_DENIED,
-    //     ErrorCode.TOKEN_FAILED,
-    //     ErrorCode.TOKEN_INVALID,
-    //   ].includes(response.data.status)
-    // ) {
-    //   showRedirectLoginBox()
-    //   const newResponse = {
-    //     ...response,
-    //     data: { ...response.data, status: 0 },
-    //   }
-    //   return newResponse
-    // }
-
     return response.data
   },
   (error) => {
     if (!error.response)
       return
+
     const errorDetailList = error.response.data.detail
 
-    /** 判断是否登录 */
-    if (error.response.status === 401) {
-      // showNotify('登录过期，请重新登录')
-      // ctx.router?.replace({ path: 'auth/login' })
-      localStorage.removeItem(AUTH_TOKEN_KEY)
+    /** 判断登录是否过期 */
+    if (error.response.status === 401 || error.response.data?.status === ErrorCode.AUTH_LOGIN_EXPIRED) {
+      authToken.value = null
       userInfo.value = undefined
-      return Promise.reject(error)
     }
-
-    if (Array.isArray(errorDetailList) && errorDetailList) {
+    else if (Array.isArray(errorDetailList)) {
       errorDetailList.forEach(detail =>
         showNotify(detail.message),
       )
@@ -82,28 +58,5 @@ function showNotify(massage: string) {
     message: massage,
   })
 }
-
-/**
- * 显示跳转登录
- * @returns
- */
-// function showRedirectLoginBox() {
-//   Dialog.create({
-//     title: '是否前往登录',
-//     message: '此操作需要登录后使用，是否立即前往登录',
-//     cancel: '暂不登录',
-//     ok: '立即前往登录',
-//     class: 'style-1',
-//   })
-//     .onOk(() => {
-//       ctx.router?.push({
-//         name: 'Login',
-//         query: {
-//           redirect: ctx.router?.currentRoute?.value?.fullPath,
-//         },
-//       })
-//     })
-//     .onCancel(() => {})
-// }
 
 export default $http
