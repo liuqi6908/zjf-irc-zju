@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import Echarts from 'vue-echarts'
+import * as echarts from 'echarts'
 import { cloneDeep } from 'lodash-es'
 import moment from 'moment'
 
@@ -18,7 +19,7 @@ const baseOption = {
   grid: {
     left: 1,
     right: 5,
-    top: 45,
+    top: 50,
     bottom: 1,
     containLabel: true,
   },
@@ -27,12 +28,22 @@ const baseOption = {
     boundaryGap: false,
     axisLine: {
       lineStyle: {
+        color: '#D4DDEA',
+      },
+    },
+    axisLabel: {
+      textStyle: {
         color: '#6E7686',
       },
     },
   },
   yAxis: {
     type: 'value',
+    axisLabel: {
+      textStyle: {
+        color: '#6E7686',
+      },
+    },
     splitLine: {
       lineStyle: {
         color: '#D4DDEA',
@@ -70,8 +81,14 @@ function formatterSeries(data: number[], color: string) {
     type: 'line',
     symbol: props.symbol || 'emptyCircle',
     areaStyle: {
-      color,
-      opacity: 0.5,
+      color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [{
+        offset: 0,
+        color: `${color}00`,
+      },
+      {
+        offset: 1,
+        color: `${color}28`,
+      }]),
     },
     emphasis: {
       focus: 'series',
@@ -100,13 +117,13 @@ function formatterLegend(data: any[]) {
           },
           text: {
             color: '#292D36',
-            fontSize: '16px',
-            fontWeight: '600',
+            fontSize: 16,
+            fontWeight: 600,
           },
           num: {
             color: baseOption.color[index % baseOption.color.length],
-            fontSize: '28px',
-            fontWeight: '600',
+            fontSize: 28,
+            fontWeight: 600,
           },
         },
       },
@@ -118,8 +135,9 @@ function formatterLegend(data: any[]) {
     data,
     formatter,
     icon: 'rect',
-    itemWidth: 10,
-    itemHeight: 10,
+    itemWidth: 8,
+    itemHeight: 8,
+    itemGap: 20,
     left: 0,
   }
 }
@@ -141,21 +159,15 @@ watch(
           return ''
       })
       // 控制标签的显示间隔
-      xAxis.axisLabel = {
-        interval: interval - 1,
-      }
+      xAxis.axisLabel.interval = interval - 1
 
-      yAxis.axisLabel = { formatter: `{value} ${props.unit}` }
+      yAxis.axisLabel.formatter = `{value} ${props.unit}`
       if (!props.title.includes('网卡'))
         yAxis.splitNumber = 2
       else
         yAxis.splitNumber = 4
 
-      series.push(...newVal.map((item, index) => {
-        const color = index === 0 ? 'rgba(2, 92, 185, 0.12)' : 'rgba(249, 158, 52, 0.12)'
-        const newVal = item.value
-        return formatterSeries(newVal, color)
-      }))
+      series.push(...newVal.map((item, index) => formatterSeries(item.value, baseOption.color[index % 2])))
 
       const names = series.map((item: any, index: number) => {
         return {
