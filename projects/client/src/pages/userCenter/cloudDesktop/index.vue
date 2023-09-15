@@ -16,7 +16,7 @@ import { getDesktopVmStatus } from '~/api/desktopVm/getDesktopVmStatus'
 import DesktopStatus from '~/view/userCenter/myDesktop/DesktopStatus.vue'
 import Cloud from '~/view/request/cloud/index.vue'
 
-const { isVerify, useGetProfile, getVerify, latestVerifiy } = useUser()
+const { isVerify, isLogin, useGetProfile, getVerify, latestVerifiy } = useUser()
 const $router = useRouter()
 const { pause, resume } = useIntervalFn(() => getVmInfo(), 3000, { immediate: false })
 
@@ -66,22 +66,29 @@ const vmInfo: Record<keyof VMBaseInfo, { label: string; value: string }> = react
 const vmStatus = computed(() => vmInfo.state.value)
 
 onMounted(async () => {
-  await useGetProfile()
-  if (!isVerify.value) {
-    await getVerify()
-  }
-  else {
-    try {
-      await getRequestInfo()
-      if (requestInfo.status === DesktopQueueStatus.Using) {
-        await getDesktopInfo()
-        getVmInfo()
-        resume()
+  try {
+    if (!isLogin.value) {
+      latestVerifiy.value = undefined
+    }
+    else {
+      await useGetProfile()
+      if (!isVerify.value) {
+        await getVerify()
+      }
+      else {
+        await getRequestInfo()
+        if (requestInfo.status === DesktopQueueStatus.Using) {
+          await getDesktopInfo()
+          getVmInfo()
+          resume()
+        }
       }
     }
-    catch (_) { }
   }
-  loading.value = false
+  catch (_) {}
+  finally {
+    loading.value = false
+  }
 })
 
 /**

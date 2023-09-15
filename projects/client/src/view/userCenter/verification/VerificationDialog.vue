@@ -209,7 +209,7 @@ watch(
               style="display:none"
               type="file"
               label="Standard"
-              max-file-size="1048576"
+              :max-file-size="2 * 1024 * 1024"
             />
             <q-btn flat bg="primary-1/10" text-primary-1 @click="pickImg">
               <div flex="~ row" items-center gap2>

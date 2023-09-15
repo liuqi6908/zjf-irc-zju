@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import HomeLayout from './home.vue'
 
+const $route = useRoute()
 const $router = useRouter()
 const { isLogin } = useUser()
 
@@ -28,8 +29,16 @@ const userList = ref([
 ])
 
 onBeforeMount(() => {
-  if (!isLogin.value)
-    $router.push('/')
+  watch(
+    () => $route.path,
+    () => {
+      if (!isLogin.value)
+        $router.push('/')
+    },
+    {
+      immediate: true,
+    },
+  )
 })
 </script>
 
