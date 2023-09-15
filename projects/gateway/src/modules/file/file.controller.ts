@@ -8,7 +8,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { HasPermission } from 'src/guards/permission.guard'
 import { DataRoleCheck } from 'src/guards/data-role-permission.guard'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
-import { Body, Controller, Get, Param, Put, Query, Req, Res, StreamableFile } from '@nestjs/common'
+import { Body, Controller, Get, Headers, Param, Put, Query, Req, Res, StreamableFile } from '@nestjs/common'
 
 import { ApiFormData } from '../../decorators/api/api-form-data'
 import { FileService } from './file.service'
@@ -35,14 +35,24 @@ export class FileController {
   @ApiOperation({ summary: '获取（下载）公共文件' })
   @Get('public')
   public async getFile(
+    @Headers('range') range: string,
     @Query() query: FilePathDto,
     @Res({ passthrough: true }) res: any,
   ): Promise<StreamableFile> {
-    const file = await this._fileSrv.download('pub', query.path)
+    const stat = await this._fileSrv.stat('pub', query.path)
+    const size = stat.size
+    let _range
+    if (range) {
+      const start = Number(range.replace(/\D/g, ''))
+      const end = Math.min(start + 10 * 6, size - 1)
+      _range = { start, end }
+    }
+    const file = await this._fileSrv.download('pub', query.path, _range)
     const filename = query.path.split('/').pop()
     const ext = filename.split('.').pop()
     res.header('Content-Disposition', `attachment; filename=${encodeURIComponent(filename)}`)
     res.header('Content-Type', `application/${ext}`)
+    res.header('Content-Length', size)
     return new StreamableFile(file)
   }
 

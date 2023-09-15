@@ -57,14 +57,36 @@ export class FileService {
     await client.putObject(this._cfg.bucket[bucket], path, file, metaData)
   }
 
-  private async _download(bucket: keyof MinioConfig['bucket'], path: string) {
+  public async stat(bucket: keyof MinioConfig['bucket'], path: string) {
     const client = this.getClient()
-    return await client.getObject(this._cfg.bucket[bucket], path)
+    try {
+      return await client.statObject(this._cfg.bucket[bucket], path)
+    }
+    catch (err) {
+      if (err.message.match(/Not Found/))
+        responseError(ErrorCode.FILE_NOT_FOUND)
+      else
+        responseError(ErrorCode.COMMON_UNEXPECTED_ERROR, err.message)
+    }
   }
 
-  public async download(bucket: keyof MinioConfig['bucket'], path: string) {
+  private async _download(bucket: keyof MinioConfig['bucket'], path: string, range?: { start: number; end: number }) {
+    const client = this.getClient()
+
+    if (range)
+      return await client.getPartialObject(this._cfg.bucket[bucket], path, range.start, range.end)
+    else
+      return await client.getObject(this._cfg.bucket[bucket], path)
+  }
+
+  public async download(
+    bucket: keyof MinioConfig['bucket'],
+    path: string,
+    range?: { start: number; end: number },
+  ) {
     const id = randomString(8, 12)
-    const key = `${bucket}:${path}`
+    const rangeKey = range ? `${range.start}-${range.end}` : 'none'
+    const key = `${bucket}:${path}:${rangeKey}`
     if (!this._lockCache.has(key)) {
       const process = {}
       const promise = this._download(bucket, path)
