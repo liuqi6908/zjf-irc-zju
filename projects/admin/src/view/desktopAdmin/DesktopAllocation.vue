@@ -3,7 +3,7 @@ import { QTable, useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 import type { IDesktop, IQueryConfig } from 'zjf-types'
 import moment from 'moment'
-import { desktopQueryList, stopDesktop } from '~/api/desktop/index'
+import { createDesktop, desktopQueryList, stopDesktop } from '~/api/desktop/index'
 
 interface Props {
   title?: string
@@ -184,32 +184,99 @@ async function allocationDesktop(id: string) {
 /**
  * 上传文件
  */
-async function uploadFile() {
+function uploadFile() {
   if (!file.value)
     return
-  loading.value = true
 
-  try {
-    const fromData = new FormData()
-    fromData.append('file', file.value)
-    file.value = undefined
-    $q.notify({
-      type: 'warn',
-      message: '敬请期待',
-    })
-    /* const res = await uploadFileCreateDesktop(fromData)
-    if (res) {
-      $q.notify({
-        type: 'success',
-        message: '上传成功',
-      })
-      tableRef.value?.requestServerInteraction()
-    } */
+  const reader = new FileReader()
+
+  reader.onload = async (event) => {
+    loading.value = true
+    let total = 0
+    let success = 0
+    const error: number[] = []
+    try {
+      // 获取读取的文件内容
+      const content = event.target?.result as string
+      // 将内容解析为 JSON 数组
+      const lines = content.split('\n')
+      const headers = lines[0].trim().split(',')
+      const jsonArray = []
+      for (let i = 1; i < lines.length; i++) {
+        lines[i] = lines[i].trim().replace('\\r', '')
+        if (lines[i]) {
+          const line = lines[i].split(',')
+          const obj: Record<string, string> = {}
+          for (let j = 0; j < headers.length; j++)
+            obj[headers[j]] = line[j]
+          jsonArray.push(obj)
+        }
+      }
+      total = jsonArray.length
+      if (total) {
+        for (let i = 0; i < total; i++) {
+          try {
+            jsonArray[i].expiredAt = new Date(jsonArray[i].expiredAt).toISOString()
+            const res = await createDesktop(jsonArray[i] as any, { headers: { dialog: false } })
+            if (res)
+              success++
+            else
+              throw new Error('error')
+          }
+          catch (e: any) {
+            error.push(e.response?.data?.message || 'error')
+          }
+        }
+      }
+    }
+    catch (_) { }
+    finally {
+      loading.value = false
+      file.value = undefined
+      if (!total) {
+        $q.notify({
+          type: 'warn',
+          message: '暂无数据',
+        })
+      }
+      else if (!success) {
+        $q.notify({
+          type: 'danger',
+          message: `共 ${total} 条数据，全部上传失败`,
+          caption: error.map((v, i) => `${i + 1}：${v}`).join('<br/>'),
+          multiLine: true,
+          html: true,
+          timeout: 0,
+          actions: [
+            { label: '确认', color: 'white', handler: () => { } },
+          ],
+        })
+      }
+      else if (success === total) {
+        $q.notify({
+          type: 'success',
+          message: `已成功上传 ${success} 条数据`,
+        })
+      }
+      else {
+        $q.notify({
+          type: 'warn',
+          message: `共 ${total} 条数据，已成功上传 ${success} 条`,
+          caption: error.map((v, i) => `${i + 1}：${v}`).join('<br/>'),
+          multiLine: true,
+          html: true,
+          timeout: 0,
+          actions: [
+            { label: '确认', color: 'white', handler: () => {} },
+          ],
+        })
+      }
+      if (success)
+        tableRef.value?.requestServerInteraction()
+    }
   }
-  catch (_) {}
-  finally {
-    loading.value = false
-  }
+
+  reader.readAsText(file.value)
 }
 
 function onRejected() {
@@ -233,9 +300,16 @@ function onRejected() {
     @request="queryData"
   >
     <template #top-right>
+      <q-btn
+        color="primary"
+        href="/桌面分配.csv"
+      >
+        下载模板
+        <q-icon name="fas fa-download" size="18px" ml-2 />
+      </q-btn>
       <q-file
         v-model="file"
-        class="mr-4! w-30!"
+        class="w-30! mx-4!"
         standout dense label-color="grey-1" bg-color="green"
         label="上传CSV" input-style="color: transparent"
         max-files="1" accept="text/csv"
