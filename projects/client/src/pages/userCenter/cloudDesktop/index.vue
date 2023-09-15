@@ -2,7 +2,7 @@
 import { DesktopQueueHistoryStatus, DesktopQueueStatus } from 'zjf-types'
 import type { IDesktop } from 'zjf-types'
 import { formatFileSize } from 'zjf-utils'
-import { Notify } from 'quasar'
+import { Notify, copyToClipboard } from 'quasar'
 import moment from 'moment'
 
 import { desktopQuery } from '~/api/desktop/desktopsQuery'
@@ -19,7 +19,6 @@ import Cloud from '~/view/request/cloud/index.vue'
 const { isVerify, useGetProfile, getVerify, latestVerifiy } = useUser()
 const $router = useRouter()
 const { pause, resume } = useIntervalFn(() => getVmInfo(), 3000, { immediate: false })
-const { copy } = useClipboard()
 
 /** 用户认证状态 */
 const userStatus = computed(() => latestVerifiy.value?.status)
@@ -35,9 +34,9 @@ const desktopInfo = ref<IDesktop>()
 const hidePassword = ref(true)
 const desktopTable = computed(() => {
   return [
+    { label: '云桌面访问地址', value: desktopInfo.value?.accessUrl },
     { label: '云桌面账号', value: desktopInfo.value?.account },
     { label: '云桌面密码', value: desktopInfo.value?.password, hide: true },
-    { label: '云桌面访问地址', value: desktopInfo.value?.accessUrl },
   ]
 })
 /** 云桌面ID */
@@ -180,11 +179,19 @@ async function desktopOperate(type: '开机' | '关机' | '重启') {
 }
 
 function copyText(text: string) {
-  copy(text)
-  Notify.create({
-    message: '已复制到剪切板',
-    type: 'success',
-  })
+  copyToClipboard(text)
+    .then(() => {
+      Notify.create({
+        message: '已复制到剪切板',
+        type: 'success',
+      })
+    })
+    .catch(() => {
+      Notify.create({
+        message: '复制失败',
+        type: 'danger',
+      })
+    })
 }
 </script>
 
