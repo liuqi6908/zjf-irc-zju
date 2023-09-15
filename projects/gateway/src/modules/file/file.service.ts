@@ -1,14 +1,22 @@
+import type internal from 'node:stream'
 import * as Minio from 'minio'
 import { ErrorCode } from 'zjf-types'
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { responseError } from 'src/utils/response'
 import type { MinioConfig } from 'src/config/_minio.config'
 import { responseParamsError } from 'src/utils/response/validate-exception-factory'
+import { randomString } from '@catsjuice/utils'
 
 @Injectable()
 export class FileService {
+  private readonly _logger: Logger = new Logger(FileService.name)
   private readonly _cfg: MinioConfig
+
+  private readonly _lockCache = new Map<string, {
+    promise: Promise<internal.Readable>
+    process: Record<string, boolean>
+  }>()
 
   constructor(private readonly _cfgSrv: ConfigService) {
     this._cfg = this._cfgSrv.get<MinioConfig>('minio')
@@ -49,10 +57,34 @@ export class FileService {
     await client.putObject(this._cfg.bucket[bucket], path, file, metaData)
   }
 
-  public async download(bucket: keyof MinioConfig['bucket'], path: string) {
+  private async _download(bucket: keyof MinioConfig['bucket'], path: string) {
     const client = this.getClient()
+    return await client.getObject(this._cfg.bucket[bucket], path)
+  }
+
+  public async download(bucket: keyof MinioConfig['bucket'], path: string) {
+    const id = randomString(8, 12)
+    const key = `${bucket}:${path}`
+    if (!this._lockCache.has(key)) {
+      const process = {}
+      const promise = this._download(bucket, path)
+      this._lockCache.set(key, { promise, process })
+    }
+    const { promise, process } = this._lockCache.get(key)!
+    process[id] = true
+
     try {
-      return await client.getObject(this._cfg.bucket[bucket], path)
+      return await new Promise<internal.Readable>((resolve, reject) => {
+        promise
+          .then(resolve)
+          .catch(reject)
+          .finally(() => {
+            delete process[id]
+            if (Object.keys(process).length === 0)
+              this._lockCache.delete(key)
+            else this._logger.debug(`[${id}] download process for [${key}] left: ${Object.keys(process).length} remaining`)
+          })
+      })
     }
     catch (err) {
       if (err.message.match(/The specified key does not exist/))
