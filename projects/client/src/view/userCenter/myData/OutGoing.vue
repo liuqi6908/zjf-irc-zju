@@ -46,16 +46,27 @@ const outgoingInfo = reactive<Record<FileType, FileInfoItem>>({
   },
 })
 
+/**
+ * 拖拽文件
+ * @param e
+ */
 function dropFiles(e: DragEvent) {
   const fileList = e.dataTransfer?.files
   addFile(fileList)
 }
 
+/**
+ * 选择文件
+ */
 function selectedFiles() {
   const fileList = document?.querySelector('.drop-zone-file')?.files as FileList
   addFile(fileList)
 }
 
+/**
+ * 添加文件
+ * @param files
+ */
 function addFile(files?: FileList) {
   if (files && files.length) {
     const fileArr = Array.from(files)
@@ -68,10 +79,14 @@ function addFile(files?: FileList) {
   clearInputFiles()
 }
 
+/**
+ * 检查文件
+ * @param file
+ * @param size
+ */
 function checkFile(file: File, size: number) {
   // 检查文件类型
-  const allowedTypes = ['application/zip', 'application/rar', 'application/x-zip-compressed']
-  if (model.value === 'small' && allowedTypes.includes(file.type)) {
+  if (model.value === 'small' && isCompressedFile(file)) {
     Notify.create({
       message: '不允许的文件类型',
       type: 'danger',
@@ -90,6 +105,24 @@ function checkFile(file: File, size: number) {
   return true
 }
 
+/**
+ * 是否为压缩文件
+ * @param file
+ */
+function isCompressedFile(file: File): boolean {
+  const type = file.type
+  const suffix = file.name.split('.').pop()?.toLocaleLowerCase()
+  const allowedTypes = ['zip', 'rar', '7z', 'tar', 'xz', 'gz', 'tgz', 'lzh', 'iso']
+  for (const key of allowedTypes) {
+    if (type.includes(key) || suffix?.includes(key))
+      return true
+  }
+  return false
+}
+
+/**
+ * 外发
+ */
 async function outConfirm() {
   loading.value = true
   const { dropzoneFile, remark } = outgoingInfo[model.value]
@@ -119,6 +152,9 @@ async function outConfirm() {
   }
 }
 
+/**
+ * 清除已选文件
+ */
 function clearInputFiles() {
   const el = document?.querySelector('.drop-zone-file')
   if (el)
