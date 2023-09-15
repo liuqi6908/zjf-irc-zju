@@ -57,7 +57,8 @@ const userList: Array<any> = [
 ]
 
 onMounted(async () => {
-  useGetProfile()
+  if (isLogin.value)
+    useGetProfile()
   footerProps.value = await cmsProps('footer')
 })
 
@@ -163,7 +164,7 @@ if (typeof document !== 'undefined') {
     <component
       :is="currComponent('home', 'footer')"
       v-if="footerProps && footerProps.length"
-      w-full :list="footerProps "
+      w-full :list="footerProps" text-left
     />
 
     <ZDialog

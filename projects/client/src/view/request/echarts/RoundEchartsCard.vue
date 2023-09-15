@@ -54,12 +54,21 @@ watch(() => props.value,
 
       percent.value = `${Number(data[0].value / 100).toFixed(2)}%`
       options.value = {
-        title: { text: props.title },
+        title: {
+          text: props.title,
+          left: -5,
+          textStyle: {
+            fontSize: 20,
+            fontWeight: 600,
+            color: 'black',
+          },
+        },
         color: data.map(item => item.color),
         series: [
           {
             type: 'pie',
-            radius: ['40%', '70%'],
+            radius: ['49.14%', '75.6%'],
+            center: ['48%', '57%'],
             avoidLabelOverlap: false,
             labelLine: {
               show: false,
@@ -74,24 +83,24 @@ watch(() => props.value,
 </script>
 
 <template>
-  <div border-1 border-grey-2 bg-grey-1 p-6>
+  <div p-6 border-1 border-grey-3 bg-grey-1>
     <div flex="~ row items-center">
       <client-only>
         <Echarts
           class="chart"
           :option="options"
           :update-options="{ notMerge: false }"
-          autoresize h-60 w-40
+          autoresize h-57 w-50
         />
       </client-only>
 
-      <div mx-5 text-grey-8 title-3>
+      <div title-2 relative top-4>
         {{ percent }}
       </div>
     </div>
-    <div flex="~ row justify-between">
-      <span>已用：{{ finalVal?.newUsed }} </span>
-      <span>总量：{{ finalVal?.newTotal }}</span>
+    <div flex="~ row justify-between" text="base grey-5" font-600>
+      <span>已用：<span text-grey-8 v-text="finalVal?.newUsed" /></span>
+      <span>总量：<span text-grey-8 v-text="finalVal?.newTotal" /></span>
     </div>
   </div>
 </template>

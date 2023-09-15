@@ -1,8 +1,6 @@
-import { useStorage } from '@vueuse/core'
 import { VerificationStatus } from 'zjf-types'
 import type { IVerificationHistory } from 'zjf-types'
 import { encryptPasswordInHttp } from 'zjf-utils'
-import { AUTH_TOKEN_KEY } from 'shared/constants'
 import { Notify } from 'quasar'
 
 import { getProfile } from '~/api/auth/getProfile'
@@ -10,8 +8,6 @@ import { login } from '~/api/auth/login'
 import { logout } from '~/api/auth/logout'
 import { register } from '~/api/auth/register'
 
-/** 用户token */
-export const authToken = useStorage(AUTH_TOKEN_KEY, '')
 /** 认证信息 */
 const latestVerifiy = ref<IVerificationHistory>()
 /** 是否云桌面 */

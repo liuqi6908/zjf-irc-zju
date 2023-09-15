@@ -12,7 +12,7 @@ defineEmits(['update:modelValue'])
 
 <template>
   <q-select
-    outlined text-grey-4
+    text-grey-4 outlined
     dropdown-icon="fa fa-chevron-down"
     :label="label"
     :options="options"
@@ -46,6 +46,9 @@ $error-color:#FF8080;
   .q-field__bottom .q-field__messages{
     color: $error-color  !important;
     color: $error-color !important
+  }
+  .q-select__dropdown-icon {
+    font-size: 12px;
   }
 }
 .q-input :deep(.text-negative) {

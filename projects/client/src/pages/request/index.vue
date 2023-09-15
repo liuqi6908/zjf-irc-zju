@@ -207,32 +207,35 @@ watch(desktopList, (newVal) => {
       <div w-full bg-grey-2>
         <div w-limited-1 flex="~ col nowrap" gap10>
           <div w-limited-1 mt-10 bg-grey-1 p-6>
-            <header flex="~ row" text-grey-8 title-4>
+            <header flex="~ row" title-4 text-black>
               云主机情况
             </header>
-            <div flex="~ wrap" items-center mt-6 justify-center>
-              <div class="desktopCode" flex-1 h-60 />
-              <section flex="~ 2 row center" min-w-500px gap-40 mr-10>
+            <div flex items-center mt-6 justify-between>
+              <div pl-28 flex items-center gap-13>
+                <div class="desktopCode" h-50 w-53 />
                 <div
-                  flex="~ col"
+                  flex="~ col center" gap-4
                   style="background: linear-gradient(135deg, #F5F7FA 0%, rgba(245, 247, 250, 0.00) 100%);"
-                  p-6 justify-center min-h-34 min-w-34
+                  h-34 w-34
                 >
                   <span text-primary-1 title-2>{{ vmInfo.total }}</span>
-                  <span text-4 text-grey-5>总数量</span>
+                  <span text-base text-grey-5>总数量</span>
                 </div>
-
-                <table min-w-80>
-                  <tr bg-grey-2 min-h-10 text-base>
-                    <td>运行中</td>
-                    <td>停止</td>
-                  </tr>
-                  <tr text-lg>
-                    <td>{{ vmInfo.running }}</td>
-                    <td>{{ vmInfo.stopped }}</td>
-                  </tr>
-                </table>
-              </section>
+              </div>
+              <table font-600>
+                <tr bg-grey-2 min-h-10 text-base>
+                  <td w-66>
+                    运行中
+                  </td>
+                  <td w-66>
+                    停止
+                  </td>
+                </tr>
+                <tr text-lg>
+                  <td>{{ vmInfo.running }}</td>
+                  <td>{{ vmInfo.stopped }}</td>
+                </tr>
+              </table>
             </div>
           </div>
 

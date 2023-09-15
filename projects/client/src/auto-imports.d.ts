@@ -9,7 +9,7 @@ declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const api: typeof import('./api/index')['default']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
-  const authToken: typeof import('./composables/useUser')['authToken']
+  const authToken: typeof import('./composables/auth-token')['authToken']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
@@ -309,7 +309,7 @@ declare module 'vue' {
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
-    readonly authToken: UnwrapRef<typeof import('./composables/useUser')['authToken']>
+    readonly authToken: UnwrapRef<typeof import('./composables/auth-token')['authToken']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
@@ -602,7 +602,7 @@ declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
-    readonly authToken: UnwrapRef<typeof import('./composables/useUser')['authToken']>
+    readonly authToken: UnwrapRef<typeof import('./composables/auth-token')['authToken']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
   modelValue: any
-  label: string
+  label?: string
   acceptFile?: string
   multiple?: boolean
 }
