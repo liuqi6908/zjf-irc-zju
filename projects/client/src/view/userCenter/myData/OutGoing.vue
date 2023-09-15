@@ -163,7 +163,7 @@ function clearInputFiles() {
 </script>
 
 <template>
-  <div class="col-grow" flex="~ col items-start" w-full relative p-7>
+  <div>
     <!-- 加载中 -->
     <div v-if="loading" full flex-center absolute z-100 top-0 left-0 style="background: rgba(255, 255, 255, 0.6)">
       <q-spinner
