@@ -209,7 +209,7 @@ watch(
               style="display:none"
               type="file"
               label="Standard"
-              max-file-size="1048576"
+              :max-file-size="2 * 1024 * 1024"
             />
             <q-btn flat bg="primary-1/10" text-primary-1 @click="pickImg">
               <div flex="~ row" items-center gap2>
@@ -222,7 +222,7 @@ watch(
           </div>
         </div>
 
-        <div text-grey-6 v-text="'请上传身份证、学生证或教师证、校园卡等凭证，仅限图片格式文件，单个图片不超过2MB'" />
+        <div text-grey-6 v-text="'请上传身份证、学生证或教师证、校园卡等凭证，仅限图片格式文件，单个图片不超过 2 MB'" />
 
         <div items-center gap1 grid grid-cols-8>
           <div

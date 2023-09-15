@@ -201,9 +201,9 @@ function resetForm() {
           <div flex="~ row justify-between items-center">
             <span text-grey-8>
               上传资料
-              <span text-grey-6 font-400>（必须为 PDF 格式）</span>
+              <span text-grey-6 font-400>（必须为 PDF 格式，且不超过 20 MB）</span>
             </span>
-            <UploadFile v-model="editInfo.file" accept-file=".pdf">
+            <UploadFile v-model="editInfo.file" accept-file=".pdf" :max-file-size="20 * 1024 * 1024">
               <q-btn bg="primary-1/12" flat square text-primary-1 h-8>
                 <div flex="~" items-center gap-2>
                   <svg width="19" height="14" viewBox="0 0 19 14" fill="none" xmlns="http://www.w3.org/2000/svg">
