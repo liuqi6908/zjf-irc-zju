@@ -300,9 +300,6 @@ watch(select, (selectOptions) => {
   .q-field__label {
     font-size: 16px;
   }
-  .q-icon {
-    font-size: 12px;
-  }
 }
 :deep(.q-chip) {
   .q-icon {
