@@ -222,7 +222,7 @@ watch(
           </div>
         </div>
 
-        <div text-grey-6 v-text="'请上传身份证、学生证或教师证、校园卡等凭证，仅限图片格式文件，单个图片不超过2MB'" />
+        <div text-grey-6 v-text="'请上传身份证、学生证或教师证、校园卡等凭证，仅限图片格式文件，单个图片不超过 2 MB'" />
 
         <div items-center gap1 grid grid-cols-8>
           <div
