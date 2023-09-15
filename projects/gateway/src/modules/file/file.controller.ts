@@ -44,18 +44,23 @@ export class FileController {
     let _range
     if (range) {
       const start = Number(range.replace(/\D/g, ''))
-      const end = Math.min(start + 10 * 6, size - 1)
+      const end = size - 1
       _range = { start, end }
     }
     const file = await this._fileSrv.download('pub', query.path, _range)
     const filename = query.path.split('/').pop()
     const ext = filename.split('.').pop()
-    res.header('Content-Disposition', `attachment; filename=${encodeURIComponent(filename)}`)
-    res.header('Content-Type', `application/${ext}`)
-    res.header('Content-Length', size)
     if (range) {
+      res.status = 206
+      res.header('Content-Type', `video/${ext}`)
+      res.header('Content-Length', _range.end - _range.start + 1)
       res.header('Accept-Ranges', 'bytes')
       res.header('Content-Range', `bytes ${_range.start}-${_range.end}/${size}`)
+    }
+    else {
+      res.header('Content-Disposition', `attachment; filename=${encodeURIComponent(filename)}`)
+      res.header('Content-Length', size)
+      res.header('Content-Type', `application/${ext}`)
     }
     return new StreamableFile(file)
   }

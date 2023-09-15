@@ -74,7 +74,7 @@ export class FileService {
     const client = this.getClient()
 
     if (range)
-      return await client.getPartialObject(this._cfg.bucket[bucket], path, range.start, range.end)
+      return await client.getPartialObject(this._cfg.bucket[bucket], path, range.start, range.end - range.start + 1)
     else
       return await client.getObject(this._cfg.bucket[bucket], path)
   }
