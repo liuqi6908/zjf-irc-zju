@@ -53,6 +53,10 @@ export class FileController {
     res.header('Content-Disposition', `attachment; filename=${encodeURIComponent(filename)}`)
     res.header('Content-Type', `application/${ext}`)
     res.header('Content-Length', size)
+    if (range) {
+      res.header('Accept-Ranges', 'bytes')
+      res.header('Content-Range', `bytes ${_range.start}-${_range.end}/${size}`)
+    }
     return new StreamableFile(file)
   }
 
