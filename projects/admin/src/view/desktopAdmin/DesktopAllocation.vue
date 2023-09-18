@@ -2,6 +2,7 @@
 import { QTable, useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 import type { IDesktop, IQueryConfig } from 'zjf-types'
+import { downloadCsv } from 'zjf-utils'
 import moment from 'moment'
 import { createDesktop, desktopQueryList, stopDesktop } from '~/api/desktop/index'
 
@@ -15,16 +16,6 @@ withDefaults(defineProps<Props>(), {
 
 const $q = useQuasar()
 const tableRef = ref<QTable>()
-const { data, saveAs } = useFileSystemAccess({
-  dataType: 'Text',
-  excludeAcceptAllOption: true,
-  types: [{
-    accept: {
-      'text/csv': ['.csv'],
-    },
-    description: 'XLS 工作表',
-  }],
-})
 
 const cols: QTableProps['columns'] = reactive([
   { name: 'id', field: 'id', label: 'ID' },
@@ -195,10 +186,7 @@ async function allocationDesktop(id: string) {
  * 下载模板
  */
 function downloadTemplate() {
-  data.value = 'id,internalIp,accessUrl,account,password,expiredAt'
-  saveAs({
-    suggestedName: '桌面分配',
-  })
+  downloadCsv('id,internalIp,accessUrl,account,password,expiredAt', '桌面分配')
 }
 
 /**
@@ -374,7 +362,8 @@ function onRejected() {
 .q-file {
   height: 36px;
   :deep(.q-field__control) {
-    min-height: 36px;
+    height: 36px !important;
+    min-height: 36px !important;
     .q-field__control-container {
       padding-top: 0;
       .q-field__label {
