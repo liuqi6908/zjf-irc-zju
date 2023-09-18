@@ -36,6 +36,7 @@ export class DesktopService {
 
       const expiredMap = new Map<string, any>()
       const cacheClient = await this._redisSrv.getClient(RedisType.DESKTOP_EXPIRE_NOTIFY_CACHE)
+      const notifiedKeyMap = new Map<string, boolean>()
 
       for (const ahead of aheadList) {
         const qb = this._desktopRepo.createQueryBuilder('d')
@@ -56,8 +57,10 @@ export class DesktopService {
             continue
 
           // 如果已经通知过了，就不再通知
-          if (await cacheClient.get(aheadKey))
+          if (notifiedKeyMap.get(key) || await cacheClient.get(aheadKey)) {
+            notifiedKeyMap.set(key, true)
             continue
+          }
 
           expiredMap.set(key, { desktop, ahead })
           // 设置通知缓存，在 ahead 天内不再重新通知
