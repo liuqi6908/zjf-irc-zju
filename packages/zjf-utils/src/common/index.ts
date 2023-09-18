@@ -10,3 +10,4 @@ export * from "./md5"
 export * from './fileToFormdata'
 export * from './format-file-size'
 export * from './hash-object'
+export * from './download-file'
