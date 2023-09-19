@@ -5,6 +5,7 @@ import { DesktopQueueHistoryStatus, DesktopQueueStatus } from 'zjf-types'
 import { getOwnDesktopQuery } from '~/api/desktop/getOwnDesktopQuery'
 import { getDesktopHostList } from '~/api/desktopHost/getDesktopHostList'
 import { getDesktopVm } from '~/api/desktopVm/getDesktopVm'
+import { desktopQuery } from '~/api/desktop/desktopsQuery'
 
 import DesktopRequestDialog from '~/view/request/DesktopRequestDialog.vue'
 import HostPercent from '~/view/request/host/HostPercent.vue'
@@ -47,11 +48,13 @@ const desktopList = computed(() => {
 })
 const model = ref('')
 
+const loading = ref(false)
 const dialog = ref(false)
 
 onMounted(async () => {
   if (!isLogin.value)
     return
+  loading.value = true
   await getVerify()
   await getRequestInfo()
   vmInfo.value = await getDesktopVm()
@@ -66,7 +69,13 @@ async function getRequestInfo() {
     const res = await getOwnDesktopQuery()
     if (res) {
       const { lastExpired, lastRejected, queue, queueLength } = res
-      requestInfo.status = queue?.status || lastRejected?.status || (lastExpired?.id ? DesktopQueueHistoryStatus.Expired : '')
+      let status = queue?.status || lastRejected?.status || (lastExpired?.id ? DesktopQueueHistoryStatus.Expired : '')
+      if (status === DesktopQueueStatus.Using) {
+        const info = await desktopQuery()
+        if (new Date(info?.expiredAt).getTime() < new Date().getTime())
+          status = DesktopQueueHistoryStatus.Expired
+      }
+      requestInfo.status = status
       requestInfo.queueLength = queueLength || 0
       requestInfo.rejectReason = lastRejected?.rejectReason
     }
@@ -75,6 +84,9 @@ async function getRequestInfo() {
     }
   }
   catch (_) {}
+  finally {
+    loading.value = false
+  }
 }
 
 watch(desktopList, (newVal) => {
@@ -91,6 +103,13 @@ watch(desktopList, (newVal) => {
         申请使用
       </div>
     </header>
+    <!-- loading -->
+    <div v-if="loading" absolute full z-100 flex-center style="background: rgba(255, 255, 255, 0.6)">
+      <q-spinner
+        color="primary-1" size="5rem" :thickness="2" label-class="text-primary-1"
+        label-style="font-size: 1.1em"
+      />
+    </div>
     <!-- 未登录 / 未认证 -->
     <div v-if="!isVerify" flex="~ col items-center" bg-grey-1 w-limited-1 min-h-4xl pt-32>
       <!-- 未登录 -->
@@ -211,8 +230,8 @@ watch(desktopList, (newVal) => {
               云主机情况
             </header>
             <div flex items-center mt-6 justify-between>
-              <div pl-28 flex items-center gap-13>
-                <div class="desktopCode" h-50 w-53 />
+              <div flex items-center pl-28 gap-13>
+                <div class="desktopCode" w-53 h-50 />
                 <div
                   flex="~ col center" gap-4
                   style="background: linear-gradient(135deg, #F5F7FA 0%, rgba(245, 247, 250, 0.00) 100%);"
@@ -223,7 +242,7 @@ watch(desktopList, (newVal) => {
                 </div>
               </div>
               <table font-600>
-                <tr bg-grey-2 min-h-10 text-base>
+                <tr bg-grey-2 text-base min-h-10>
                   <td w-66>
                     运行中
                   </td>
