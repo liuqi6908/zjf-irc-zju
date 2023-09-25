@@ -89,7 +89,7 @@ export class FileService {
     const key = `${bucket}:${path}:${rangeKey}`
     if (!this._lockCache.has(key)) {
       const process = {}
-      const promise = this._download(bucket, path)
+      const promise = this._download(bucket, path, range)
       this._lockCache.set(key, { promise, process })
     }
     const { promise, process } = this._lockCache.get(key)!
