@@ -251,7 +251,7 @@ watch(
         </div>
 
         <!-- 用户协议 -->
-        <ProtocolFooter v-model="agreeWithProtocol" />
+        <ProtocolVerify v-model="agreeWithProtocol" />
       </section>
     </div>
   </ZDialog>

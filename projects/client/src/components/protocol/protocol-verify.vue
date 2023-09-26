@@ -23,26 +23,36 @@ const showUserAgreementDialog = ref(false)
     <div>
       <span>我已阅读并同意</span>
       <span
-        text-primary-1
+        text-primary-1 cursor-pointer hover:underline
         @click="showPrivacyDialog = true"
       >《「智能云科研平台」隐私政策》</span>
       <span>、</span>
       <span
-        text-primary-1
+        text-primary-1 cursor-pointer hover:underline
         @click="showUserAgreementDialog = true"
       >《「智能云科研平台」用户使用协议》</span>
     </div>
     <ZDialog
       v-model="showPrivacyDialog"
-      :wrapper-style="{ maxWidth: '800px' }"
-      title="隐私政策"
+      :wrapper-style="{
+        width: '50rem',
+        maxWidth: '50rem',
+        height: '95vh',
+      }"
+      scroll
+      title="「智能云科研平台」隐私政策"
     >
       <PrivacyDoc />
     </ZDialog>
     <ZDialog
       v-model="showUserAgreementDialog"
-      :wrapper-style="{ maxWidth: '800px' }"
-      title="用户使用协议"
+      :wrapper-style="{
+        width: '50rem',
+        maxWidth: '50rem',
+        height: '95vh',
+      }"
+      scroll
+      title="「智能云科研平台」用户使用协议"
     >
       <UserAgreementDoc />
     </ZDialog>
