@@ -142,20 +142,20 @@ function resetForm() {
           w-36 label="增加作品"
           @click="uploadDialog = true, editType = 'add'"
         >
-          <div i-material-symbols:add h-6 w-6 ml-2 />
+          <div ml-2 i-material-symbols:add h-6 w-6 />
         </Btn1>
       </client-only>
     </header>
 
     <div v-if="loading || rows.length" flex="~ col">
-      <div flex="~ row" mb-5 text-grey-8>
+      <div flex="~ row" text-grey-8 mb-5>
         <span font-600 text="4 grey-8">我的作品</span>
       </div>
 
       <BaseTable v-slot="{ props, col }" :loading="loading" :cols="workCol" :rows="rows">
         <div v-if="col === 'operation'" flex="~ row justify-center">
           <Btn outline mr-4 min-w-22 label="重新上传" @click="resetWork(props.row)" />
-          <Btn min-w-22 text-alert-error outline label="删除" bg-color="alert-error" @click="deleteRow(props.row.id)" />
+          <Btn min-w-22 outline text-alert-error label="删除" bg-color="alert-error" @click="deleteRow(props.row.id)" />
         </div>
         <div v-else>
           {{ props.row[`${col}`] }}
@@ -215,7 +215,7 @@ function resetForm() {
             </UploadFile>
           </div>
 
-          <div v-if="editInfo.file" flex items-center justify-between text-grey-5 mt-2>
+          <div v-if="editInfo.file" items-center justify-between text-grey-5 flex mt-2>
             <div flex items-center gap1>
               <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0.570312 13.6673V0.333984H7.23698L11.237 4.33398V13.6673H0.570312ZM6.57031 5.00065V1.66732H1.90365V12.334H9.90365V5.00065H6.57031Z" fill="#6E7686" />
@@ -230,7 +230,7 @@ function resetForm() {
           </div>
         </div>
 
-        <ProtocolFooter v-model="editInfo.read" />
+        <ProtocolWorks v-model="editInfo.read" />
       </div>
     </ZDialog>
   </div>

@@ -73,7 +73,7 @@ function removeFile(index: number) {
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <div flex="~ col" gap2>
-      <span font-600 text-grey-8 text-3.5>云桌面使用时长</span>
+      <span text-grey-8 font-600 text-3.5>云桌面使用时长</span>
       <ZSelect v-model="select" class="req-duration-select" :options="options" />
     </div>
 
@@ -81,7 +81,7 @@ function removeFile(index: number) {
       <div flex="~ row justify-between items-center" mb-2>
         <span text-3.5 font-600 text-grey-8>研究计划/其他材料</span>
         <UploadFile v-model="file">
-          <q-btn bg="primary-1/12" flat square text-primary-1 h-8>
+          <q-btn bg="primary-1/12" flat text-primary-1 square h-8>
             <div flex="~" items-center gap-2>
               <svg width="19" height="14" viewBox="0 0 19 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0.935547 13.6673V0.333984H7.60221L9.26888 2.00065H17.6022V3.66732H8.58138L6.91471 2.00065H2.60221V12.0007L4.60221 5.33398H18.8522L16.3522 13.6673H0.935547ZM4.35221 12.0007H15.1022L16.6022 7.00065H5.85221L4.35221 12.0007Z" fill="#025CB9" />
@@ -109,7 +109,7 @@ function removeFile(index: number) {
       </div>
     </div>
 
-    <ProtocolFooter v-model="read" />
+    <ProtocolDesktop v-model="read" />
   </ZDialog>
 </template>
 
