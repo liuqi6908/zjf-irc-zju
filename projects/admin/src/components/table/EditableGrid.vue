@@ -100,9 +100,7 @@ function upSort(index: number, sort: 'up' | 'down') {
     }
     emits('update:rows', rowsRef.value)
   }
-  catch (e) {
-    console.error(e)
-  }
+  catch (e) {}
 }
 </script>
 
@@ -125,7 +123,7 @@ function upSort(index: number, sort: 'up' | 'down') {
     </template>
     <template #body="props">
       <q-tr :props="props">
-        <q-td key="title" :props="props">
+        <q-td key="title" :props="props" min-w-50>
           <q-input v-model="props.row.title" />
         </q-td>
 
