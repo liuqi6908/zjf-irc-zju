@@ -5,10 +5,9 @@ interface Props {
   urlImg: string
   svg?: boolean
 }
-const props = defineProps<Props>()
+defineProps<Props>()
 const emits = defineEmits(['update:urlImg'])
 
-const svgRef = ref<Element>()
 const imgFile = ref(null)
 
 async function uploadFile(file: File) {
@@ -20,23 +19,6 @@ async function uploadFile(file: File) {
     emits('update:urlImg', url)
   }
 }
-
-watch(
-  () => props.urlImg,
-  () => {
-    nextTick(() => {
-      const el = svgRef.value?.firstElementChild
-      if (el) {
-        const width = el.scrollWidth
-        el.style.transform = `scale(${152 / width})`
-        el.style.transformOrigin = 'left top'
-      }
-    })
-  },
-  {
-    immediate: true,
-  },
-)
 </script>
 
 <template>
@@ -47,11 +29,19 @@ watch(
       :label="svg ? '上传svg' : '上传图片'"
       :accept="svg ? '.svg' : '.jpg, image/*'"
       standout dense
-      class="w-38!"
+      class="w-30!"
       :model-value="imgFile"
       @update:model-value="(val) => uploadFile(val)"
     />
-    <q-img v-if="!svg && urlImg" w-38 :src="urlImg" />
-    <div v-else-if="svg && urlImg" ref="svgRef" w-38 max-h-40 v-html="urlImg" />
+    <q-img v-if="!svg && urlImg" w-30 :src="urlImg" />
+    <div v-else-if="svg && urlImg" class="preview-svg" w-20 max-h-40 m-auto flex="~" v-html="urlImg" />
   </div>
 </template>
+
+<style lang="scss" scoped>
+.preview-svg {
+  > :deep(svg) {
+    height: auto !important;
+  }
+}
+</style>
