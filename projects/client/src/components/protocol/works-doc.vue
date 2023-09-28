@@ -66,5 +66,6 @@ p {
 }
 ul {
   margin: 1.5rem 0 1.5rem 1.25rem;
+  font-size: 1rem;
 }
 </style>
