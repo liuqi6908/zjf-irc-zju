@@ -23,13 +23,10 @@ async function uploadFile(file: File) {
 
 <template>
   <div flex="~ col gap-2">
-    <q-file
-      color="lime-11" bg-color="primary"
-      label-color="grey-1"
+    <Upload
+      color="primary"
       :label="svg ? '上传svg' : '上传图片'"
       :accept="svg ? '.svg' : '.jpg, image/*'"
-      standout dense
-      class="w-30!"
       :model-value="imgFile"
       @update:model-value="(val) => uploadFile(val)"
     />
