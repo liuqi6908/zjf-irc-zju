@@ -104,11 +104,11 @@ async function downloadData() {
             <path d="M6 12L0 6L6 0L7.4 1.4L2.8 6L7.4 10.6L6 12Z" fill="#6E7686" />
           </svg>
         </q-btn>
-        <span text="grey-8 5">数据资源介绍</span>
+        <span text="grey-8 5" cursor-pointer @click="() => $router.back()">数据资源介绍</span>
       </header>
 
       <div flex="~ col" mt-5 gap-5>
-        <span flex="~ row" text-4 font-600 text-grey-8>表格字段说明</span>
+        <span flex="~ row" font-600 text-grey-8 text-4>表格字段说明</span>
         <BaseTable
           v-if="tableFieldRows.length"
           v-slot="{ props, col }" disable-pagination :loading="loading" :cols="tableFieldsCol" :rows="tableFieldRows"
@@ -137,12 +137,12 @@ async function downloadData() {
       <div text="primary-1 left" text-4 mt-6 v-text="`引用规范：${route.query.reference || '暂无引用规范'}`" />
     </div>
 
-    <div flex="~ col" items-center my-10 gap-4>
+    <div flex="~ col" items-center gap-4 my-10>
       <template v-if="!isPurchased">
         <router-link v-if="!isDesktop" :to="{ path: '/request' }">
           <q-btn
             color="primary"
-            h12 outline square w-36
+            square h12 outline w-36
           >
             <span text-4 font-600>数据申请使用</span>
           </q-btn>
