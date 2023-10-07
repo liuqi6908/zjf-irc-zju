@@ -121,23 +121,23 @@ onMounted(() => {
 
 <template>
   <div w-limited-1 flex="~ col justify-center items-center">
-    <header flex="~ row" w-full items-center gap4 py6 font-600>
+    <header flex="~ row" w-full items-center font-600 gap4 py6>
       <q-btn flat dense h6 min-h6 w6 p0 text-grey-6 @click="() => $router.back()">
         <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M6 12L0 6L6 0L7.4 1.4L2.8 6L7.4 10.6L6 12Z" fill="#6E7686" />
         </svg>
       </q-btn>
-      <span text="grey-8 5"> 数据库介绍</span>
+      <span text="grey-8 5" cursor-pointer @click="() => $router.back()"> 数据库介绍</span>
     </header>
 
-    <Empty v-if="!docHtml" label="暂无数据库介绍" />
-    <div v-else pn-10 full flex="~ row gap-10">
+    <Empty v-if="!docHtml" label="暂无数据库介绍" min-h-160 />
+    <div v-else full pn-10 flex="~ row gap-10">
       <div>
-        <q-list sticky top-0 h-100vh overflow-x-hidden overflow-y-auto text-grey-8 class="navs">
+        <q-list text-grey-8 sticky top-0 h-100vh overflow-x-hidden overflow-y-auto class="navs">
           <q-item
             v-for="(node, index) in navList"
             :key="index" class="ellipsis"
-            flex="~ col justify-center items-start" clickable min-h-10 w-50 p-0 px2 font-600 :active="link === node.textContent"
+            flex="~ col justify-center items-start" min-h-10 p-0 font-600 clickable w-50 px2 :active="link === node.textContent"
             active-class="text-primary-1 bg-grey-2" @click="scrollTo(node.textContent, index)"
           >
             <q-item-section>
