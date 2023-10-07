@@ -100,11 +100,11 @@ watch(desktopList, (newVal) => {
     <!-- header -->
     <header class="request" w-full flex-center h-64 shrink-0>
       <div text-grey-8 title-1>
-        申请使用
+        申请云桌面
       </div>
     </header>
     <!-- loading -->
-    <div v-if="loading" absolute full z-100 flex-center style="background: rgba(255, 255, 255, 0.6)">
+    <div v-if="loading" absolute full flex-center z-100 style="background: rgba(255, 255, 255, 0.6)">
       <q-spinner
         color="primary-1" size="5rem" :thickness="2" label-class="text-primary-1"
         label-style="font-size: 1.1em"
@@ -153,7 +153,7 @@ watch(desktopList, (newVal) => {
           <div
             flex="~ row" style="background:rgba(2, 92, 185, 0.08);"
 
-            mt-10 w-full items-center justify-between px-6 font-600 py-4 text="lg grey-8"
+            mt-10 w-full items-center justify-between font-600 px-6 py-4 text="lg grey-8"
           >
             <!-- 使用中 -->
             <template v-if="requestInfo.status === DesktopQueueStatus.Using">
@@ -195,7 +195,7 @@ watch(desktopList, (newVal) => {
               <!-- 已驳回 -->
               <div v-else-if="requestInfo.status === DesktopQueueHistoryStatus.Rejected" text-left>
                 您的申请已被驳回，请重新提交
-                <div flex="~ col" mt-2 bg-grey-2 p-4 font-500 w-80 text-sm>
+                <div flex="~ col" p-4 mt-2 bg-grey-2 font-500 w-80 text-sm>
                   <div mb-2>
                     驳回理由
                   </div>
@@ -229,16 +229,16 @@ watch(desktopList, (newVal) => {
             <header flex="~ row" title-4 text-black>
               云主机情况
             </header>
-            <div flex items-center mt-6 justify-between>
+            <div flex items-center justify-between mt-6>
               <div flex items-center pl-28 gap-13>
                 <div class="desktopCode" w-53 h-50 />
                 <div
-                  flex="~ col center" gap-4
+                  flex="~ col center"
                   style="background: linear-gradient(135deg, #F5F7FA 0%, rgba(245, 247, 250, 0.00) 100%);"
-                  h-34 w-34
+                  w-34 gap-4 h-34
                 >
                   <span text-primary-1 title-2>{{ vmInfo.total }}</span>
-                  <span text-base text-grey-5>总数量</span>
+                  <span text-grey-5 text-base>总数量</span>
                 </div>
               </div>
               <table font-600>
