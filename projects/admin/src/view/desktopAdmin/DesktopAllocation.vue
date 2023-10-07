@@ -286,13 +286,6 @@ function uploadFile() {
 
   reader.readAsText(file.value)
 }
-
-function onRejected() {
-  $q.notify({
-    type: 'danger',
-    message: '只能上传 CSV 格式文件',
-  })
-}
 </script>
 
 <template>
@@ -315,18 +308,17 @@ function onRejected() {
         下载模板
         <q-icon name="fas fa-download" size="18px" ml-2 />
       </q-btn>
-      <q-file
+      <Upload
         v-model="file"
-        class="w-30! mx-4!"
-        standout dense label-color="grey-1" bg-color="green"
-        label="上传CSV" input-style="color: transparent"
-        max-files="1" accept="text/csv"
-        @rejected="onRejected"
+        mx-4
+        accept="text/csv"
+        :max-files="1"
       >
-        <template #append>
-          <q-icon name="fas fa-cloud-upload" size="18px" color="grey-1" />
-        </template>
-      </q-file>
+        <q-btn color="green">
+          上传CSV
+          <q-icon name="fas fa-cloud-upload" size="18px" ml-2 />
+        </q-btn>
+      </Upload>
       <q-btn
         color="primary"
         @click="desktopDialog()"

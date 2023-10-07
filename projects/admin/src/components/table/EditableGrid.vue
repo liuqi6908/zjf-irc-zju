@@ -127,11 +127,11 @@ function upSort(index: number, sort: 'up' | 'down') {
           <q-input v-model="props.row.title" />
         </q-td>
 
-        <q-td key="uploadImg" :props="props">
+        <q-td key="uploadImg" :props="props" min-w-30>
           <UploadFile v-model:urlImg="props.row.uploadImg" />
         </q-td>
 
-        <q-td key="svg" :props="props">
+        <q-td key="svg" :props="props" min-w-30>
           <UploadFile v-model:urlImg="props.row.svg" svg />
         </q-td>
 

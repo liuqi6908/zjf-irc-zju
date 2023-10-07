@@ -19,6 +19,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SMSInput: typeof import('./components/auth/SMSInput.vue')['default']
     Tabs: typeof import('./components/tab/Tabs.vue')['default']
+    Upload: typeof import('./components/file/Upload.vue')['default']
     UploadFile: typeof import('./components/table/UploadFile.vue')['default']
     UserCodeInput: typeof import('./components/auth/UserCodeInput.vue')['default']
   }

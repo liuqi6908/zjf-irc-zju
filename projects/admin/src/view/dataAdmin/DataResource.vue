@@ -214,13 +214,11 @@ watch(uploadTab, (currTab) => {
           <span title-4>
             上传中间表
           </span>
-          <q-file
+          <Upload
             :model-value="midTable"
-            bg-color="primary"
-            dense filled w-30
-            label-color="white"
+            w-30
             label="上传中间表"
-            @update:model-value="(val) => $emit('update:midTable', val)"
+            @update:model-value="val => $emit('update:midTable', val)"
           />
         </header>
 
@@ -259,19 +257,15 @@ watch(uploadTab, (currTab) => {
               <div flex="~ row justify-between gap-5 items-center">
                 <span font-600>文件名:</span>
                 <span>{{ fileOssList.includes(data.nameEN) ? `${data.nameEN}.docx` : '暂未上传文件' }}</span>
-                <q-file
-                  bg-color="primary"
-                  class="w-34!"
+                <Upload
                   label="上传数据库介绍"
-                  filled
                   accept=".docx"
-                  dense
-                  label-color="white"
+                  w-34
                   :model-value="describe?.file[`${data.id}`]"
-                  @update:model-value="(val) => emitDescribe(val, data.nameEN, data.rootId)"
+                  @update:model-value="val => emitDescribe(val, data.nameEN, data.rootId)"
                 />
                 <q-btn
-                  color="teal" h-10
+                  color="teal"
                   label="下载数据库介绍"
                   :href="downLoadDescribe(data.nameEN)"
                 />
