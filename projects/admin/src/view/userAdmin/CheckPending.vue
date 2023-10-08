@@ -3,6 +3,7 @@ import { VerificationStatus } from 'zjf-types'
 import type { IQueryDto, IVerificationHistory } from 'zjf-types'
 import { QTable, useQuasar } from 'quasar'
 import moment from 'moment'
+import { hideSensitiveInfo } from 'zjf-utils'
 import { queryAllApply } from '~/api/verification/queryAllApply'
 import { approveApply } from '~/api/verification/approveApply'
 import { rejectApply } from '~/api/verification/rejectApply'
@@ -63,6 +64,7 @@ async function queryVerifyList(props: any) {
     pagination.value.rowsNumber = total
     rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
     rows.forEach((item) => {
+      item.idCard = hideSensitiveInfo(item.idCard)
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
       item.identify = userIdentify.find(v => v.value === item.identify)?.label
       item['founder.createdAt'] = item['founder.createdAt'] ? moment(item['founder.createdAt']).format('YYYY-MM-DD HH:mm:ss') : null

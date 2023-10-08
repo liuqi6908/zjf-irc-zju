@@ -4,6 +4,7 @@ import type { QTableProps } from 'quasar'
 import { DesktopQueueStatus } from 'zjf-types'
 import type { IDesktopQueue, IQueryConfig } from 'zjf-types'
 import moment from 'moment'
+import { hideSensitiveInfo } from 'zjf-utils'
 import { approveDesktop, desktopRequestQueryList, rejectDesktop } from '~/api/desktop/request'
 
 interface Props {
@@ -82,6 +83,7 @@ async function queryData(props: any) {
     rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
     rows.forEach((item) => {
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
+      item['user.verification.idCard'] = hideSensitiveInfo(item['user.verification.idCard'])
       item['user.verification.identify'] = userIdentify.find(v => v.value === item['user.verification.identify'])?.label || '无'
       item.status = desktopStatus.find(v => v.value === item.status)?.label || ''
     })
