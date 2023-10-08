@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { CodeAction, VerificationStatus } from 'zjf-types'
 import type { IUser, IVerificationHistory } from 'zjf-types'
+import { hideSensitiveInfo } from 'zjf-utils'
 import { Notify } from 'quasar'
 
 import VerificationDialog from '~/view/userCenter/verification/VerificationDialog.vue'
@@ -147,29 +148,6 @@ async function checkoutVerify() {
         obj.inputVal = value
     }
   }
-}
-
-/**
- * 隐藏敏感信息
- * @param input
- */
-function hideSensitiveInfo(input: string): string {
-  let result = ''
-
-  // 邮箱
-  if (input.includes('@')) {
-    const atIndex = input.indexOf('@')
-    const username = input.slice(0, atIndex)
-    const domain = input.slice(atIndex + 1)
-    const hiddenUsername = username.slice(0, 3) + '*'.repeat(username.length - 3)
-    result = `${hiddenUsername}@${domain}`
-  }
-  // 身份证号
-  else if (input.length > 7) {
-    result = `${input.slice(0, 3)}${'*'.repeat(input.length - 7)}${input.slice(input.length - 4)}`
-  }
-
-  return result
 }
 
 onBeforeMount(() => {

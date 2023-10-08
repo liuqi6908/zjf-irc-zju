@@ -4,6 +4,7 @@ import type { IQueryDto, IVerificationHistory } from 'zjf-types'
 import { QTable } from 'quasar'
 import type { QTableProps } from 'quasar'
 import moment from 'moment'
+import { hideSensitiveInfo } from 'zjf-utils'
 import { queryAllApply } from '~/api/verification/queryAllApply'
 
 defineProps<{ title: string }>()
@@ -65,12 +66,16 @@ async function queryVerifyList(props: any) {
     pagination.value.rowsNumber = total
     rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
     rows.forEach((item) => {
+      item['founder.email'] = hideSensitiveInfo(item['founder.email'])
+      item.idCard = hideSensitiveInfo(item.idCard)
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
       item.identify = userIdentify.find(v => v.value === item.identify)?.label
       item['founder.createdAt'] = item['founder.createdAt'] ? moment(item['founder.createdAt']).format('YYYY-MM-DD HH:mm:ss') : null
     })
   }
-  catch (_) {}
+  catch (_) {
+    console.error(_)
+  }
   finally {
     // 更新本地分页对象
     pagination.value.page = page
