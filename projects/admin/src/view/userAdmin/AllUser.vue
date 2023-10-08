@@ -55,7 +55,6 @@ async function queryUserList(props: any) {
     pagination.value.rowsNumber = total
     rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
     rows.forEach((item) => {
-      item.email = hideSensitiveInfo(item.email)
       item['verification.idCard'] = hideSensitiveInfo(item['verification.idCard'])
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
       item['verification.identify'] = userIdentify.find(v => v.value === item['verification.identify'])?.label

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { hideSensitiveInfo } from 'zjf-utils'
+
 interface Props {
   userInfo: any
 }
@@ -15,7 +17,7 @@ const info = computed(() => {
     { label: '学校', value: userInfo['user.verification.school'] },
     { label: '学院', value: userInfo['user.verification.college'] },
     { label: '学号', value: userInfo['user.verification.number'] },
-    { label: '身份证', value: userInfo['user.verification.idCard'] },
+    { label: '身份证', value: hideSensitiveInfo(userInfo['user.verification.idCard']) },
     { label: '身份', value: userInfo['user.verification.identify'] },
     { label: '角色', value: userInfo['user.dataRoleName'] },
     { label: '权限', value: userInfo['user.roleName'] },

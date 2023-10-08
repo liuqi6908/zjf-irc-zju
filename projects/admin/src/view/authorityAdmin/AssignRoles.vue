@@ -3,6 +3,7 @@ import { VerificationStatus } from 'zjf-types'
 import type { IQueryDto, IUser } from 'zjf-types'
 import { QTable, useQuasar } from 'quasar'
 import moment from 'moment'
+import { hideSensitiveInfo } from 'zjf-utils'
 import { searchUserQuery } from '~/api/auth/user/searchUserQuery'
 
 defineProps<{ title: string }>()
@@ -62,6 +63,7 @@ async function queryUserList(props: any) {
     rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
     rows.forEach((item) => {
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
+      item['verification.idCard'] = hideSensitiveInfo(item['verification.idCard'])
       item['verification.identify'] = userIdentify.find(v => v.value === item['verification.identify'])?.label
       item['verification.updatedAt'] = item['verification.updatedAt'] ? moment(item['verification.updatedAt']).format('YYYY-MM-DD HH:mm:ss') : null
       item['verification.status'] = userStatus.find(v => v.value === item['verification.status'])?.label || '未认证'
