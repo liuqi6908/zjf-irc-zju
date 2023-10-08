@@ -41,12 +41,12 @@ export class DataController {
   @HasPermission(PermissionType.DATA_ROOT_CREATE)
   @Put('root')
   public async createRoot(@Body() body: CreateRootBodyDto) {
-    const { nameZH, nameEN } = body
+    const { nameZH, nameEN, order } = body
     const root = new DataDirectory()
     root.nameZH = nameZH
     root.nameEN = nameEN
     root.level = 0
-    root.order = 0
+    root.order = order ?? 0
     root.id = nameEN
     root.rootId = nameEN
     await this._dataSrv.dirRepo().save(root)
