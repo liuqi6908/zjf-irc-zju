@@ -1,21 +1,14 @@
 <script setup lang="ts">
-// https://github.com/vueuse/head
-// you can use this to manipulate the document head in any components,
-// they will be rendered correctly in the html results with vite-ssg
 useHead({
-  title: 'Admin',
+  title: '智能云科研平台-管理后台',
   meta: [
-    { name: 'description', content: 'Opinionated Vite Starter Template' },
-    {
-      name: 'theme-color',
-      content: () => isDark.value ? '#00aba9' : '#ffffff',
-    },
+    { name: 'description', content: '「智能云科研平台」是一整套供科研人员处理分析大数据和开展学术研究的云端超融合系统的简称。' },
   ],
   link: [
     {
       rel: 'icon',
       type: 'image/svg+xml',
-      href: () => preferredDark.value ? '/favicon-dark.svg' : '/favicon.svg',
+      href: '/favicon.svg',
     },
   ],
 })
