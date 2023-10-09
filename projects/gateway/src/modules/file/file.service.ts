@@ -128,7 +128,12 @@ export class FileService {
     }
 
     // 签发链接
-    return await client.presignedGetObject(this._cfg.bucket[bucket], path, expires)
+    const filename = path.split('/').pop()
+    const ext = filename.split('.').pop()
+    return await client.presignedGetObject(this._cfg.bucket[bucket], path, expires, {
+      'Content-Type': `application/${ext}`,
+      'Content-Disposition': `attachment; filename="${filename}"`,
+    })
   }
 
   public async delete(bucket: keyof MinioConfig['bucket'], path: string) {

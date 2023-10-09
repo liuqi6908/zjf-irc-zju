@@ -306,13 +306,15 @@ export class DataController {
     if (!allowed)
       response(ErrorCode.PERMISSION_DENIED)
     const tableEn = dataDirectory.nameEN
-    const path = `download/${dataRootId}/${tableEn}.csv`
+    const path = `download/${dataRootId}/${tableEn}.zip`
     try {
       const url = await this._fileSrv.signUrl('data', path)
       response()
       return url
     }
     catch (err) {
+      // TODO: 处理无法找到指定文件的错误
+      console.error(err)
       response(ErrorCode.COMMON_UNEXPECTED_ERROR)
     }
   }
