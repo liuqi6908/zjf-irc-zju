@@ -1,5 +1,4 @@
 import { useStorage } from '@vueuse/core'
-import type { IUser } from 'zjf-types'
 import { encryptPasswordInHttp } from 'zjf-utils'
 import { ADMIN_ROLE_NAME, AUTH_TOKEN_KEY } from 'shared/constants'
 import { Dialog, Notify } from 'quasar'
@@ -7,12 +6,10 @@ import { Dialog, Notify } from 'quasar'
 import { login } from '~/api/auth/login'
 import { logout } from '~/api/auth/logout'
 import { register } from '~/api/auth/register'
-import { getProfile } from '~/api/auth/getProfile'
 
 /** 用户token */
 const authToken = useStorage(AUTH_TOKEN_KEY, '')
-const userInfo = ref<IUser>()
-const adminInfo = useStorage(ADMIN_ROLE_NAME, '')
+const roleName = useStorage(ADMIN_ROLE_NAME, '')
 
 export function useUser($router = useRouter()) {
   /** 登录 */
@@ -23,8 +20,9 @@ export function useUser($router = useRouter()) {
       password: encryptPasswordInHttp(options.password),
     })
     if (res) {
-      authToken.value = res.sign.access_token
-      userInfo.value = res.user
+      const { sign, user } = res
+      authToken.value = sign.access_token
+      roleName.value = user.roleName
       $router.replace({ path: '/' })
     }
   }
@@ -58,18 +56,9 @@ export function useUser($router = useRouter()) {
       .onOk(() => {
         logout()
         authToken.value = null
-        userInfo.value = undefined
+        roleName.value = null
         $router.replace({ path: '/auth/login' })
       })
-  }
-
-  /** 获取当前登入用户信息 */
-  const useGetProfile = async (relation = 'role.permissions,verification') => {
-    const res = await getProfile(relation)
-    if (res) {
-      userInfo.value = res
-      adminInfo.value = res.role?.name
-    }
   }
 
   /** 用户是否登录 */
@@ -77,12 +66,10 @@ export function useUser($router = useRouter()) {
 
   return {
     authToken,
-    userInfo,
-    adminInfo,
+    roleName,
     isLogin,
     useLogin,
     useRegister,
     useLogout,
-    useGetProfile,
   }
 }
