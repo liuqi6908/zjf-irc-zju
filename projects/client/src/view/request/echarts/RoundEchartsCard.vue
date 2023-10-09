@@ -52,7 +52,7 @@ watch(() => props.value,
     if (newVal) {
       const data = computedItem()
 
-      percent.value = `${Number(data[0].value / 100).toFixed(2)}%`
+      percent.value = `${Number(data[0].value).toFixed(2)}%`
       options.value = {
         title: {
           text: props.title,
