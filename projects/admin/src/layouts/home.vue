@@ -1,13 +1,8 @@
 <script setup lang="ts">
 const $router = useRouter()
-const { isLogin, useLogout } = useUser()
+const { isLogin, roleName, useLogout } = useUser()
 const drawer = ref(false)
 const routerLink = ref('')
-
-onBeforeMount(() => {
-  if (!isLogin.value)
-    $router.push('/auth/login')
-})
 
 const link = computed({
   get: () => { return $router.currentRoute.value.name as string },
@@ -15,6 +10,20 @@ const link = computed({
     routerLink.value = val
   },
 })
+
+watch(
+  link,
+  () => {
+    if (!isLogin.value)
+      $router.replace({ path: 'auth/login' })
+    else if (roleName.value !== 'root')
+      $router.replace({ path: 'denied' })
+  },
+  {
+    immediate: true,
+  },
+)
+
 const navList = [
   {
     id: 'home',
