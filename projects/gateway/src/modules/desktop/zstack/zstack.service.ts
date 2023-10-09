@@ -103,7 +103,7 @@ export class ZstackService extends EventEmitter {
 
   public async getHostMonitor(hostUuid: string, period = 60) {
     // eslint-disable-next-line max-len
-    const zql = `query Host.name where uuid = '${hostUuid}' return with (zwatch{{resultName='CPUUtilization', metricName='CPUAllIdleUtilization',offsetAheadOfCurrentTime=3600, period=${period}}},zwatch{{resultName='memUsed',metricName='MemoryUsedInPercent',offsetAheadOfCurrentTime=3600, period=${period}}}, zwatch{{resultName='diskRead',metricName='DiskAllReadBytes', offsetAheadOfCurrentTime=3600, period=${period}}}, zwatch{{resultName='diskWrite',metricName='DiskAllWriteBytes', offsetAheadOfCurrentTime=3600, period=${period}}})`
+    const zql = `query Host.name where uuid = '${hostUuid}' return with (zwatch{{resultName='CPUUtilization', metricName='CPUAllUsedUtilization',offsetAheadOfCurrentTime=3600, period=${period}}},zwatch{{resultName='memUsed',metricName='MemoryUsedInPercent',offsetAheadOfCurrentTime=3600, period=${period}}}, zwatch{{resultName='diskRead',metricName='DiskAllReadBytes', offsetAheadOfCurrentTime=3600, period=${period}}}, zwatch{{resultName='diskWrite',metricName='DiskAllWriteBytes', offsetAheadOfCurrentTime=3600, period=${period}}})`
     const res = await this.zql(zql)
     return res.results[0].returnWith
   }
