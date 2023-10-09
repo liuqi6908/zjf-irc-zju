@@ -5,23 +5,16 @@ interface Props {
   size?: number
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   size: 40,
 })
 
 defineEmits(['update:route'])
 
-const dropDown = ref(false)
-
 function subStr(name: string) {
   if (!name)
     return ''
-  const sub = Array.from(name)[0]
-  return sub
-}
-
-function avatarBehavior() {
-  dropDown.value = !dropDown.value
+  return Array.from(name)[0]
 }
 
 function getImageUrl(url: string) {
@@ -47,10 +40,3 @@ function getImageUrl(url: string) {
     <slot />
   </div>
 </template>
-
-<style lang="sass" scoped>
-.show-first-char-only
-  visibility: hidden
-  &::first-letter
-    visibility: visible
-</style>
