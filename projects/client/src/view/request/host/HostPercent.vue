@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import RoundEchartsCard from '../echarts/RoundEchartsCard.vue'
-import { getDesktopHostCpu } from '~/api/desktopHost/getDesktopCpu'
+import { getDesktopHostCpu, getDesktopHostStorage } from '~/api/desktopHost/getDesktopCpu'
 
 interface Props {
   uuid: string
@@ -35,7 +35,8 @@ const { pause, resume } = useIntervalFn(() => fetchDEsktopCpu(), 30000)
 
 async function fetchDEsktopCpu(uuid?: string) {
   try {
-    const res = await getDesktopHostCpu(uuid || props.uuid)
+    let res = await getDesktopHostCpu(uuid || props.uuid)
+
     if (!res)
       throw new Error('Error')
 
@@ -45,8 +46,13 @@ async function fetchDEsktopCpu(uuid?: string) {
     cpuList.storage.used = Number(res.memUsed[0].value)
     cpuList.storage.total = cpuList.storage.used + Number(res.memAvailable[0].value)
 
-    cpuList.disk.used = Number(res.diskUsed[0].value)
-    cpuList.disk.total = cpuList.storage.used + Number(res.diskTotal[0].value)
+    res = await getDesktopHostStorage()
+
+    if (!res)
+      throw new Error('Error')
+
+    cpuList.disk.used = Number(res.UsedCapacityInBytes[0].value)
+    cpuList.disk.total = Number(res.TotalCapacityInBytes[0].value)
   }
   catch (_) {
     pause()
