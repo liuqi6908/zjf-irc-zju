@@ -27,10 +27,10 @@ const requestInfo = reactive({
 })
 
 /** 云桌面总览 */
-const vmInfo = ref({
-  running: '',
-  stopped: '',
-  total: '',
+const vmInfo = reactive({
+  running: 0,
+  stopped: 0,
+  total: 0,
 })
 /** 云桌面物理机 */
 const hostList = ref()
@@ -57,7 +57,10 @@ onMounted(async () => {
   loading.value = true
   await getVerify()
   await getRequestInfo()
-  vmInfo.value = await getDesktopVm()
+  const { running, stopped } = await getDesktopVm()
+  vmInfo.running = running
+  vmInfo.stopped = stopped
+  vmInfo.total = running + stopped
   hostList.value = await getDesktopHostList()
 })
 
