@@ -133,6 +133,16 @@ export class ZstackService extends EventEmitter {
     return res.results?.flatMap(el => el.inventories)
   }
 
+  /**
+   * 获取集群存储使用情况
+   */
+  public async getClusterStorage() {
+    // eslint-disable-next-line max-len
+    const zqlStr = 'query PrimaryStorage.uuid return with(zwatch{{resultName=\'UsedCapacityInPercent\', metricName=\'UsedCapacityInPercent\', offsetAheadOfCurrentTime=0}}, zwatch{{resultName=\'UsedCapacityInBytes\', metricName=\'UsedCapacityInBytes\', offsetAheadOfCurrentTime=0}}, zwatch{{resultName=\'TotalCapacityInBytes\', metricName=\'TotalPhysicalCapacityInBytes\', offsetAheadOfCurrentTime=0}})'
+    const res = await this.zql(zqlStr)
+    return res.results[0].returnWith;
+  }
+
   public async startVM(vmUUID: string) {
     return await this.requestWithSession((cfg) => {
       return this._httpSrv.axiosRef({

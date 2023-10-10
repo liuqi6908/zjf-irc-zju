@@ -29,4 +29,10 @@ export class DesktopHostController {
   public async getHostTimeSeries(@Param('hostId') hostId: string) {
     return this._zstackSrv.getHostMonitor(hostId)
   }
+
+  @ApiOperation({ summary: '获取集群整体的存储使用情况' })
+  @Get('cluster/storage')
+  public async getClusterStorage() {
+    return await this._zstackSrv.getClusterStorage()
+  }
 }
