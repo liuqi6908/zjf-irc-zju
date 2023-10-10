@@ -1,10 +1,20 @@
+<script setup lang="ts">
+/**
+ * 返回首页
+ */
+function backHome() {
+  const url = window.location.origin
+  window.location.replace(url)
+}
+</script>
+
 <template>
   <div class="flex-center fit column" absolute>
     <q-icon name="fas fa-exclamation-triangle" size="5rem" color="red-6" />
     <div class="text-red" my-2>
       您没有权限访问
     </div>
-    <q-btn color="primary" label="返回首页" @click="$router.push('/')" />
+    <q-btn color="primary" label="返回首页" @click="backHome" />
   </div>
 </template>
 
