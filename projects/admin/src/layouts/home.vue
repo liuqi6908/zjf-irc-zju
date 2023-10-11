@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const $router = useRouter()
+const $route = useRoute()
 const { isLogin, roleName, useLogout } = useUser()
 const drawer = ref(false)
 const routerLink = ref('')
@@ -82,6 +83,10 @@ const navList = [
     icon: 'i-mingcute:file-export-line',
   },
 ]
+
+const showMenu = computed(() => {
+  return $route.name !== 'denied'
+})
 </script>
 
 <template>
@@ -102,14 +107,15 @@ const navList = [
             color="primary"
             @click="useLogout()"
           >
-            <div i-mingcute:exit-fill ml-2 />
+            <div ml-2 i-mingcute:exit-fill />
           </q-btn>
         </q-toolbar>
       </q-header>
 
       <q-drawer
+        v-if="showMenu"
         style="border-right: 1px solid var(--grey-3, #D4DDEA);"
-        flex flex-col bg-grey-2 show-if-above
+        flex bg-grey-2 flex-col show-if-above
         :width="260"
         :mini-width="80"
         :mini="drawer"
@@ -118,7 +124,7 @@ const navList = [
         <q-toolbar p-0 q-none flex="~ items-center justify-end">
           <div
             class="nav-Br my-1"
-            w-6 flex-center cursor-pointer bg-white h-8
+            flex-center bg-white w-6 cursor-pointer h-8
             @click="drawer = !drawer"
           >
             <q-icon :name="`fas fa-chevron-${drawer ? 'right' : 'left'}`" size="0.25rem" text-grey-5 />
