@@ -9,12 +9,12 @@ function backHome() {
 </script>
 
 <template>
-  <div class="flex-center fit column" absolute>
-    <q-icon name="fas fa-exclamation-triangle" size="5rem" color="red-6" />
-    <div class="text-red" my-2>
+  <div class="flex-center fit column gap-2" absolute>
+    <q-icon name="fas fa-exclamation-triangle" size="8rem" color="red-6" />
+    <div class="text-red" my-2 text-xl>
       您没有权限访问
     </div>
-    <q-btn color="primary" label="返回首页" @click="backHome" />
+    <q-btn color="primary" size="16px" label="返回首页" @click="backHome" />
   </div>
 </template>
 
