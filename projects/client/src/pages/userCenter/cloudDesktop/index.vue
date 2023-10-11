@@ -36,7 +36,7 @@ const desktopTable = computed(() => {
   return [
     { label: '云桌面访问地址', value: desktopInfo.value?.accessUrl },
     { label: '云桌面账号', value: desktopInfo.value?.account },
-    { label: '云桌面密码', value: desktopInfo.value?.password, hide: true },
+    { label: '云桌面初始密码', value: desktopInfo.value?.password, hide: true },
   ]
 })
 /** 云桌面ID */
