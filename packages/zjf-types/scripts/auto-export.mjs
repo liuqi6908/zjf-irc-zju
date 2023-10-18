@@ -14,7 +14,7 @@ function exportCode(p) {
   const name = path.basename(p, '.ts')
   const dir = path.dirname(p)
   const relative = path.relative(ROOT_DIR, dir)
-  const importPath = path.join(relative, name)
+  const importPath = path.join(relative, name).replaceAll('\\', '/')
   return `export * from './${importPath}'`
 }
 function filter(p) {
