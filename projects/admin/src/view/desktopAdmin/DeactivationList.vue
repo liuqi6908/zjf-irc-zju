@@ -3,7 +3,7 @@ import { QTable, useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 import type { IDesktop, IQueryConfig } from 'zjf-types'
 import moment from 'moment'
-import { desktopQueryList } from '~/api/desktop/index'
+import { deleteDesktop, desktopQueryList } from '~/api/desktop/index'
 
 interface Props {
   title?: string
@@ -26,6 +26,7 @@ const cols: QTableProps['columns'] = reactive([
   { name: 'createdAt', field: 'createdAt', label: '创建时间' },
   { name: 'expiredAt', field: 'expiredAt', label: '到期时间' },
   { name: 'user.account', field: 'user.account', label: '用户' },
+  { name: 'action', field: 'action', label: '操作' },
 ])
 const rows: Array<any> = reactive([])
 const pagination = tablePagination()
@@ -105,6 +106,37 @@ async function checkUserInfo(row: any) {
     },
   })
 }
+
+/**
+ * 删除云桌面
+ * @param id 云桌面id
+ */
+function deleteDesktopInfo(id: string) {
+  $q.dialog({
+    title: '删除确认',
+    message: '该操作将删除该云桌面，是否继续？',
+    cancel: true,
+  }).onOk(async () => {
+    loading.value = true
+    try {
+      const res = await deleteDesktop(id)
+      if (res) {
+        $q.notify({
+          message: '删除成功！',
+          type: 'success',
+        })
+        tableRef.value?.requestServerInteraction()
+      }
+      else {
+        throw new Error('删除失败！')
+      }
+    }
+    catch (_) {}
+    finally {
+      loading.value = false
+    }
+  })
+}
 </script>
 
 <template>
@@ -127,6 +159,9 @@ async function checkUserInfo(row: any) {
         <q-td v-for="col in cols" :key="col.name">
           <template v-if="col.name === 'user.account'">
             <q-btn v-if="props.row['user.account']" flat no-caps color="primary" :label="props.row['user.account']" @click="checkUserInfo(props.row)" />
+          </template>
+          <template v-else-if="col.name === 'action'">
+            <q-btn label="删除" color="red" size="sm" @click="deleteDesktopInfo(props.row.id)" />
           </template>
           <template v-else>
             {{ props.row[col.field as string] }}
