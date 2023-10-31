@@ -204,7 +204,7 @@ async function downloadTemplate() {
       const expiredAt = moment(new Date().setFullYear(new Date().getFullYear() + 1)).format('YYYY-MM-DD')
       arr.push(...data.map((v) => {
         const { uuid, name, ip } = v
-        return [uuid, name, ip, accessUrl, generateRandomString(), generateRandomString(), expiredAt]
+        return [uuid, name, ip, accessUrl, `user-${name}`, generateRandomString(), expiredAt]
       }))
     }
   }

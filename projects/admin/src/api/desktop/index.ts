@@ -52,9 +52,13 @@ export function getVmList() {
 }
 
 /**
- * 删除云桌面
- * @param id
+ * 批量删除云桌面
+ * @param ids
  */
-export function deleteDesktop(id: string) {
-  return $delete(`desktop/delete/${id}`)
+export function batchDeleteDesktop(ids: string[]) {
+  return $delete('desktop/delete/batch', {
+    params: {
+      ids,
+    },
+  })
 }

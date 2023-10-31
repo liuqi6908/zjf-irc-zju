@@ -3,7 +3,7 @@ import { QTable, useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 import type { IDesktop, IQueryConfig } from 'zjf-types'
 import moment from 'moment'
-import { deleteDesktop, desktopQueryList } from '~/api/desktop/index'
+import { batchDeleteDesktop, desktopQueryList } from '~/api/desktop/index'
 
 interface Props {
   title?: string
@@ -31,6 +31,9 @@ const cols: QTableProps['columns'] = reactive([
 const rows: Array<any> = reactive([])
 const pagination = tablePagination()
 const loading = ref(true)
+
+/** 选中的云桌面 */
+const selected = ref<any[]>([])
 
 onMounted(async () => {
   cols.forEach((item) => {
@@ -109,17 +112,17 @@ async function checkUserInfo(row: any) {
 
 /**
  * 删除云桌面
- * @param id 云桌面id
+ * @param ids 云桌面id
  */
-function deleteDesktopInfo(id: string) {
+function deleteDesktop(ids: string[]) {
   $q.dialog({
     title: '删除确认',
-    message: '该操作将删除该云桌面，是否继续？',
+    message: '该操作将删除已选云桌面，是否继续？',
     cancel: true,
   }).onOk(async () => {
     loading.value = true
     try {
-      const res = await deleteDesktop(id)
+      const res = await batchDeleteDesktop(ids)
       if (res) {
         $q.notify({
           message: '删除成功！',
@@ -143,25 +146,44 @@ function deleteDesktopInfo(id: string) {
   <QTable
     ref="tableRef"
     v-model:pagination="pagination"
+    v-model:selected="selected"
     :title="title"
     h-full
     :columns="cols"
     :rows="rows"
     :loading="loading"
     :rows-per-page-options="rowsPerPageOptions"
+    row-key="id"
+    selection="multiple"
     @request="queryData"
   >
+    <template #top-right>
+      <q-btn
+        color="red"
+        :disable="!selected.length"
+        @click="deleteDesktop(selected.map(v => v.id))"
+      >
+        批量删除
+        <q-icon name="fas fa-trash" size="18px" ml-2 />
+      </q-btn>
+    </template>
     <template #loading>
       <q-inner-loading showing color="primary" />
     </template>
     <template #body="props">
       <q-tr :props="props">
+        <q-td>
+          <q-checkbox
+            v-model="selected"
+            :val="props.row"
+          />
+        </q-td>
         <q-td v-for="col in cols" :key="col.name">
           <template v-if="col.name === 'user.account'">
             <q-btn v-if="props.row['user.account']" flat no-caps color="primary" :label="props.row['user.account']" @click="checkUserInfo(props.row)" />
           </template>
           <template v-else-if="col.name === 'action'">
-            <q-btn label="删除" color="red" size="sm" @click="deleteDesktopInfo(props.row.id)" />
+            <q-btn label="删除" color="red" size="sm" @click="deleteDesktop([props.row.id])" />
           </template>
           <template v-else>
             {{ props.row[col.field as string] }}
