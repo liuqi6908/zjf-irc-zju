@@ -2,9 +2,9 @@
 import { QTable, useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 import type { IDesktop, IQueryConfig } from 'zjf-types'
-import { downloadCsv } from 'zjf-utils'
 import moment from 'moment'
-import { createDesktop, desktopQueryList, stopDesktop } from '~/api/desktop/index'
+import { downloadCsv } from 'zjf-utils'
+import { createDesktop, desktopQueryList, getVmList, stopDesktop } from '~/api/desktop/index'
 
 interface Props {
   title?: string
@@ -186,8 +186,33 @@ async function allocationDesktop(id: string) {
 /**
  * 下载模板
  */
-function downloadTemplate() {
-  downloadCsv('id,name,internalIp,accessUrl,account,password,expiredAt', '桌面分配')
+async function downloadTemplate() {
+  loading.value = true
+  const arr = [[
+    'zstack中云桌面的UUID',
+    '云桌面名称',
+    '云桌面IP地址',
+    '云桌面登录地址',
+    '云桌面用户名，随机生成，请按照实际值修改',
+    '云桌面密码，随机生成，按照实际值修改',
+    '用户云桌面权限过期时间，默认1年，按实际值修改',
+  ]]
+  try {
+    const data = await getVmList()
+    if (Array.isArray(data)) {
+      const accessUrl = 'https://36.26.47.210:8443/'
+      const expiredAt = moment(new Date().setFullYear(new Date().getFullYear() + 1)).format('YYYY-MM-DD')
+      arr.push(...data.map((v) => {
+        const { uuid, name, ip } = v
+        return [uuid, name, ip, accessUrl, `user-${name}`, generateRandomString(), expiredAt]
+      }))
+    }
+  }
+  catch (_) {}
+  finally {
+    loading.value = false
+    downloadCsv(arr.map(v => v.join(',')).join('\n'), '桌面分配')
+  }
 }
 
 /**
@@ -203,13 +228,13 @@ function uploadFile() {
     loading.value = true
     let total = 0
     let success = 0
-    const error: number[] = []
+    const error: [number, string][] = []
     try {
       // 获取读取的文件内容
       const content = event.target?.result as string
       // 将内容解析为 JSON 数组
       const lines = content.split('\n')
-      const headers = lines[0].trim().split(',')
+      const headers = ['id', 'name', 'internalIp', 'accessUrl', 'account', 'password', 'expiredAt']
       const jsonArray = []
       for (let i = 1; i < lines.length; i++) {
         lines[i] = lines[i].trim().replace('\\r', '')
@@ -233,7 +258,7 @@ function uploadFile() {
               throw new Error('error')
           }
           catch (e: any) {
-            error.push(e.response?.data?.message || 'error')
+            error.push([i + 1, e.response?.data?.message || 'error'])
           }
         }
       }
@@ -252,7 +277,7 @@ function uploadFile() {
         $q.notify({
           type: 'danger',
           message: `共 ${total} 条数据，全部上传失败`,
-          caption: error.map((v, i) => `${i + 1}：${v}`).join('<br/>'),
+          caption: error.map(v => `第 ${v[0]} 条：${v[1]}`).join('<br/>'),
           multiLine: true,
           html: true,
           timeout: 0,
@@ -271,7 +296,7 @@ function uploadFile() {
         $q.notify({
           type: 'warn',
           message: `共 ${total} 条数据，已成功上传 ${success} 条`,
-          caption: error.map((v, i) => `${i + 1}：${v}`).join('<br/>'),
+          caption: error.map(v => `第 ${v[0]} 条：${v[1]}`).join('<br/>'),
           multiLine: true,
           html: true,
           timeout: 0,

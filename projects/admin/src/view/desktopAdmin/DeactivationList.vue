@@ -3,7 +3,7 @@ import { QTable, useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 import type { IDesktop, IQueryConfig } from 'zjf-types'
 import moment from 'moment'
-import { desktopQueryList } from '~/api/desktop/index'
+import { batchDeleteDesktop, desktopQueryList } from '~/api/desktop/index'
 
 interface Props {
   title?: string
@@ -26,10 +26,14 @@ const cols: QTableProps['columns'] = reactive([
   { name: 'createdAt', field: 'createdAt', label: '创建时间' },
   { name: 'expiredAt', field: 'expiredAt', label: '到期时间' },
   { name: 'user.account', field: 'user.account', label: '用户' },
+  { name: 'action', field: 'action', label: '操作' },
 ])
 const rows: Array<any> = reactive([])
 const pagination = tablePagination()
 const loading = ref(true)
+
+/** 选中的云桌面 */
+const selected = ref<any[]>([])
 
 onMounted(async () => {
   cols.forEach((item) => {
@@ -105,28 +109,81 @@ async function checkUserInfo(row: any) {
     },
   })
 }
+
+/**
+ * 删除云桌面
+ * @param ids 云桌面id
+ */
+function deleteDesktop(ids: string[]) {
+  $q.dialog({
+    title: '删除确认',
+    message: '该操作将删除已选云桌面，是否继续？',
+    cancel: true,
+  }).onOk(async () => {
+    loading.value = true
+    try {
+      const res = await batchDeleteDesktop(ids)
+      if (res) {
+        $q.notify({
+          message: '删除成功！',
+          type: 'success',
+        })
+        tableRef.value?.requestServerInteraction()
+      }
+      else {
+        throw new Error('删除失败！')
+      }
+    }
+    catch (_) {}
+    finally {
+      loading.value = false
+    }
+  })
+}
 </script>
 
 <template>
   <QTable
     ref="tableRef"
     v-model:pagination="pagination"
+    v-model:selected="selected"
     :title="title"
     h-full
     :columns="cols"
     :rows="rows"
     :loading="loading"
     :rows-per-page-options="rowsPerPageOptions"
+    row-key="id"
+    selection="multiple"
     @request="queryData"
   >
+    <template #top-right>
+      <q-btn
+        color="red"
+        :disable="!selected.length"
+        @click="deleteDesktop(selected.map(v => v.id))"
+      >
+        批量删除
+        <q-icon name="fas fa-trash" size="18px" ml-2 />
+      </q-btn>
+    </template>
     <template #loading>
       <q-inner-loading showing color="primary" />
     </template>
     <template #body="props">
       <q-tr :props="props">
+        <q-td>
+          <q-checkbox
+            v-model="selected"
+            :val="props.row"
+          />
+        </q-td>
         <q-td v-for="col in cols" :key="col.name">
           <template v-if="col.name === 'user.account'">
             <q-btn v-if="props.row['user.account']" flat no-caps color="primary" :label="props.row['user.account']" @click="checkUserInfo(props.row)" />
+          </template>
+          <template v-else-if="col.name === 'action'">
+            <q-btn label="删除" color="red" size="sm" @click="deleteDesktop([props.row.id])" />
           </template>
           <template v-else>
             {{ props.row[col.field as string] }}

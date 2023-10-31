@@ -1,4 +1,4 @@
-import { IsNull, Not } from 'typeorm'
+import { In, IsNull, Not } from 'typeorm'
 import { getQuery } from 'src/utils/query'
 import { IsLogin } from 'src/guards/login.guard'
 import type { Desktop } from 'src/entities/desktop'
@@ -111,6 +111,20 @@ export class DesktopController {
       this._notifySrv.notifyUserDesktopInfoChanged(desktop)
     })
     return updateRes.affected > 0
+  }
+
+  @ApiOperation({ summary: '批量删除云桌面（无法删除未禁用的）' })
+  @HasPermission(PermissionType.DESKTOP_DELETE)
+  @Delete('delete/batch')
+  public async batchDeleteDesktop(@Body() body: DesktopIdDto[]) {
+    const deleteRes = await this._desktopSrv.repo()
+      .createQueryBuilder()
+      .delete()
+      .where({ disabled: true })
+      .andWhere({ id: In(body) })
+      .execute()
+
+    return deleteRes.affected > 0
   }
 
   @ApiOperation({ summary: '分配云桌面给指定的用户' })

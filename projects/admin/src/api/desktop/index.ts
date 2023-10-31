@@ -50,3 +50,13 @@ export function assignDesktop(id: string, userId: string) {
 export function getVmList() {
   return $get<Record<string, string>[]>('desktop/vm-list')
 }
+
+/**
+ * 批量删除云桌面
+ * @param ids
+ */
+export function batchDeleteDesktop(ids: string[]) {
+  return $delete('desktop/delete/batch', {
+    data: ids,
+  })
+}

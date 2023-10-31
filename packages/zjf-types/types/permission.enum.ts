@@ -1,8 +1,8 @@
 export enum PermissionType {
 
   // ---------------- 超级管理员 -------------------
-  // /** 
-  //  * 完整的访问权限 
+  // /**
+  //  * 完整的访问权限
   //  * @deprecated 只能使用最细粒度的权限
   //  **/
   // ROOT = 'root',
@@ -92,6 +92,8 @@ export enum PermissionType {
   DESKTOP_DISABLE = 'desktop:disable',
   /** 更新云桌面 */
   DESKTOP_UPDATE = 'desktop:update',
+  /** 删除云桌面 */
+  DESKTOP_DELETE = 'desktop:delete',
   /** 分配云桌面给指定用户 */
   DESKTOP_ASSIGN = 'desktop:assign',
   /** 查询云桌面 */
@@ -169,6 +171,7 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.DESKTOP_CREATE]: '创建云桌面',
   [PermissionType.DESKTOP_DISABLE]: '停用云桌面',
   [PermissionType.DESKTOP_UPDATE]: '更新云桌面',
+  [PermissionType.DESKTOP_DELETE]: '删除云桌面',
   [PermissionType.DESKTOP_ASSIGN]: '分配云桌面给指定用户',
   [PermissionType.DESKTOP_QUERY]: '查询云桌面',
   [PermissionType.DESKTOP_EXPIRE_CHECK]: '云桌面过期检查',
