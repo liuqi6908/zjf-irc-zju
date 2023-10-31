@@ -69,8 +69,8 @@ export function checkAttachment(images: Array<string>, id: string, url = 'verify
  * 生成随机字符串
  * @param len
  */
-export function generateRandomString(len = 12): string {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&'
+export function generateRandomString(len = 18): string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   let result = ''
 
   for (let i = 0; i < len; i++) {

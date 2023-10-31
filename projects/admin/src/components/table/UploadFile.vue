@@ -13,9 +13,10 @@ const imgFile = ref(null)
 async function uploadFile(file: File) {
   const fromData = new FormData()
   fromData.append('file', file)
-  const res = await putPublicFile('cms', file.name, fromData)
-  if (res && file.name && fromData) {
-    const url = await getPublicFileUrl('cms', file.name) || ''
+  const fileName = `${generateRandomString()}.${file.name.split('.').pop()}`
+  const res = await putPublicFile('cms', fileName, fromData)
+  if (res && fileName && fromData) {
+    const url = await getPublicFileUrl('cms', fileName) || ''
     emits('update:urlImg', url)
   }
 }

@@ -47,10 +47,11 @@ const uploadImage = {
   async customUpload(file: File, insertFn: InsertFnType) {
     const path = 'cms'
     const formData = fileToFormData(file)
-    const res = await putPublicFile(path, file.name, formData)
+    const fileName = `${generateRandomString()}.${file.name.split('.').pop()}`
+    const res = await putPublicFile(path, fileName, formData)
 
     if (res) {
-      const url = await getPublicFileUrl(path, file.name)
+      const url = await getPublicFileUrl(path, fileName)
       // 插入图片
       insertFn(url)
     }
