@@ -1,6 +1,6 @@
 import type { ICreateDesktopBodyDto, IDesktop, IPaginatedResData, IQueryConfig, IUpdateDesktopInterface } from 'zjf-types'
 
-const { $delete, $patch, $post, $put } = useRequest()
+const { $delete, $patch, $post, $put, $get } = useRequest()
 
 /**
  * 查询云桌面列表
@@ -45,9 +45,8 @@ export function assignDesktop(id: string, userId: string) {
 }
 
 /**
- * 上传文件批量创建云桌面
- * @param file
+ * 获取云桌面虚拟机列表
  */
-export function uploadFileCreateDesktop(file: FormData) {
-  return $put('desktop/upload', file)
+export function getVmList() {
+  return $get<Record<string, string>[]>('desktop/vm-list')
 }

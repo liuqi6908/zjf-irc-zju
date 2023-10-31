@@ -1,6 +1,8 @@
+import type { MiddlewareConsumer } from '@nestjs/common'
 import { Module, forwardRef } from '@nestjs/common'
 import { Login } from 'src/entities/login'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { CorsMiddleware } from '../../middleware/cors.middleware'
 
 import { UserModule } from '../user/user.module'
 import { CodeModule } from '../code/code.module'
@@ -20,4 +22,10 @@ import { AuthService } from './auth.service'
   providers: [AuthService],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(CorsMiddleware)
+      .forRoutes('/auth/login/password')
+  }
+}
