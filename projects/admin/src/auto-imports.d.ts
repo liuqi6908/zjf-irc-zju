@@ -46,6 +46,7 @@ declare global {
   const flowOpts: typeof import('./constants/trade.constant')['flowOpts']
   const formatDate: typeof import('./utils/format')['formatDate']
   const formatFileSize: typeof import('./utils/format')['formatFileSize']
+  const generateRandomString: typeof import('./utils/tool')['generateRandomString']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const goodsMap: typeof import('./constants/goods.constant')['goodsMap']
@@ -390,6 +391,7 @@ declare module 'vue' {
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly flattenJSON: UnwrapRef<typeof import('./utils/tool')['flattenJSON']>
+    readonly generateRandomString: UnwrapRef<typeof import('./utils/tool')['generateRandomString']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
@@ -689,6 +691,7 @@ declare module '@vue/runtime-core' {
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly flattenJSON: UnwrapRef<typeof import('./utils/tool')['flattenJSON']>
+    readonly generateRandomString: UnwrapRef<typeof import('./utils/tool')['generateRandomString']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
