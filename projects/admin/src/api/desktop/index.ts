@@ -57,8 +57,6 @@ export function getVmList() {
  */
 export function batchDeleteDesktop(ids: string[]) {
   return $delete('desktop/delete/batch', {
-    params: {
-      ids,
-    },
+    data: ids,
   })
 }
