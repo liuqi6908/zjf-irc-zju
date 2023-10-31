@@ -19,6 +19,7 @@ const tableRef = ref<QTable>()
 
 const cols: QTableProps['columns'] = reactive([
   { name: 'id', field: 'id', label: 'ID' },
+  { name: 'name', field: 'name', label: '云桌面名称' },
   { name: 'internalIp', field: 'internalIp', label: 'IP地址' },
   { name: 'accessUrl', field: 'accessUrl', label: '访问地址' },
   { name: 'account', field: 'account', label: '账号' },
@@ -186,7 +187,7 @@ async function allocationDesktop(id: string) {
  * 下载模板
  */
 function downloadTemplate() {
-  downloadCsv('id,internalIp,accessUrl,account,password,expiredAt', '桌面分配')
+  downloadCsv('id,name,internalIp,accessUrl,account,password,expiredAt', '桌面分配')
 }
 
 /**
