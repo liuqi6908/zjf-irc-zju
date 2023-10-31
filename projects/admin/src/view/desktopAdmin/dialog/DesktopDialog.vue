@@ -6,6 +6,7 @@ interface Props {
   type: 'update' | 'add'
   desktop?: {
     id: string
+    name: string
     internalIp: string
     accessUrl: string
     account: string
@@ -66,6 +67,7 @@ async function onSubmit() {
  */
 function onReset() {
   desktopForm.id = desktop?.id || ''
+  desktopForm.name = desktop?.name || ''
   desktopForm.internalIp = desktop?.internalIp || ''
   desktopForm.accessUrl = desktop?.accessUrl || ''
   desktopForm.account = desktop?.account || ''
@@ -92,6 +94,13 @@ function onReset() {
           lazy-rules
           :readonly="type === 'update'"
           :rules="[val => val && val.length > 0 || '请输入云桌面ID']"
+        />
+        <q-input
+          v-model="desktopForm.name"
+          label="云桌面名称"
+          filled
+          lazy-rules
+          :rules="[val => val && val.length > 0 || '请输入云桌面名称']"
         />
         <q-input
           v-model="desktopForm.internalIp"

@@ -140,7 +140,40 @@ export class ZstackService extends EventEmitter {
     // eslint-disable-next-line max-len
     const zqlStr = 'query PrimaryStorage.uuid return with(zwatch{{resultName=\'UsedCapacityInPercent\', metricName=\'UsedCapacityInPercent\', offsetAheadOfCurrentTime=0}}, zwatch{{resultName=\'UsedCapacityInBytes\', metricName=\'UsedCapacityInBytes\', offsetAheadOfCurrentTime=0}}, zwatch{{resultName=\'TotalCapacityInBytes\', metricName=\'TotalPhysicalCapacityInBytes\', offsetAheadOfCurrentTime=0}})'
     const res = await this.zql(zqlStr)
-    return res.results[0].returnWith;
+    return res.results[0].returnWith
+  }
+
+  /**
+   * 获取云桌面虚拟机列表
+   */
+  public async vmList() {
+    const res = await this.requestWithSession((cfg) => {
+      return this._httpSrv.axiosRef({
+        ...cfg,
+        method: 'Get',
+        url: '/zstack/v1/vm-instances',
+      })
+    })
+    const ban_names = [
+      'Windows-Server2016', 'Server2016TMP', 'YUNOPR01', 'YUNOPR02', 'YUNODC01', 'YUNODC02',
+      'YUNODB03', 'YUNODB02', 'YUNODB01', 'YUNOLIC', 'YUNOAD02', 'YUNOAD01', 'mysql8',
+      'mysql8bak', 'minio-1', 'minio-2', 'minio-3', 'minio-4', 'docker', 'TEST-1', 'TEST-2',
+      'TEST-3', 'elasticsearch-1', 'elasticsearch-2', 'elasticsearch-3', '安全接入选件',
+      'yuancheng', 'Win10', 'Win10TMP', 'Yunzy', 'zstackapi',
+    ]
+    const { inventories = [] } = res
+    return inventories.filter((v: any) => {
+      const { name, vmNics } = v
+      return !ban_names.includes(name) && vmNics?.length
+    })
+      .map((v: any) => {
+        const { uuid, name, vmNics } = v
+        return {
+          uuid,
+          name,
+          ip: vmNics[0].ip,
+        }
+      })
   }
 
   public async startVM(vmUUID: string) {

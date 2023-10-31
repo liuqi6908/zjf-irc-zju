@@ -19,6 +19,7 @@ import { UpdateDesktopBodyDto } from './dto/update-desktop.body.dto'
 import { AssignDesktopParamDto } from './dto/assign-desktop.param.dto'
 import { DesktopRequestService } from './desktop-request/desktop-request.service'
 import { DesktopQueueHistoryService } from './desktop-queue-history/desktop-queue-history.service'
+import { ZstackService } from './zstack/zstack.service'
 
 @ApiTags('Desktop | 云桌面')
 @Controller('desktop')
@@ -28,6 +29,7 @@ export class DesktopController {
     private readonly _desktopSrv: DesktopService,
     private readonly _desktopReqSrv: DesktopRequestService,
     private readonly _desktopHisSrv: DesktopQueueHistoryService,
+    private readonly _zstackSrv: ZstackService,
   ) {}
 
   @ApiOperation({ summary: '判断当前客户端是否在云桌面内使用' })
@@ -181,5 +183,12 @@ export class DesktopController {
   public async getOwnDesktop(@Req() req: FastifyRequest) {
     const user = req.raw.user
     return await this._desktopSrv.repo().findOne({ where: { userId: user.id } })
+  }
+
+  @ApiOperation({ summary: '获取云桌面虚拟机列表', description: '返回所有云桌面虚拟机的 id、name、ip' })
+  @HasPermission(PermissionType.DESKTOP_CREATE)
+  @Get('vm-list')
+  public async getVMList() {
+    return await this._zstackSrv.vmList()
   }
 }
