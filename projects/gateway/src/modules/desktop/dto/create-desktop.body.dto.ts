@@ -7,6 +7,10 @@ export class CreateDesktopBodyDto implements ICreateDesktopBodyDto {
   @IsString()
   id: string
 
+  @ApiProperty({ description: '云桌面名称' })
+  @IsString()
+  name: string
+
   @ApiProperty({ description: '内网地址' })
   @IsString()
   internalIp: string

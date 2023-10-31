@@ -9,6 +9,9 @@ export interface IDesktop extends ICreatedAt, IUpdatedAt {
   /** 云桌面 ID， 需要管理员手动填写虚拟机的 id */
   id: string
 
+  /** 云桌面名称 */
+  name: string
+
   /** 内网地址 */
   internalIp: string
 

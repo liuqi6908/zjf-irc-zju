@@ -15,6 +15,10 @@ export class Desktop
   @PrimaryColumn()
   id: string
 
+  @ApiProperty({ description: '云桌面名称' })
+  @Column()
+  name: string
+
   @ApiProperty({ description: '内网地址' })
   @Column()
   internalIp: string
