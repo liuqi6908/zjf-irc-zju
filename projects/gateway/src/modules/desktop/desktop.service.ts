@@ -85,7 +85,7 @@ export class DesktopService {
   public async createDesktop(body: CreateDesktopBodyDto) {
     const insertRes = await this._desktopRepo.insert({
       ...objectPick(body, [
-        'accessUrl', 'account', 'expiredAt', 'id', 'internalIp', 'password',
+        'accessUrl', 'account', 'expiredAt', 'id', 'name', 'internalIp', 'password',
       ]),
       expiredAt: body.expiredAt ? new Date(body.expiredAt) : new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
     })

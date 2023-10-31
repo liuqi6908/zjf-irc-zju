@@ -1,7 +1,7 @@
 import { IDesktop } from "../../entities/desktop.interface";
 
-export interface ICreateDesktopBodyDto 
+export interface ICreateDesktopBodyDto
   extends Omit<
-    IDesktop, 
+    IDesktop,
     'user' | 'createdAt' | 'updatedAt' | 'userId' | 'lastUser' | 'lastUserId'
   >{}
