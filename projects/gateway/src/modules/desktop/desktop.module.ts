@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { Module, forwardRef } from '@nestjs/common'
 import { HttpModule } from '@nestjs/axios'
 import { Desktop } from 'src/entities/desktop'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -6,6 +6,7 @@ import { DesktopQueue } from 'src/entities/desktop-queue'
 import { DesktopQueueHistory } from 'src/entities/desktop-queue-history'
 
 import { NotifyModule } from '../notify/notify.module'
+import { ExportModule } from '../export/export.module'
 import { DesktopService } from './desktop.service'
 import { ZstackService } from './zstack/zstack.service'
 import { DesktopController } from './desktop.controller'
@@ -17,6 +18,7 @@ import { DesktopQueueHistoryService } from './desktop-queue-history/desktop-queu
 
 @Module({
   imports: [
+    forwardRef(() => ExportModule),
     HttpModule,
     NotifyModule,
     TypeOrmModule.forFeature([
