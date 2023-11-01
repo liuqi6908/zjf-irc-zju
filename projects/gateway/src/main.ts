@@ -6,6 +6,7 @@ import { validatePath } from '@catsjuice/utils'
 import { Logger, ValidationPipe } from '@nestjs/common'
 import type { NestFastifyApplication } from '@nestjs/platform-fastify'
 import fmp from '@fastify/multipart'
+import * as cors from 'cors'
 
 import {
   FastifyAdapter,
@@ -52,6 +53,8 @@ async function bootstrap() {
   // Global variables
   globalThis.prefix = globalPrefix
   globalThis.version = packageJson.version
+
+  app.use(cors())
 
   // Start server
   await app.listen(Number.parseInt(cfgSrv.get('SERVER_PORT')) || 3000, '::')
