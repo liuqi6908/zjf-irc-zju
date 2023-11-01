@@ -7,7 +7,7 @@ const cols = [
   { name: 'email', field: 'email', label: '邮箱' },
   { name: 'name', field: 'founder.verification.name', label: '姓名' },
   /** 云桌面信息 */
-  { name: 'internalIp', field: 'desktop.internalIp', label: '云桌面IP' },
+  { name: 'ip', field: 'ip', label: '外发IP' },
   /** 外发文件信息 */
   { name: 'fileName', field: 'fileName', label: '文件名' },
   { name: 'fileSize', field: 'fileSize', label: '文件大小' },

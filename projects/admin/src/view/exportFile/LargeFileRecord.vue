@@ -112,7 +112,6 @@ async function queryData(props: any) {
         founder: {
           verification: true,
         },
-        desktop: true,
         handler: {
           verification: true,
         },
@@ -121,9 +120,6 @@ async function queryData(props: any) {
     const { total, data } = await queryExportLg(body) as QueryLg
     pagination.value.rowsNumber = total
     data.forEach((item) => {
-      // 云桌面
-      if (item.desktop)
-        item.desktop.expiredAt = item.desktop.expiredAt && moment(item.desktop.expiredAt).format('YYYY-MM-DD HH:mm:ss')
       // 文件
       item.fileSize = formatFileSize(item.fileSize)
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')

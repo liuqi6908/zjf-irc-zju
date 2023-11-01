@@ -20,6 +20,7 @@ export class DesktopService {
   constructor(
     @InjectRepository(Desktop)
     private readonly _desktopRepo: Repository<Desktop>,
+
     private readonly _redisSrv: RedisService,
     private readonly _notifySrv: NotifyService,
   ) {}
