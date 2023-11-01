@@ -6,7 +6,6 @@ import { validatePath } from '@catsjuice/utils'
 import { Logger, ValidationPipe } from '@nestjs/common'
 import type { NestFastifyApplication } from '@nestjs/platform-fastify'
 import fmp from '@fastify/multipart'
-import * as cors from 'cors'
 
 import {
   FastifyAdapter,
@@ -54,7 +53,11 @@ async function bootstrap() {
   globalThis.prefix = globalPrefix
   globalThis.version = packageJson.version
 
-  app.use(cors())
+  // enable cors
+  app.enableCors({
+    origin: ['https://r.qiyandata.com'],
+    methods: 'POST',
+  })
 
   // Start server
   await app.listen(Number.parseInt(cfgSrv.get('SERVER_PORT')) || 3000, '::')
