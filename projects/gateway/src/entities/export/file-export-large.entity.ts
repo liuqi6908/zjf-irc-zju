@@ -41,8 +41,7 @@ export class FileExportLarge
   rejectReason?: string
 
   @ApiPropertyOptional({ description: '发起外发的云桌面' })
-  @ManyToOne(() => Desktop, desktop => desktop.exportsLarge)
-  @JoinColumn()
+  @ManyToOne(() => Desktop, desktop => desktop.exportsLarge, { onDelete: 'SET NULL' })
   desktop?: Desktop
 
   @ApiPropertyOptional({ description: '发起外发时所在的云桌面的 id' })

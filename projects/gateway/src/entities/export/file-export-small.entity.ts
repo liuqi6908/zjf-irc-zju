@@ -15,7 +15,7 @@ export class FileExportSmall
   founder: User
 
   @ApiPropertyOptional({ description: '发起外发的云桌面' })
-  @ManyToOne(() => Desktop, desktop => desktop.exportsSmall)
+  @ManyToOne(() => Desktop, desktop => desktop.exportsSmall, { onDelete: 'SET NULL' })
   @JoinColumn()
   desktop?: Desktop
 
