@@ -119,35 +119,11 @@ export class DesktopController {
   @HasPermission(PermissionType.DESKTOP_DELETE)
   @Delete('delete/batch')
   public async batchDeleteDesktop(@Body() body: DesktopIdDto[]) {
-    // 获取需删除的云桌面id列表
-    const ids = (await this._desktopSrv.repo()
-      .createQueryBuilder()
-      .where({ disabled: true })
-      .andWhere({ id: In(body) })
-      .getMany())
-      .map(v => v.id)
-
-    // 遍历ids，解绑文件外发绑定的外键
-    for (const id of ids) {
-      if (await this._exportSrv.lgRepo().findOne({ where: { desktopId: id } })) {
-        await this._exportSrv.lgRepo().update(
-          { desktopId: id },
-          { desktopId: null },
-        )
-      }
-      else if (await this._exportSrv.smRepo().findOne({ where: { desktopId: id } })) {
-        await this._exportSrv.smRepo().update(
-          { desktopId: id },
-          { desktopId: null },
-        )
-      }
-    }
-
-    // 删除云桌面
     const deleteRes = await this._desktopSrv.repo()
       .createQueryBuilder()
       .delete()
-      .andWhere({ id: In(ids) })
+      .where({ disabled: true })
+      .andWhere({ id: In(body) })
       .execute()
 
     return deleteRes.affected > 0
