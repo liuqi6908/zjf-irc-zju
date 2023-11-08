@@ -7,8 +7,14 @@ import { responseError } from 'src/utils/response'
 import { InjectRepository } from '@nestjs/typeorm'
 import { LessThan, MoreThan, Repository } from 'typeorm'
 import { Inject, Injectable, forwardRef } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { HttpService } from '@nestjs/axios'
+import type { AxiosResponse } from 'axios'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { comparePassword } from 'src/utils/encrypt/encrypt-password'
+
+import { generateSign, rsaDecrypt } from 'src/utils/rsa'
+import type { LoginApp } from '../../config/_login.config'
 
 import { UserService } from '../user/user.service'
 import { CodeService } from '../code/code.service'
@@ -16,12 +22,18 @@ import { EmailService } from '../email/email.service'
 import { JwtAuthService } from '../jwt-auth/jwt-auth.service'
 
 import type { LoginByPasswordBodyDto } from './dto/login-by-password.body.dto'
+import type { LoginByPasswordPlusBodyDto } from './dto/login-by-password-plus.body.dto'
 import type { RegisterBodyDto } from './dto/register.body.dto'
 import type { LoginByEmailCodeBodyDto } from './dto/login-by-email-code.body.dto'
 import type { LoginByEmailLinkDto } from './dto/login-by-email-link.body.dto'
 
 @Injectable()
 export class AuthService {
+  private _oauth = {
+    token: '',
+    expireAt: 0,
+  }
+
   constructor(
     private readonly _codeSrv: CodeService,
     private readonly _emailSrv: EmailService,
@@ -32,6 +44,9 @@ export class AuthService {
     private readonly _jwtAuthSrv: JwtAuthService,
     @InjectRepository(Login)
     private readonly _loginRepo: Repository<Login>,
+
+    private readonly _cfgSrv: ConfigService,
+    private readonly _httpSrv: HttpService,
   ) {}
 
   @Cron('*/30 * * * * *')
@@ -42,19 +57,70 @@ export class AuthService {
   }
 
   /**
+   * 获取城市大脑签发的 token
+   */
+  private async _getAuthToken() {
+    const { host, app_key, app_secret, public_key, private_key } = this._cfgSrv.get<LoginApp>('login')
+
+    const getCfg = (token: string) => ({
+      baseURL: host,
+      headers: {
+        token,
+      },
+    })
+
+    if (this._oauth.token && this._oauth.expireAt > Date.now())
+      return getCfg(this._oauth.token)
+
+    const sign = await generateSign(app_key, app_secret, public_key)
+
+    const res = await this._httpSrv.axiosRef({
+      method: 'GET',
+      url: '/authtoken',
+      params: {
+        sign,
+      },
+      baseURL: host,
+    })
+    const { success, data } = res.data
+
+    if (!success && !data)
+      throw new Error('身份验证错误')
+
+    this._oauth = {
+      token: data,
+      expireAt: Date.now() + 1000 * 60 * 30,
+    }
+    return getCfg(data)
+  }
+
+  public requestWithSession<T = any>(
+    request: (axiosCfg) => Promise<AxiosResponse<T>>,
+  ) {
+    return new Promise<T>((resolve, reject) => {
+      this._getAuthToken().then(
+        config =>
+          request(config)
+            .then(response => resolve(response.data))
+            .catch(reject),
+      ).catch(reject)
+    })
+  }
+
+  /**
    * 通过账号密码登录，校验并签发 access_token
    * @param body
    * @returns
    */
   public async loginByPassword(body: LoginByPasswordBodyDto) {
-    const { account, email, password } = body
+    const { account, email, password, registerPlatform } = body
     if (!account && !email)
       throw new Error('手机号码或邮箱地址至少需要填写一个')
     const qb = this._userSrv.qb().addSelect('u.password')
     if (account)
-      qb.where('account = :account', { account })
+      qb.where('account = :account AND registerPlatform = :registerPlatform', { account, registerPlatform })
     else if (email)
-      qb.where('email = :email', { email })
+      qb.where('email = :email AND registerPlatform = :registerPlatform', { email, registerPlatform })
     const user = await qb.getOne()
     if (!user) {
       responseError(
@@ -63,6 +129,8 @@ export class AuthService {
           : ErrorCode.AUTH_EMAIL_NOT_REGISTERED,
       )
     }
+    if (!user.password)
+      responseError(ErrorCode.AUTH_PASSWORD_IS_NULL)
 
     // 校验密码
     const correct = await comparePassword(password, user.password)
@@ -72,6 +140,59 @@ export class AuthService {
 
     // 签发 access_token
     return await this.signLoginTicket(user)
+  }
+
+  /**
+   * 城市大脑平台通过 账号 + 密码 登录，校验并签发 access_token
+   * @param body
+   * @returns
+   */
+  public async loginByPasswordPlus(body: LoginByPasswordPlusBodyDto) {
+    try {
+      const res = await this.requestWithSession((cfg) => {
+        return this._httpSrv.axiosRef({
+          ...cfg,
+          method: 'GET',
+          url: '/getUserInfo',
+          params: body,
+        })
+      })
+
+      const { success, data } = res
+      if (!success || !data) {
+        return res
+      }
+      else {
+        const { private_key } = this._cfgSrv.get<LoginApp>('login')
+        const username = await rsaDecrypt(data.username, private_key)
+        const email = await rsaDecrypt(data.email, private_key)
+
+        // 校验 账号 是否被注册
+        let user = await this._userSrv.qb()
+          .where(
+            'account = :account and registerPlatform = :type',
+            {
+              account: username,
+              type: 1,
+            })
+          .getOne()
+        if (!user) {
+          user = await this._userSrv.insertUser({
+            account: username,
+            email,
+            registerPlatform: 1,
+          })
+        }
+
+        const { access_token } = await this._jwtAuthSrv.signLoginAuthToken(user)
+        return { status: 0, token: access_token }
+      }
+    }
+    catch (_) {
+      console.error(_)
+
+      responseError(ErrorCode.AUTH_VALIDATION_ERROR)
+    }
   }
 
   /**
@@ -134,12 +255,19 @@ export class AuthService {
   }
 
   /**
-   * 自助注册
+   * 自助注册（云科研平台）
    * @param body
    */
   public async register(body: RegisterBodyDto) {
     // 校验 账号 是否被注册
-    const user = await this._userSrv.qb().where('account = :account', { account: body.account }).getOne()
+    const user = await this._userSrv.qb()
+      .where(
+        'account = :account AND registerPlatform = :type',
+        {
+          account: body.account,
+          type: 0,
+        })
+      .getOne()
     if (user)
       responseError(ErrorCode.USER_ACCOUNT_REGISTERED)
     // 校验 邮箱 是否被注册

@@ -9,9 +9,10 @@ import { emailAccountAtLeastOne } from 'src/utils/validator/account-phone-at-lea
 import { JwtAuthService } from '../jwt-auth/jwt-auth.service'
 import { AuthService } from './auth.service'
 import { RegisterBodyDto } from './dto/register.body.dto'
-import { LoginSuccessResDto } from './dto/login-success.res.dto'
+import { LoginByPasswordPlusSuccessResDto, LoginSuccessResDto } from './dto/login-success.res.dto'
 import { LoginByEmailLinkDto } from './dto/login-by-email-link.body.dto'
 import { LoginByPasswordBodyDto } from './dto/login-by-password.body.dto'
+import { LoginByPasswordPlusBodyDto } from './dto/login-by-password-plus.body.dto'
 import { LoginByEmailCodeBodyDto } from './dto/login-by-email-code.body.dto'
 
 @ApiTags('Auth | 身份验证')
@@ -30,7 +31,17 @@ export class AuthController {
     return await this._authSrv.loginByPassword(body)
   }
 
-  @ApiOperation({ summary: '通过邮箱 + 验证码 登录' })
+  @ApiOperation({ summary: '城市大脑平台通过 账号 + 密码 登录' })
+  @ApiSuccessResponse(LoginByPasswordPlusSuccessResDto)
+  @Post('login/passwordplus')
+  public async loginByPasswordPlus(@Body() body: LoginByPasswordPlusBodyDto) {
+    return await this._authSrv.loginByPasswordPlus(body)
+  }
+
+  @ApiOperation({
+    summary: '通过邮箱 + 验证码 登录',
+    deprecated: true,
+  })
   @ApiSuccessResponse(LoginSuccessResDto)
   @Post('login/email/code')
   public async loginByEmailCode(@Body() body: LoginByEmailCodeBodyDto) {
@@ -38,7 +49,10 @@ export class AuthController {
   }
 
   @Throttle(1, 30)
-  @ApiOperation({ summary: '通过邮箱魔法链接登录（半分钟内只能发送一次）' })
+  @ApiOperation({
+    summary: '通过邮箱魔法链接登录（半分钟内只能发送一次）',
+    deprecated: true,
+  })
   @Post('login/email/link')
   public async loginByEmailLink(@Body() body: LoginByEmailLinkDto) {
     return await this._authSrv.loginByEmailLink(body)

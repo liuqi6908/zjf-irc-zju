@@ -39,7 +39,10 @@ export class UserController {
     private readonly _authSrv: AuthService,
   ) {}
 
-  @ApiOperation({ summary: '创建一个新用户' })
+  @ApiOperation({
+    summary: '创建一个新用户',
+    deprecated: true,
+  })
   @ApiSuccessResponse(CreateUserResDto)
   @Put('create')
   public async createUser(@Body() body: CreateUserBodyDto) {
@@ -125,7 +128,7 @@ export class UserController {
   }
 
   @Throttle(1, 10)
-  @ApiOperation({ summary: '通过原密码修改密码（需要登录）' })
+  @ApiOperation({ summary: '通过原密码修改密码（需要登录，账号未设置密码可直接修改）' })
   @ApiSuccessResponse(UniversalOperationResDto)
   @IsLogin()
   @Patch('own/password/old')
@@ -135,7 +138,7 @@ export class UserController {
   ) {
     const user = req.raw.user!
     const correct = await comparePassword(body.oldPassword, user.password)
-    if (!correct)
+    if (!!user.password && !correct)
       responseError(ErrorCode.AUTH_PASSWORD_NOT_MATCHED)
     await this._userSrv.updateUserPassword({ id: user.id }, body.newPassword)
     // 登出当前用户的所有登录会话
@@ -148,8 +151,8 @@ export class UserController {
   @EmailCodeVerify(CodeAction.CHANGE_PASSWORD)
   @Patch('own/password/code')
   public async updateOwnPasswordByCode(@Body() body: UpdatePasswordByCodeBodyDto) {
-    const { email, password } = body
-    const user = await this._userSrv.repo().findOne({ where: { email } })
+    const { email, password, registerPlatform } = body
+    const user = await this._userSrv.repo().findOne({ where: { email, registerPlatform } })
     if (!user)
       responseError(ErrorCode.AUTH_EMAIL_NOT_REGISTERED)
     await this._userSrv.updateUserPassword({ id: user.id }, password)

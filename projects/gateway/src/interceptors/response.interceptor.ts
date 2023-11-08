@@ -19,7 +19,7 @@ export class ResponseInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((data) => {
         const req: FastifyRequest = context.switchToHttp().getRequest()
-        if (req.url.match(/\/file\//) && req.method === 'GET')
+        if ((req.url.match(/\/file\//) && req.method === 'GET') || (/passwordplus/).test(req.url))
           return data
         return responseSuccess(data)
       }),

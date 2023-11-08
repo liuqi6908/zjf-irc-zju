@@ -42,6 +42,14 @@ const _authErrors: ErrorMessageCollection = {
     httpStatus: HttpStatus.FORBIDDEN,
     message: '账号未完成认证',
   },
+  [ErrorCode.AUTH_VALIDATION_ERROR]: {
+    httpStatus: HttpStatus.FORBIDDEN,
+    message: '身份验证错误',
+  },
+  [ErrorCode.AUTH_PASSWORD_IS_NULL]: {
+    httpStatus: HttpStatus.FORBIDDEN,
+    message: '账号密码不存在',
+  },
 }
 
 export default _authErrors

@@ -46,6 +46,8 @@
     "class-validator": "^0.14.0",
     "cron": "^2.4.0",
     "iconv-lite": "^0.6.3",
+    "jsdom": "^22.1.0",
+    "jsencrypt": "^3.3.2",
     "lodash": "^4.17.21",
     "minio": "^7.1.1",
     "moment": "^2.29.4",

@@ -27,3 +27,8 @@ export class LoginSuccessResDto extends SuccessDto implements ILoginSuccessResDt
   @ApiProperty({ type: () => LoginSuccessResData })
   data: LoginSuccessResData
 }
+
+export class LoginByPasswordPlusSuccessResDto extends SuccessDto {
+  @ApiProperty({ description: 'JWT 登录凭证' })
+  token: string
+}

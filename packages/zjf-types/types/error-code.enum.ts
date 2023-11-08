@@ -31,6 +31,10 @@ export enum ErrorCode {
   AUTH_ACCOUNT_REGISTERED = 200010,
   /** 账号未完成认证 */
   AUTH_NOT_VERIFIED = 200011,
+  /** 身份验证错误 */
+  AUTH_VALIDATION_ERROR = 200012,
+  /** 账号密码不存在 */
+  AUTH_PASSWORD_IS_NULL = 200013,
 
   // 权限相关错误
   PERMISSION_DENIED = 300001,
