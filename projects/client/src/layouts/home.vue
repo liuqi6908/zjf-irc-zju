@@ -129,11 +129,7 @@ async function changePassword() {
     return
 
   const res = await changePasswordOld(password.value, password.value)
-  console.log(res);
-  const { status, data } = res
-  if (status === 0 && data) {
-    console.log(11);
-    
+  if (res) {
     $q.notify({
       message: '设置成功',
       type: 'success',
