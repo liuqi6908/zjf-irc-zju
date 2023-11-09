@@ -5,6 +5,7 @@ const { useLogin } = useUser()
 
 const userCode = ref('')
 const password = ref('')
+const registerPlatform = ref<0 | 1>(0)
 const acceptObj = reactive({
   password: false,
 })
@@ -13,8 +14,13 @@ function passwordRule(val: string) {
   return validatePassword(val) || true
 }
 
-const logArg = computed(() =>
-  validateEmail(userCode.value) ? { password: password.value, account: userCode.value } : { password: password.value, email: userCode.value })
+const logArg = computed(() => {
+  return {
+    password: password.value,
+    registerPlatform: registerPlatform.value,
+    [validateEmail(userCode.value) ? 'account' : 'email']: userCode.value
+  }
+})
 
 const disable = computed(() => !userCode.value || Object.values(acceptObj).includes(false))
 
@@ -45,10 +51,21 @@ function handleEnter() {
       @update:accept="(val) => acceptObj.password = val"
       @keydown.enter="handleEnter()"
     />
-    <RouterLink text-grey-1 text-xs :to="{ path: 'forgetPassword' }" v-text="'忘记密码？'" />
+    <span mb-1 v-text="'注册用户类型'" />
+    <div flex gap-4 relative right-2>
+      <ZRadio
+        v-for="(item, index) in userRegisterPlatform"
+        :key="index"
+        v-model="registerPlatform"
+        :val="index"
+        :label="item"
+      />
+    </div>
+
+    <RouterLink text-grey-1 text-xs mt-4 :to="{ path: 'forgetPassword' }" v-text="'忘记密码？'" />
 
     <client-only>
-      <Btn color="primary-1" mt-20 bg-color="grey-1" :disable="disable" label="登录" @click="useLogin(logArg)" />
+      <Btn color="primary-1" mt-12 bg-color="grey-1" :disable="disable" label="登录" @click="useLogin(logArg)" />
     </client-only>
 
     <div flex-center m-t-5 text-grey-3>
