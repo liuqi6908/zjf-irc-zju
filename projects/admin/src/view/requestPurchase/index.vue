@@ -12,6 +12,7 @@ const columns: QTableProps['columns'] = reactive([
   { name: 'account', label: '用户', field: 'user.account' },
   { name: 'email', label: '邮箱', field: 'user.email' },
   { name: 'name', label: '姓名', field: 'user.verification.name' },
+  { name: 'registerPlatform', label: '注册平台', field: 'user.registerPlatform' },
   { name: 'root', label: '类', field: 'dataDirectory.parent.parent.parent.parent.nameZH' },
   { name: 'db', label: '数据库', field: 'dataDirectory.parent.parent.parent.nameZH' },
   { name: 'subDb', label: '子库', field: 'dataDirectory.parent.parent.nameZH' },
@@ -64,6 +65,9 @@ async function queryRequestData(props: any) {
     const { total, data } = await queryDataRequest(body)
     pagination.value.rowsNumber = total
     rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
+    rows.forEach((item) => {
+      item['user.registerPlatform'] = userRegisterPlatform[item['user.registerPlatform']]
+    })
   }
   catch (_) {}
   finally {

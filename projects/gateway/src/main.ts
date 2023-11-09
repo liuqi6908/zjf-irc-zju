@@ -55,7 +55,6 @@ async function bootstrap() {
 
   // enable cors
   app.enableCors({
-    origin: ['https://xue.qiyandata.com:6443', 'https://szjsc.thecityos.com'],
     methods: 'POST',
   })
 

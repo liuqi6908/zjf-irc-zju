@@ -21,6 +21,7 @@ const info = computed(() => {
     { label: '身份', value: userInfo['user.verification.identify'] },
     { label: '角色', value: userInfo['user.dataRoleName'] },
     { label: '权限', value: userInfo['user.roleName'] },
+    { label: '注册平台', value: userRegisterPlatform[userInfo['user.registerPlatform']] },
   ]
 })
 </script>
