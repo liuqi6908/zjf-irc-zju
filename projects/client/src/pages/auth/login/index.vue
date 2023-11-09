@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { validateEmail, validatePassword } from 'zjf-utils'
+import { ErrorCode } from 'zjf-types'
 
 const { useLogin } = useUser()
+const $router = useRouter()
 
 const userCode = ref('')
 const password = ref('')
@@ -9,6 +11,9 @@ const registerPlatform = ref<0 | 1>(0)
 const acceptObj = reactive({
   password: false,
 })
+
+/** 登录提示对话框 */
+const dialog = ref(false)
 
 function passwordRule(val: string) {
   return validatePassword(val) || true
@@ -27,9 +32,18 @@ const disable = computed(() => !userCode.value || Object.values(acceptObj).inclu
 /**
  * 按下回车键，登录
  */
-function handleEnter() {
-  if (!disable.value)
-    useLogin(logArg.value)
+async function handleEnter() {
+  if (disable.value)
+    return
+
+  try {
+    await useLogin(logArg.value)
+  }
+  catch (e: any) {
+    const { status } = e.response?.data || {}
+    if (status === ErrorCode.AUTH_PASSWORD_IS_NULL)
+      dialog.value = true
+  }
 }
 </script>
 
@@ -65,13 +79,24 @@ function handleEnter() {
     <RouterLink text-grey-1 text-xs mt-4 :to="{ path: 'forgetPassword' }" v-text="'忘记密码？'" />
 
     <client-only>
-      <Btn color="primary-1" mt-12 bg-color="grey-1" :disable="disable" label="登录" @click="useLogin(logArg)" />
+      <Btn color="primary-1" mt-12 bg-color="grey-1" :disable="disable" label="登录" @click="handleEnter" />
     </client-only>
 
     <div flex-center m-t-5 text-grey-3>
       没有账号？
       <RouterLink text-grey-1 :to="{ path: 'signup' }" v-text="'立即注册'" />
     </div>
+
+    <!-- 登录提示对话框 -->
+    <ZDialog
+      v-model="dialog"
+      title="提示"
+      confirm-text="立即前往"
+      footer
+      @ok="$router.push('forgetPassword')"
+    >
+      区域发展政策大脑用户第一次登录本平台，需要设置初始密码，请前往“邮箱找回”设置密码。
+    </ZDialog>
   </div>
 </template>
 
