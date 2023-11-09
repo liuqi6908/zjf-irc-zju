@@ -190,5 +190,14 @@ export default ({ mode }: any) => {
       // TODO: workaround until they support native ESM
       noExternal: ['workbox-window', /vue-i18n/, '@wangeditor/editor', '@wangeditor/editor-for-vue'],
     },
+
+    build: {
+      rollupOptions: {
+        external: [
+          'workbox-window',
+          'vue-router',
+        ],
+      },
+    },
   })
 }

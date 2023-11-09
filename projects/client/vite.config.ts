@@ -202,5 +202,14 @@ export default ({ mode }: any) => {
       // TODO: workaround until they support native ESM
       noExternal: ['workbox-window', /vue-i18n/, 'echarts', 'vue-echarts', 'resize-detector', 'zrender'],
     },
+
+    build: {
+      rollupOptions: {
+        external: [
+          'workbox-window',
+          'vue-router',
+        ],
+      },
+    },
   })
 }
