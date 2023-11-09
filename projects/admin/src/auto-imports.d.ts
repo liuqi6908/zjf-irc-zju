@@ -324,6 +324,7 @@ declare global {
   const useWindowScroll: typeof import('@vueuse/core')['useWindowScroll']
   const useWindowSize: typeof import('@vueuse/core')['useWindowSize']
   const userIdentify: typeof import('./constants/user.constant')['userIdentify']
+  const userRegisterPlatform: typeof import('./constants/user.constant')['userRegisterPlatform']
   const userStatus: typeof import('./constants/user.constant')['userStatus']
   const userTableCols: typeof import('./constants/table.constant')['userTableCols']
   const valueFormatter: typeof import('./constants/map.constant')['valueFormatter']
@@ -637,6 +638,7 @@ declare module 'vue' {
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
     readonly userIdentify: UnwrapRef<typeof import('./constants/user.constant')['userIdentify']>
+    readonly userRegisterPlatform: UnwrapRef<typeof import('./constants/user.constant')['userRegisterPlatform']>
     readonly userStatus: UnwrapRef<typeof import('./constants/user.constant')['userStatus']>
     readonly userTableCols: UnwrapRef<typeof import('./constants/table.constant')['userTableCols']>
     readonly verifyTableCols: UnwrapRef<typeof import('./constants/table.constant')['verifyTableCols']>
@@ -937,6 +939,7 @@ declare module '@vue/runtime-core' {
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
     readonly userIdentify: UnwrapRef<typeof import('./constants/user.constant')['userIdentify']>
+    readonly userRegisterPlatform: UnwrapRef<typeof import('./constants/user.constant')['userRegisterPlatform']>
     readonly userStatus: UnwrapRef<typeof import('./constants/user.constant')['userStatus']>
     readonly userTableCols: UnwrapRef<typeof import('./constants/table.constant')['userTableCols']>
     readonly verifyTableCols: UnwrapRef<typeof import('./constants/table.constant')['verifyTableCols']>
