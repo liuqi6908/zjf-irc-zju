@@ -96,7 +96,7 @@ async function confirmEdit(id: string) {
     if (id === 'email')
       res = await changeEmail(obj.edit, obj.bizId, obj.smsCode)
     else if (id === 'password' && userInfo.value?.email)
-      res = await changePassword(obj.edit, userInfo.value?.email, obj.bizId, obj.smsCode)
+      res = await changePassword(obj.edit, userInfo.value?.email, obj.bizId, obj.smsCode, userInfo.value?.registerPlatform || 0)
     if (res) {
       Notify.create({
         message: '修改成功',
