@@ -57,7 +57,7 @@ export class AuthService {
   }
 
   /**
-   * 获取城市大脑签发的 token
+   * 获取区域发展政策大脑平台签发的 token
    */
   private async _getAuthToken() {
     const { host, app_key, app_secret, public_key, private_key } = this._cfgSrv.get<LoginApp>('login')
@@ -143,7 +143,7 @@ export class AuthService {
   }
 
   /**
-   * 城市大脑平台通过 账号 + 密码 登录，校验并签发 access_token
+   * 区域发展政策大脑平台通过 账号 + 密码 登录，校验并签发 access_token
    * @param body
    * @returns
    */

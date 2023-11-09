@@ -5,7 +5,7 @@ import { objectEntries } from '@catsjuice/utils'
 
 const registerPlatform = {
   0: '智能云科研平台',
-  1: '城市大脑平台',
+  1: '区域发展政策大脑平台',
 }
 
 export class RegisterPlatformDto {

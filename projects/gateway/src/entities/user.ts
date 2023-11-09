@@ -45,7 +45,7 @@ export class User extends BaseTimeStamp implements IUser {
   password?: string
 
   @ApiProperty({
-    description: '用户注册平台（0云科研、1城市大脑）',
+    description: '用户注册平台（0智能云科研、1区域发展政策大脑）',
   })
   @Column({ default: 0 })
   registerPlatform: 0 | 1

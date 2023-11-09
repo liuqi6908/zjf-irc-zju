@@ -31,7 +31,7 @@ export class AuthController {
     return await this._authSrv.loginByPassword(body)
   }
 
-  @ApiOperation({ summary: '城市大脑平台通过 账号 + 密码 登录' })
+  @ApiOperation({ summary: '区域发展政策大脑平台通过 账号 + 密码 登录' })
   @ApiSuccessResponse(LoginByPasswordPlusSuccessResDto)
   @Post('login/passwordplus')
   public async loginByPasswordPlus(@Body() body: LoginByPasswordPlusBodyDto) {
