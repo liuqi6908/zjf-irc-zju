@@ -58,17 +58,26 @@ export class UserController {
     @Query() query: GetProfileOwnQueryDto,
     @Req() req: FastifyRequest,
   ) {
-    const omitFields: Array<keyof User> = ['password', 'isDeleted', 'isSysAdmin']
+    const omitFields: Array<keyof User> = ['isDeleted', 'isSysAdmin']
     if (!query.relation) {
-      return objectOmit(
+      const user = objectOmit(
         (req.raw?.user || {}) as User, omitFields,
       )
+      return {
+        ...user,
+        password: !!req.raw?.user.password,
+      }
     }
     try {
-      const user = await this._userSrv.findById(req.raw?.user?.id, {
-        relations: query.relation as any,
-      })
-      return objectOmit(user, omitFields)
+      const user = objectOmit(
+        await this._userSrv.findById(req.raw?.user?.id, {
+          relations: query.relation as any,
+        }), omitFields,
+      )
+      return {
+        ...user,
+        password: !!req.raw?.user.password,
+      }
     }
     catch (err) {
       const sqlError = parseSqlError(err)
