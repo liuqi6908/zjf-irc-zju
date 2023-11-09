@@ -285,6 +285,12 @@ importers:
       echarts:
         specifier: ^5.4.3
         version: registry.npmmirror.com/echarts@5.4.3
+      lodash:
+        specifier: ^4.17.21
+        version: registry.npmmirror.com/lodash@4.17.21
+      lodash-es:
+        specifier: ^4.17.21
+        version: registry.npmmirror.com/lodash-es@4.17.21
       mammoth:
         specifier: ^1.6.0
         version: registry.npmmirror.com/mammoth@1.6.0
@@ -352,6 +358,12 @@ importers:
       '@quasar/vite-plugin':
         specifier: ^1.4.1
         version: 1.4.1(@vitejs/plugin-vue@4.2.3)(quasar@2.12.3)(vite@4.4.3)(vue@3.3.4)
+      '@types/lodash':
+        specifier: ^4.14.196
+        version: registry.npmmirror.com/@types/lodash@4.14.196
+      '@types/lodash-es':
+        specifier: ^4.17.8
+        version: registry.npmmirror.com/@types/lodash-es@4.17.8
       '@types/markdown-it-link-attributes':
         specifier: ^3.0.1
         version: registry.npmmirror.com/@types/markdown-it-link-attributes@3.0.1
@@ -5488,13 +5500,11 @@ packages:
     version: 4.17.8
     dependencies:
       '@types/lodash': registry.npmmirror.com/@types/lodash@4.14.196
-    dev: false
 
   registry.npmmirror.com/@types/lodash@4.14.196:
     resolution: {integrity: sha512-22y3o88f4a94mKljsZcanlNWPzO0uBsBdzLAngf2tp533LzZcQzb6+eZPJ+vCTt+bqF2XnvT9gejTLsAcJAJyQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/lodash/-/lodash-4.14.196.tgz}
     name: '@types/lodash'
     version: 4.14.196
-    dev: false
 
   registry.npmmirror.com/@types/markdown-it-link-attributes@3.0.1:
     resolution: {integrity: sha512-K8RnNb1q8j7rDOJbMF7AnlhCC/45BjrQ8z3WZWOrvkBIl8u9RXvmBdG/hfpnmK1JhhEZcmFEKWt+ilW1Mly+2Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/markdown-it-link-attributes/-/markdown-it-link-attributes-3.0.1.tgz}
