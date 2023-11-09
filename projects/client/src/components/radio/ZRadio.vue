@@ -13,7 +13,7 @@ defineEmits(['update:modelValue'])
     :model-value="modelValue"
     :val="val"
     :label="label"
-    size="sm" dark color="cyan"
+    size="sm" dark color="white"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   />
 </template>
