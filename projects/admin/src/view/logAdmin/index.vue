@@ -23,6 +23,7 @@ const columns: QTableProps['columns'] = reactive([
   { name: 'account', label: '用户', field: 'user.account' },
   { name: 'email', label: '邮箱', field: 'user.email' },
   { name: 'name', label: '姓名', field: 'user.verification.name' },
+  { name: 'registerPlatform', label: '注册平台', field: 'user.registerPlatform' },
   { name: 'ip', label: 'IP 地址', field: 'ip' },
   { name: 'rootId', label: '类', field: 'targetInfo.root.nameZH' },
   { name: 'dbId', label: '数据库', field: 'targetInfo.db.nameZH' },
@@ -80,6 +81,7 @@ async function queryLogData(props: any) {
     rows.forEach((item) => {
       item.time = moment(item.time).format('YYYY-MM-DD HH:mm:ss')
       item.action = actions.find(v => v.key === item.action)?.value || item.action
+      item['user.registerPlatform'] = userRegisterPlatform[item['user.registerPlatform']]
     })
   }
   catch (_) {}
