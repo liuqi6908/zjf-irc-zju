@@ -41,6 +41,12 @@ const baseInfoList = reactive([
     bizId: '',
     action: CodeAction.CHANGE_PASSWORD,
   },
+  {
+    label: '注册平台',
+    id: 'registerPlatform',
+    caption: '',
+    inputVal: '',
+  },
 ])
 
 const authInfoList = reactive([
@@ -128,9 +134,12 @@ async function checkoutVerify() {
     const value = userInfo.value[key as keyof IUser]
     if (obj && typeof value === 'string') {
       if (key === 'email')
-        obj.inputVal = hideSensitiveInfo(value)
+        obj.inputVal = hideSensitiveInfo(value) || ''
       else
         obj.inputVal = value
+    }
+    else if (obj && obj.id === 'registerPlatform' && typeof value === 'number') {
+      obj.inputVal = userRegisterPlatform[value]
     }
   }
 
@@ -143,7 +152,7 @@ async function checkoutVerify() {
     const value = latestVerifiy.value[key as keyof IVerificationHistory]
     if (obj && typeof value === 'string') {
       if (key === 'idCard')
-        obj.inputVal = hideSensitiveInfo(value)
+        obj.inputVal = hideSensitiveInfo(value) || ''
       else
         obj.inputVal = value
     }

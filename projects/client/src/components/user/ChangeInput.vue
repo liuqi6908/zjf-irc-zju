@@ -44,7 +44,11 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
         <span font-600 text-grey-8>
           {{ label }}
         </span>
-        <span text-grey-6>（{{ captions }}）</span>
+        <span
+          v-if="captions"
+          text-grey-6
+          v-text="`（${captions}）`"
+        />
       </div>
     </div>
 
@@ -57,7 +61,7 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
         {{ userCode }}
       </div>
       <div min-w-20>
-        <Btn v-if="label !== '用户名'" outline label="修改" :disable="label === '密码' && !userInfo?.email" @click="dialog = true" />
+        <Btn v-if="label !== '用户名' && label !== '注册平台'" outline label="修改" :disable="label === '密码' && !userInfo?.email" @click="dialog = true" />
       </div>
     </div>
 
