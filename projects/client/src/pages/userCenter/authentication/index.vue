@@ -30,6 +30,7 @@ const baseInfoList = reactive([
     smsCode: '',
     bizId: '',
     action: CodeAction.BIND_EMAIL,
+    registerPlatform: userInfo.value?.registerPlatform
   },
   {
     label: '密码',
@@ -133,10 +134,13 @@ async function checkoutVerify() {
     const obj = baseInfoList.find(i => i.id === key)
     const value = userInfo.value[key as keyof IUser]
     if (obj && typeof value === 'string') {
-      if (key === 'email')
+      if (key === 'email') {
         obj.inputVal = hideSensitiveInfo(value) || ''
-      else
+        obj.registerPlatform = userInfo.value?.registerPlatform
+      }
+      else {
         obj.inputVal = value
+      }
     }
     else if (obj && obj.id === 'registerPlatform' && typeof value === 'number') {
       obj.inputVal = userRegisterPlatform[value]
@@ -184,6 +188,7 @@ onBeforeMount(() => {
           class="col-grow"
           :label="b.label"
           :biz-id="b.bizId"
+          :registerPlatform="b.registerPlatform"
           @update:sms-code="(val) => b.smsCode = val"
           @update:biz-id="(val) => b.bizId = val"
           @update:confirm="confirmEdit(b.id)"
