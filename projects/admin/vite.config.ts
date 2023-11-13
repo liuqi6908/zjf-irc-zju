@@ -3,7 +3,6 @@ import Unocss from 'unocss/vite'
 import Vue from '@vitejs/plugin-vue'
 import Pages from 'vite-plugin-pages'
 import Shiki from 'markdown-it-shiki'
-import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig, loadEnv } from 'vite'
 import Layouts from 'vite-plugin-vue-layouts'
 import generateSitemap from 'vite-ssg-sitemap'
@@ -13,7 +12,6 @@ import AutoImport from 'unplugin-auto-import/vite'
 import VueDevTools from 'vite-plugin-vue-devtools'
 import WebfontDownload from 'vite-plugin-webfont-dl'
 import Components from 'unplugin-vue-components/vite'
-import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import LinkAttributes from 'markdown-it-link-attributes'
 
 export default ({ mode }: any) => {
@@ -33,6 +31,7 @@ export default ({ mode }: any) => {
           target: process.env.VITE_DEV_PROXY_TARGET,
           changeOrigin: true,
           rewrite: path => path.replace(new RegExp(`^${process.env.VITE_API_BASE}`), ''),
+          secure: false,
         },
       },
     },
@@ -70,7 +69,6 @@ export default ({ mode }: any) => {
         imports: [
           'vue',
           'vue-router',
-          'vue-i18n',
           '@vueuse/head',
           '@vueuse/core',
         ],
@@ -121,43 +119,6 @@ export default ({ mode }: any) => {
         },
       }),
 
-      // https://github.com/antfu/vite-plugin-pwa
-      VitePWA({
-        registerType: 'autoUpdate',
-        includeAssets: ['favicon.svg', 'safari-pinned-tab.svg'],
-        manifest: {
-          name: 'Vitesse',
-          short_name: 'Vitesse',
-          theme_color: '#ffffff',
-          icons: [
-            {
-              src: '/pwa-192x192.png',
-              sizes: '192x192',
-              type: 'image/png',
-            },
-            {
-              src: '/pwa-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-            },
-            {
-              src: '/pwa-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any maskable',
-            },
-          ],
-        },
-      }),
-
-      // https://github.com/intlify/bundle-tools/tree/main/packages/unplugin-vue-i18n
-      VueI18n({
-        runtimeOnly: true,
-        compositionOnly: true,
-        fullInstall: true,
-        include: [path.resolve(__dirname, 'locales/**')],
-      }),
-
       // https://github.com/feat-agency/vite-plugin-webfont-dl
       WebfontDownload(),
 
@@ -188,7 +149,7 @@ export default ({ mode }: any) => {
 
     ssr: {
       // TODO: workaround until they support native ESM
-      noExternal: ['workbox-window', /vue-i18n/, '@wangeditor/editor', '@wangeditor/editor-for-vue'],
+      noExternal: ['workbox-window', '@wangeditor/editor', '@wangeditor/editor-for-vue'],
     },
   })
 }

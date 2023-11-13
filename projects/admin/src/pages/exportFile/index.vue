@@ -14,6 +14,7 @@ const cols = [
   { name: 'note', field: 'note', label: '备注信息' },
   /** 其他 */
   { name: 'createdAt', field: 'createdAt', label: '外发时间' },
+  { name: 'registerPlatform', field: 'founder.registerPlatform', label: '注册平台' },
   { name: 'operation', field: 'operation', label: '操作' },
 ]
 

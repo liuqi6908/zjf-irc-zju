@@ -14,7 +14,14 @@ const userStatus = [
   { label: '已拒绝', value: VerificationStatus.REJECTED },
 ]
 
+/** 用户注册平台 */
+const userRegisterPlatform = [
+  '智能云科研平台',
+  '区域发展政策大脑',
+]
+
 export {
   userIdentify,
   userStatus,
+  userRegisterPlatform,
 }

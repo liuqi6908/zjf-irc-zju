@@ -13,7 +13,12 @@ const roleName = useStorage(ADMIN_ROLE_NAME, '')
 
 export function useUser($router = useRouter()) {
   /** 登录 */
-  const useLogin = async (options: { password: string; account?: string; email?: string }) => {
+  const useLogin = async (options: {
+    password: string
+    registerPlatform: 0 | 1
+    account?: string
+    email?: string
+  }) => {
     const res = await login({
       ...options,
       /** 加密 */
@@ -41,7 +46,7 @@ export function useUser($router = useRouter()) {
         type: 'success',
         message: '注册成功',
       })
-      await useLogin({ password, account, email })
+      await useLogin({ password, account, email, registerPlatform: 0 })
     }
   }
 

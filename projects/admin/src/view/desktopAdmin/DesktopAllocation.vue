@@ -337,7 +337,7 @@ function uploadFile() {
       <Upload
         v-model="file"
         mx-4
-        accept="text/csv"
+        accept="text/csv,application/vnd.ms-excel"
         :max-files="1"
       >
         <q-btn color="green">

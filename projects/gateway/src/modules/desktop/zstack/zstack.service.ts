@@ -150,7 +150,7 @@ export class ZstackService extends EventEmitter {
     const res = await this.requestWithSession((cfg) => {
       return this._httpSrv.axiosRef({
         ...cfg,
-        method: 'Get',
+        method: 'GET',
         url: '/zstack/v1/vm-instances',
       })
     })

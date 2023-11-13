@@ -124,7 +124,7 @@ export class UserService implements OnModuleInit {
       return await this._userRepo.save(
         await this._userRepo.create({
           ...user,
-          password: await encryptPassword(user.password),
+          password: user.password ? await encryptPassword(user.password) : null,
         }),
       )
     }

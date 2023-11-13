@@ -5,6 +5,6 @@ export class UpdatePasswordByOldBodyDto implements IUpdatePasswordByOldBodyDto {
   @PasswordDecorator(false)
   newPassword: string
 
-  @PasswordDecorator(false)
-  oldPassword: string
+  @PasswordDecorator(true)
+  oldPassword?: string
 }

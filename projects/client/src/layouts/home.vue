@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { objectPick } from '@vueuse/core'
+import { useQuasar } from 'quasar'
 import { getUsername } from 'shared/utils'
+import { validatePassword } from 'zjf-utils'
+import { changePasswordOld } from '~/api/user/changePassword'
 
 defineProps<{ layout?: boolean }>()
 
+const route = useRoute()
 const router = useRouter()
+const $q = useQuasar()
 const { cmsProps, currComponent } = useCms()
 const { userInfo, useGetProfile, useLogout, isLogin } = useUser()
 
@@ -56,10 +61,49 @@ const userList: Array<any> = [
   },
 ]
 
+/** 是否使用 url 中的 token 登录 */
+let isUrlLogin = false
+
+/** 修改密码 */
+const changePasswordDialog = ref(false)
+const password = ref('')
+const repeatPassword = ref('')
+
+/** 需要校验的input */
+const acceptObj = reactive({
+  password: false,
+  repeatPassword: false,
+})
+
+/** 输入校验 */
+function passwordRules(val: string) {
+  return validatePassword(val) || true
+}
+function passwordRule(val: string) {
+  return val === password.value || '两次密码不一致'
+}
+
+onBeforeMount(() => {
+  // 组件挂载前处理用户token
+  const { query = {}, name } = route
+  const { token } = query
+  if (token && name === 'home' && !isLogin.value) {
+    isUrlLogin = true
+    router.push({ query: {} })
+    authToken.value = token as string
+  }
+})
+
 onMounted(async () => {
-  if (isLogin.value)
-    useGetProfile()
-  footerProps.value = await cmsProps('footer')
+  cmsProps('footer').then(data => {
+    footerProps.value = data
+  })
+  if (isLogin.value) {
+    await useGetProfile()
+    if (isLogin.value && isUrlLogin && !userInfo.value?.password) {
+      changePasswordDialog.value = true
+    }
+  }
 })
 
 useEventListener(avatarRef, 'click', (e: PointerEvent) => {
@@ -75,6 +119,22 @@ if (typeof document !== 'undefined') {
     if (!avatarRef.value?.$el.contains(e.target))
       userDropdown.value = false
   })
+}
+
+/**
+ * 修改密码
+ */
+async function changePassword() {
+  if (Object.values(acceptObj).includes(false))
+    return
+
+  const res = await changePasswordOld(password.value, password.value)
+  if (res) {
+    $q.notify({
+      message: '设置成功',
+      type: 'success',
+    })
+  }
 }
 </script>
 
@@ -175,6 +235,33 @@ if (typeof document !== 'undefined') {
       @ok="useLogout()"
     >
       是否退出登录
+    </ZDialog>
+
+    <ZDialog
+      v-model="changePasswordDialog"
+      title="设置密码"
+      confirm-text="确认"
+      footer
+      :disable-confirm="Object.values(acceptObj).includes(false)"
+      @ok="changePassword()"
+    >
+      欢迎“区域发展政策大脑”用户登录本平台，考虑到安全因素，您在政策大脑使用的密码不会被同步到本平台，请在下方设置默认密码，以便后续使用！
+      <div mt-2 v-text="'密码'" />
+      <PasswordInput
+        v-model:password="password"
+        :rules="[(val: string) => passwordRules(val)]"
+        :dark="false"
+        @update:accept="(val) => acceptObj.password = val"
+      />
+
+      <div v-text="'确认密码'" />
+      <PasswordInput
+        v-model:password="repeatPassword"
+        reactive-rules
+        :rules="[(val: string) => passwordRule(val)]"
+        :dark="false"
+        @update:accept="(val) => acceptObj.repeatPassword = val"
+      />
     </ZDialog>
   </main>
 </template>

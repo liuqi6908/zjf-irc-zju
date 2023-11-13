@@ -324,6 +324,7 @@ declare global {
   const useWindowScroll: typeof import('@vueuse/core')['useWindowScroll']
   const useWindowSize: typeof import('@vueuse/core')['useWindowSize']
   const userIdentify: typeof import('./constants/user.constant')['userIdentify']
+  const userRegisterPlatform: typeof import('./constants/user.constant')['userRegisterPlatform']
   const userStatus: typeof import('./constants/user.constant')['userStatus']
   const userTableCols: typeof import('./constants/table.constant')['userTableCols']
   const valueFormatter: typeof import('./constants/map.constant')['valueFormatter']
@@ -537,7 +538,6 @@ declare module 'vue' {
     readonly useGamepad: UnwrapRef<typeof import('@vueuse/core')['useGamepad']>
     readonly useGeolocation: UnwrapRef<typeof import('@vueuse/core')['useGeolocation']>
     readonly useHead: UnwrapRef<typeof import('@vueuse/head')['useHead']>
-    readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useIdle: UnwrapRef<typeof import('@vueuse/core')['useIdle']>
     readonly useImage: UnwrapRef<typeof import('@vueuse/core')['useImage']>
     readonly useInfiniteScroll: UnwrapRef<typeof import('@vueuse/core')['useInfiniteScroll']>
@@ -637,6 +637,7 @@ declare module 'vue' {
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
     readonly userIdentify: UnwrapRef<typeof import('./constants/user.constant')['userIdentify']>
+    readonly userRegisterPlatform: UnwrapRef<typeof import('./constants/user.constant')['userRegisterPlatform']>
     readonly userStatus: UnwrapRef<typeof import('./constants/user.constant')['userStatus']>
     readonly userTableCols: UnwrapRef<typeof import('./constants/table.constant')['userTableCols']>
     readonly verifyTableCols: UnwrapRef<typeof import('./constants/table.constant')['verifyTableCols']>
@@ -837,7 +838,6 @@ declare module '@vue/runtime-core' {
     readonly useGamepad: UnwrapRef<typeof import('@vueuse/core')['useGamepad']>
     readonly useGeolocation: UnwrapRef<typeof import('@vueuse/core')['useGeolocation']>
     readonly useHead: UnwrapRef<typeof import('@vueuse/head')['useHead']>
-    readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useIdle: UnwrapRef<typeof import('@vueuse/core')['useIdle']>
     readonly useImage: UnwrapRef<typeof import('@vueuse/core')['useImage']>
     readonly useInfiniteScroll: UnwrapRef<typeof import('@vueuse/core')['useInfiniteScroll']>
@@ -937,6 +937,7 @@ declare module '@vue/runtime-core' {
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
     readonly userIdentify: UnwrapRef<typeof import('./constants/user.constant')['userIdentify']>
+    readonly userRegisterPlatform: UnwrapRef<typeof import('./constants/user.constant')['userRegisterPlatform']>
     readonly userStatus: UnwrapRef<typeof import('./constants/user.constant')['userStatus']>
     readonly userTableCols: UnwrapRef<typeof import('./constants/table.constant')['userTableCols']>
     readonly verifyTableCols: UnwrapRef<typeof import('./constants/table.constant')['verifyTableCols']>

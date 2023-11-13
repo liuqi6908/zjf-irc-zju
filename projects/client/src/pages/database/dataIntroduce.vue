@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { DesktopQueueStatus } from 'zjf-types'
 import BaseTable from 'shared/component/base/table/BaseTable.vue'
 
 import { cloneDeep } from 'lodash-es'
@@ -8,6 +9,7 @@ import { getDataDownload } from '~/api/data/dataDownloadHandle'
 import { getDataFields } from '~/api/data/getDataDirctoryFields'
 import { getDataPreview } from '~/api/data/dataPreviewHandle'
 import { putSuggest } from '~/api/dataSuggest/putSuggest'
+import { getOwnDesktopQuery } from '~/api/desktop/getOwnDesktopQuery'
 
 const route = useRoute()
 const $router = useRouter()
@@ -53,6 +55,9 @@ const previewTableData = computed(() => {
 
 const isPurchased = computed(() => route.query.label?.includes('预购'))
 
+/** 是否已经申请了云桌面 */
+const isApplyDesktop = ref(false)
+
 onBeforeMount(async () => {
   loading.value = true
 
@@ -62,7 +67,26 @@ onBeforeMount(async () => {
   previewTable.value = (await getDataPreview(route.query.dataId as string).finally(() => {
     loading.value = false
   })).filter((row: any) => Object.values(row).some(v => v))
+
+  // 不在云桌面 且 已通过认证，判断是否已申请云桌面
+  if (!isDesktop.value && isVerify.value)
+    getRequestInfo()
 })
+
+/**
+ * 获取云桌面申请信息
+ */
+async function getRequestInfo() {
+  try {
+    const res = await getOwnDesktopQuery()
+    if (res) {
+      const { queue = {} } = res
+      if (queue.status === DesktopQueueStatus.Using)
+        isApplyDesktop.value = true
+    }
+  }
+  catch (_) {}
+}
 
 /**
  * 建议采购申请
@@ -139,12 +163,20 @@ async function downloadData() {
 
     <div flex="~ col" items-center gap-4 my-10>
       <template v-if="!isPurchased">
-        <router-link v-if="!isDesktop" :to="{ path: '/request' }">
+        <router-link v-if="!isDesktop && !isApplyDesktop" :to="{ path: '/request' }">
           <q-btn
             color="primary"
             square h12 outline w-36
           >
             <span text-4 font-600>数据申请使用</span>
+          </q-btn>
+        </router-link>
+        <router-link v-else-if="!isDesktop && isApplyDesktop" :to="{ path: '/userCenter/cloudDesktop' }">
+          <q-btn
+            color="primary"
+            square h12 outline w-44
+          >
+            <span text-4 font-600>请前往云桌面下载</span>
           </q-btn>
         </router-link>
         <template v-else>

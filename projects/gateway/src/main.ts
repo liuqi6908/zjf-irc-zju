@@ -55,7 +55,6 @@ async function bootstrap() {
 
   // enable cors
   app.enableCors({
-    origin: ['https://r.qiyandata.com'],
     methods: 'POST',
   })
 

@@ -63,12 +63,13 @@ async function queryData(props: any) {
     }
     const { total, data } = await queryExportSm(body) as QueryLg
     pagination.value.rowsNumber = total
-    data.forEach((item) => {
+    rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
+    rows.forEach((item) => {
       // 文件
       item.fileSize = formatFileSize(item.fileSize)
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
+      item['founder.registerPlatform'] = userRegisterPlatform[item['founder.registerPlatform']]
     })
-    rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
   }
   catch (e) { }
   finally {
