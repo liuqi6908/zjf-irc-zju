@@ -5,6 +5,7 @@ import { objectOmit } from '@catsjuice/utils'
 import type { User } from 'src/entities/user'
 import { IsLogin } from 'src/guards/login.guard'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ConfigService } from '@nestjs/config'
 import { HasPermission } from 'src/guards/permission.guard'
 import { CodeAction, ErrorCode, PermissionType } from 'zjf-types'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
@@ -15,6 +16,7 @@ import { UniversalOperationResDto } from 'src/dto/universal-operation.dto'
 import { responseParamsError } from 'src/utils/response/validate-exception-factory'
 import { emailAccountAtLeastOne } from 'src/utils/validator/account-phone-at-least-one'
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Put, Query, Req, forwardRef } from '@nestjs/common'
+import type { SysAdmin } from 'src/config/_sa.config'
 
 import { AuthService } from '../auth/auth.service'
 import { UserService } from './user.service'
@@ -37,6 +39,7 @@ export class UserController {
     private readonly _userSrv: UserService,
     @Inject(forwardRef(() => AuthService))
     private readonly _authSrv: AuthService,
+    private readonly _cfgSrv: ConfigService,
   ) {}
 
   @ApiOperation({
@@ -183,7 +186,12 @@ export class UserController {
   public async updateUserRole(@Param() param: UpdateUserRoleParamDto) {
     const { userId } = param
     const roleName = param.roleName || null
+    const { list } = this._cfgSrv.get<{ list: SysAdmin[] }>('sa')
+
     try {
+      const user = await this._userSrv.repo().findOne({ where: { id: userId } })
+      if (!user?.account || list.map(v => v.account).includes(user?.account))
+        return 0
       return (await this._userSrv.repo().update({ id: userId }, { roleName })).affected
     }
     catch (err) {
