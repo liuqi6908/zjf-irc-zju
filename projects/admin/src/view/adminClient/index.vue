@@ -131,8 +131,8 @@ function approveAdmin(row: any, root: string) {
               <q-btn flat color="primary" label="查看认证材料" @click="checkAttachment(props.row[col.field as string], props.row.id)" />
             </template>
             <template v-else-if="col.name === 'action'">
-              <q-btn label="分配" :disable="Boolean(props.row.roleName)" color="primary" mr-2 size="sm" @click="approveAdmin(props.row, 'root')" />
-              <q-btn label="取消" :disable="!Boolean(props.row.roleName)" color="red" size="sm" @click="approveAdmin(props.row, '')" />
+              <q-btn label="分配" :disable="!!props.row.roleName || props.row.account === 'root'" color="primary" mr-2 size="sm" @click="approveAdmin(props.row, 'root')" />
+              <q-btn label="取消" :disable="!props.row.roleName || props.row.account === 'root'" color="red" size="sm" @click="approveAdmin(props.row, '')" />
             </template>
             <template v-else>
               {{ props.row[col.field as string] }}
