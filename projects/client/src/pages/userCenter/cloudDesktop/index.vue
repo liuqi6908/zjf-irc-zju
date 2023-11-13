@@ -324,7 +324,7 @@ function copyText(text: string) {
           v-else-if="requestInfo.status === DesktopQueueStatus.Queueing"
           :label="
             requestInfo.queueLength
-              ? `云桌面排队情况：前面有 ${requestInfo.queueLength}人 在排队`
+              ? `您正在排队中，前面有 ${requestInfo.queueLength}个 用户正在排队，请耐心等待`
               : '管理员正在为您创建云桌面，请耐心等待并留意邮件通知'
           "
         />
