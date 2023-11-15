@@ -1,6 +1,6 @@
 import type { IUser } from 'zjf-types'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 
 import { Role } from './role'
 import { Work } from './work'
@@ -17,7 +17,6 @@ import { FileExportSmall } from './export/file-export-small.entity'
 import { FileExportLarge } from './export/file-export-large.entity'
 
 @Entity()
-@Unique(['account', 'registerPlatform'])
 export class User extends BaseTimeStamp implements IUser {
   @ApiProperty({
     description: '用户的唯一标识',
@@ -29,26 +28,21 @@ export class User extends BaseTimeStamp implements IUser {
   @ApiProperty({
     description: '账号',
     example: 'catsjuice',
+    uniqueItems: true,
   })
-  @Column()
+  @Column({ unique: true })
   account: string
 
   @ApiPropertyOptional({
     description: '邮箱',
     example: 'somebody@gmail.com',
   })
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   email?: string
 
   // @ApiProperty({ description: '密码（加密后）' })
   @Column({ nullable: true, select: false })
   password?: string
-
-  @ApiProperty({
-    description: '用户注册平台（0智能云科研、1区域发展政策大脑）',
-  })
-  @Column({ default: 0 })
-  registerPlatform: 0 | 1
 
   @ApiPropertyOptional({ description: '用户昵称' })
   @Column({ nullable: true })

@@ -163,8 +163,8 @@ export class UserController {
   @EmailCodeVerify(CodeAction.CHANGE_PASSWORD)
   @Patch('own/password/code')
   public async updateOwnPasswordByCode(@Body() body: UpdatePasswordByCodeBodyDto) {
-    const { email, password, registerPlatform } = body
-    const user = await this._userSrv.repo().findOne({ where: { email, registerPlatform } })
+    const { email, password } = body
+    const user = await this._userSrv.repo().findOne({ where: { email } })
     if (!user)
       responseError(ErrorCode.AUTH_EMAIL_NOT_REGISTERED)
     await this._userSrv.updateUserPassword({ id: user.id }, password)

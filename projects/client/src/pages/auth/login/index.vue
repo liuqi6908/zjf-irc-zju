@@ -7,7 +7,6 @@ const $router = useRouter()
 
 const userCode = ref('')
 const password = ref('')
-const registerPlatform = ref<0 | 1>(0)
 const acceptObj = reactive({
   password: false,
 })
@@ -22,7 +21,6 @@ function passwordRule(val: string) {
 const logArg = computed(() => {
   return {
     password: password.value,
-    registerPlatform: registerPlatform.value,
     [validateEmail(userCode.value) ? 'account' : 'email']: userCode.value
   }
 })
@@ -65,16 +63,6 @@ async function handleEnter() {
       @update:accept="(val) => acceptObj.password = val"
       @keydown.enter="handleEnter()"
     />
-    <span mb-1 v-text="'注册用户类型'" />
-    <div flex gap-4 relative right-2>
-      <ZRadio
-        v-for="(item, index) in userRegisterPlatform"
-        :key="index"
-        v-model="registerPlatform"
-        :val="index"
-        :label="item"
-      />
-    </div>
 
     <RouterLink text-grey-1 text-xs mt-4 :to="{ path: 'forgetPassword' }" v-text="'忘记密码？'" />
 

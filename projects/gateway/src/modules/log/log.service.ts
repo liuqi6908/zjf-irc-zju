@@ -88,7 +88,7 @@ export class LogService implements OnModuleInit {
       ...log,
       user: log.user
         ? {
-            ...objectPick(log.user, ['id', 'email', 'nickname', 'account', 'registerPlatform']),
+            ...objectPick(log.user, ['id', 'email', 'nickname', 'account']),
             verification: log.user.verification
               ? {
                   ...objectPick(log.user.verification, ['name', 'college', 'idCard', 'identify', 'number', 'school']),

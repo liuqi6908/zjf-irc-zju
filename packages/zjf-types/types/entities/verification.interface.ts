@@ -6,7 +6,7 @@ import { ICreatedAt, IUpdatedAt } from './_timestamp.interface';
 export interface IVerificationHistory extends ICreatedAt, IUpdatedAt {
   /** 认证记录的唯一标识 */
   id: string;
-  
+
   // 基础信息
   /** 真实姓名 */
   name: string;

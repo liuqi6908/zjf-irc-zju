@@ -30,7 +30,6 @@ const baseInfoList = reactive([
     smsCode: '',
     bizId: '',
     action: CodeAction.BIND_EMAIL,
-    registerPlatform: userInfo.value?.registerPlatform
   },
   {
     label: '密码',
@@ -41,12 +40,6 @@ const baseInfoList = reactive([
     smsCode: '',
     bizId: '',
     action: CodeAction.CHANGE_PASSWORD,
-  },
-  {
-    label: '注册平台',
-    id: 'registerPlatform',
-    caption: '',
-    inputVal: '',
   },
 ])
 
@@ -103,7 +96,7 @@ async function confirmEdit(id: string) {
     if (id === 'email')
       res = await changeEmail(obj.edit, obj.bizId, obj.smsCode)
     else if (id === 'password' && userInfo.value?.email)
-      res = await changePassword(userInfo.value?.email, obj.edit, obj.bizId, obj.smsCode, userInfo.value?.registerPlatform || 0)
+      res = await changePassword(userInfo.value?.email, obj.edit, obj.bizId, obj.smsCode)
     if (res) {
       Notify.create({
         message: '修改成功',
@@ -134,16 +127,10 @@ async function checkoutVerify() {
     const obj = baseInfoList.find(i => i.id === key)
     const value = userInfo.value[key as keyof IUser]
     if (obj && typeof value === 'string') {
-      if (key === 'email') {
+      if (key === 'email')
         obj.inputVal = hideSensitiveInfo(value) || ''
-        obj.registerPlatform = userInfo.value?.registerPlatform
-      }
-      else {
+      else
         obj.inputVal = value
-      }
-    }
-    else if (obj && obj.id === 'registerPlatform' && typeof value === 'number') {
-      obj.inputVal = userRegisterPlatform[value]
     }
   }
 
@@ -188,7 +175,6 @@ onBeforeMount(() => {
           class="col-grow"
           :label="b.label"
           :biz-id="b.bizId"
-          :registerPlatform="b.registerPlatform"
           @update:sms-code="(val) => b.smsCode = val"
           @update:biz-id="(val) => b.bizId = val"
           @update:confirm="confirmEdit(b.id)"

@@ -5,7 +5,6 @@ const { useLogin } = useUser()
 
 const userCode = ref('')
 const password = ref('')
-const registerPlatform = ref<0 | 1>(0)
 const acceptObj = reactive({
   password: false,
 })
@@ -17,7 +16,6 @@ function passwordRule(val: string) {
 const logArg = computed(() => {
   return {
     password: password.value,
-    registerPlatform: registerPlatform.value,
     [validateEmail(userCode.value) ? 'account' : 'email']: userCode.value
   }
 })
@@ -51,16 +49,6 @@ function handleEnter() {
       @update:accept="(val) => acceptObj.password = val"
       @keydown.enter="handleEnter()"
     />
-    <span  v-text="'注册用户类型'" />
-    <div flex gap-4>
-      <q-radio
-        v-for="(item, index) in userRegisterPlatform"
-        :key="index"
-        v-model="registerPlatform"
-        :val="index"
-        :label="item"
-      />
-    </div>
 
     <RouterLink text-grey-5 text-xs mt-2 :to="{ path: 'forgetPassword' }" v-text="'忘记密码?'" />
 

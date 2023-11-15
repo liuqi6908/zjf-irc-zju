@@ -6,7 +6,6 @@ import { IAccountDto } from '../dto/account.interface';
 import { IPasswordOptionalDto } from '../dto/password.interface';
 import { IDesktopQueue } from './desktop-queue.interface';
 import { IEmailOptionalDto } from '../dto/email.interface';
-import { IRegisterPlatformDto } from '../dto/register-platform.interface';
 import { ICreatedAt, IUpdatedAt } from "./_timestamp.interface";
 import { IVerificationHistory } from './verification.interface';
 import { INicknameOptionalDto } from '../dto/nickname.interface';
@@ -21,7 +20,6 @@ export interface IUser extends
   IPasswordOptionalDto,
   IAccountDto,
   IEmailOptionalDto,
-  IRegisterPlatformDto,
   INicknameOptionalDto {
 
   /** 用户唯一标识（UUID, v4) */

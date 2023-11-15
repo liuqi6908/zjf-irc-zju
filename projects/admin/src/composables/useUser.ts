@@ -15,7 +15,6 @@ export function useUser($router = useRouter()) {
   /** 登录 */
   const useLogin = async (options: {
     password: string
-    registerPlatform: 0 | 1
     account?: string
     email?: string
   }) => {
@@ -46,7 +45,7 @@ export function useUser($router = useRouter()) {
         type: 'success',
         message: '注册成功',
       })
-      await useLogin({ password, account, email, registerPlatform: 0 })
+      await useLogin({ password, account, email })
     }
   }
 

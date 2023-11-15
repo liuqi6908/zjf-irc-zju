@@ -279,7 +279,6 @@ declare global {
   const useWindowScroll: typeof import('@vueuse/core')['useWindowScroll']
   const useWindowSize: typeof import('@vueuse/core')['useWindowSize']
   const userInfo: typeof import('./composables/user-info')['userInfo']
-  const userRegisterPlatform: typeof import('./constants/user.constant')['userRegisterPlatform']
   const vmStatus: typeof import('./constants/desktop.constants')['vmStatus']
   const vmStatusList: typeof import('./constants/desktop.constants')['vmStatusList']
   const watch: typeof import('vue')['watch']
@@ -579,7 +578,6 @@ declare module 'vue' {
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
     readonly userInfo: UnwrapRef<typeof import('./composables/user-info')['userInfo']>
-    readonly userRegisterPlatform: UnwrapRef<typeof import('./constants/user.constant')['userRegisterPlatform']>
     readonly vmStatusList: UnwrapRef<typeof import('./constants/desktop.constants')['vmStatusList']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchArray: UnwrapRef<typeof import('@vueuse/core')['watchArray']>
@@ -872,7 +870,6 @@ declare module '@vue/runtime-core' {
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
     readonly userInfo: UnwrapRef<typeof import('./composables/user-info')['userInfo']>
-    readonly userRegisterPlatform: UnwrapRef<typeof import('./constants/user.constant')['userRegisterPlatform']>
     readonly vmStatusList: UnwrapRef<typeof import('./constants/desktop.constants')['vmStatusList']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchArray: UnwrapRef<typeof import('@vueuse/core')['watchArray']>

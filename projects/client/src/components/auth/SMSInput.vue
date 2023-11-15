@@ -7,7 +7,6 @@ interface Props {
   smsCode: string
   email: string
   action: CodeAction
-  registerPlatform?: 0 | 1
   dark?: boolean
 }
 
@@ -20,7 +19,7 @@ const inputRef = ref<typeof QInput>()
 const wait = ref(0)
 
 async function getCode() {
-  const res = await smsCodeByEmail(props.email, props.action, props.registerPlatform)
+  const res = await smsCodeByEmail(props.email, props.action)
   if (res) {
     Notify.create({
       type: 'success',

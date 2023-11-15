@@ -68,7 +68,6 @@ async function queryData(props: any) {
       // 文件
       item.fileSize = formatFileSize(item.fileSize)
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
-      item['founder.registerPlatform'] = userRegisterPlatform[item['founder.registerPlatform']]
     })
   }
   catch (e) { }

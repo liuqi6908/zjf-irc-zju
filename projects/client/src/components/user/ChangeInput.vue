@@ -10,7 +10,6 @@ interface Props {
   label?: string
   captions?: string
   action?: string
-  registerPlatform?: 0 | 1
 }
 
 defineProps<Props>()
@@ -94,7 +93,6 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
           :sms-code="smsCode"
           :action="action"
           :email="id === 'email' ? edit : userInfo?.email"
-          :registerPlatform="registerPlatform"
           :dark="false"
           :rules="[(val: string) => smsCodeRules(val)]"
           :disable="id === 'email' && !acceptObj.edit"

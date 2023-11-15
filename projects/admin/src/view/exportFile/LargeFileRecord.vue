@@ -126,7 +126,6 @@ async function queryData(props: any) {
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
       // 审核时间
       item.handleAt = item.handleAt && moment(item.handleAt).format('YYYY-MM-DD HH:mm:ss')
-      item['founder.registerPlatform'] = userRegisterPlatform[item['founder.registerPlatform']]
     })
   }
   catch (_) {}

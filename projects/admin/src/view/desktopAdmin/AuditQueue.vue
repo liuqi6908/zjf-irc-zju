@@ -29,7 +29,6 @@ const cols: QTableProps['columns'] = reactive([
   { name: 'identify', field: 'user.verification.identify', label: '身份' },
   { name: 'dataRoleName', field: 'user.dataRoleName', label: '角色' },
   { name: 'roleName', field: 'user.roleName', label: '权限' },
-  { name: 'registerPlatform', field: 'user.registerPlatform', label: '注册平台' },
   { name: 'createdAt', field: 'createdAt', label: '申请时间' },
   { name: 'duration', field: 'duration', label: '申请时长' },
   { name: 'attachments', field: 'attachments', label: '申请材料' },
@@ -84,7 +83,6 @@ async function queryData(props: any) {
     rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
     rows.forEach((item) => {
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
-      item['user.registerPlatform'] = userRegisterPlatform[item['user.registerPlatform']]
       item['user.verification.idCard'] = hideSensitiveInfo(item['user.verification.idCard'])
       item['user.verification.identify'] = userIdentify.find(v => v.value === item['user.verification.identify'])?.label || '无'
       item.status = desktopStatus.find(v => v.value === item.status)?.label || ''

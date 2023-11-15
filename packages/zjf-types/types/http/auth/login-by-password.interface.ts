@@ -3,14 +3,12 @@ import { IUser } from '../../entities/user.interface';
 import { IPasswordDto } from '../../dto/password.interface';
 import { IEmailOptionalDto } from '../../dto/email.interface';
 import { IAccountOptionalDto } from '../../dto/account.interface';
-import { IRegisterPlatformDto } from '../../dto/register-platform.interface';
 
 export interface ILoginByPasswordBodyDto
   extends
   IPasswordDto,
   IAccountOptionalDto,
-  IEmailOptionalDto,
-  IRegisterPlatformDto {}
+  IEmailOptionalDto {}
 
 /** 登录成功的响应类型定义 */
 export interface ILoginSuccessResData {

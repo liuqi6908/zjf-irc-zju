@@ -40,8 +40,6 @@ export class EmailCodeSendableGuard implements CanActivate {
     const actionKey = getReflectorValue(this.reflector, context, 'actionKey', 'action')
     const emailIn = getReflectorValue(this.reflector, context, 'emailIn', 'body')
     const emailKey = getReflectorValue(this.reflector, context, 'emailKey', 'email')
-    const registerPlatformIn = getReflectorValue(this.reflector, context, 'registerPlatformIn', 'body')
-    const registerPlatformKey = getReflectorValue(this.reflector, context, 'registerPlatformKey', 'registerPlatform')
 
     const email = req?.[emailIn]?.[emailKey]
     const action = req?.[actionIn]?.[actionKey]
@@ -67,17 +65,9 @@ export class EmailCodeSendableGuard implements CanActivate {
       }])
     }
 
-    let registerPlatform
-    if (action === CodeAction.BIND_EMAIL)
-      registerPlatform = req?.[registerPlatformIn]?.[registerPlatformKey]
-
-    const queryParam: any = {
+    const user = await this.userSrv.queryUser({
       where: { email },
-    }
-    if ([0, 1].includes(registerPlatform))
-      queryParam.where.registerPlatform = registerPlatform
-
-    const user = await this.userSrv.queryUser(queryParam)
+    })
 
     if (registerRequiredActions.includes(action) && !user)
       responseError(ErrorCode.USER_EMAIL_NOT_REGISTERED)

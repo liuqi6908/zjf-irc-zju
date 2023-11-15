@@ -113,14 +113,14 @@ export class AuthService {
    * @returns
    */
   public async loginByPassword(body: LoginByPasswordBodyDto) {
-    const { account, email, password, registerPlatform } = body
+    const { account, email, password } = body
     if (!account && !email)
       throw new Error('手机号码或邮箱地址至少需要填写一个')
     const qb = this._userSrv.qb().addSelect('u.password')
     if (account)
-      qb.where('account = :account AND registerPlatform = :registerPlatform', { account, registerPlatform })
+      qb.where('account = :account', { account })
     else if (email)
-      qb.where('email = :email AND registerPlatform = :registerPlatform', { email, registerPlatform })
+      qb.where('email = :email', { email })
     const user = await qb.getOne()
     if (!user) {
       responseError(
@@ -164,24 +164,31 @@ export class AuthService {
       }
       else {
         const { private_key } = this._cfgSrv.get<LoginApp>('login')
-        const username = await rsaDecrypt(data.username, private_key)
+        const account = await rsaDecrypt(data.username, private_key)
         const email = await rsaDecrypt(data.email, private_key)
 
-        // 校验 账号 是否被注册
+        // 校验 邮箱 是否被注册
         let user = await this._userSrv.qb()
-          .where(
-            'account = :account and registerPlatform = :type',
-            {
-              account: username,
-              type: 1,
-            })
+          .where('email = :email', { email })
           .getOne()
         if (!user) {
-          user = await this._userSrv.insertUser({
-            account: username,
-            email,
-            registerPlatform: 1,
-          })
+          user = await this._userSrv.qb()
+            .where('account = :account', { account })
+            .getOne()
+          if (!user) {
+            user = await this._userSrv.insertUser({
+              account,
+              email,
+            })
+          }
+          else {
+            return {
+              success: false,
+              errorCode: '40002',
+              errorMsg: '账号已注册',
+              data: null,
+            }
+          }
         }
 
         const { access_token } = await this._jwtAuthSrv.signLoginAuthToken(user)
@@ -189,8 +196,6 @@ export class AuthService {
       }
     }
     catch (_) {
-      console.error(_)
-
       responseError(ErrorCode.AUTH_VALIDATION_ERROR)
     }
   }
@@ -261,12 +266,7 @@ export class AuthService {
   public async register(body: RegisterBodyDto) {
     // 校验 账号 是否被注册
     const user = await this._userSrv.qb()
-      .where(
-        'account = :account AND registerPlatform = :type',
-        {
-          account: body.account,
-          type: 0,
-        })
+      .where('account = :account', { account: body.account })
       .getOne()
     if (user)
       responseError(ErrorCode.USER_ACCOUNT_REGISTERED)

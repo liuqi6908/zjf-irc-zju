@@ -12,7 +12,6 @@ const columns: QTableProps['columns'] = reactive([
   { name: 'account', label: '用户', field: 'user.account' },
   { name: 'email', label: '邮箱', field: 'user.email' },
   { name: 'name', label: '姓名', field: 'user.verification.name' },
-  { name: 'registerPlatform', label: '注册平台', field: 'user.registerPlatform' },
   { name: 'title', label: '标题', field: 'title' },
   { name: 'author', label: '作者', field: 'author' },
   { name: 'filename', label: '文件名', field: 'filename' },
@@ -66,7 +65,6 @@ async function queryWorkData(props: any) {
     rows.splice(0, rows.length, ...data.map(v => flattenJSON(v)))
     rows.forEach((item) => {
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
-      item['user.registerPlatform'] = userRegisterPlatform[item['user.registerPlatform']]
     })
   }
   catch (_) {}

@@ -68,7 +68,6 @@ async function queryVerifyList(props: any) {
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
       item.identify = userIdentify.find(v => v.value === item.identify)?.label
       item['founder.createdAt'] = item['founder.createdAt'] ? moment(item['founder.createdAt']).format('YYYY-MM-DD HH:mm:ss') : null
-      item['founder.registerPlatform'] = userRegisterPlatform[item['founder.registerPlatform']]
     })
   }
   catch (_) {}

@@ -10,7 +10,6 @@ const smsCode = ref('')
 const bizId = ref('')
 const password = ref('')
 const repeatPassword = ref('')
-const registerPlatform = ref<0 | 1>(0)
 
 const $router = useRouter()
 
@@ -37,7 +36,7 @@ function passwordRule(val: string) {
 }
 
 async function finish() {
-  const res = await changePasswordBySms(email.value, password.value, bizId.value, smsCode.value, registerPlatform.value)
+  const res = await changePasswordBySms(email.value, password.value, bizId.value, smsCode.value)
   if (res) {
     Notify.create({
       type: 'success',
@@ -91,17 +90,6 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
       :rules="[(val:string) => passwordRule(val)]"
       @update:accept="(val) => acceptObj.repeatPassword = val"
     />
-
-    <span mb-1 v-text="'注册用户类型'" />
-    <div flex gap-4 relative right-2>
-      <ZRadio
-        v-for="(item, index) in userRegisterPlatform"
-        :key="index"
-        v-model="registerPlatform"
-        :val="index"
-        :label="item"
-      />
-    </div>
 
     <client-only>
       <Btn color="primary-1" bg-color="grey-1" w-full mt-6 label="完成" :disable="disable" @click="finish" />

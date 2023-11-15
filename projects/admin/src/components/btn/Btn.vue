@@ -55,7 +55,7 @@ const finalProps = computed(() => ({ props }))
 </template>
 
 <style scoped>
-.q-btn >>> .q-btn__content {
+.q-btn :deep(.q-btn__content) {
     border-radius:inherit;
 }
 .translucent-mask {
