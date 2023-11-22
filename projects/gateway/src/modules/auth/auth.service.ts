@@ -60,7 +60,7 @@ export class AuthService {
    * 获取区域发展政策大脑平台签发的 token
    */
   private async _getAuthToken() {
-    const { host, app_key, app_secret, public_key, private_key } = this._cfgSrv.get<LoginApp>('login')
+    const { host, app_key, app_secret, public_key } = this._cfgSrv.get<LoginApp>('login')
 
     const getCfg = (token: string) => ({
       baseURL: host,

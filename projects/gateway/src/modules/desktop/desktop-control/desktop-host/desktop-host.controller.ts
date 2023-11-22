@@ -1,10 +1,10 @@
 import { Controller, Get, Param } from '@nestjs/common'
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
-import { VerifiedRequired } from 'src/guards/verify-required.guard'
+import { VerifiedRequiredToken } from 'src/guards/verify-required-token.guard'
 
 import { ZstackService } from '../../zstack/zstack.service'
 
-@VerifiedRequired()
+@VerifiedRequiredToken()
 @ApiTags('DesktopHost | 云桌面物理机')
 @Controller('desktop-host')
 export class DesktopHostController {

@@ -1,11 +1,11 @@
 import { Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
-import { VerifiedRequired } from 'src/guards/verify-required.guard'
+import { VerifiedRequiredToken } from 'src/guards/verify-required-token.guard'
 import { AllowDesktopOperate } from 'src/guards/desktop-operate-allowed.guard'
 
 import { ZstackService } from '../../zstack/zstack.service'
 
-@VerifiedRequired()
+@VerifiedRequiredToken()
 @ApiTags('DesktopVm | 云桌面虚拟机')
 @Controller('desktop-vm')
 export class DesktopVmController {
@@ -18,7 +18,6 @@ export class DesktopVmController {
   }
 
   @ApiOperation({ summary: '获取指定虚拟机的状态' })
-  @AllowDesktopOperate()
   @ApiParam({ name: 'desktopId', description: '虚拟机ID' })
   @Get(':desktopId')
   public async getVMState(@Param('desktopId') desktopId: string) {
@@ -26,7 +25,6 @@ export class DesktopVmController {
   }
 
   @ApiOperation({ summary: '获取指定虚拟机的详情' })
-  @AllowDesktopOperate()
   @ApiParam({ name: 'desktopId', description: '虚拟机ID' })
   @Get('detail/:desktopId')
   public async getVMDetail(@Param('desktopId') desktopId: string) {
