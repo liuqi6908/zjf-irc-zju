@@ -10,6 +10,7 @@ import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req } from '@nestjs/common'
 import { DesktopQueueHistoryStatus, DesktopQueueStatus, ErrorCode, PermissionType } from 'zjf-types'
+import { VerifiedRequiredToken } from 'src/guards/verify-required-token.guard'
 
 import { NotifyService } from '../notify/notify.service'
 import { ExportService } from '../export/export.service'
@@ -201,8 +202,8 @@ export class DesktopController {
     return await this._desktopSrv.repo().findOne({ where: { userId: user.id } })
   }
 
+  @VerifiedRequiredToken()
   @ApiOperation({ summary: '获取云桌面虚拟机列表', description: '返回所有云桌面虚拟机的 id、name、ip' })
-  @HasPermission(PermissionType.DESKTOP_CREATE)
   @Get('vm-list')
   public async getVMList() {
     return await this._zstackSrv.vmList()
