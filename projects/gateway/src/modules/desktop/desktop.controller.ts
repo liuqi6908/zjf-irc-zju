@@ -13,7 +13,7 @@ import { DesktopQueueHistoryStatus, DesktopQueueStatus, ErrorCode, PermissionTyp
 import { VerifiedRequiredToken } from 'src/guards/verify-required-token.guard'
 
 import { NotifyService } from '../notify/notify.service'
-import { ExportService } from '../export/export.service'
+import { UserService } from '../user/user.service'
 import { DesktopService } from './desktop.service'
 import { DesktopResDto } from './dto/desktop.res.dto'
 import { CreateDesktopBodyDto } from './dto/create-desktop.body.dto'
@@ -29,10 +29,10 @@ export class DesktopController {
   constructor(
     private readonly _notifySrv: NotifyService,
     private readonly _desktopSrv: DesktopService,
-    private readonly _exportSrv: ExportService,
     private readonly _desktopReqSrv: DesktopRequestService,
     private readonly _desktopHisSrv: DesktopQueueHistoryService,
     private readonly _zstackSrv: ZstackService,
+    private readonly _userSrv: UserService,
   ) {}
 
   @ApiOperation({ summary: '判断当前客户端是否在云桌面内使用' })
@@ -74,6 +74,12 @@ export class DesktopController {
         DesktopQueueHistoryStatus.Expired,
         {},
       )
+      try {
+        // 根据用户账号调用云之遥接口停用云桌面
+        const user = await this._userSrv.repo().findOne({ where: { id: desktop.userId } })
+        this._desktopSrv.applyOrStopDesktop(user.account, 1)
+      }
+      catch (_) {}
     }
 
     const updateRes = await this._desktopSrv.repo().update(

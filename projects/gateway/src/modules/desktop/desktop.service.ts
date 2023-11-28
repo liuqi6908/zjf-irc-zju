@@ -6,10 +6,12 @@ import { Desktop } from 'src/entities/desktop'
 import { InjectRepository } from '@nestjs/typeorm'
 import { responseError } from 'src/utils/response'
 import { Injectable, Logger } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { HttpService } from '@nestjs/axios'
 
+import type { YunApp } from 'src/config/_yun.config'
 import { RedisService } from '../redis/redis.service'
 import { NotifyService } from '../notify/notify.service'
-
 import type { CreateDesktopBodyDto } from './dto/create-desktop.body.dto'
 
 @Injectable()
@@ -23,6 +25,8 @@ export class DesktopService {
 
     private readonly _redisSrv: RedisService,
     private readonly _notifySrv: NotifyService,
+    private readonly _cfgSrv: ConfigService,
+    private readonly _httpSrv: HttpService,
   ) {}
 
   // 每小时检查一次即将过期的云桌面
@@ -119,6 +123,26 @@ export class DesktopService {
     desktops.forEach(desktop => desktopIpMap.set(desktop.internalIp, desktop))
     list.forEach(item => item[desktopKey] = desktopIpMap.get(item[ipKey] as string))
     return list
+  }
+
+  /**
+   * 申请或停用云桌面
+   * @param account
+   */
+  public async applyOrStopDesktop(account: string, flag: 0 | 1) {
+    if (account) {
+      const url = ['/applyDesktop', '/stopDesktop']
+      const { host } = this._cfgSrv.get<YunApp>('yun')
+      const { data } = await this._httpSrv.axiosRef({
+        baseURL: host,
+        method: 'POST',
+        url: url[flag],
+        data: { account },
+      })
+      if (data.code !== 200)
+        throw new Error(`云桌面${flag ? '停用' : '开通'}失败`)
+      return data.data
+    }
   }
 
   repo() {
