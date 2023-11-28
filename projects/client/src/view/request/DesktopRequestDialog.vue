@@ -79,7 +79,10 @@ function removeFile(index: number) {
 
     <div my-6 flex="~ col">
       <div flex="~ row justify-between items-center" mb-2>
-        <span text-3.5 font-600 text-grey-8>研究计划/其他材料</span>
+        <div text-3.5 font-600 text-grey-8>
+          <span text-red>*</span>
+          研究计划/其他材料
+        </div>
         <UploadFile v-model="file">
           <q-btn bg="primary-1/12" flat text-primary-1 square h-8>
             <div flex="~" items-center gap-2>
