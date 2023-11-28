@@ -23,8 +23,7 @@ onBeforeMount(() => {
 
     databaseId.value = obj.id
     $router.push({ query: { database: obj.id, label: obj.nameZH } })
-  },
-  )
+  })
 })
 
 const empty = computed(() => !rootData.value || !rootData.value.length)
@@ -39,9 +38,9 @@ const empty = computed(() => !rootData.value || !rootData.value.length)
       class="col-grow" flex-start w-limited-1 mt-10 justify-center
       flex="~ row gap-10"
     >
-      <SliderList :list="rootData" :current-id="databaseId" router @update:current-id="(id) => databaseId = id" />
+      <SliderList :list="rootData" v-model:current-id="databaseId" />
 
-      <div flex="1" w0 flex-center>
+      <div flex="1 center" w0>
         <q-spinner
           v-if="loading"
           color="primary-1"
@@ -61,7 +60,7 @@ const empty = computed(() => !rootData.value || !rootData.value.length)
 
 <style lang="scss" scoped>
 .database {
-    background: no-repeat center / cover url("../../assets/layout/database.jpg");
+  background: no-repeat center / cover url("../../assets/layout/database.jpg");
 }
 </style>
 
