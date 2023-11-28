@@ -34,7 +34,7 @@ async function confirmEdit() {
     @ok="confirmEdit"
     @update:model-value="(val) => $emit('update:editDialog', val)"
   >
-    <div mb-3 text-grey-8>
+    <div mb-2 text-sm>
       {{ label }}
     </div>
 
@@ -45,7 +45,7 @@ async function confirmEdit() {
       @update:user-code="(v) => $emit('update:edit', v)"
     />
 
-    <div mb-3 mt-6 text-grey-8>
+    <div mb-2 mt-6 text-sm>
       邮箱验证
     </div>
     <SMSInput

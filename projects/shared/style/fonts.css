@@ -1,0 +1,24 @@
+@font-face {
+  font-family: 'PingFang';
+  src: url('../assets/fonts/PingFang_400.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PingFang';
+  src: url('../assets/fonts/PingFang_500.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PingFang';
+  src: url('../assets/fonts/PingFang_600.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+.font-pingfang {
+  font-family: 'PingFang';
+}

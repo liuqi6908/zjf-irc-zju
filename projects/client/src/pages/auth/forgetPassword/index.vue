@@ -50,10 +50,10 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
 </script>
 
 <template>
-  <div w-full flex="~ col" text="14px grey-1" font-500>
-    <header flex="~ flex items-center justify-center" mb-6 relative>
-      <div cursor-pointer absolute left-0 text-xl i-mingcute:left-line top-2.5 w-5.5 @click="$router.replace({ path: 'login' })" />
-      <span font-600 text-7>邮箱找回</span>
+  <div w-full flex="~ col" text="sm grey-1" font-500>
+    <header flex="~ flex items-center" mb-14 relative>
+      <div cursor-pointer text-xl i-mingcute:left-line w-5.5 @click="$router.replace({ path: 'login' })" />
+      <span font-600 text-7 absolute-x-center>邮箱找回</span>
     </header>
 
     <span mb-2 v-text="'邮箱'" />
@@ -92,7 +92,9 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
     />
 
     <client-only>
-      <Btn color="primary-1" bg-color="grey-1" w-full mt-6 label="完成" :disable="disable" @click="finish" />
+      <Btn color="primary-1" bg-color="grey-1" h="12!" mt-20 :disable="disable" @click="finish">
+        <div text-base font-600>完成</div>
+      </Btn>
     </client-only>
   </div>
 </template>

@@ -25,6 +25,6 @@ defineProps<Props>()
 
 <style lang="scss" scoped>
 .introduce_bg-img {
-    background: no-repeat center / cover url("../../../assest/introduce.svg");
+    background: no-repeat center / cover url("../../../assets/imgs/introduce.svg");
 }
 </style>

@@ -3,13 +3,17 @@ const $router = useRouter()
 </script>
 
 <template>
-  <div class="confirmation" full flex="~ row">
+  <div class="confirmation" h-100vh flex="~ row">
     <div class="col-grow confirmation-bgImg">
-      <header flex="~ row items-center" text-grey-1 absolute cursor-pointer gap-2 left-12 top-10 @click="$router.push('/')">
-        <img h-12 w-12 src="../assets/auth/couldTitle.png">
-        <span text-7 font-600>智能云科研平台</span>
-        <span text-7 font-600>|</span>
-        <span text-lg relative font-400 top-3px>CloudResearch</span>
+      <header flex="~ items-center gap-2" text-grey-1 absolute cursor-pointer left-12 top-10 @click="$router.push('/')">
+        <img w-12 src="../assets/auth/couldTitle.png">
+        <div text-7 font-600>
+          智能云科研平台
+        </div>
+        <div w-3px h-8 bg-grey-1 />
+        <div text-lg>
+          CloudResearch
+        </div>
       </header>
     </div>
 
@@ -17,7 +21,7 @@ const $router = useRouter()
     <div class="flex-center col-5" mr-40>
       <div
         flex="~ col" class="confirmation-card"
-        min-w-sm p-10 backdrop-blur-md
+        w-26rem p-10 backdrop-blur-md
       >
         <RouterView />
       </div>

@@ -1,9 +1,32 @@
 :root
-  --q-primary: #025CB9
-  --alert-success: #22B07D
-  --alert-warning: #FFBA2F
-  --alert-error: #F44336
+  --q-primary: var(--primary-1)
+  --alert-success: var(--success)
+  --alert-error: var(--error)
+  --alert-warning: var(--warning)
 
+/* 主题色 */
+@for $i from 1 through 2
+  .text-primary-#{$i}
+    color: var(--primary-#{$i}) !important
+
+@for $i from 1 through 2
+  .bg-primary-#{$i}
+    background: var(--primary-#{$i}) !important
+
+/* 中性色 */
 @for $i from 1 through 8
   .text-grey-#{$i}
     color: var(--grey-#{$i}) !important
+
+@for $i from 1 through 8
+  .bg-grey-#{$i}
+    background: var(--grey-#{$i}) !important
+
+/* 透明色 */
+@for $i from 1 through 9
+  .text-white-#{$i}
+    color: var(--transparency-#{$i}) !important
+
+@for $i from 1 through 9
+  .bg-white-#{$i}
+    background: var(--transparency-#{$i}) !important

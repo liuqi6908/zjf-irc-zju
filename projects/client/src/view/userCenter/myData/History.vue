@@ -3,7 +3,6 @@ import BaseTable from 'shared/component/base/table/BaseTable.vue'
 import { FileExportLargeStatus, PAGINATION_SIZE_MAX } from 'zjf-types'
 import type { IFileExportLarge, IFileExportSmall, IQueryDto } from 'zjf-types'
 import moment from 'moment'
-import { useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 
 import HistoryStatus from './history/HistoryStatus.vue'
@@ -18,7 +17,6 @@ const toggle: Array < { label: string; value: FileType } > = [
 
 const model = ref<FileType>(toggle[0].value)
 const loading = ref(false)
-const $q = useQuasar()
 const baseOpts: IQueryDto<IFileExportSmall> = {
   pagination: {
     page: 0,
@@ -91,6 +89,9 @@ const select = ref(selectList.value)
 
 const rows = ref([])
 
+const dialog = ref(false)
+const reason = ref('')
+
 onMounted(() => {
   getSmExport(baseOpts)
 })
@@ -134,13 +135,6 @@ async function getLgExport(options: IQueryDto<IFileExportLarge>) {
       ...i,
       name,
     }
-  })
-}
-
-function fetchRejectReason(reason: string) {
-  $q.dialog({
-    title: '驳回理由',
-    message: reason,
   })
 }
 
@@ -269,7 +263,13 @@ watch(select, (selectOptions) => {
 
       <div v-else-if="col === 'rejectReason'">
         <div v-if="props.row[`${col}`]">
-          <div text-primary-1 cursor-pointer @click="fetchRejectReason(props.row[`${col}`])">
+          <div
+            text-primary-1 cursor-pointer
+            @click="() => {
+              dialog = true
+              reason = props.row[`${col}`]
+            }"
+          >
             点击查看
           </div>
         </div>
@@ -283,6 +283,17 @@ watch(select, (selectOptions) => {
         {{ props.row[`${col}`] || '-' }}
       </div>
     </BaseTable>
+
+    <!-- 驳回理由 -->
+    <ZDialog v-model="dialog" title="驳回理由">
+      {{ reason }}
+      <footer flex justify-end mt-6>
+        <q-btn
+          v-close-popup flat square h10 min-w-28 bg-primary-1
+          text-grey-1 label="确认"
+        />
+      </footer>
+    </ZDialog>
   </div>
 </template>
 

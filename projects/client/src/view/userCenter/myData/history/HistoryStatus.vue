@@ -25,6 +25,6 @@ const textContent = reactive<Record<FileExportLargeStatus, any>>({
       />
     </div>
 
-    <span font-500 text-grey-1>{{ textContent[status].text }}</span>
+    <span text-grey-1>{{ textContent[status].text }}</span>
   </div>
 </template>

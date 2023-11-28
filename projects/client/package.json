@@ -31,7 +31,6 @@
     "mammoth": "^1.6.0",
     "moment": "^2.29.4",
     "nprogress": "^0.2.0",
-    "pinia": "^2.1.4",
     "quasar": "^2.12.3",
     "shared": "workspace:^",
     "vue": "^3.3.4",

@@ -57,13 +57,13 @@ defineExpose({
 </script>
 
 <template>
-  <q-table 
-    class="my-sticky-dynamic" 
-    :rows="rows" 
-    bordered 
-    separator="cell" 
-    :columns="cols" 
-    :loading="loading" 
+  <q-table
+    class="my-sticky-dynamic"
+    :rows="rows"
+    bordered
+    separator="cell"
+    :columns="cols"
+    :loading="loading"
     flat
     :hide-bottom="disablePagination"
     :pagination="{ rowsPerPage: disablePagination ? 0 : 10 }"
@@ -101,6 +101,7 @@ defineExpose({
     td
       height: 40px
       padding: 8px
+      font-weight: 400
       border-color: var(--grey-3)
       font-size: 16px
       color: var(--grey-8)
@@ -117,7 +118,7 @@ defineExpose({
   .q-table__control button span.q-btn__content
     color: var(--grey-5)
 
-  .q-table__control .q-select .q-field__control 
+  .q-table__control .q-select .q-field__control
     span
       color: var(--grey-7)
     i

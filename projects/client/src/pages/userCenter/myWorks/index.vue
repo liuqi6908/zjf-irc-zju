@@ -190,16 +190,16 @@ function resetForm() {
       @update:model-value="(val) => !val && resetForm()"
       @ok="confirmWork"
     >
-      <div bg-grey-1 flex="~ col gap-2">
-        <span font-500 text-grey-8>题目</span>
+      <div bg-grey-1 flex="~ col gap-2" text-sm>
+        <span font-500>题目</span>
         <UserCodeInput v-model:user-code="editInfo.title" label="请输入题目" :dark="false" />
 
-        <span font-500 text-grey-8 mt-4>作者</span>
+        <span font-500 mt-4>作者</span>
         <UserCodeInput v-model:user-code="editInfo.author" label="请输入作者" :dark="false" />
 
         <div flex="~ col" my-4>
           <div flex="~ row justify-between items-center">
-            <span text-grey-8>
+            <span font-500>
               上传资料
               <span text-grey-6 font-400>（必须为 PDF 格式，且不超过 20 MB）</span>
             </span>

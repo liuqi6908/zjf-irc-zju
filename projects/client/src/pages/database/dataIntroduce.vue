@@ -15,8 +15,6 @@ const route = useRoute()
 const $router = useRouter()
 const { isDesktop, isLogin, isVerify } = useUser()
 const { $get } = useRequest()
-const { y } = useScroll(document)
-y.value = 0
 
 const tableFieldsCol: QTableProps['columns'] = [
   { label: '字段', name: 'nameZH', field: 'nameZH', align: 'center' },
@@ -161,7 +159,7 @@ async function downloadData() {
       <div text="primary-1 left" text-4 mt-6 v-text="`引用规范：${route.query.reference || '暂无引用规范'}`" />
     </div>
 
-    <div flex="~ col" items-center gap-4 my-10>
+    <div flex="~ col" items-center gap-4 my-20>
       <template v-if="!isPurchased">
         <router-link v-if="!isDesktop && !isApplyDesktop" :to="{ path: '/request' }">
           <q-btn

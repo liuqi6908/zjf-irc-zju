@@ -206,17 +206,17 @@ onBeforeMount(() => {
       </div>
     </div>
     <!-- 用户状态 -->
-    <div flex="~ row" w-full justify-center items-center mt-10 gap-5>
+    <div flex-center w-full mt-20>
       <!-- 已拒绝 -->
       <div v-if="latestVerifiy?.status === VerificationStatus.REJECTED" flex="~ col items-center" w-full>
-        <div flex="~ row" justify-center items-center gap-5>
+        <div flex="~ row" justify-center items-center gap-8>
           <VerifyStatus :status="latestVerifiy?.status" />
           <Btn1
             label="前往认证" icon w-53
             @click="showVeri = true"
           />
         </div>
-        <div flex="~ col" mt-5 w-full bg-grey-2 p-4 text="base grey-8 left">
+        <div flex="~ col" mt-6 w-full bg-grey-2 p-4 text="base grey-8 left">
           <div mb-2 font-600>
             驳回理由
           </div>
@@ -224,7 +224,7 @@ onBeforeMount(() => {
         </div>
       </div>
       <!-- 其他状态 -->
-      <div v-else flex="~ row" justify-center items-center gap-5 w-full>
+      <div v-else flex="~ row" justify-center items-center gap-8 w-full>
         <VerifyStatus :status="latestVerifiy?.status" />
         <Btn1
           v-if="latestVerifiy?.status === VerificationStatus.CANCELLED || !latestVerifiy"

@@ -163,7 +163,7 @@ function clearInputFiles() {
 </script>
 
 <template>
-  <div>
+  <div text-sm>
     <!-- 加载中 -->
     <div v-if="loading" full flex-center absolute z-100 top-0 left-0 style="background: rgba(255, 255, 255, 0.6)">
       <q-spinner
@@ -215,7 +215,7 @@ function clearInputFiles() {
         {{ outgoingInfo[model].dropzoneFile?.name }}
         <q-icon
           name="fas fa-close" size="7px"
-          relative cursor-pointer top-1 bg-gray-4 text-white
+          relative cursor-pointer top-1 bg-gray-4 text-grey-1
           p-1 rounded="1/2" ml-4 hover:bg-grey-5 transition
           @click="outgoingInfo[model].dropzoneFile = undefined"
         />

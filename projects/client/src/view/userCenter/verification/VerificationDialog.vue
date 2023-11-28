@@ -128,17 +128,18 @@ watch(
 
 <template>
   <ZDialog
-    :wrapper-style="{ height: '80vh' }"
-    class="max-w-300px"
+    :wrapper-style="{ height: '80vh', width: '600px' }"
     :model-value="modelValue" footer scroll
     title="需要完善信息并且通过审核"
     :disable-confirm="disable"
     @update:model-value="(val) => $emit('update:modelValue', val)"
     @ok="requestVerify"
   >
-    <div flex="~ col" gap1>
+    <div flex="~ col" gap1 text-sm>
       <section class="form-item">
-        <span text-grey-8>学校名称</span>
+        <span text-grey-8>
+          学校名称
+        </span>
         <VerificationInput
           v-model="verifyInfo.school"
           v-model:errored="veriAccept.school"
@@ -148,7 +149,9 @@ watch(
       </section>
 
       <section class="form-item">
-        <span text-grey-8> 所在学院</span>
+        <span text-grey-8>
+          所在学院
+        </span>
         <VerificationInput
           v-model="verifyInfo.college"
           v-model:errored="veriAccept.college"
@@ -158,7 +161,9 @@ watch(
       </section>
 
       <section class="form-item">
-        <span text-grey-8> 身份证号码</span>
+        <span text-grey-8>
+          身份证号码
+        </span>
         <VerificationInput
           v-model="verifyInfo.idCard"
           v-model:errored="veriAccept.idCard"
@@ -168,7 +173,9 @@ watch(
       </section>
 
       <section class="form-item">
-        <span text-grey-8> 学号/工号</span>
+        <span text-grey-8>
+          学号/工号
+        </span>
         <VerificationInput
           v-model="verifyInfo.number"
           v-model:errored="veriAccept.number"
@@ -178,7 +185,9 @@ watch(
       </section>
 
       <section class="form-item">
-        <span text-grey-8> 姓名</span>
+        <span text-grey-8>
+          姓名
+        </span>
         <VerificationInput
           v-model="verifyInfo.name"
           v-model:errored="veriAccept.name"
@@ -188,7 +197,9 @@ watch(
       </section>
 
       <section class="form-item" mb5>
-        <span text-grey-8>身份 </span>
+        <span text-grey-8>
+          身份
+        </span>
         <ZSelect
           v-model="identify"
           label="请选择您的身份"
@@ -198,7 +209,9 @@ watch(
 
       <section class="form-item">
         <div flex="~ row justify-between items-center">
-          <span class="label" font-500 text-grey-8>上传资料</span>
+          <span class="label" font-500 text-grey-8>
+            上传资料
+          </span>
           <div class="q-gutter-md" style="max-width: 300px">
             <QFile
               ref="myFileInput"
@@ -244,14 +257,14 @@ watch(
                 left="1/2" top="1/2"
                 translate-x="-1/2"
                 translate-y="-1/2"
-                absolute i-material-symbols:close-rounded text-white
+                absolute i-material-symbols:close-rounded text-grey-1
               />
             </div>
           </div>
         </div>
 
         <!-- 用户协议 -->
-        <ProtocolVerify v-model="agreeWithProtocol" />
+        <ProtocolVerify mt-4 v-model="agreeWithProtocol" />
       </section>
     </div>
   </ZDialog>

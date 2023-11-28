@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { isClient } from '@vueuse/core'
+import { QScrollArea } from 'quasar'
+
 useHead({
   title: '智能云科研平台',
   meta: [
@@ -12,8 +15,48 @@ useHead({
     },
   ],
 })
+
+const el = ref<QScrollArea>()
+const route = useRoute()
+
+watch(
+  () => route.name,
+  () => {
+    el.value?.setScrollPosition('vertical', 0)
+  },
+)
+
+const { width } = useWindowSize()
+watch(
+  width,
+  (newVal) => {
+    if (isClient) {
+      nextTick(() => {
+        const body = document.body
+        const base = 700
+        if (body) {
+          if (newVal < base) {
+            body.style.transform = `scale(${newVal / base})`
+            body.style.width = `${base / newVal * 100}%`
+            body.style.height = `${base / newVal * 100}%`
+          }
+          else {
+            body.style.transform = ''
+            body.style.width = '100%'
+            body.style.height = '100%'
+          }
+        }
+      })
+    }
+  },
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <template>
-  <RouterView />
+  <QScrollArea ref="el" full>
+    <RouterView />
+  </QScrollArea>
 </template>

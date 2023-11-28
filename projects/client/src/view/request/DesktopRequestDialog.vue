@@ -73,13 +73,13 @@ function removeFile(index: number) {
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <div flex="~ col" gap2>
-      <span text-grey-8 font-600 text-3.5>云桌面使用时长</span>
+      <span font-500 text-sm>云桌面使用时长</span>
       <ZSelect v-model="select" class="req-duration-select" :options="options" />
     </div>
 
     <div my-6 flex="~ col">
       <div flex="~ row justify-between items-center" mb-2>
-        <div text-3.5 font-600 text-grey-8>
+        <div text-sm font-500>
           <span text-red>*</span>
           研究计划/其他材料
         </div>
@@ -96,12 +96,12 @@ function removeFile(index: number) {
       </div>
 
       <div flex="~ col" gap2>
-        <div v-for="(item, index) in files" :key="index" flex="~ row" items-center justify-between text-grey-5>
+        <div v-for="(item, index) in files" :key="index" flex="~ row" items-center justify-between>
           <div flex="~" items-center gap1>
             <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M0.570312 13.6673V0.333984H7.23698L11.237 4.33398V13.6673H0.570312ZM6.57031 5.00065V1.66732H1.90365V12.334H9.90365V5.00065H6.57031Z" fill="#6E7686" />
             </svg>
-            <span text-grey-8>{{ item.name }}</span>
+            <span>{{ item.name }}</span>
           </div>
           <div flex="~ center" cursor-pointer h4 w4 @click="removeFile(index)">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -112,7 +112,7 @@ function removeFile(index: number) {
       </div>
     </div>
 
-    <ProtocolDesktop v-model="read" />
+    <ProtocolDesktop text-sm v-model="read" />
   </ZDialog>
 </template>
 

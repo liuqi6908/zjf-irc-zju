@@ -146,13 +146,14 @@ async function changePassword() {
   >
     <div w-limited-1 bg-white>
       <div flex="~ row justify-between items-center">
-        <div my-4 flex="~ row">
-          <img mr-2 h-6 src="../assets/layout/cloud.png">
-          <div>
-            <span font-600 text-xl text-primary-1>
-              智能云科研平台 |
-            </span>
-            <span text-primary-1>CloudResearch</span>
+        <div my-4 flex="~ row gap-2 items-center" text-primary-1>
+          <img w-10 src="../assets/layout/cloud.png">
+          <div font-600 text-2xl>
+            智能云科研平台
+          </div>
+          <div w-3px h-8 bg-primary-1 />
+          <div text-lg>
+            CloudResearch
           </div>
         </div>
 
@@ -210,7 +211,7 @@ async function changePassword() {
             px8
             v-bind="objectPick(tab, ['to'])"
           >
-            <span text-primary-1 text-16px font-bold>{{ tab.label }}</span>
+            <span text-primary-1 text-base font-600>{{ tab.label }}</span>
           </q-route-tab>
         </q-tabs>
       </div>

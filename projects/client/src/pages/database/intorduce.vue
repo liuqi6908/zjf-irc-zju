@@ -137,7 +137,7 @@ onMounted(() => {
           <q-item
             v-for="(node, index) in navList"
             :key="index" class="ellipsis"
-            flex="~ col justify-center items-start" min-h-10 p-0 font-600 clickable w-50 px2 :active="link === node.textContent"
+            flex="~ col justify-center items-start" min-h-10 p-0 font-500 clickable w-50 px2 :active="link === node.textContent"
             active-class="text-primary-1 bg-grey-2" @click="scrollTo(node.textContent, index)"
           >
             <q-item-section>

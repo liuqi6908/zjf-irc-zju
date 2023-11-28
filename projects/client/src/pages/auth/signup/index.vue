@@ -46,10 +46,10 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
 </script>
 
 <template>
-  <div w-full flex="~ col" text="14px grey-1" font-500>
-    <header flex="~ flex row items-center justify-center" mb-10 relative>
-      <div i-mingcute:left-line cursor-pointer absolute left-0 text-xl top-2.5 w-5.5 @click="router.replace({ path: 'login' })" />
-      <span text-7 font-600>注册</span>
+  <div w-full flex="~ col" text="sm grey-1" font-500>
+    <header flex="~ flex items-center" mb-14 relative>
+      <div i-mingcute:left-line cursor-pointer text-xl w-5.5 @click="router.replace({ path: 'login' })" />
+      <span text-7 font-600 absolute-x-center>注册</span>
     </header>
 
     <span mb-2 v-text="'用户名称'" />
@@ -97,7 +97,9 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
     />
 
     <client-only>
-      <Btn color="primary-1" bg-color="grey-1" mt-5 w-full label="注册" :disable="disable" @click="signUp" />
+      <Btn color="primary-1" bg-color="grey-1" mt-5 h="12!" :disable="disable" @click="signUp">
+        <div text-base font-600>注册</div>
+      </Btn>
     </client-only>
   </div>
 </template>
