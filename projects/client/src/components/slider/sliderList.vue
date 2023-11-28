@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useRouter } from 'vue-router'
 import { watch } from 'vue'
 
 interface Item {
@@ -13,10 +12,9 @@ interface Props {
   list: Item[]
   currentId: string
 }
+
 const props = defineProps<Props>()
 const emits = defineEmits(['update:currentId'])
-
-const router = useRouter()
 
 function updateId(item: Item) {
   const clickedIdList = props.list.filter(i => i.id !== item.id)
@@ -27,12 +25,18 @@ function updateId(item: Item) {
   emits('update:currentId', item.id)
 }
 
-watch(() => props.currentId, (id) => {
-  if (!id)
-    return
-  const itemToClick = props.list.find(item => item.id === id)
-  updateId(itemToClick || props.list[0])
-}, { immediate: true })
+watch(
+  () => props.currentId,
+  (id) => {
+    if (!id)
+      return
+    const itemToClick = props.list.find(item => item.id === id)
+    updateId(itemToClick || props.list[0])
+  },
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <template>
@@ -51,11 +55,7 @@ watch(() => props.currentId, (id) => {
       active-class="bg-gray-2"
       @click="updateId(item)"
     >
-      {{ item. nameZH }}
+      {{ item.nameZH }}
     </q-item>
   </q-list>
 </template>
-
-<style lang="sass" scoped>
-
-</style>
