@@ -149,7 +149,7 @@ export class UserController {
     @Req() req: FastifyRequest,
   ) {
     const user = req.raw.user!
-    const correct = await comparePassword(body.oldPassword, user.password)
+    const correct = await comparePassword(body.oldPassword, user.password || '')
     if (!!user.password && !correct)
       responseError(ErrorCode.AUTH_PASSWORD_NOT_MATCHED)
     await this._userSrv.updateUserPassword({ id: user.id }, body.newPassword)
