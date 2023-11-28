@@ -18,7 +18,6 @@ withDefaults(defineProps<Props>(), {
     :label="label"
     h-12
     square size="16px" unelevated font-600
-    style="font-family: PingFang SC;"
   >
     <slot />
     <template v-if="icon">

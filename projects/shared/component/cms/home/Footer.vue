@@ -1,12 +1,12 @@
 <template >
-    <div 
-      flex="~ row justify-center" 
+    <div
+      flex="~ row justify-center"
       p25 text-grey-1 w-full bg="#001020"
       gap24
     >
       <div v-for="(item,index) in list" :key="index" flex="~ row" class="footer-item">
         <div flex="~ col">
-            <span text-4.5 font-600 mb-5>{{ item.title }}</span>
+            <span text-4.5 font-500 mb-5>{{ item.title }}</span>
             <div class="col-grow items-center" v-html="item.richText"/>
         </div>
       </div>

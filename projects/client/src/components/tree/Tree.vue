@@ -38,7 +38,7 @@ const route = useRoute()
           header-class="font-600 text-4.5"
         >
           <template #label>
-            <div text-4.5 font-bold text-gray-8>
+            <div text-4.5 font-600 text-gray-8>
               {{ child.nameZH }}
             </div>
           </template>

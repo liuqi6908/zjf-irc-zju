@@ -128,7 +128,7 @@ watch(
 </script>
 
 <template>
-  <div mt-10 w-full mb-20 max-w-6xl>
+  <div mt-10 w-full max-w-6xl flex="~ col gap-6">
     <LineEchartsCard
       v-for="(item, index) in data"
       :key="index"

@@ -46,16 +46,16 @@ async function handleEnter() {
 </script>
 
 <template>
-  <div w-full flex="~ col" text-grey-1 font-500>
+  <div w-full flex="~ col" text="sm grey-1" font-500>
     <header flex="~ flex col items-center justify-center" mb-12>
       <span font-600 text-7 v-text="'登录'" />
     </header>
-    <span mb-1 v-text="'账号 / 邮箱'" />
+    <span mb-2 v-text="'账号 / 邮箱'" />
     <UserCodeInput
       v-model:userCode="userCode"
       label="请输入账号/邮箱"
     />
-    <span mb-1 mt-4 v-text="'密码'" />
+    <span mb-2 mt-6 v-text="'密码'" />
     <PasswordInput
       v-model:password="password"
       reactive-rules
@@ -64,14 +64,16 @@ async function handleEnter() {
       @keydown.enter="handleEnter()"
     />
 
-    <RouterLink text-grey-1 text-xs mt-4 :to="{ path: 'forgetPassword' }" v-text="'忘记密码？'" />
+    <RouterLink text-grey-1 font-400 mt-2 :to="{ path: 'forgetPassword' }" v-text="'忘记密码？'" />
 
     <client-only>
-      <Btn color="primary-1" mt-12 bg-color="grey-1" :disable="disable" label="登录" @click="handleEnter" />
+      <Btn color="primary-1" mt-20 h="12!" bg-color="grey-1" :disable="disable" @click="handleEnter">
+        <div text-base font-600>登录</div>
+      </Btn>
     </client-only>
 
-    <div flex-center m-t-5 text-grey-3>
-      没有账号？
+    <div flex-center mt-4 font-400>
+      <span text-white-7>没有账号？</span>
       <RouterLink text-grey-1 :to="{ path: 'signup' }" v-text="'立即注册'" />
     </div>
 

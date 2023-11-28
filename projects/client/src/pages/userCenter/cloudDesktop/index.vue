@@ -216,21 +216,36 @@ function copyText(text: string) {
       <!-- 状态及操作 -->
       <header flex="~ row justify-between">
         <DesktopStatus :status="requestInfo.status as DesktopQueueStatus" :duration="remainingTime" />
-        <div flex="~ row gap-5" class="desktop-operation-buttons">
-          <Btn w28 label="开机" :disable="vmStatus !== '已关机'" @click="desktopOperate('开机')">
-            <template #icon>
-              <q-icon name="fas fa-power-off" size="16px" relative top="-0.5" ml-2 />
-            </template>
+        <div flex="~ row gap-4" class="desktop-operation-buttons">
+          <Btn
+            :disable="vmStatus !== '已关机'" w28
+            :bg-color="vmStatus !== '已关机' ? 'grey-4' : undefined"
+            @click="desktopOperate('开机')"
+          >
+            <div text-base flex="~ gap-2 items-center">
+              开机
+              <q-icon name="fas fa-power-off" size="18px" />
+            </div>
           </Btn>
-          <Btn w28 label="关机" :disable="vmStatus !== '运行中'" @click="desktopOperate('关机')">
-            <template #icon>
-              <q-icon name="fas fa-power-off" size="16px" relative top="-0.5" ml-2 />
-            </template>
+          <Btn
+            :disable="vmStatus !== '运行中'" w28
+            :bg-color="vmStatus !== '运行中' ? 'grey-4' : undefined"
+            @click="desktopOperate('关机')"
+          >
+            <div text-base flex="~ gap-2 items-center">
+              关机
+              <q-icon name="fas fa-power-off" size="18px" />
+            </div>
           </Btn>
-          <Btn w28 label="重启" :disable="vmStatus !== '运行中'" @click="desktopOperate('重启')">
-            <template #icon>
-              <q-icon name="fas fa-sync" size="16px" relative top="-0.5" ml-2 />
-            </template>
+          <Btn
+            :disable="vmStatus !== '运行中'" w28
+            :bg-color="vmStatus !== '运行中' ? 'grey-4' : undefined"
+            @click="desktopOperate('重启')"
+          >
+            <div text-base flex="~ gap-2 items-center">
+              重启
+              <q-icon name="fas fa-sync" size="18px" />
+            </div>
           </Btn>
         </div>
       </header>
@@ -361,7 +376,6 @@ function copyText(text: string) {
 .desktop-operation-buttons
   .q-btn.disabled
     opacity: 1 !important
-    background: var(--grey-4)
 .base-info
   > div:nth-child(2n)
     background: rgba(2, 92, 185, 0.06)

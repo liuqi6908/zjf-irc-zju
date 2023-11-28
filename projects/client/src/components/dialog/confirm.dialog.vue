@@ -26,7 +26,6 @@ const btnPrimary = computed(() => {
       style="width: 90%; max-width: 400px; min-height: 150px;"
     >
       <div absolute right-4 top-4>
-        <!-- <Btn v-close-popup icon="fas fa-times-circle" type="flat" style="--q-primary: var(--netural-6);" /> -->
         <q-btn
           color="primary" icon="fas fa-times"
           style="--q-primary: #e0e0e0"

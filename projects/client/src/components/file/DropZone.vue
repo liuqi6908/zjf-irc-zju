@@ -24,7 +24,7 @@ function toggleActive(event: Event) {
         <div class="label-box" mb-2 border-1 text-primary-1 border-primary-1 w-14 h-14 flex items-center justify-center>
           <q-icon name="far fa-plus" />
         </div>
-        <div font-500 text-primary-1 leading-5>选择文件</div>
+        <div font-500 text="sm primary-1">选择文件</div>
       </label>
       <input id="dropZoneFile" ref="dropZoneFileRef" class="drop-zone-file" type="file" @change="handleFileChange">
       <slot />

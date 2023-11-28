@@ -48,7 +48,7 @@ watch(
         <q-item flex-center pr0>
           <router-link
             :to="{ path: '/database/intorduce', query: { rootId: route.query.database, nameEN: list?.nameEN } }"
-            shrink-0 text-nowrap text-primary-1
+            shrink-0 text-nowrap text-primary-1 leading-18px border-b="1px solid primary-1"
           >
             查看数据库介绍
           </router-link>

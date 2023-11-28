@@ -1,0 +1,54 @@
+/* styles.css */
+
+/* Reset some default browser styles */
+body, h1, h2, p, ul, li {
+  margin: 0;
+  padding: 0;
+}
+
+/* Styling for heading tags */
+h1 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+h4 {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+
+/* Default paragraph styles */
+p {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Default list styles */
+ul {
+  list-style: disc;
+  margin-left: 20px;
+}
+
+li {
+  margin-bottom: 6px;
+}
+
+/* Links */
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+
+

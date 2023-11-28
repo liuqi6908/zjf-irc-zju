@@ -70,7 +70,7 @@ defineEmits([...useDialogPluginComponent.emits, 'update:back', 'update:modelValu
           </q-btn>
           <q-btn
             v-close-popup flat square h10 min-w-28 bg-primary-1
-            text-white :disable="disableConfirm"
+            text-grey-1 :disable="disableConfirm"
             @click="$emit('ok')"
           >
             <span text-3.5 font-500>{{ confirmText }}</span>

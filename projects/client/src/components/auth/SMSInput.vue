@@ -76,7 +76,7 @@ watch(
             ),
           }"
           label="发送验证码"
-          cursor-pointer px2 py1 text-sm
+          cursor-pointer px3 py2 text-sm
           @click="getCode()"
         >
           发送验证码

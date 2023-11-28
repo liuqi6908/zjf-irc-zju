@@ -28,10 +28,10 @@ export default ({ mode }: any) => {
     },
     server: {
       host: '0.0.0.0',
-      port: Number.parseInt((process.env.VITE_DEV_PORT as string) || '3333', 10),
+      port: Number.parseInt((process.env.VITE_PORT as string) || '3333', 10),
       proxy: {
         [process.env.VITE_API_BASE as string]: {
-          target: process.env.VITE_DEV_PROXY_TARGET,
+          target: process.env.VITE_PROXY_TARGET,
           changeOrigin: true,
           rewrite: path => path.replace(new RegExp(`^${process.env.VITE_API_BASE}`), ''),
           secure: false,
@@ -72,7 +72,6 @@ export default ({ mode }: any) => {
         dts: 'src/auto-imports.d.ts',
         dirs: [
           'src/composables',
-          'src/stores',
           'src/constants',
           'src/views',
         ],
@@ -121,13 +120,7 @@ export default ({ mode }: any) => {
       // https://github.com/webfansplz/vite-plugin-vue-devtools
       VueDevTools(),
     ],
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: '@import "shared/style/base.scss";',
-        },
-      },
-    },
+
     // https://github.com/vitest-dev/vitest
     test: {
       include: ['test/**/*.test.ts'],

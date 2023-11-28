@@ -13,9 +13,6 @@ import HostTiming from '~/view/request/host/HostTiming.vue'
 
 const { isLogin, isVerify, getVerify, latestVerifiy } = useUser()
 const $router = useRouter()
-/** 滚动至页面顶部 */
-const { y } = useScroll(document)
-y.value = 0
 
 /** 用户认证状态 */
 const userStatus = computed(() => latestVerifiy.value?.status)
@@ -261,7 +258,7 @@ watch(desktopList, (newVal) => {
             </div>
           </div>
 
-          <div w-full bg-grey-1 px8 py10>
+          <div w-full bg-grey-1 mb-20 px8 py10>
             <header v-if="model && desktopList" mb-10>
               <q-btn-toggle
                 v-model="model"
