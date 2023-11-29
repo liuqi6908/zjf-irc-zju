@@ -111,7 +111,7 @@ function approve(id: string) {
     try {
       await approveDesktop(id)
       $q.notify({
-        message: '通过成功！',
+        message: '将自动为用户创建并分配云桌面，请耐心等待！',
         type: 'success',
       })
       tableRef.value?.requestServerInteraction()

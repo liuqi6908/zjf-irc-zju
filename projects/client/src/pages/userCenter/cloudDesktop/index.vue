@@ -262,9 +262,12 @@ function copyText(text: string) {
           }"
         >
           <div overflow-hidden bg-grey-2 text-ellipsis whitespace-nowrap px-6 py-3 v-text="item.label" />
-          <div flex pl-6 items-center justify-between py-1 pr-4>
-            <div w-0 overflow-hidden text-ellipsis whitespace-nowrap flex-1 v-text="item.hide && hidePassword ? '********' : item.value" />
-            <div text-grey-4>
+          <div flex pl-6 items-center justify-between h-11 pr-4>
+            <div
+              w-0 overflow-hidden text-ellipsis whitespace-nowrap flex-1
+              v-text="item.value !== '您的登录密码' && item.hide && hidePassword ? '********' : item.value"
+            />
+            <div text-grey-4 v-if="item.value !== '您的登录密码'">
               <q-btn v-if="item.hide" flat px-2 @click="hidePassword = !hidePassword">
                 <div v-if="hidePassword" text-xl i-mingcute:eye-close-line />
                 <div v-else text-xl i-mingcute:eye-2-line />
