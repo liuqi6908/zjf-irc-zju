@@ -3,8 +3,8 @@ const $router = useRouter()
 </script>
 
 <template>
-  <div class="confirmation" absolute inset-0 flex="~ row">
-    <div class="col-grow confirmation-bgImg">
+  <div class="confirmation" absolute inset-0 flex="~ row justify-end">
+    <div class="confirmation-bgImg" absolute inset-y-0 left-0 w-1290px>
       <header flex="~ items-center gap-2" text-grey-1 absolute cursor-pointer left-12 top-10 @click="$router.push('/')">
         <img w-12 src="../assets/auth/couldTitle.png">
         <div text-7 font-600>
@@ -46,6 +46,7 @@ $linear: linear-gradient(135deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 25
     &-bgImg {
       background: no-repeat url(~/assets/auth/authBgRect.svg);
       background-size: cover;
+      background-position: center;
     }
     &-card {
       border: 1px solid transparent;
