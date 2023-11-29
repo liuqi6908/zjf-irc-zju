@@ -7,8 +7,10 @@ import { mergeDeep } from 'src/utils/mergeDeep'
 import type { OnModuleInit } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { responseError } from 'src/utils/response'
+import { HttpService } from '@nestjs/axios'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { encryptPassword } from 'src/utils/encrypt/encrypt-password'
+import { rsaEncrypt } from 'src/utils/rsa'
 
 import type {
   FindManyOptions,
@@ -20,7 +22,8 @@ import {
   Not,
   Repository,
 } from 'typeorm'
-import type { SysAdmin } from '../../config/_sa.config'
+import type { YunApp } from 'src/config/_yun.config'
+import type { SysAdmin } from 'src/config/_sa.config'
 
 const defaultQueryUserOptions = {
   where: { isDeleted: false, isSysAdmin: false },
@@ -32,6 +35,7 @@ export class UserService implements OnModuleInit {
     @InjectRepository(User)
     private readonly _userRepo: Repository<User>,
     private readonly _cfgSrv: ConfigService,
+    private readonly _httpSrv: HttpService,
   ) {}
 
   onModuleInit() {
@@ -181,15 +185,26 @@ export class UserService implements OnModuleInit {
 
   /**
    * 更新某个用户的密码
-   * @param where
+   * @param id
    * @param newPassword
    */
   public async updateUserPassword(
-    where: FindOptionsWhere<User> | string | number,
+    id: string,
     newPassword: string,
   ) {
-    await this._userRepo.update(where, {
-      password: await encryptPassword(newPassword),
+    await this._userRepo.manager.transaction(async (transactionRepository) => {
+      try {
+        await transactionRepository.update(User, { id }, { password: await encryptPassword(newPassword) })
+        // await this._userRepo.update({ id }, { password: await encryptPassword(newPassword) })
+        const user = await this._userRepo.createQueryBuilder('user')
+          .where('user.id = :id', { id })
+          .addSelect('user.password')
+          .getOne()
+        await this.syncAccountPassword({ account: user.account, password: newPassword }, !user.password ? 0 : 1)
+      }
+      catch (_) {
+        responseError(ErrorCode.COMMON_UNEXPECTED_ERROR)
+      }
     })
   }
 
@@ -206,6 +221,33 @@ export class UserService implements OnModuleInit {
     const filteredBasicInfo = objectPick(newBasicInfo, allowedKeys, true)
     const updateRes = await this._userRepo.update(where, filteredBasicInfo)
     return updateRes.affected > 0
+  }
+
+  /**
+   * 同步账号密码至云之遥
+   * @param userInfo
+   * @param flag
+   */
+  public async syncAccountPassword(userInfo: {
+    account: string
+    password?: string
+  }, flag: 0 | 1) {
+    const { account, password } = userInfo
+    if (account && password) {
+      const url = ['/newAdUser', '/changeAdUserPasswors']
+      const { host, public_key } = this._cfgSrv.get<YunApp>('yun')
+      const { data } = await this._httpSrv.axiosRef({
+        baseURL: host,
+        method: 'POST',
+        url: url[flag],
+        data: {
+          account,
+          [['password', 'newPassword'][flag]]: await rsaEncrypt(password, public_key),
+        },
+      })
+      if (data.code !== 200)
+        throw new Error('同步账号失败')
+    }
   }
 
   public qb(alias = 'u') {

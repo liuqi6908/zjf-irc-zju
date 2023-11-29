@@ -1,13 +1,16 @@
 import { LessThan, Repository } from 'typeorm'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, forwardRef } from '@nestjs/common'
 import type { User } from 'src/entities/user'
 import { InjectRepository } from '@nestjs/typeorm'
 import { responseError } from 'src/utils/response'
 import { DesktopQueue } from 'src/entities/desktop-queue'
 import { DesktopQueueStatus, ErrorCode } from 'zjf-types'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
-
+import type { UserIdDto } from 'src/dto/user-id.dto'
 import { NotifyService } from 'src/modules/notify/notify.service'
+import { UserService } from 'src/modules/user/user.service'
+import { DesktopService } from '../desktop.service'
+
 import type { CreateDesktopRequestBodyDto } from './dto/create-desktop-req.body.dto'
 
 @Injectable()
@@ -16,6 +19,9 @@ export class DesktopRequestService {
     @InjectRepository(DesktopQueue)
     private readonly _desktopQueueRepo: Repository<DesktopQueue>,
     private readonly _notifySrv: NotifyService,
+    @Inject(forwardRef(() => DesktopService))
+    private readonly _desktopSrv: DesktopService,
+    private readonly _userSrv: UserService,
   ) {}
 
   /**
@@ -62,6 +68,27 @@ export class DesktopRequestService {
         responseError(ErrorCode.COMMON_UNEXPECTED_ERROR)
       }
     }
+  }
+
+  /**
+   * 通过一个云桌面申请
+   * @param param
+   * @returns
+   */
+  public async approveRequest(param: UserIdDto) {
+    const updateRes = await this._desktopQueueRepo.update(
+      { userId: param.userId, status: DesktopQueueStatus.Pending },
+      { status: DesktopQueueStatus.Queueing, queueAt: new Date() },
+    )
+    // 根据用户账号调用云之遥接口开通云桌面
+    const desktopReq = await this._desktopQueueRepo.findOne(
+      {
+        where: { userId: param.userId, status: DesktopQueueStatus.Queueing },
+      },
+    )
+    const user = await this._userSrv.repo().findOne({ where: { id: param.userId } })
+    this._desktopSrv.applyOrStopDesktop(user, 0, desktopReq.duration)
+    return updateRes.affected > 0
   }
 
   /**

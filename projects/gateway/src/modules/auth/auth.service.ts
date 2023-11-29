@@ -14,7 +14,7 @@ import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { comparePassword } from 'src/utils/encrypt/encrypt-password'
 
 import { generateSign, rsaDecrypt } from 'src/utils/rsa'
-import type { LoginApp } from '../../config/_login.config'
+import type { LoginApp } from 'src/config/_login.config'
 
 import { UserService } from '../user/user.service'
 import { CodeService } from '../code/code.service'
@@ -94,7 +94,7 @@ export class AuthService {
     return getCfg(data)
   }
 
-  public requestWithSession<T = any>(
+  private requestWithSession<T = any>(
     request: (axiosCfg) => Promise<AxiosResponse<T>>,
   ) {
     return new Promise<T>((resolve, reject) => {
@@ -265,7 +265,7 @@ export class AuthService {
    */
   public async register(body: RegisterBodyDto) {
     // 校验 账号 是否被注册
-    const user = await this._userSrv.qb()
+    let user = await this._userSrv.qb()
       .where('account = :account', { account: body.account })
       .getOne()
     if (user)
@@ -280,14 +280,25 @@ export class AuthService {
 
     // 创建用户
     try {
-      const user = await this._userSrv.insertUser(userInfo)
+      user = await this._userSrv.insertUser(userInfo)
+      // 将账号密码同步至云之遥
+      await this._userSrv.syncAccountPassword(userInfo, 0)
       const sign = await this._jwtAuthSrv.signLoginAuthToken(user)
       return { sign, user: objectOmit(user, ['password']) }
     }
     catch (e) {
+      if (user) {
+        await this._userSrv.repo()
+          .createQueryBuilder()
+          .delete()
+          .where({ id: user.id })
+          .execute()
+      }
       const sqlError = parseSqlError(e)
       if (sqlError === SqlError.DUPLICATE_ENTRY)
         responseError(ErrorCode.USER_EXISTED, '邮箱或账号已被注册')
+      else if (e.message === '同步账号失败')
+        responseError(ErrorCode.COMMON_UNEXPECTED_ERROR, e.message)
       throw e
     }
   }

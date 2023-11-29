@@ -152,7 +152,7 @@ export class UserController {
     const correct = await comparePassword(body.oldPassword, user.password || '')
     if (!!user.password && !correct)
       responseError(ErrorCode.AUTH_PASSWORD_NOT_MATCHED)
-    await this._userSrv.updateUserPassword({ id: user.id }, body.newPassword)
+    await this._userSrv.updateUserPassword(user.id, body.newPassword)
     // 登出当前用户的所有登录会话
     // this._authSrv.logoutUser(user.id)
     return true
@@ -167,7 +167,7 @@ export class UserController {
     const user = await this._userSrv.repo().findOne({ where: { email } })
     if (!user)
       responseError(ErrorCode.AUTH_EMAIL_NOT_REGISTERED)
-    await this._userSrv.updateUserPassword({ id: user.id }, password)
+    await this._userSrv.updateUserPassword(user.id, password)
     // 登出当前用户的所有登录会话
     this._authSrv.logoutUser(user.id)
     return true

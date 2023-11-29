@@ -27,6 +27,7 @@ export class DesktopRequestController {
   ) {}
 
   @ApiOperation({ summary: '发起一个云桌面使用申请' })
+  @IsLogin()
   @VerifiedRequired()
   @Put()
   async requestDesktop(
@@ -41,11 +42,7 @@ export class DesktopRequestController {
   @HasPermission(PermissionType.DESKTOP_REQUEST_APPROVE)
   @Post('approve/:userId')
   async approveRequest(@Param() param: UserIdDto) {
-    const updateRes = await this._desktopReqSrv.repo().update(
-      { userId: param.userId, status: DesktopQueueStatus.Pending },
-      { status: DesktopQueueStatus.Queueing, queueAt: new Date() },
-    )
-    return updateRes.affected > 0
+    return await this._desktopReqSrv.approveRequest(param)
   }
 
   @ApiOperation({ summary: '驳回一个云桌面申请' })

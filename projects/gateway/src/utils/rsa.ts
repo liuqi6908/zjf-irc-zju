@@ -21,12 +21,7 @@ async function generateEncrypt() {
  * @returns
  */
 export async function generateSign(appKey: string, appSecret: string, publicKey: string) {
-  if (!encrypt)
-    await generateEncrypt()
-
-  const data = `app_key=${appKey}&app_secret=${appSecret}`
-  encrypt.setPublicKey(publicKey)
-  return encrypt.encrypt(data)
+  return await rsaEncrypt(`app_key=${appKey}&app_secret=${appSecret}`, publicKey)
 }
 
 /**
@@ -40,6 +35,19 @@ export async function rsaDecrypt(cipherText: string, privateKey: string) {
     await generateEncrypt()
 
   encrypt.setPrivateKey(privateKey)
-
   return encrypt.decrypt(cipherText)
+}
+
+/**
+ * 使用 rse 加密
+ * @param text
+ * @param publicKey
+ * @returns
+ */
+export async function rsaEncrypt(text: string, publicKey: string) {
+  if (!encrypt)
+    await generateEncrypt()
+
+  encrypt.setPublicKey(publicKey)
+  return encrypt.encrypt(text)
 }
