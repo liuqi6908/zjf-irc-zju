@@ -66,7 +66,7 @@ watch(
             ...(
               dark ? {
                 'bg-white/20': true,
-                'text-white': true,
+                'text-grey-1': true,
                 'hover:bg-white/30': true,
               } : {
                 'bg-primary-1/12': true,
@@ -75,7 +75,6 @@ watch(
               }
             ),
           }"
-          label="发送验证码"
           cursor-pointer px3 py2 text-sm
           @click="getCode()"
         >

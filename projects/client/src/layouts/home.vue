@@ -144,7 +144,7 @@ async function changePassword() {
     text="center"
     flex="~ col" items-center
   >
-    <div w-limited-1 bg-white>
+    <div w-limited-1 bg-grey-1>
       <div flex="~ row justify-between items-center">
         <div my-4 flex="~ row gap-2 items-center" text-primary-1>
           <img w-10 src="../assets/layout/cloud.png">

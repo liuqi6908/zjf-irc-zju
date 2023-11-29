@@ -90,7 +90,7 @@ const processedList = computed(() => props.list.map(q => ({
           v-model="openState[item.title]"
           header-class="display-none"
         >
-          <div w-150 pl12 pt4>
+          <div w-full overflow-hidden pl12 pt4>
             <div relative full pl4>
               <div absolute w2px left-0 top="1/2" translate-y="-1/2" bg="primary-1/70" style="height: calc(100% - 10px)"></div>
               <div class="question-content" w-150 v-html="item.richText" />
