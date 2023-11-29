@@ -310,7 +310,7 @@ watch(uploadTab, (currTab) => {
           />
         </q-card-section>
 
-        <q-card-actions align="right" class="bg-white text-teal">
+        <q-card-actions align="right" class="bg-grey-1 text-teal">
           <q-btn flat label="确认" @click="confirmRef" />
         </q-card-actions>
       </q-card>

@@ -95,7 +95,7 @@ const showMenu = computed(() => {
     text="center"
   >
     <q-layout container view="hHh Lpr lff">
-      <q-header bg-white>
+      <q-header bg-grey-1>
         <q-toolbar flex="~ row justify-between">
           <div mx-8 my-4 flex="~ row">
             <span text-xl font-600 text-grey-8>
@@ -124,7 +124,7 @@ const showMenu = computed(() => {
         <q-toolbar p-0 q-none flex="~ items-center justify-end">
           <div
             class="nav-Br my-1"
-            flex-center bg-white w-6 cursor-pointer h-8
+            flex-center bg-grey-1 w-6 cursor-pointer h-8
             @click="drawer = !drawer"
           >
             <q-icon :name="`fas fa-chevron-${drawer ? 'right' : 'left'}`" size="0.25rem" text-grey-5 />

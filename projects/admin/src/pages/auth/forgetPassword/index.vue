@@ -50,13 +50,13 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
 </script>
 
 <template>
-  <div w-full flex="~ col" text="14px grey-8" font-500>
-    <header flex="~ flex items-center justify-center " mb-10 relative>
-      <div i-mingcute:left-line cursor-pointer absolute left-0 text-xl top-0.5 @click="$router.replace({ path: 'login' })" />
-      <span text-5 font-600>邮箱找回</span>
+  <div>
+    <header flex="~ items-center" mb-10 relative>
+      <div i-mingcute:left-line cursor-pointer text-xl @click="$router.replace({ path: 'login' })" />
+      <span text-3xl font-600 absolute-x-center>邮箱找回</span>
     </header>
 
-    <span mb-1 v-text="'邮箱'" />
+    <span mb-2 v-text="'邮箱'" />
     <UserCodeInput
       v-model:userCode="email"
       label="请输入邮箱"
@@ -65,7 +65,7 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
       @update:accept="(val) => acceptObj.email = val"
     />
 
-    <span mb-1 v-text="'邮箱验证'" />
+    <span mb-2 v-text="'邮箱验证'" />
     <SMSInput
       v-model:smsCode="smsCode"
       :action="CodeAction.CHANGE_PASSWORD"
@@ -76,14 +76,14 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
       @update:accept="(val) => acceptObj.sms = val"
     />
 
-    <span mb-1 v-text="'密码'" />
+    <span mb-2 v-text="'密码'" />
     <PasswordInput
       v-model:password="password"
       :rules="[(val: string) => passwordRules(val)]"
       @update:accept="(val) => acceptObj.password = val"
     />
 
-    <span mb-1 v-text="'确认密码'" />
+    <span mb-2 v-text="'确认密码'" />
     <PasswordInput
       v-model:password="repeatPassword"
       reactive-rules
@@ -92,7 +92,7 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
     />
 
     <client-only>
-      <Btn w-full mt-5 label="完成" :disable="disable" @click="finish" />
+      <Btn mt-10 label="完成" :disable="disable" @click="finish" />
     </client-only>
   </div>
 </template>

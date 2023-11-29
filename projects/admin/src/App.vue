@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { isClient } from '@vueuse/core'
+
 useHead({
   title: '智能云科研平台-管理后台',
   meta: [
@@ -12,6 +14,34 @@ useHead({
     },
   ],
 })
+
+const { width } = useWindowSize()
+watch(
+  width,
+  (newVal) => {
+    if (isClient) {
+      nextTick(() => {
+        const body = document.body
+        const base = 900
+        if (body) {
+          if (newVal < base) {
+            body.style.transform = `scale(${newVal / base})`
+            body.style.width = `${base / newVal * 100}%`
+            body.style.height = `${base / newVal * 100}%`
+          }
+          else {
+            body.style.transform = ''
+            body.style.width = '100%'
+            body.style.height = '100%'
+          }
+        }
+      })
+    }
+  },
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <template>
