@@ -5,6 +5,7 @@ import { ApiErrorResponse, responseError } from 'src/utils/response'
 import { Injectable, UseGuards, applyDecorators } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 
+import { ApiBearerAuth } from '@nestjs/swagger'
 import { LoginGuard } from './login.guard'
 
 @Injectable()
@@ -29,7 +30,7 @@ export class VerifiedRequiredGuard
     if (!user)
       responseError(ErrorCode.AUTH_LOGIN_REQUIRED)
     const verified = !!user.verificationId
-    if (!verified)
+    if (!verified && user.roleName !== 'root')
       responseError(ErrorCode.AUTH_NOT_VERIFIED)
     return true
   }
@@ -37,6 +38,7 @@ export class VerifiedRequiredGuard
 
 export function VerifiedRequiredToken() {
   return applyDecorators(
+    ApiBearerAuth(),
     ApiErrorResponse(ErrorCode.AUTH_NOT_VERIFIED),
     UseGuards(VerifiedRequiredGuard),
   )
