@@ -1,10 +1,8 @@
-<script lang="ts" setup>
-
-</script>
+<script lang="ts" setup></script>
 
 <template>
-  <div class="confirmation" full flex-center>
-    <svg preserveAspectRatio="none" class="confirmation_ellipse" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1639 1080" fill="none">
+  <div full flex-center overflow-hidden relative bg="#1877F2">
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1639 1080" fill="none" absolute inset-0>
       <g filter="url(#filter0_di_102_10500)">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M144.502 1141.97C144.502 1141.98 144.502 1141.99 144.502 1142H804.5C901.5 1138.83 1164.7 1043.6 1441.5 688C1565.03 529.297 1669.59 339.859 1752.5 160.02V-228C1272.49 -97 746.026 71.4971 476.003 348C217.047 613.169 147.285 950.23 144.502 1121.03V1141.97Z" fill="#1877F2" />
       </g>
@@ -30,23 +28,7 @@
 
     <!-- auth card  -->
     <q-card flex="~ col" style="width: 30%;" min-w-sm rounded-4 p-10>
-      <RouterView />
+      <RouterView w-full flex="~ col" text-sm font-500 />
     </q-card>
   </div>
 </template>
-
-<style lang="scss" scoped>
-$confirmation-bg:#1877F2;
-
-.confirmation {
-    overflow:hidden;
-    background-color: $confirmation-bg;
-    &_ellipse{
-        position:fixed;
-        top:0;
-        left:0;
-        height:100%;
-        width:100%
-    }
-}
-</style>

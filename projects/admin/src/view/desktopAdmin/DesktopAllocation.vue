@@ -206,12 +206,12 @@ async function downloadTemplate() {
         const { uuid, name, ip } = v
         return [uuid, name, ip, accessUrl, `user-${name}`, generateRandomString(), expiredAt]
       }))
+      downloadCsv(arr.map(v => v.join(',')).join('\n'), '桌面分配')
     }
   }
   catch (_) {}
   finally {
     loading.value = false
-    downloadCsv(arr.map(v => v.join(',')).join('\n'), '桌面分配')
   }
 }
 

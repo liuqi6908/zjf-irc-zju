@@ -1,6 +1,7 @@
 :root {
   --primary: #025CB9;
-  --gray: #000000;
+
+  --text: #292D36;
 
   --success: #22B07D;
   --error: #F44336;

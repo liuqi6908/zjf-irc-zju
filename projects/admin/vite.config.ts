@@ -23,12 +23,15 @@ export default ({ mode }: any) => {
   // Object.assign(process.env, loadEnv(mode, process.cwd()))
   return defineConfig({
     base: process.env.VITE_BASE,
+    define: {
+      'process.env': {},
+    },
     server: {
       host: '0.0.0.0',
-      port: Number.parseInt((process.env.VITE_DEV_PORT as string) || '3333', 10),
+      port: Number.parseInt((process.env.VITE_PORT as string) || '3333', 10),
       proxy: {
         [process.env.VITE_API_BASE as string]: {
-          target: process.env.VITE_DEV_PROXY_TARGET,
+          target: process.env.VITE_PROXY_TARGET,
           changeOrigin: true,
           rewrite: path => path.replace(new RegExp(`^${process.env.VITE_API_BASE}`), ''),
           secure: false,
@@ -40,13 +43,7 @@ export default ({ mode }: any) => {
         '~/': `${path.resolve(__dirname, 'src')}/`,
       },
     },
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: '@import "shared/style/base.scss";',
-        },
-      },
-    },
+
     plugins: [
       VueMacros({
         plugins: {
@@ -75,7 +72,6 @@ export default ({ mode }: any) => {
         dts: 'src/auto-imports.d.ts',
         dirs: [
           'src/composables',
-          'src/stores',
           'src/constants',
           'src/utils',
           'src/views',
