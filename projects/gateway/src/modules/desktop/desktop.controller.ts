@@ -74,12 +74,10 @@ export class DesktopController {
         DesktopQueueHistoryStatus.Expired,
         {},
       )
-      try {
-        // 根据用户账号调用云之遥接口停用云桌面
-        const user = await this._userSrv.repo().findOne({ where: { id: desktop.userId } })
-        this._desktopSrv.applyOrStopDesktop(user.account, 1)
-      }
-      catch (_) {}
+
+      // 根据用户账号调用云之遥接口停用云桌面
+      const user = await this._userSrv.repo().findOne({ where: { id: desktop.userId } })
+      this._desktopSrv.applyOrStopDesktop(user, 1)
     }
 
     const updateRes = await this._desktopSrv.repo().update(
@@ -159,24 +157,7 @@ export class DesktopController {
     if (userAssigned)
       responseError(ErrorCode.DESKTOP_USER_ASSIGNED_OTHERS)
     // 将云桌面分配，并更新用户的状态
-    await this._desktopSrv.repo().update(
-      { id: param.desktopId, disabled: false },
-      {
-        userId: param.userId,
-        expiredAt: new Date(Date.now() + request.duration * 1000 * 60 * 60 * 24),
-      },
-    )
-    await this._desktopReqSrv.repo().update(
-      { userId: param.userId },
-      { status: DesktopQueueStatus.Using },
-    )
-    setTimeout(async () => {
-      const desktop = await this._desktopSrv.repo().findOne({
-        where: { id: param.desktopId },
-        relations: { user: { verification: true } },
-      })
-      this._notifySrv.notifyUserDesktopAssigned(desktop)
-    })
+    await this._desktopSrv.allocationDesktop(param.desktopId, param.userId, request.duration)
     return true
   }
 

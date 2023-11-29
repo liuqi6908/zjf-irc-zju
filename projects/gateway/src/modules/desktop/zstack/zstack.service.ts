@@ -173,7 +173,11 @@ export class ZstackService extends EventEmitter {
           name,
           ip: vmNics[0].ip,
         }
-      })
+      }) as Array<{
+        uuid: string
+        name: string
+        ip: string
+      }>
   }
 
   public async startVM(vmUUID: string) {

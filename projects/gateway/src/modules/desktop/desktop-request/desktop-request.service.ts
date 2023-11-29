@@ -1,5 +1,5 @@
 import { LessThan, Repository } from 'typeorm'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, forwardRef } from '@nestjs/common'
 import type { User } from 'src/entities/user'
 import { InjectRepository } from '@nestjs/typeorm'
 import { responseError } from 'src/utils/response'
@@ -19,6 +19,7 @@ export class DesktopRequestService {
     @InjectRepository(DesktopQueue)
     private readonly _desktopQueueRepo: Repository<DesktopQueue>,
     private readonly _notifySrv: NotifyService,
+    @Inject(forwardRef(() => DesktopService))
     private readonly _desktopSrv: DesktopService,
     private readonly _userSrv: UserService,
   ) {}
@@ -75,26 +76,19 @@ export class DesktopRequestService {
    * @returns
    */
   public async approveRequest(param: UserIdDto) {
-    return await this._desktopQueueRepo.manager.transaction(async (transactionRepository) => {
-      try {
-        const updateRes = await transactionRepository.update(
-          DesktopQueue,
-          { userId: param.userId, status: DesktopQueueStatus.Pending },
-          { status: DesktopQueueStatus.Queueing, queueAt: new Date() },
-        )
-        // 根据用户账号调用云之遥接口开通云桌面
-        const user = await this._userSrv.repo().findOne({ where: { id: param.userId } })
-        const data = await this._desktopSrv.applyOrStopDesktop(user.account, 0)
-        const { desktopId, desktopName, createDate } = data
-        if (!desktopId || !desktopName)
-          throw new Error('云桌面开通失败')
-        return updateRes.affected > 0
-      }
-      catch (e) {
-        console.error(e)
-        responseError(ErrorCode.COMMON_UNEXPECTED_ERROR, e.message)
-      }
-    })
+    const updateRes = await this._desktopQueueRepo.update(
+      { userId: param.userId, status: DesktopQueueStatus.Pending },
+      { status: DesktopQueueStatus.Queueing, queueAt: new Date() },
+    )
+    // 根据用户账号调用云之遥接口开通云桌面
+    const desktopReq = await this._desktopQueueRepo.findOne(
+      {
+        where: { userId: param.userId, status: DesktopQueueStatus.Queueing },
+      },
+    )
+    const user = await this._userSrv.repo().findOne({ where: { id: param.userId } })
+    this._desktopSrv.applyOrStopDesktop(user, 0, desktopReq.duration)
+    return updateRes.affected > 0
   }
 
   /**
