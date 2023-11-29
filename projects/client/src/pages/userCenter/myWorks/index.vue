@@ -97,7 +97,6 @@ async function confirmWork() {
 async function deleteRow(id: string) {
   const dialog = await showConfirmDialog({
     title: '确认删除',
-    color: '#F44336',
     okText: '删除',
     content: '确认删除该作品？删除后不可恢复',
   })

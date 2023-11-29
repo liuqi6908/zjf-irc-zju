@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
 import { useDialogPluginComponent } from 'quasar'
 
 import type { ConfirmDialogProps } from './use-dialog'
@@ -7,15 +6,9 @@ import type { ConfirmDialogProps } from './use-dialog'
 interface Props {
   options?: ConfirmDialogProps
 }
-const props = defineProps<Props>()
+defineProps<Props>()
 
 const { dialogRef, onDialogCancel, onDialogOK } = useDialogPluginComponent()
-
-const btnPrimary = computed(() => {
-  if (props.options?.color?.replace(/\s+/g, '') === 'var(--q-primary)')
-    return undefined
-  return props.options?.color
-})
 </script>
 
 <template>
@@ -25,17 +18,21 @@ const btnPrimary = computed(() => {
       class="q-pa-lg br-12 column no-wrap"
       style="width: 90%; max-width: 400px; min-height: 150px;"
     >
-      <div absolute right-4 top-4>
+      <!-- <div absolute right-4 top-4>
         <q-btn
           color="primary" icon="fas fa-times"
           style="--q-primary: #e0e0e0"
           dense flat h7 w7 rounded-full px0 py0
         />
-      </div>
-      <header class="font-500" text-4>
-        <slot name="title">
+      </div> -->
+      <header flex="~ row justify-between items-center" h4>
+        <div text-base font-600>
           {{ options?.title || "是否确认?" }}
-        </slot>
+        </div>
+
+        <q-btn v-close-popup dense flat h7 w7 translate-x-2 p0>
+          <div i-mingcute:close-line text-grey-5 />
+        </q-btn>
       </header>
       <main class="q-py-md">
         <slot>
@@ -44,22 +41,21 @@ const btnPrimary = computed(() => {
           </div>
         </slot>
       </main>
-      <footer class="no-wrap row items-center justify-end" mt4 gap2>
+      <footer class="no-wrap row items-center justify-end" mt4 gap6>
         <q-btn
           v-close-popup
-          color="grey-7"
-          square min-w-22 px4 outline
-          :label="options?.cancelText || '取消'"
-          :style="btnPrimary ? `--q-primary: ${btnPrimary}` : '--q-primary: var(--grey-5)'"
+          color="primary" square h10 min-w-28 outline
           @click="onDialogCancel"
-        />
+        >
+          <span text-3.5 font-500>{{ options?.cancelText || '取消' }}</span>
+        </q-btn>
         <q-btn
-          class="bg-primary"
-          :label="options?.okText || '确认'"
-          flat square min-w-22 px4 text-white
-          :style="btnPrimary ? `--q-primary: ${btnPrimary}` : ''"
-          @click="onDialogOK()"
-        />
+          v-close-popup flat square h10 min-w-28 bg-primary-1
+          text-grey-1
+          @click="onDialogOK"
+        >
+          <span text-3.5 font-500>{{ options?.okText || '确认' }}</span>
+        </q-btn>
       </footer>
     </q-card>
   </q-dialog>

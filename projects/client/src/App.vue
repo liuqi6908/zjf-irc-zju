@@ -33,7 +33,7 @@ watch(
     if (isClient) {
       nextTick(() => {
         const body = document.body
-        const base = 700
+        const base = 1290
         if (body) {
           if (newVal < base) {
             body.style.transform = `scale(${newVal / base})`

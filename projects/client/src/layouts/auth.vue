@@ -3,7 +3,7 @@ const $router = useRouter()
 </script>
 
 <template>
-  <div class="confirmation" h-100vh flex="~ row">
+  <div class="confirmation" absolute inset-0 flex="~ row">
     <div class="col-grow confirmation-bgImg">
       <header flex="~ items-center gap-2" text-grey-1 absolute cursor-pointer left-12 top-10 @click="$router.push('/')">
         <img w-12 src="../assets/auth/couldTitle.png">
