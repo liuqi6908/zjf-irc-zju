@@ -185,7 +185,7 @@ export class DesktopService {
           if (!desktopId || !desktopName)
             return
           // 获取云桌面ip
-          const ip = (await this._zstackSrv.vmList()).find(v => v.uuid === desktopId)?.ip
+          const ip = (await this._zstackSrv.vmList()).find(v => v.uuid === desktopId)?.ip || '127.0.0.1'
           const id = await this.createDesktop({
             id: desktopId,
             name: desktopName,
