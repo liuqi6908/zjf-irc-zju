@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { DataField } from 'src/entities/data-field'
 import { DataDirectory } from 'src/entities/data-directory'
 
+import { ErrorCode } from 'zjf-types'
 import { ModuleRef } from '@nestjs/core'
 import { LogService } from '../log/log.service'
 import { RedisService } from '../redis/redis.service'
@@ -59,6 +60,23 @@ export class DataService implements OnModuleInit {
     }
     catch (e) {
       return null
+    }
+  }
+
+  /**
+   * 获取数据目录
+   * @param id
+   */
+  public async getDataDirectory(id: string) {
+    const dataDirectory = await this._dataDirRepo.findOne({ where: { id } })
+    let code = 200
+    if (!dataDirectory)
+      code = ErrorCode.DATA_DIRECTORY_NOT_FOUND
+    else if (dataDirectory.level !== 4)
+      code = ErrorCode.DATA_TABLE_MANIPULATE_ONLY
+    return {
+      code,
+      dataDirectory,
     }
   }
 

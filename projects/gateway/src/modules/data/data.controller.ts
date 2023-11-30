@@ -283,9 +283,7 @@ export class DataController {
     @Param('dataDirectoryId') dataDirectoryId: string,
     @Req() req: FastifyRequest,
   ) {
-    const dataDirectory = await this._dataSrv.dirRepo().findOne({ where: { id: dataDirectoryId } })
-    const dataRole = req.dataRole
-    const dataRootId = dataDirectory?.rootId
+    const { code, dataDirectory } = await this._dataSrv.getDataDirectory(dataDirectoryId)
 
     const response = (code?: ErrorCode) => {
       this._dataSrv.saveLog({
@@ -298,13 +296,16 @@ export class DataController {
       code && responseError(code)
     }
 
-    if (!dataDirectory)
-      response(ErrorCode.DATA_DIRECTORY_NOT_FOUND)
-    if (dataDirectory.level !== 4)
-      response(ErrorCode.DATA_TABLE_MANIPULATE_ONLY)
+    if (code !== 200)
+      response(code)
+
+    const dataRole = req.dataRole
+    const dataRootId = dataDirectory?.rootId
+
     const allowed = dataRole === '*' || dataRole.downloadDirectories.some(p => dataDirectory.path.includes(p.id))
     if (!allowed)
       response(ErrorCode.PERMISSION_DENIED)
+
     const tableEn = dataDirectory.nameEN
     const path = `download/${dataRootId}/${tableEn}.zip`
     try {
@@ -317,6 +318,30 @@ export class DataController {
         responseError(ErrorCode.FILE_NOT_FOUND)
       else
         response(ErrorCode.COMMON_UNEXPECTED_ERROR)
+    }
+  }
+
+  @ApiOperation({ summary: '判断文件是否存在' })
+  @ApiParam({ name: 'dataDirectoryId', description: '数据目录的id（请注意，只能传表级别，其他级别没有意义，会直接报错）' })
+  @Get('isExist/:dataDirectoryId')
+  public async isExist(
+    @Param('dataDirectoryId') dataDirectoryId: string,
+  ) {
+    const { code, dataDirectory } = await this._dataSrv.getDataDirectory(dataDirectoryId)
+
+    if (code !== 200)
+      return false
+
+    const dataRootId = dataDirectory?.rootId
+
+    const tableEn = dataDirectory.nameEN
+    const path = `download/${dataRootId}/${tableEn}.zip`
+    try {
+      await this._fileSrv.isExist('data', path)
+      return true
+    }
+    catch (err) {
+      return false
     }
   }
 }
