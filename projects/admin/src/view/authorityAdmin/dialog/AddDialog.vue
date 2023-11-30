@@ -1,41 +1,62 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import type { IDataRole } from '~/api/dataRole'
-import { upsertDataRole } from '~/api/dataRole'
+import type { IUpsertDataRoleBodyDto } from 'zjf-types'
+import { cloneDeep } from 'lodash'
+import { upsertDataRole, queryDataRoleInfo } from '~/api/dataRole'
 
 interface Props {
   type: 'update' | 'add'
-  role?: IDataRole
+  name?: string
   callback?: () => void
 }
 
-const { type, role, callback = () => {} } = defineProps<Props>()
+const { type, name, callback = () => {} } = defineProps<Props>()
 const $q = useQuasar()
-const roleForm = reactive<IDataRole>({
+let role: IUpsertDataRoleBodyDto = {
   name: '',
   description: '',
-})
+  select: false,
+  sort: 0,
+  viewableDirectoryIds: [],
+  downloadableDirectoryIds: []
+}
+const roleForm = ref<IUpsertDataRoleBodyDto>(cloneDeep(role))
 const dialog = ref(true)
 const loading = ref(false)
 
-onMounted(() => {
-  onReset()
+onMounted(async () => {
+  if (name) {
+    loading.value = true
+    try {
+      const res = await queryDataRoleInfo(name)
+      const { viewDirectories, downloadDirectories } = res
+      delete res.viewDirectories
+      delete res.downloadDirectories
+      role = {
+        ...res,
+        viewableDirectoryIds: viewDirectories?.map(v => v.id) || [],
+        downloadableDirectoryIds: downloadDirectories?.map(v => v.id) || [],
+      }
+    }
+    catch (_) {}
+    finally {
+      loading.value = false
+      onReset()
+    }
+  }
 })
-
-const disable = computed(() => !roleForm.name)
 
 /**
  * 提交
  */
 async function onSubmit() {
-  if (disable.value)
+  if (!roleForm.value.name)
     return
   try {
     loading.value = true
     const flag = await upsertDataRole({
-      ...roleForm,
-      downloadableDirectoryIds: [],
-      viewableDirectoryIds: [''],
+      ...roleForm.value,
+      sort: Number(roleForm.value.sort) || 0
     })
     if (flag) {
       $q.notify({
@@ -56,8 +77,7 @@ async function onSubmit() {
  * 重置
  */
 function onReset() {
-  roleForm.name = role?.name || ''
-  roleForm.description = role?.description || ''
+  roleForm.value = cloneDeep(role)
 }
 </script>
 
@@ -84,10 +104,24 @@ function onReset() {
           v-model="roleForm.description"
           label="描述"
           filled
+          class="mb-5"
+        />
+        <q-input
+          v-model="roleForm.sort"
+          label="排序"
+          filled
+          type="number"
+        />
+        <q-toggle
+          v-model="roleForm.select"
+          color="primary"
+          label="是否可选"
+          left-label
+          my-3
         />
         <div text-right mt-4>
           <q-btn label="重置" type="reset" color="primary" flat class="q-ml-sm" />
-          <q-btn label="提交" :disable="disable" type="submit" color="primary" ml-2 />
+          <q-btn label="提交" :disable="!roleForm.name" type="submit" color="primary" ml-2 />
         </div>
       </q-form>
       <q-inner-loading :showing="loading" color="primary" />

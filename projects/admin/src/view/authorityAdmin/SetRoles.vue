@@ -19,6 +19,8 @@ const tableRef = ref<QTable>()
 const cols: QTableProps['columns'] = reactive([
   { name: 'name', field: 'name', label: '角色名称' },
   { name: 'description', field: 'description', label: '描述' },
+  { name: 'sort', field: 'sort', label: '排序' },
+  { name: 'select', field: 'select', label: '是否可选' },
   { name: 'action', field: 'action', label: '操作' },
 ])
 const rows: Array<any> = reactive([])
@@ -80,16 +82,16 @@ function deleteRole(name: string) {
 
 /**
  * 添加/编辑数据下载角色
- * @param row
+ * @param name
  */
-async function addRole(row?: any) {
+async function addRole(name?: string) {
   $q.dialog({
     component: await defineAsyncComponent(
       () => import('./dialog/AddDialog.vue'),
     ).__asyncLoader(),
     componentProps: {
-      type: row ? 'update' : 'add',
-      role: row,
+      type: name ? 'update' : 'add',
+      name,
       callback: async () => {
         await queryRoleList()
       },
@@ -171,8 +173,11 @@ async function getRootData(id: string) {
           <q-td v-for="col in cols" :key="col.name">
             <template v-if="col.name === 'action'">
               <q-btn label="权限" color="green" size="sm" @click="() => (dialog = true, name = props.row.name)" />
-              <q-btn label="编辑" mx-2 color="primary" size="sm" @click="addRole(props.row)" />
+              <q-btn label="编辑" mx-2 color="primary" size="sm" @click="addRole(props.row.name)" />
               <q-btn label="删除" color="red" size="sm" @click="deleteRole(props.row.name)" />
+            </template>
+            <template v-else-if="col.name === 'select'">
+              {{ props.row[col.field as string] ? '是' : '否' }}
             </template>
             <template v-else>
               {{ props.row[col.field as string] }}
