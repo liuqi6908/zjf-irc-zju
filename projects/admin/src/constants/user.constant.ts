@@ -1,10 +1,4 @@
-import { VerificationIdentify, VerificationStatus } from 'zjf-types'
-
-/** 用户认证身份 */
-const userIdentify = [
-  { label: '学生', value: VerificationIdentify.STUDENT },
-  { label: '教师', value: VerificationIdentify.TEACHER },
-]
+import { VerificationStatus } from 'zjf-types'
 
 /** 用户认证状态 */
 const userStatus = [
@@ -15,6 +9,5 @@ const userStatus = [
 ]
 
 export {
-  userIdentify,
   userStatus,
 }

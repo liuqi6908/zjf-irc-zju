@@ -66,7 +66,6 @@ async function queryVerifyList(props: any) {
     rows.forEach((item) => {
       item.idCard = hideSensitiveInfo(item.idCard)
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
-      item.identify = userIdentify.find(v => v.value === item.identify)?.label
       item['founder.createdAt'] = item['founder.createdAt'] ? moment(item['founder.createdAt']).format('YYYY-MM-DD HH:mm:ss') : null
     })
   }

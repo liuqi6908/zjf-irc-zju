@@ -1,3 +1,4 @@
+import { IsOptional } from 'class-validator'
 import type { IVerificationHistory } from 'zjf-types'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { VerificationStatus } from 'zjf-types'
@@ -32,9 +33,10 @@ export class VerificationHistory extends BaseTimeStamp implements IVerificationH
   @Column()
   idCard: string
 
-  @ApiProperty({ description: '身份' })
+  @ApiPropertyOptional({ description: '身份' })
   @Column({ nullable: true })
-  identify: string
+  @IsOptional()
+  identify?: string
 
   @ApiProperty({ description: '上传的附件列表，oss 相对地址列表' })
   @Column({ type: 'simple-array' })

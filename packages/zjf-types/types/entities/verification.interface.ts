@@ -24,7 +24,7 @@ export interface IVerificationHistory extends ICreatedAt, IUpdatedAt {
   idCard: string;
 
   /** 身份 */
-  identify: string;
+  identify?: string;
 
   /** 上传的附件列表，oss 相对地址列表  */
   attachments: string[];
