@@ -167,40 +167,42 @@ export class DesktopService {
    * 申请或停用云桌面
    * @param user
    */
-  public async applyOrStopDesktop(user: User, flag: 0 | 1, duration?: number) {
-    if (user) {
-      try {
-        const url = ['/applyDesktop', '/stopDesktop']
-        const { host } = this._cfgSrv.get<YunApp>('yun')
-        const { data } = await this._httpSrv.axiosRef({
-          baseURL: host,
-          method: 'POST',
-          url: url[flag],
-          data: { account: user.account },
-        })
+  public async applyOrStopDesktop(user: User, flag: 0 | 1, duration?: number): Promise<boolean> {
+    if (!user)
+      return false
 
-        // 开通云桌面并分配
-        if (data.code === 200 && flag === 0) {
-          const { desktopId, desktopName } = data.data
-          if (!desktopId || !desktopName)
-            return
-          // 获取云桌面ip
-          const ip = (await this._zstackSrv.vmList()).find(v => v.uuid === desktopId)?.ip || '127.0.0.1'
-          const id = await this.createDesktop({
-            id: desktopId,
-            name: desktopName,
-            internalIp: ip,
-            accessUrl: 'https://36.26.47.210:8443/',
-            account: user.account,
-            password: '您的登录密码',
-            expiredAt: undefined,
-          })
-          await this.allocationDesktop(id, user.id, duration)
-        }
+    try {
+      const url = ['/applyDesktop', '/stopDesktop']
+      const { host } = this._cfgSrv.get<YunApp>('yun')
+      const { data } = await this._httpSrv.axiosRef({
+        baseURL: host,
+        method: 'POST',
+        url: url[flag],
+        data: { account: user.account },
+      })
+
+      // 开通云桌面并分配
+      if (data.code === 200 && flag === 0) {
+        const { desktopId, desktopName } = data.data
+        if (!desktopId || !desktopName)
+          return
+        // 获取云桌面ip
+        const ip = (await this._zstackSrv.vmList()).find(v => v.uuid === desktopId)?.ip || '127.0.0.1'
+        const id = await this.createDesktop({
+          id: desktopId,
+          name: desktopName,
+          internalIp: ip,
+          accessUrl: 'https://36.26.47.210:8443/',
+          account: user.account,
+          password: '您的登录密码',
+          expiredAt: undefined,
+        })
+        await this.allocationDesktop(id, user.id, duration)
       }
-      catch (_) {
-        console.error(_)
-      }
+      return true
+    }
+    catch (_) {
+      return false
     }
   }
 

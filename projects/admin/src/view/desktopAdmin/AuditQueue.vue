@@ -107,14 +107,30 @@ function approve(id: string) {
     message: '该操作将通过桌面申请，是否继续？',
     cancel: true,
   }).onOk(async () => {
-    loading.value = true
+    rows.splice(rows.findIndex(v => v['user.id'] === id), 1)
+    const notify = $q.notify({
+      type: 'ongoing',
+      message: '正在为用户创建云桌面中，请耐心等待！',
+      position: 'top',
+      color: 'warning',
+    })
     try {
-      await approveDesktop(id)
-      $q.notify({
-        message: '将自动为用户创建并分配云桌面，请耐心等待！',
-        type: 'success',
-      })
-      tableRef.value?.requestServerInteraction()
+      const res = await approveDesktop(id)
+      if (res) {
+        notify({
+          type: 'success',
+          message: '已成功创建并分配！',
+          color: 'positive',
+        })
+        tableRef.value?.requestServerInteraction()
+      }
+      else {
+        notify({
+          type: 'danger',
+          message: '创建失败，请手动添加云桌面并分配！',
+          color: 'negative',
+        })
+      }
     }
     catch (_) {}
     finally {

@@ -134,7 +134,10 @@ function deleteDesktop(id: string) {
         tableRef.value?.requestServerInteraction()
       }
       else {
-        throw new Error('停用失败！')
+        $q.notify({
+          message: '停用失败！',
+          type: 'danger',
+        })
       }
     }
     catch (_) {}

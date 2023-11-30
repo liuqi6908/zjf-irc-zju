@@ -76,7 +76,7 @@ export class DesktopRequestService {
    * @returns
    */
   public async approveRequest(param: UserIdDto) {
-    const updateRes = await this._desktopQueueRepo.update(
+    await this._desktopQueueRepo.update(
       { userId: param.userId, status: DesktopQueueStatus.Pending },
       { status: DesktopQueueStatus.Queueing, queueAt: new Date() },
     )
@@ -87,8 +87,7 @@ export class DesktopRequestService {
       },
     )
     const user = await this._userSrv.repo().findOne({ where: { id: param.userId } })
-    await this._desktopSrv.applyOrStopDesktop(user, 0, desktopReq.duration)
-    return updateRes.affected > 0
+    return await this._desktopSrv.applyOrStopDesktop(user, 0, desktopReq.duration)
   }
 
   /**
