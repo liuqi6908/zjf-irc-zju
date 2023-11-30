@@ -59,6 +59,8 @@ export class DataPermissionService implements OnModuleInit {
     const saveInfo: Partial<Record<keyof DataRole, any>> = {
       name: role.name,
       description: role.description || '',
+      select: role.select || false,
+      sort: role.sort || 0,
       viewDirectories: mapId(role.viewableDirectoryIds || []),
       downloadDirectories: mapId(role.downloadableDirectoryIds || []),
     }

@@ -53,7 +53,7 @@ function rightEvent(params: any) {
   editInfo.id = val.id
   editInfo.nameZH = val.label
   editInfo.nameEN = val.nameEN
-  editInfo.order = val.order
+  editInfo.order = val.order ?? 0
   const el = editRef.value?.$el
   if (el) {
     el.style.left = `${event.clientX - 250}px`
@@ -81,7 +81,7 @@ async function confirmEditInfo() {
   const body = {
     nameZH: editInfo.nameZH,
     nameEN: editInfo.nameEN,
-    order: Number(editInfo.order),
+    order: Number(editInfo.order) ?? 0,
   }
   if (editInfo.type)
     res = await updateRootData(editInfo.id, body)
@@ -245,8 +245,8 @@ const disable = computed(() => !editInfo.id || !editInfo.nameZH || !editInfo.nam
                   bg-grey-1 shadow-lg text="base grey-8"
                 >
                   <div>创建数据资源后，ID不可变</div>
-                  <div>样例数据路径：preview/{{ editInfo.id }}</div>
-                  <div>下载数据路径：download/{{ editInfo.id }}</div>
+                  <div>样例数据路径：zjf-data/preview/{{ editInfo.id }}</div>
+                  <div>下载数据路径：zjf-data/download/{{ editInfo.id }}</div>
                 </q-tooltip>
               </div>
             </template>

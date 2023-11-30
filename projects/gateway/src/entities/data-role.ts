@@ -15,6 +15,14 @@ export class DataRole implements IDataRole {
   @Column({ nullable: true })
   description?: string
 
+  @ApiProperty({ description: '是否可选', required: false })
+  @Column({ default: false })
+  select?: boolean
+
+  @ApiProperty({ description: '排序', required: false })
+  @Column({ default: 0 })
+  sort?: number
+
   @ApiProperty({ description: '数据下载角色的用户', required: false, type: () => [User] })
   @ManyToMany(() => User, user => user.dataRole)
   users?: User[]
