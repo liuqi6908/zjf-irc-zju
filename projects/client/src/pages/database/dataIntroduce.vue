@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { DesktopQueueStatus } from 'zjf-types'
+import { download } from 'zjf-utils'
 import BaseTable from 'shared/component/base/table/BaseTable.vue'
 
 import { cloneDeep } from 'lodash-es'
@@ -107,13 +108,11 @@ async function confirmRequest() {
  * @param url
  */
 async function downloadData() {
-  let url = getDataDownload(route.query.dataId as string)
-  if (url.startsWith('/api'))
-    url = url.substring(4)
-  const a = document?.createElement('a')
-  a.href = await $get(url)
-  a.click()
-  a.remove()
+  let api = getDataDownload(route.query.dataId as string)
+  if (api.startsWith('/api'))
+    api = api.substring(4)
+  const url = await $get(api)
+  download(url, url.split('/').pop().split('?').shift())
 }
 </script>
 
