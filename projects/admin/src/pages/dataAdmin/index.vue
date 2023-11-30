@@ -53,7 +53,7 @@ function rightEvent(params: any) {
   editInfo.id = val.id
   editInfo.nameZH = val.label
   editInfo.nameEN = val.nameEN
-  editInfo.order = val.order
+  editInfo.order = val.order ?? 0
   const el = editRef.value?.$el
   if (el) {
     el.style.left = `${event.clientX - 250}px`
@@ -81,7 +81,7 @@ async function confirmEditInfo() {
   const body = {
     nameZH: editInfo.nameZH,
     nameEN: editInfo.nameEN,
-    order: Number(editInfo.order),
+    order: Number(editInfo.order) ?? 0,
   }
   if (editInfo.type)
     res = await updateRootData(editInfo.id, body)
