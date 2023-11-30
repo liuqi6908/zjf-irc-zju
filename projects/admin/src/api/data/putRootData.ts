@@ -1,4 +1,5 @@
 export interface Body {
+  id: string
   nameZH: string
   nameEN: string
   order?: number
