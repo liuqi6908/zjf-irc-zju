@@ -115,16 +115,7 @@ export class FileService {
   }
 
   public async signUrl(bucket: keyof MinioConfig['bucket'], path: string, expires = 60 * 10) {
-    // 如果是下载数据，仅允许签发内网链接
-    const client = this.getClient(bucket === 'data')
-
-    // 检查文件是否存在
-    try {
-      await client.statObject(this._cfg.bucket[bucket], path)
-    }
-    catch (err) {
-      throw new Error(err)
-    }
+    const client = await this.isExist(bucket, path)
 
     // 签发链接
     const filename = path.split('/').pop()
@@ -133,6 +124,25 @@ export class FileService {
       'Content-Type': `application/${ext}`,
       'Content-Disposition': `attachment; filename="${filename}"`,
     })
+  }
+
+  /**
+   * 判断文件是否存在
+   * @param bucket
+   * @param path
+   */
+  public async isExist(bucket: keyof MinioConfig['bucket'], path: string) {
+    // 如果是下载数据，仅允许签发内网链接
+    const client = this.getClient(bucket === 'data')
+
+    // 检查文件是否存在
+    try {
+      await client.statObject(this._cfg.bucket[bucket], path)
+      return client
+    }
+    catch (err) {
+      throw new Error(err)
+    }
   }
 
   public async delete(bucket: keyof MinioConfig['bucket'], path: string) {
