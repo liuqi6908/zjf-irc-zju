@@ -87,7 +87,7 @@ export class DesktopRequestService {
       },
     )
     const user = await this._userSrv.repo().findOne({ where: { id: param.userId } })
-    this._desktopSrv.applyOrStopDesktop(user, 0, desktopReq.duration)
+    await this._desktopSrv.applyOrStopDesktop(user, 0, desktopReq.duration)
     return updateRes.affected > 0
   }
 
