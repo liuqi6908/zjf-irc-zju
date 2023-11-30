@@ -1,5 +1,5 @@
 import { IUser } from './user.interface';
-import { VerificationIdentify, VerificationStatus } from '../verification.enum';
+import { VerificationStatus } from '../verification.enum';
 import { ICreatedAt, IUpdatedAt } from './_timestamp.interface';
 
 
@@ -24,7 +24,7 @@ export interface IVerificationHistory extends ICreatedAt, IUpdatedAt {
   idCard: string;
 
   /** 身份 */
-  identify: VerificationIdentify;
+  identify: string;
 
   /** 上传的附件列表，oss 相对地址列表  */
   attachments: string[];
@@ -51,7 +51,7 @@ export interface IVerificationHistory extends ICreatedAt, IUpdatedAt {
 
   /** 处理时间： 通过/驳回/取消 */
   handledAt?: Date;
-  
+
   /** 认证状态 */
   status: VerificationStatus;
 
