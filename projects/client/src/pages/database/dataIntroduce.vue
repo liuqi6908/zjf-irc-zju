@@ -6,14 +6,14 @@ import BaseTable from 'shared/component/base/table/BaseTable.vue'
 import { cloneDeep } from 'lodash-es'
 import { Notify } from 'quasar'
 import type { QTableProps } from 'quasar'
-import { getDataDownload } from '~/api/data/dataDownloadHandle'
+import { tableFileIsExist, getDataDownload } from '~/api/data/dataDownloadHandle'
 import { getDataFields } from '~/api/data/getDataDirctoryFields'
 import { getDataPreview } from '~/api/data/dataPreviewHandle'
 import { putSuggest } from '~/api/dataSuggest/putSuggest'
 import { getOwnDesktopQuery } from '~/api/desktop/getOwnDesktopQuery'
 
 const route = useRoute()
-const $router = useRouter()
+const router = useRouter()
 const { isDesktop, isLogin, isVerify } = useUser()
 const { $get } = useRequest()
 
@@ -52,10 +52,12 @@ const previewTableData = computed(() => {
   }
 })
 
+/** 是否预购 */
 const isPurchased = computed(() => route.query.label?.includes('预购'))
-
 /** 是否已经申请了云桌面 */
 const isApplyDesktop = ref(false)
+/** 表格文件是否存在 */
+const isExist = ref(false)
 
 onBeforeMount(async () => {
   loading.value = true
@@ -70,6 +72,9 @@ onBeforeMount(async () => {
   // 不在云桌面 且 已通过认证，判断是否已申请云桌面
   if (!isDesktop.value && isVerify.value)
     getRequestInfo()
+  // 在云桌面中，判断该表格文件是否存在
+  else if (isDesktop.value)
+    isExist.value = await tableFileIsExist(route.query.dataId as string)
 })
 
 /**
@@ -120,12 +125,12 @@ async function downloadData() {
   <div flex="~ col items-center" min-h-4xl bg-grey-1>
     <div w-limited-1>
       <header flex="~ row" mb-10 w-full items-center font-600 py6 gap4>
-        <q-btn flat dense text-grey-6 h6 min-h6 w6 p0 @click="() => $router.back()">
+        <q-btn flat dense text-grey-6 h6 min-h6 w6 p0 @click="router.back()">
           <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M6 12L0 6L6 0L7.4 1.4L2.8 6L7.4 10.6L6 12Z" fill="#6E7686" />
           </svg>
         </q-btn>
-        <span text="grey-8 5" cursor-pointer @click="() => $router.back()">数据资源介绍</span>
+        <span text="grey-8 5" cursor-pointer @click="router.back()">数据资源介绍</span>
       </header>
 
       <div flex="~ col" mt-5 gap-5>
@@ -158,71 +163,62 @@ async function downloadData() {
       <div text="primary-1 left" text-4 mt-6 v-text="`引用规范：${route.query.reference || '暂无引用规范'}`" />
     </div>
 
+    <!-- 底部操作栏 -->
     <div flex="~ col" items-center gap-4 my-20>
-      <template v-if="!isPurchased">
-        <router-link v-if="!isDesktop && !isApplyDesktop" :to="{ path: '/request' }">
-          <q-btn
-            color="primary"
-            square h12 outline w-36
-          >
-            <span text-4 font-600>数据申请使用</span>
-          </q-btn>
-        </router-link>
-        <router-link v-else-if="!isDesktop && isApplyDesktop" :to="{ path: '/userCenter/cloudDesktop' }">
-          <q-btn
-            color="primary"
-            square h12 outline w-44
-          >
-            <span text-4 font-600>请前往云桌面下载</span>
-          </q-btn>
-        </router-link>
-        <template v-else>
-          <Btn1
-            w-36 label="数据下载"
-            :disable="!isLogin"
-            :color="!isLogin ? 'grey-5' : undefined"
-            @click="downloadData()"
-          />
-          <div v-if="!isLogin" text="base grey-5" font-400>
-            您尚未登录，请
-            <span
-              font-600 text-primary-1 cursor-pointer
-              underline="~ offset-2" decoration-2
-              @click="$router.push('/auth/login')"
-              v-text="'登录'"
-            />
-            后重试
-          </div>
-        </template>
-      </template>
-      <template v-else>
-        <Btn1
-          w-36 label="建议采购"
-          :disable="!isLogin || !isVerify"
-          :color="!isLogin || !isVerify ? 'grey-5' : undefined"
-          @click="dialog = true"
+      <Btn1
+        v-if="isPurchased"
+        w-36 label="建议采购"
+        :disable="!isLogin || !isVerify"
+        :color="!isLogin || !isVerify ? 'grey-5' : undefined"
+        @click="dialog = true"
+      />
+      <q-btn
+        v-else-if="!isDesktop && !isApplyDesktop"
+        color="primary"
+        :disable="!isLogin"
+        square h12 outline w-36
+        @click="router.push('/request')"
+      >
+        <span text-4 font-600>数据申请使用</span>
+      </q-btn>
+      <q-btn
+        v-else-if="!isDesktop && isApplyDesktop"
+        color="primary"
+        square h12 outline w-44
+        @click="router.push('/userCenter/cloudDesktop')"
+      >
+        <span text-4 font-600>请前往云桌面下载</span>
+      </q-btn>
+      <Btn1
+        v-else
+        w-36 label="数据下载"
+        :disable="!isLogin || !isExist"
+        :color="!isLogin || !isExist ? 'grey-5' : undefined"
+        @click="downloadData()"
+      />
+      <div v-if="!isLogin" text="base grey-5" font-400>
+        您尚未登录，请
+        <span
+          font-600 text-primary-1 cursor-pointer
+          underline="~ offset-2" decoration-2
+          @click="router.push('/auth/login')"
+          v-text="'登录'"
         />
-        <div v-if="!isLogin" text="base grey-5" font-400>
-          您尚未登录，请
-          <span
-            font-600 text-primary-1 cursor-pointer
-            underline="~ offset-2" decoration-2
-            @click="$router.push('/auth/login')"
-            v-text="'登录'"
-          />
-          后重试
-        </div>
-        <div v-else-if="!isVerify" text="base grey-5" font-400>
-          用户认证通过后才能建议采购，请先前往
-          <span
-            font-600 text-primary-1 cursor-pointer
-            underline="~ offset-2" decoration-2
-            @click="$router.push('/userCenter/authentication')"
-            v-text="'用户中心'"
-          />
-          进行认证
-        </div>
-      </template>
+        后重试
+      </div>
+      <div v-else-if="isPurchased && !isVerify" text="base grey-5" font-400>
+        用户认证通过后才能建议采购，请先前往
+        <span
+          font-600 text-primary-1 cursor-pointer
+          underline="~ offset-2" decoration-2
+          @click="router.push('/userCenter/authentication')"
+          v-text="'用户中心'"
+        />
+        进行认证
+      </div>
+      <div v-else-if="!isPurchased && isDesktop && !isExist" text="base grey-5" font-400>
+        管理员正在配置中
+      </div>
     </div>
 
     <ZDialog v-model="dialog" title="采购理由" footer @ok="confirmRequest">
