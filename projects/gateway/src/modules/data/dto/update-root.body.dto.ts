@@ -13,5 +13,9 @@ export class UpdateRootBodyDto extends CreateRootBodyDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
+  id: string
+
+  @ApiProperty({ required: false })
+  @IsOptional()
   order?: number
 }
