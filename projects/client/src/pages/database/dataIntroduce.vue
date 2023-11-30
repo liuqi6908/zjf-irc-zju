@@ -183,7 +183,16 @@ async function downloadData() {
             :color="!isLogin ? 'grey-5' : undefined"
             @click="downloadData()"
           />
-          <div v-if="!isLogin" text="base grey-5" v-text="'您尚未登录请登录后重试'" />
+          <div v-if="!isLogin" text="base grey-5" font-400>
+            您尚未登录，请
+            <span
+              font-600 text-primary-1 cursor-pointer
+              underline="~ offset-2" decoration-2
+              @click="$router.push('/auth/login')"
+              v-text="'登录'"
+            />
+            后重试
+          </div>
         </template>
       </template>
       <template v-else>
@@ -193,8 +202,8 @@ async function downloadData() {
           :color="!isLogin || !isVerify ? 'grey-5' : undefined"
           @click="dialog = true"
         />
-        <div v-if="!isLogin" text="base grey-5">
-          您尚未登录请
+        <div v-if="!isLogin" text="base grey-5" font-400>
+          您尚未登录，请
           <span
             font-600 text-primary-1 cursor-pointer
             underline="~ offset-2" decoration-2
@@ -203,7 +212,7 @@ async function downloadData() {
           />
           后重试
         </div>
-        <div v-else-if="!isVerify" text="base grey-5">
+        <div v-else-if="!isVerify" text="base grey-5" font-400>
           用户认证通过后才能建议采购，请先前往
           <span
             font-600 text-primary-1 cursor-pointer
