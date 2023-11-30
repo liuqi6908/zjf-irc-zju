@@ -2,8 +2,9 @@
 import { Dialog, Notify } from 'quasar'
 import type { Node } from '../SetRoles.vue'
 import RoleTree from './RoleTree.vue'
-import type { IRequest } from '~/api/dataRole'
 import { queryDataRoleInfo, upsertDataRole } from '~/api/dataRole'
+import type { IRequest } from '~/api/dataRole'
+import type { IUpsertDataRoleBodyDto } from 'zjf-types'
 
 interface Props {
   modelValue: boolean
@@ -15,11 +16,12 @@ const props = defineProps<Props>()
 const $emit = defineEmits(['update:modelValue'])
 
 const loading = ref(false)
-const desc = ref('')
+
+let role: IRequest
 /** 访问权限 */
-const view: string[] = reactive([])
+const view = reactive<string[]>([])
 /** 下载权限 */
-const download: string[] = reactive([])
+const download = reactive<string[]>([])
 
 onMounted(() => {
   getRolesList()
@@ -31,10 +33,12 @@ onMounted(() => {
 async function getRolesList() {
   loading.value = true
   try {
-    const { description, downloadDirectories, viewDirectories } = await queryDataRoleInfo(props.name)
-    desc.value = description
+    role = await queryDataRoleInfo(props.name)
+    const { viewDirectories, downloadDirectories } = role
     view.push(...viewDirectories?.map(v => v.id) || [])
     download.push(...downloadDirectories?.map(v => v.id) || [])
+    delete role.viewDirectories
+    delete role.downloadDirectories
   }
   catch (_) { }
   finally {
@@ -54,9 +58,8 @@ function updateDataRole() {
   }).onOk(async () => {
     loading.value = true
     try {
-      const body: IRequest = {
-        name: props.name,
-        description: desc.value,
+      const body: IUpsertDataRoleBodyDto = {
+        ...role,
         viewableDirectoryIds: view,
         downloadableDirectoryIds: download,
       }

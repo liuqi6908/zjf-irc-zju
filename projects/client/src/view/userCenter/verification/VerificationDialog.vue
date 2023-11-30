@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, reactive, ref } from 'vue'
 import type { ICreateVerificationBodyDto } from 'zjf-types'
-import { VerificationIdentify, verificationIdentifyDescriptions } from 'zjf-types'
 import { Notify, QFile } from 'quasar'
 import { requestVerification } from '../../../api/auth/verification/requestVerification'
 
@@ -15,7 +14,12 @@ const VerificationInput = defineAsyncComponent(() => import('./VerificationInput
 interface Props {
   modelValue: boolean
 }
-const identify = ref<{ label: string; id: VerificationIdentify | '' } | undefined>()
+
+const { $get } = useRequest()
+
+const identify = ref<{ label: string; id: string }>()
+
+const dataRoles = ref<string[]>()
 
 const files = ref<Array<File>>([])
 // const previewImgs = ref<Array<{ id: number; previewURL: any }>>([])
@@ -42,16 +46,14 @@ const veriAccept = reactive({
 const disable = computed(() =>
   Object.values(veriAccept).includes(false)
   || !attachmentsList.value.length
-  || !identify.value?.id
+  || dataRoles.value?.length && !identify.value?.id
   || !agreeWithProtocol.value,
 )
 
-function transformedArray(): { label: string; id: string }[] {
-  return Object.keys(VerificationIdentify).map(key => ({
-    id: VerificationIdentify[key as keyof typeof VerificationIdentify],
-    label: verificationIdentifyDescriptions[VerificationIdentify[key as keyof typeof VerificationIdentify]],
-  }))
-}
+onMounted(async () => {
+  dataRoles.value = await $get<string[]>('/data-permission/data-role/names')
+})
+
 async function requestVerify() {
   let attachments = []
   attachments = attachmentsList.value.map(i => i.filename)
@@ -203,7 +205,7 @@ watch(
         <ZSelect
           v-model="identify"
           label="请选择您的身份"
-          :options="transformedArray()"
+          :options="dataRoles?.map(v => ({ label: v, id: v }))"
         />
       </section>
 

@@ -1,6 +1,6 @@
 import type { IVerificationHistory } from 'zjf-types'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { VerificationIdentify, VerificationStatus } from 'zjf-types'
+import { VerificationStatus } from 'zjf-types'
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 
 import { User } from './user'
@@ -33,8 +33,8 @@ export class VerificationHistory extends BaseTimeStamp implements IVerificationH
   idCard: string
 
   @ApiProperty({ description: '身份' })
-  @Column({ type: 'enum', enum: VerificationIdentify, nullable: true })
-  identify: VerificationIdentify
+  @Column({ nullable: true })
+  identify: string
 
   @ApiProperty({ description: '上传的附件列表，oss 相对地址列表' })
   @Column({ type: 'simple-array' })

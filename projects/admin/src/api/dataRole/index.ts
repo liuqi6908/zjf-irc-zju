@@ -1,13 +1,10 @@
+import type { IDataRole, IUpsertDataRoleBodyDto } from 'zjf-types'
+
 export interface IRequest {
   name: string
   description: string
-  downloadableDirectoryIds: string[]
-  viewableDirectoryIds: string[]
-}
-
-export interface IDataRole {
-  name: string
-  description: string
+  select: boolean
+  sort: number
   downloadDirectories?: any[]
   viewDirectories?: any[]
 }
@@ -18,7 +15,7 @@ const { $get, $post, $patch, $delete } = useRequest()
  * 查询所有数据下载角色
  */
 export function queryDataRole() {
-  return $get<Array<IDataRole>>('/data-permission/data-role/list')
+  return $get<IDataRole[]>('/data-permission/data-role/list')
 }
 
 /**
@@ -35,7 +32,7 @@ export function updateUserDataRole(id: string, name: string) {
  * @param name
  */
 export function queryDataRoleInfo(name: string) {
-  return $get<IDataRole>(`/data-permission/data-role/${name}`)
+  return $get<IRequest>(`/data-permission/data-role/${name}`)
 }
 
 /**
@@ -50,6 +47,6 @@ export function deleteDataRole(name: string) {
  * 插入/更新数据下载角色
  * @param body
  */
-export function upsertDataRole(body: IRequest) {
+export function upsertDataRole(body: IUpsertDataRoleBodyDto) {
   return $post('/data-permission/data-role/upsert', body)
 }
