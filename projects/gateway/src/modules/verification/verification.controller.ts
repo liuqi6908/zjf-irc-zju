@@ -140,7 +140,7 @@ export class VerificationController {
     try {
       const { list } = this._cfgSrv.get<{ list: SysAdmin[] }>('sa')
       if (verification.identify && !list.map(v => v.account).includes(user?.account))
-        this._userSrv.repo().update({ id: user.id }, { roleName: verification.identify })
+        this._userSrv.repo().update({ id: user.id }, { dataRoleName: verification.identify })
     }
     catch (_) {}
     return res
