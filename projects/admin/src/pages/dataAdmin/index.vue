@@ -19,6 +19,8 @@ const currentTabObj = ref()
 const editRef = ref<typeof QList>()
 const dialog = ref(false)
 const editInfo = reactive({
+  /** 操作类型（0新增、1编辑） */
+  type: 0,
   id: '',
   nameEN: '',
   nameZH: '',
@@ -47,6 +49,7 @@ onMounted(() => {
  */
 function rightEvent(params: any) {
   const { val, event } = params
+  editInfo.type = 1
   editInfo.id = val.id
   editInfo.nameZH = val.label
   editInfo.nameEN = val.nameEN
@@ -63,6 +66,7 @@ function rightEvent(params: any) {
  */
 function openAddDialog() {
   dialog.value = true
+  editInfo.type = 0
   editInfo.id = ''
   editInfo.nameZH = ''
   editInfo.nameEN = ''
@@ -79,16 +83,16 @@ async function confirmEditInfo() {
     nameEN: editInfo.nameEN,
     order: Number(editInfo.order),
   }
-  if (editInfo.id)
+  if (editInfo.type)
     res = await updateRootData(editInfo.id, body)
   else
-    res = await putRootData(body)
+    res = await putRootData({ ...body, id: editInfo.id })
   dialog.value = false
 
   if (res) {
     await geRootData()
     Notify.create({
-      message: `${editInfo.id ? '编辑' : '新增'}成功`,
+      message: `${editInfo.type ? '编辑' : '新增'}成功`,
       type: 'success',
     })
   }
@@ -191,7 +195,7 @@ watch(
   },
 )
 
-const disable = computed(() => !editInfo.nameZH || !editInfo.nameEN)
+const disable = computed(() => !editInfo.id || !editInfo.nameZH || !editInfo.nameEN)
 </script>
 
 <template>
@@ -223,8 +227,30 @@ const disable = computed(() => !editInfo.nameZH || !editInfo.nameEN)
 
     <q-dialog v-model="dialog">
       <q-card min-w-100 p-5>
-        <div title-4 v-text="editInfo.id ? '编辑' : '新增'" />
+        <div title-4 v-text="editInfo.type ? '编辑' : '新增'" />
         <q-card-section>
+          <q-input
+            v-model="editInfo.id"
+            label="资源ID"
+            filled
+            lazy-rules
+            :readonly="!!editInfo.type"
+            :rules="[val => val && val.length > 0 || '请输入资源ID']"
+          >
+            <template v-slot:append>
+              <div cursor-pointer ml-1 text-lg i-mdi:information-variant>
+                <q-tooltip
+                  anchor="center right" self="center left"
+                  :offset="[15, 0]" py-3 px-4
+                  bg-grey-1 shadow-lg text="base grey-8"
+                >
+                  <div>创建数据资源后，ID不可变</div>
+                  <div>样例数据路径：preview/{{ editInfo.id }}</div>
+                  <div>下载数据路径：download/{{ editInfo.id }}</div>
+                </q-tooltip>
+              </div>
+            </template>
+          </q-input>
           <q-input
             v-model="editInfo.nameZH"
             label="中文名"
