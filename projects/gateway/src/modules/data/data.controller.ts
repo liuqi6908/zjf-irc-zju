@@ -313,9 +313,10 @@ export class DataController {
       return url
     }
     catch (err) {
-      // TODO: 处理无法找到指定文件的错误
-      console.error(err)
-      response(ErrorCode.COMMON_UNEXPECTED_ERROR)
+      if (err.message.match(/Not Found/))
+        responseError(ErrorCode.FILE_NOT_FOUND)
+      else
+        response(ErrorCode.COMMON_UNEXPECTED_ERROR)
     }
   }
 }

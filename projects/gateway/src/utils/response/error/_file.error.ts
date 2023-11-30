@@ -8,7 +8,7 @@ const _fileErrors: ErrorMessageCollection = {
   },
   [ErrorCode.FILE_NOT_FOUND]: {
     httpStatus: HttpStatus.NOT_FOUND,
-    message: '文无法找到指定的文件',
+    message: '无法找到指定的文件',
   },
   [ErrorCode.FILE_TOO_LARGE]: {
     httpStatus: HttpStatus.FORBIDDEN,

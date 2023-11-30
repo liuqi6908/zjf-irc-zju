@@ -123,8 +123,7 @@ export class FileService {
       await client.statObject(this._cfg.bucket[bucket], path)
     }
     catch (err) {
-      if (err.message.match(/Not Found/))
-        responseError(ErrorCode.FILE_NOT_FOUND)
+      throw new Error(err)
     }
 
     // 签发链接
