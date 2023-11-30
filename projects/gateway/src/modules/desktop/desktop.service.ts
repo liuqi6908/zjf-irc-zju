@@ -198,8 +198,9 @@ export class DesktopService {
           expiredAt: undefined,
         })
         await this.allocationDesktop(id, user.id, duration)
+        return true
       }
-      return true
+      return data
     }
     catch (_) {
       return false
