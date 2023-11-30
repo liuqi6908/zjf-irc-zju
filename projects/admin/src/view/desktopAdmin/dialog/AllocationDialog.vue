@@ -26,8 +26,7 @@ const cols: QTableProps['columns'] = reactive([
   { name: 'college', field: 'user.verification.college', label: '学院' },
   { name: 'number', field: 'user.verification.number', label: '学号' },
   { name: 'idCard', field: 'user.verification.idCard', label: '身份证' },
-  { name: 'identify', field: 'user.verification.identify', label: '身份' },
-  { name: 'dataRoleName', field: 'user.dataRoleName', label: '角色' },
+  { name: 'dataRoleName', field: 'user.dataRoleName', label: '身份' },
   { name: 'roleName', field: 'user.roleName', label: '权限' },
   { name: 'duration', field: 'duration', label: '申请时长' },
   { name: 'createdAt', field: 'createdAt', label: '申请时间' },
@@ -88,7 +87,6 @@ async function queryData(props: any) {
       item.index = index + 1
       item.createdAt = moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
       item['user.verification.idCard'] = hideSensitiveInfo(item['user.verification.idCard'])
-      item['user.verification.identify'] = userIdentify.find(v => v.value === item['user.verification.identify'])?.label || '无'
       item.status = desktopStatus.find(v => v.value === item.status)?.label || ''
     })
   }

@@ -1,7 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import type { ICreateVerificationBodyDto } from 'zjf-types'
 import { sharedVariableMarkdown } from 'src/utils/docs/shared-variable'
-import { ArrayNotEmpty, IsString, MaxLength, MinLength } from 'class-validator'
+import { ArrayNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator'
 
 import {
   VERIFICATION_COLLEGE_MAX,
@@ -15,8 +15,9 @@ export class CreateVerificationBodyDto implements ICreateVerificationBodyDto {
   @ApiProperty({ description: '真实姓名' })
   name: string
 
-  @ApiProperty({ description: '身份类型' })
+  @ApiPropertyOptional({ description: '身份类型' })
   @IsString()
+  @IsOptional()
   identify: string
 
   @ApiProperty({

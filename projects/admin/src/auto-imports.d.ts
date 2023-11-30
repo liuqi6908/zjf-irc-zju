@@ -634,7 +634,6 @@ declare module 'vue' {
     readonly useWindowFocus: UnwrapRef<typeof import('@vueuse/core')['useWindowFocus']>
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
-    readonly userIdentify: UnwrapRef<typeof import('./constants/user.constant')['userIdentify']>
     readonly userStatus: UnwrapRef<typeof import('./constants/user.constant')['userStatus']>
     readonly userTableCols: UnwrapRef<typeof import('./constants/table.constant')['userTableCols']>
     readonly verifyTableCols: UnwrapRef<typeof import('./constants/table.constant')['verifyTableCols']>
@@ -932,7 +931,6 @@ declare module '@vue/runtime-core' {
     readonly useWindowFocus: UnwrapRef<typeof import('@vueuse/core')['useWindowFocus']>
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
-    readonly userIdentify: UnwrapRef<typeof import('./constants/user.constant')['userIdentify']>
     readonly userStatus: UnwrapRef<typeof import('./constants/user.constant')['userStatus']>
     readonly userTableCols: UnwrapRef<typeof import('./constants/table.constant')['userTableCols']>
     readonly verifyTableCols: UnwrapRef<typeof import('./constants/table.constant')['verifyTableCols']>
