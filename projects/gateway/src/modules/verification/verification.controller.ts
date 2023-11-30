@@ -8,9 +8,12 @@ import { ErrorCode, PermissionType, VerificationStatus } from 'zjf-types'
 import { VerificationExists } from 'src/guards/verification-exists.guard'
 import { ApiErrorResponse, ApiSuccessResponse, responseError } from 'src/utils/response'
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req } from '@nestjs/common'
+import type { SysAdmin } from 'src/config/_sa.config'
 
+import { ConfigService } from '@nestjs/config'
 import { QueryDto, QueryResDto } from '../../dto/query.dto'
 import { NotifyService } from '../notify/notify.service'
+import { UserService } from '../user/user.service'
 import { VerificationService } from './verification.service'
 import { VerificationResDto } from './dto/verification.res.dto'
 import { CreateVerificationBodyDto } from './dto/create-verification.body.dto'
@@ -22,6 +25,8 @@ export class VerificationController {
   constructor(
     private readonly _verificationSrv: VerificationService,
     private readonly _notifySrv: NotifyService,
+    private readonly _cfgSrv: ConfigService,
+    private readonly _userSrv: UserService,
   ) {}
 
   @ApiOperation({ summary: '发起一个认证申请' })
@@ -126,11 +131,19 @@ export class VerificationController {
     const user = req.raw.user!
     if (verification.status !== VerificationStatus.PENDING)
       responseError(ErrorCode.VERIFICATION_NOT_PENDING)
-    return await this._verificationSrv.updateVerificationStatus(
+    const res = await this._verificationSrv.updateVerificationStatus(
       verification,
       user,
       VerificationStatus.APPROVED,
     )
+    // 自动为用户分配角色
+    try {
+      const { list } = this._cfgSrv.get<{ list: SysAdmin[] }>('sa')
+      if (verification.identify && !list.map(v => v.account).includes(user?.account))
+        this._userSrv.repo().update({ id: user.id }, { roleName: verification.identify })
+    }
+    catch (_) {}
+    return res
   }
 
   @ApiOperation({ summary: '驳回一个认证申请' })
