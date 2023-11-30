@@ -116,7 +116,7 @@ function approve(id: string) {
     })
     try {
       const res = await approveDesktop(id)
-      if (res) {
+      if (res === true) {
         notify({
           type: 'success',
           message: '已成功创建并分配！',
