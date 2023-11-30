@@ -50,11 +50,21 @@ export class DataPermissionController {
   public async listDataRole(
     @Query('permission') permission: any,
   ) {
-    return await this._dataPSrv.dataRoleRepo().find({
+    return (await this._dataPSrv.dataRoleRepo().find({
       relations: permission
         ? { downloadDirectories: true, viewDirectories: true }
         : {},
-    })
+    })).sort((a, b) => a.sort - b.sort)
+  }
+
+  @ApiOperation({ summary: '查询所有数据下载角色名称' })
+  @Get('data-role/names')
+  public async dataRoleNames() {
+    return (await this._dataPSrv.dataRoleRepo().find({
+      where: {
+        select: true,
+      },
+    })).sort((a, b) => a.sort - b.sort).map(v => v.name)
   }
 
   @ApiOperation({ summary: '查询指定的数据下载角色详情' })

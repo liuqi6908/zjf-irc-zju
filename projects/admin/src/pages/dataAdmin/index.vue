@@ -245,8 +245,8 @@ const disable = computed(() => !editInfo.id || !editInfo.nameZH || !editInfo.nam
                   bg-grey-1 shadow-lg text="base grey-8"
                 >
                   <div>创建数据资源后，ID不可变</div>
-                  <div>样例数据路径：preview/{{ editInfo.id }}</div>
-                  <div>下载数据路径：download/{{ editInfo.id }}</div>
+                  <div>样例数据路径：zjf-data/preview/{{ editInfo.id }}</div>
+                  <div>下载数据路径：zjf-data/download/{{ editInfo.id }}</div>
                 </q-tooltip>
               </div>
             </template>
