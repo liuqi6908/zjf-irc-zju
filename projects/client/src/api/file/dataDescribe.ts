@@ -1,14 +1,10 @@
-import type { DataRoot } from 'zjf-types'
-import { useRequest } from '../../composables/request'
 import { getUrlByToken } from './getUriByToken'
 
-const { $put } = useRequest()
-/** filename 为DATABASE_ENG + .doc */
-export function getDataDescribe(dataRootId: DataRoot, filename: string) {
+/**
+ * 获取下载指定根目录的数据库介绍链接
+ * @param dataRootId
+ * @param filename 文件名为: DATABASE_ENG + .doc
+ */
+export function getDataDescribe(dataRootId: string, filename: string) {
   return getUrlByToken(`file/private/db/${dataRootId}/${filename}`)
-}
-
-export function downloadDataDescribe(dataRootId: DataRoot, filename: string, file: FormData) {
-  const res = $put(`file/private/db/${dataRootId}/${filename}`, file)
-  return res
 }

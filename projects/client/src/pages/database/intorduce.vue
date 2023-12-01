@@ -3,7 +3,7 @@ import * as mammoth from 'mammoth'
 import { getDataDescribe } from '~/api/file/dataDescribe'
 
 const route = useRoute()
-const url = ref('')
+
 const docHtml = ref('')
 const link = ref('')
 const navHtml = ref<{
@@ -14,13 +14,12 @@ const navHtml = ref<{
   }[]
   article: HTMLElement
 }>()
+const loading = ref(false)
 
-// const tableStyle
-
-function judegeISHEaderHtml(node: HTMLElement) {
-  return Object.prototype.toString.call(node) === '[object HTMLHeadingElement]'
-}
-
+/**
+ * 解析html，生成目录
+ * @param html
+ */
 function resolveHTML(html: string) {
   if (typeof document !== 'undefined') {
     const article = document.createElement('article')
@@ -36,7 +35,7 @@ function resolveHTML(html: string) {
       id++
       const level = +h.tagName.slice(1)
 
-      h.setAttribute('id', id)
+      h.setAttribute('id', id.toString())
 
       if (id === 1)
         h.setAttribute('style', 'width: 100% !important;display: flex !important;flex-direction: inherit;align-items: center')
@@ -67,27 +66,36 @@ function resolveHTML(html: string) {
 }
 
 const navList = computed(() => {
-  const nodeList = []
-  if (navHtml.value?.article.childNodes) {
-    for (const node of navHtml.value?.article.childNodes) {
-      if (judegeISHEaderHtml(node))
-        nodeList.push(node)
+  const arr = []
+  const nodes = navHtml.value?.article.childNodes
+  if (nodes) {
+    for (let i = 0; i < nodes.length; i++) {
+      if (Object.prototype.toString.call(nodes[i]) === '[object HTMLHeadingElement]')
+        arr.push(nodes[i])
     }
   }
-  return nodeList
+  return arr
 })
 
-/** 解析 */
+/**
+ * 解析文档文件
+ * @param fileData
+ */
 function parseDocFile(fileData: ArrayBuffer) {
   mammoth.convertToHtml({ arrayBuffer: fileData }).then((res) => {
-    const html = res.value
-    docHtml.value = html
+    docHtml.value = res.value
     navHtml.value = resolveHTML(docHtml.value)
   }).catch((err) => {
     console.error('error', err)
+  }).finally(() => {
+    loading.value = false
   })
 }
 
+/**
+ * 下载数据库介绍
+ * @param url
+ */
 function downloadDoc(url: string) {
   const xhr = new XMLHttpRequest()
   xhr.open('GET', url, true)
@@ -99,6 +107,11 @@ function downloadDoc(url: string) {
   xhr.send()
 }
 
+/**
+ * 点击目录滚动
+ * @param title
+ * @param index
+ */
 function scrollTo(title: string, index: number) {
   link.value = title
   if (typeof document !== 'undefined') {
@@ -112,16 +125,15 @@ function scrollTo(title: string, index: number) {
 }
 
 onMounted(() => {
+  loading.value = true
   const { rootId, nameEN } = route.query
-  url.value = getDataDescribe(rootId, `${nameEN}.docx`)
-  // console.log({ url })
-  downloadDoc(url.value)
+  downloadDoc(getDataDescribe(rootId as string, `${nameEN}.docx`))
 })
 </script>
 
 <template>
-  <div w-limited-1 flex="~ col justify-center items-center">
-    <header flex="~ row" w-full items-center font-600 gap4 py6>
+  <div w-limited-1 flex="~ col">
+    <header flex="~ row" items-center font-600 gap4 py6>
       <q-btn flat dense h6 min-h6 w6 p0 text-grey-6 @click="() => $router.back()">
         <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M6 12L0 6L6 0L7.4 1.4L2.8 6L7.4 10.6L6 12Z" fill="#6E7686" />
@@ -130,26 +142,39 @@ onMounted(() => {
       <span text="grey-8 5" cursor-pointer @click="() => $router.back()"> 数据库介绍</span>
     </header>
 
-    <Empty v-if="!docHtml" label="暂无数据库介绍" min-h-160 />
-    <div v-else full pn-10 flex="~ row gap-10">
-      <div>
-        <q-list text-grey-8 sticky top-0 h-100vh overflow-x-hidden overflow-y-auto class="navs">
-          <q-item
-            v-for="(node, index) in navList"
-            :key="index" class="ellipsis"
-            flex="~ col justify-center items-start" min-h-10 p-0 font-500 clickable w-50 px2 :active="link === node.textContent"
-            active-class="text-primary-1 bg-grey-2" @click="scrollTo(node.textContent, index)"
-          >
-            <q-item-section>
-              <q-item-label lines="1">
-                {{ node.textContent }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </div>
+    <div flex-center min-h-160>
+      <q-spinner
+        v-if="loading"
+        color="primary-1"
+        size="5rem"
+        :thickness="2"
+      />
+      <template v-else>
+        <Empty v-if="!docHtml" label="暂无数据库介绍" />
+        <div v-else full pn-10 flex="~ row gap-10">
+          <div>
+            <q-list text-grey-8 sticky top-0 h-100vh overflow-x-hidden overflow-y-auto class="navs">
+              <q-item
+                v-for="(node, index) in navList"
+                :key="index" class="ellipsis"
+                flex="~ col justify-center items-start"
+                min-h-10 p-0 font-500 clickable w-50 px2
+                :active="link === node.textContent"
+                active-class="text-primary-1 bg-grey-2"
+                @click="scrollTo(node.textContent!, index)"
+              >
+                <q-item-section>
+                  <q-item-label lines="1">
+                    {{ node.textContent }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
 
-      <div class="docHtml" pb4 flex="~ col justify-start items-start" v-html="navHtml?.article.innerHTML" />
+          <div class="docHtml" pb4 flex="~ col justify-start items-start" v-html="navHtml?.article.innerHTML" />
+        </div>
+      </template>
     </div>
   </div>
 </template>
