@@ -76,18 +76,11 @@ export class DesktopRequestService {
    * @returns
    */
   public async approveRequest(param: UserIdDto) {
-    await this._desktopQueueRepo.update(
+    const updateRes = await this._desktopQueueRepo.update(
       { userId: param.userId, status: DesktopQueueStatus.Pending },
       { status: DesktopQueueStatus.Queueing, queueAt: new Date() },
     )
-    // 根据用户账号调用云之遥接口开通云桌面
-    const desktopReq = await this._desktopQueueRepo.findOne(
-      {
-        where: { userId: param.userId, status: DesktopQueueStatus.Queueing },
-      },
-    )
-    const user = await this._userSrv.repo().findOne({ where: { id: param.userId } })
-    return await this._desktopSrv.applyOrStopDesktop(user, 0, desktopReq.duration)
+    return updateRes.affected > 0
   }
 
   /**
