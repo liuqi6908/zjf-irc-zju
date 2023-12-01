@@ -3,6 +3,7 @@ import { getQuery } from 'src/utils/query'
 import { IsLogin } from 'src/guards/login.guard'
 import type { Desktop } from 'src/entities/desktop'
 import { DesktopIdDto } from 'src/dto/id/desktop.dto'
+import { UserIdDto } from 'src/dto/user-id.dto'
 import { QueryDto, QueryResDto } from 'src/dto/query.dto'
 import { HasPermission } from 'src/guards/permission.guard'
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
@@ -55,6 +56,26 @@ export class DesktopController {
         responseError(ErrorCode.DESKTOP_ID_EXISTS)
       responseError(ErrorCode.COMMON_UNEXPECTED_ERROR)
     }
+  }
+
+  @ApiOperation({ summary: '自动创建一个云桌面并分配' })
+  @HasPermission([PermissionType.DESKTOP_CREATE, PermissionType.DESKTOP_ASSIGN], 'AND')
+  @Post('create/:userId')
+  public async createAndAssignDesktop(
+    @Param() param: UserIdDto,
+  ) {
+    // 根据用户账号调用云之遥接口开通云桌面
+    const request = await this._desktopReqSrv.repo().findOne(
+      {
+        where: { userId: param.userId },
+      },
+    )
+    // 确认是否已是排队状态
+    if (request.status !== DesktopQueueStatus.Queueing)
+      responseError(ErrorCode.DESKTOP_REQUEST_QUEUE_ONLY)
+
+    const user = await this._userSrv.repo().findOne({ where: { id: param.userId } })
+    return await this._desktopSrv.applyOrStopDesktop(user, 0, request.duration)
   }
 
   @ApiOperation({ summary: '停用一个云桌面' })
