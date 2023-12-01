@@ -6,6 +6,7 @@ import moment from 'moment'
 import { hideSensitiveInfo } from 'zjf-utils'
 import { desktopRequestQueryList } from '~/api/desktop/request'
 import { createAndAssignDesktop, desktopQueryList } from '~/api/desktop'
+import { isClient } from '@vueuse/core'
 
 interface Props {
   title?: string
@@ -18,12 +19,28 @@ withDefaults(defineProps<Props>(), {
 const $q = useQuasar()
 const tableRef = ref<QTable>()
 
-const rows: Array<any> = reactive([])
+const rows = reactive<any[]>([])
 const pagination = tablePagination()
 const loading = ref(true)
 let disabledAssign = true
+let observer: MutationObserver
+const isDisabled = ref<string[]>([])
 
 onMounted(async () => {
+  nextTick(() => {
+    // 监听分配情况
+    if (isClient) {
+      disabledButton()
+      const targetElement  = document.querySelector('.q-notifications__list--top.items-center')
+      if (targetElement) {
+        observer = new MutationObserver(disabledButton)
+        observer.observe(targetElement, {
+          childList: true
+        })
+      }
+    }
+  })
+
   tableRef.value?.requestServerInteraction()
   disabledAssign = (await desktopQueryList({
     filters: [{
@@ -35,6 +52,26 @@ onMounted(async () => {
     sort: []
   })).total >= 50
 })
+
+onBeforeUnmount(() => {
+  observer?.disconnect()
+})
+
+/**
+ * 禁用分配按钮
+ */
+function disabledButton() {
+  const els = document.querySelectorAll('.q-notification')
+
+  isDisabled.value = Array.from(els)
+    .reduce((arr: string[], el) => {
+      const classList = Array.from(el.classList)
+      const userClass = classList.find(name => name.startsWith('user-'))
+      if (userClass)
+        arr.push(userClass.split('user-')[1])
+      return arr
+    }, [])
+}
 
 /**
  * 查询数据
@@ -103,6 +140,7 @@ function assign(id: string) {
       message: '正在为用户创建云桌面中，请耐心等待！',
       position: 'top',
       color: 'warning',
+      classes: `user-${id}`,
     })
     try {
       const res = await createAndAssignDesktop(id)
@@ -122,7 +160,9 @@ function assign(id: string) {
         })
       }
     }
-    catch (_) {}
+    catch (_) {
+      notify()
+    }
     finally {
       loading.value = false
     }
@@ -149,10 +189,17 @@ function assign(id: string) {
       <q-tr :props="props">
         <q-td v-for="col in desktopRequestTableCols" :key="col.name">
           <template v-if="col.name === 'attachments'">
-            <q-btn flat color="primary" label="查看申请材料" @click="checkAttachment(props.row.attachments, props.row['user.id'], 'desktop-request')" />
+            <q-btn
+              flat color="primary" label="查看申请材料"
+              @click="checkAttachment(props.row.attachments, props.row['user.id'], 'desktop-request')"
+            />
           </template>
           <template v-else-if="col.name === 'action'">
-            <q-btn label="自动分配" color="green" size="sm" @click="assign(props.row['user.id'])" />
+            <q-btn
+              label="分配云桌面" color="green" size="sm"
+              :disable="isDisabled.includes(props.row['user.id'])"
+              @click="assign(props.row['user.id'])"
+            />
           </template>
           <template v-else>
             {{ props.row[col.field as string] }}
