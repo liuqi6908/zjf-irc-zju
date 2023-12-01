@@ -1,6 +1,6 @@
 import { DesktopQueueStatus, ErrorCode } from 'zjf-types'
 import { Cron } from '@nestjs/schedule'
-import { In, Repository } from 'typeorm'
+import { In, IsNull, Not, Repository } from 'typeorm'
 import { objectPick } from '@catsjuice/utils'
 import { Desktop } from 'src/entities/desktop'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -115,6 +115,21 @@ export class DesktopService {
    * @param duration
    */
   public async allocationDesktop(desktopId: string, userId: string, duration = 180) {
+    const [desktopAssigned, userAssigned] = await Promise.all([
+      // 确认云桌面是否已被分配
+      this._desktopRepo.exist({
+        where: { id: desktopId, userId: Not(IsNull()) },
+      }),
+      // 确认用户是否已分配了其他的云桌面
+      this._desktopRepo.exist({
+        where: { userId },
+      }),
+    ])
+    if (desktopAssigned)
+      responseError(ErrorCode.DESKTOP_ALREADY_ASSIGNED)
+    if (userAssigned)
+      responseError(ErrorCode.DESKTOP_USER_ASSIGNED_OTHERS)
+
     await this._desktopRepo.update(
       { id: desktopId, disabled: false },
       {

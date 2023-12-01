@@ -1,4 +1,4 @@
-import { In, IsNull, Not } from 'typeorm'
+import { In } from 'typeorm'
 import { getQuery } from 'src/utils/query'
 import { IsLogin } from 'src/guards/login.guard'
 import type { Desktop } from 'src/entities/desktop'
@@ -165,18 +165,6 @@ export class DesktopController {
     // 确认是否已是排队状态
     if (request.status !== DesktopQueueStatus.Queueing)
       responseError(ErrorCode.DESKTOP_REQUEST_QUEUE_ONLY)
-    const [desktopAssigned, userAssigned] = await Promise.all([
-      // 确认云桌面是否已被分配
-      this._desktopSrv.repo().exist({
-        where: { id: param.desktopId, userId: Not(IsNull()) },
-      }),
-      // 确认用户是否已分配了其他的云桌面
-      this._desktopSrv.repo().exist({ where: { userId: param.userId } }),
-    ])
-    if (desktopAssigned)
-      responseError(ErrorCode.DESKTOP_ALREADY_ASSIGNED)
-    if (userAssigned)
-      responseError(ErrorCode.DESKTOP_USER_ASSIGNED_OTHERS)
     // 将云桌面分配，并更新用户的状态
     await this._desktopSrv.allocationDesktop(param.desktopId, param.userId, request.duration)
     return true
