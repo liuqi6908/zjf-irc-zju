@@ -4,7 +4,8 @@ import { DesktopQueueStatus } from 'zjf-types'
 import type { IDesktopQueue, IQueryConfig } from 'zjf-types'
 import moment from 'moment'
 import { hideSensitiveInfo } from 'zjf-utils'
-import { approveDesktop, desktopRequestQueryList, rejectDesktop } from '~/api/desktop/request'
+import { desktopRequestQueryList } from '~/api/desktop/request'
+import { createAndAssignDesktop, desktopQueryList } from '~/api/desktop'
 
 interface Props {
   title?: string
@@ -20,9 +21,19 @@ const tableRef = ref<QTable>()
 const rows: Array<any> = reactive([])
 const pagination = tablePagination()
 const loading = ref(true)
+let disabledAssign = true
 
-onMounted(() => {
+onMounted(async () => {
   tableRef.value?.requestServerInteraction()
+  disabledAssign = (await desktopQueryList({
+    filters: [{
+      field: 'disabled',
+      type: '=',
+      value: false,
+    }],
+    relations: {},
+    sort: []
+  })).total >= 50
 })
 
 /**
@@ -42,7 +53,7 @@ async function queryData(props: any) {
         {
           field: 'status',
           type: '=',
-          value: DesktopQueueStatus.Pending,
+          value: DesktopQueueStatus.Queueing,
         },
       ],
       sort: [
@@ -76,57 +87,39 @@ async function queryData(props: any) {
 }
 
 /**
- * 通过申请
+ * 自动创建云桌面并分配
  * @param id
  */
-function approve(id: string) {
+function assign(id: string) {
   $q.dialog({
-    title: '通过确认',
-    message: '该操作将通过桌面申请，是否继续？',
+    title: '分配确认',
+    message: disabledAssign ? '云桌面授权已用完，无法继续分配，请释放后重试。' : '该操作将自动创建云桌面并分配给用户，是否继续？',
     cancel: true,
   }).onOk(async () => {
-    loading.value = true
+    if (disabledAssign)
+      return
+    const notify = $q.notify({
+      type: 'ongoing',
+      message: '正在为用户创建云桌面中，请耐心等待！',
+      position: 'top',
+      color: 'warning',
+    })
     try {
-      const res = await approveDesktop(id)
-      if (res) {
-        $q.notify({
-          message: '通过成功！',
+      const res = await createAndAssignDesktop(id)
+      if (res === true) {
+        notify({
           type: 'success',
+          message: '已成功创建并分配！',
+          color: 'positive',
         })
         tableRef.value?.requestServerInteraction()
       }
-    }
-    catch (_) {}
-    finally {
-      loading.value = false
-    }
-  })
-}
-
-/**
- * 驳回文件外发
- * @param id
- */
-function reject(id: string) {
-  $q.dialog({
-    title: '驳回确认',
-    message: '请输入驳回原因：',
-    prompt: {
-      model: '',
-      isValid: val => val.length > 0,
-      type: 'text',
-    },
-    cancel: true,
-  }).onOk(async (val) => {
-    loading.value = true
-    try {
-      const res = await rejectDesktop(id, val)
-      if (res) {
-        $q.notify({
-          message: '驳回成功！',
-          type: 'success',
+      else {
+        notify({
+          type: 'danger',
+          message: '创建失败！',
+          color: 'negative',
         })
-        tableRef.value?.requestServerInteraction()
       }
     }
     catch (_) {}
@@ -159,8 +152,7 @@ function reject(id: string) {
             <q-btn flat color="primary" label="查看申请材料" @click="checkAttachment(props.row.attachments, props.row['user.id'], 'desktop-request')" />
           </template>
           <template v-else-if="col.name === 'action'">
-            <q-btn label="通过" color="green" size="sm" mr-2 @click="approve(props.row['user.id'])" />
-            <q-btn label="驳回" color="red" size="sm" @click="reject(props.row['user.id'])" />
+            <q-btn label="自动分配" color="green" size="sm" @click="assign(props.row['user.id'])" />
           </template>
           <template v-else>
             {{ props.row[col.field as string] }}

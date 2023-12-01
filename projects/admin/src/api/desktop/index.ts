@@ -19,6 +19,14 @@ export function createDesktop(body: ICreateDesktopBodyDto, config?: any) {
 }
 
 /**
+ * 自动创建云桌面并分配
+ * @param body
+ */
+export function createAndAssignDesktop(userId: string) {
+  return $post(`desktop/create/${userId}`, null)
+}
+
+/**
  * 更新云桌面
  * @param id
  * @param body
