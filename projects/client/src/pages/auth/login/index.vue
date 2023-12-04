@@ -73,7 +73,7 @@ async function handleEnter() {
     </client-only>
 
     <div flex-center mt-4 font-400>
-      <span text-white-7>没有账号？</span>
+      <span text-transparency-7>没有账号？</span>
       <RouterLink text-grey-1 :to="{ path: 'signup' }" v-text="'立即注册'" />
     </div>
 

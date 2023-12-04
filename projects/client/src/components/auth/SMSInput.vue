@@ -65,9 +65,9 @@ watch(
           :class="{
             ...(
               dark ? {
-                'bg-white/20': true,
+                'bg-transparency-2': true,
                 'text-grey-1': true,
-                'hover:bg-white/30': true,
+                'hover:bg-transparency-3': true,
               } : {
                 'bg-primary-1/12': true,
                 'text-primary-1': true,
@@ -75,7 +75,7 @@ watch(
               }
             ),
           }"
-          cursor-pointer px3 py2 text-sm
+          cursor-pointer px3 py2 text-sm font-400
           @click="getCode()"
         >
           发送验证码

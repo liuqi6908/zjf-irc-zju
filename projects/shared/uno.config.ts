@@ -53,7 +53,7 @@ export default defineConfig({
       alert: { success: '#22B07D', error: '#F44336', warning: '#FFBA2F' },
       opacity: { primary: 'rgba(48, 123, 246, 0.12)' },
       tab: { bottom: '#F99E34' },
-      white: { 1: '#FFFFFF1A', 2: '#FFFFFF33', 3: '#FFFFFF4d', 4: '#FFFFFF66', 5: '#FFFFFF80', 6: '#FFFFFF99', 7: '#FFFFFFB3', 8: '#FFFFFFCC', 9: '#FFFFFFE6' },
+      transparency: { 1: '#FFFFFF1A', 2: '#FFFFFF33', 3: '#FFFFFF4d', 4: '#FFFFFF66', 5: '#FFFFFF80', 6: '#FFFFFF99', 7: '#FFFFFFB3', 8: '#FFFFFFCC', 9: '#FFFFFFE6' },
     },
     breakpoints: {
       'xs': '500px',
