@@ -134,12 +134,7 @@ export class VerificationController {
       VerificationStatus.APPROVED,
     )
     // 自动为用户分配角色
-    try {
-      this._userSrv.repo().update({ id: user.id }, { dataRoleName: verification.identify || null })
-    }
-    catch (_) {
-      console.error(_)
-    }
+    this._userSrv.repo().update({ id: user.id }, { dataRoleName: verification.identify || null })
     return res
   }
 
