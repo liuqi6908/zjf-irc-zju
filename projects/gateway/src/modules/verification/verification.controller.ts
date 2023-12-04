@@ -8,9 +8,7 @@ import { ErrorCode, PermissionType, VerificationStatus } from 'zjf-types'
 import { VerificationExists } from 'src/guards/verification-exists.guard'
 import { ApiErrorResponse, ApiSuccessResponse, responseError } from 'src/utils/response'
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req } from '@nestjs/common'
-import type { SysAdmin } from 'src/config/_sa.config'
 
-import { ConfigService } from '@nestjs/config'
 import { QueryDto, QueryResDto } from '../../dto/query.dto'
 import { NotifyService } from '../notify/notify.service'
 import { UserService } from '../user/user.service'
@@ -25,7 +23,6 @@ export class VerificationController {
   constructor(
     private readonly _verificationSrv: VerificationService,
     private readonly _notifySrv: NotifyService,
-    private readonly _cfgSrv: ConfigService,
     private readonly _userSrv: UserService,
   ) {}
 
@@ -138,11 +135,11 @@ export class VerificationController {
     )
     // 自动为用户分配角色
     try {
-      const { list } = this._cfgSrv.get<{ list: SysAdmin[] }>('sa')
-      if (verification.identify && !list.map(v => v.account).includes(user?.account))
-        this._userSrv.repo().update({ id: user.id }, { dataRoleName: verification.identify })
+      this._userSrv.repo().update({ id: user.id }, { dataRoleName: verification.identify || null })
     }
-    catch (_) {}
+    catch (_) {
+      console.error(_)
+    }
     return res
   }
 
