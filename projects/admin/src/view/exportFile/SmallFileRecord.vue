@@ -95,9 +95,10 @@ function download(name: string, id: string) {
       const data = await downloadSm(id)
       downloadFile(data, name)
     }
-    catch (_) {
+    catch (e: any) {
+      const { status } = e.response
       $q.notify({
-        message: '下载失败！',
+        message: status === 404 ? '无法找到指定的文件！' : '下载失败，发生未知的错误！',
         type: 'danger',
       })
     }

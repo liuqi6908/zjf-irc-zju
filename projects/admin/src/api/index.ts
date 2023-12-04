@@ -11,7 +11,7 @@ const $http = axios.create({
 $http.interceptors.request.use((config) => {
   const token = localStorage.getItem(AUTH_TOKEN_KEY)
   if (token && !config.headers.Authorization)
-    config.headers.Authorization = token ? `Bearer ${token?.trim()}` : ''
+    config.headers.Authorization = `Bearer ${token?.trim()}`
 
   const baseURLWhiteList = ['http', '//']
   if (
@@ -34,45 +34,48 @@ $http.interceptors.response.use(
   (error) => {
     if (!error.response)
       return
+
     if (error.config.headers.dialog === false)
       return Promise.reject(error)
 
-    const errorDetailList = error.response.data.detail
+    const { status, detail, message } = error.response.data
 
     /** 判断是否有权限 */
-    if (error.response.data.status === ErrorCode.PERMISSION_DENIED) {
-      showNotify('没有权限执行此操作')
+    if (status === ErrorCode.PERMISSION_DENIED) {
+      showNotify(message)
       ctx.router?.replace({ path: 'denied' })
     }
     /* 判断登录是否未登录 */
-    else if (error.response.data.status === ErrorCode.AUTH_LOGIN_REQUIRED) {
-      showNotify('请登录后重试')
+    else if (status === ErrorCode.AUTH_LOGIN_REQUIRED) {
+      showNotify(message)
       ctx.router?.replace({ path: 'auth/login' })
     }
     /* 判断登录是否过期 */
-    else if (error.response.data.status === ErrorCode.AUTH_LOGIN_EXPIRED) {
+    else if (status === ErrorCode.AUTH_LOGIN_EXPIRED) {
       showNotify('登录过期，请重新登录')
       ctx.router?.replace({ path: 'auth/login' })
       localStorage.removeItem(AUTH_TOKEN_KEY)
     }
-    else if (Array.isArray(errorDetailList)) {
-      errorDetailList.forEach(detail =>
-        showNotify(detail.message),
+    else if (Array.isArray(detail)) {
+      detail.forEach(item =>
+        showNotify(item.message),
       )
     }
     else {
-      showNotify(error.response.data.message)
+      showNotify(message)
     }
 
     return Promise.reject(error)
   },
 )
 
-function showNotify(massage: string) {
-  Notify.create({
-    type: 'danger',
-    message: massage,
-  })
+function showNotify(message: string) {
+  if (message) {
+    Notify.create({
+      type: 'danger',
+      message,
+    })
+  }
 }
 
 export default $http
