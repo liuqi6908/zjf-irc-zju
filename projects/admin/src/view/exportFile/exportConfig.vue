@@ -3,6 +3,7 @@ import { useQuasar } from 'quasar';
 import type { IConfigDto, IUpsertConfigBodyDto } from 'zjf-types'
 import { formatFileSize, fileSizeUnits } from 'zjf-utils'
 import { getConfig, upsertConfig } from '~/api/config'
+import { EXPORT_DFT_SM_DAILY_LIMIT, EXPORT_DFT_SM_SIZE_LIMIT, EXPORT_DFT_LG_SIZE_LIMIT } from 'zjf-types'
 
 interface Props {
   title?: string
@@ -25,17 +26,17 @@ const $q = useQuasar()
 const config = reactive<Config>({
   sizeLimitSm: {
     label: '小文件尺寸限制',
-    value: 0,
+    value: EXPORT_DFT_SM_SIZE_LIMIT,
     unit: fileSizeUnits[0]
   },
   sizeLimitLg:  {
     label: '大文件尺寸限制',
-    value: 0,
+    value: EXPORT_DFT_LG_SIZE_LIMIT,
     unit: fileSizeUnits[0]
   },
   dailyLimit:  {
     label: '小文件每日外发限制',
-    value: 0
+    value: EXPORT_DFT_SM_DAILY_LIMIT
   },
 })
 const loading = ref(false)
@@ -61,7 +62,11 @@ async function reset() {
   loading.value = true
 
   try {
-    const { export: data } = await getConfig('file') || {}
+    const { export: data = {
+      sizeLimitSm: EXPORT_DFT_SM_SIZE_LIMIT,
+      sizeLimitLg: EXPORT_DFT_LG_SIZE_LIMIT,
+      dailyLimit: EXPORT_DFT_SM_DAILY_LIMIT
+    } } = await getConfig('file') || {}
     if (data) {
       for (const key of Object.keys(data) as Array<keyof IConfigDto>) {
         if (config[key].unit) {

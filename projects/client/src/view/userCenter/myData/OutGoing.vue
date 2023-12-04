@@ -2,12 +2,15 @@
 import { Notify } from 'quasar'
 import { putExportLg } from '~/api/exportLg/putExportLg'
 import { putExportSm } from '~/api/exportSm/putExportSm'
+import { getConfig } from '~/api/config'
+import { formatFileSize } from 'zjf-utils'
+import { EXPORT_DFT_SM_DAILY_LIMIT, EXPORT_DFT_SM_SIZE_LIMIT, EXPORT_DFT_LG_SIZE_LIMIT } from 'zjf-types'
 
 interface FileInfoItem {
   remark: string
   dropzoneFile?: File
   size: number
-  desc: string[]
+  limit?: number
 }
 type FileType = 'small' | 'big'
 
@@ -19,31 +22,58 @@ const model = ref<FileType>(toggle[0].value)
 const editDialog = ref(false)
 const loading = ref(false)
 
+/** 外发信息 */
 const outgoingInfo = reactive<Record<FileType, FileInfoItem>>({
   small: {
     remark: '',
     dropzoneFile: undefined,
-    size: 100 * 1024,
-    desc: [
-      '（1）支持 100KB 及以内的文件，每日外发次数上限为5次；',
-      '（2）禁止外发原始数据；禁止外发 .zip、.rar 等压缩文件；',
-      '（3）无需审核，快速通过；',
-      '（4）外发标准详见“智能云科研平台”的常见问题解答板块。',
-    ],
+    size: EXPORT_DFT_SM_SIZE_LIMIT,
+    limit: EXPORT_DFT_SM_DAILY_LIMIT,
   },
   big: {
     remark: '',
     dropzoneFile: undefined,
-    size: 5 * 1024 * 1024,
-    desc: [
-      '（1）支持 5MB 及以内的文件外发，每日外发次数不限；',
+    size: EXPORT_DFT_LG_SIZE_LIMIT,
+  },
+})
+
+/** 提示信息 */
+const hintInfo = computed<Record<FileType, string[]>>(() => {
+  const { small, big } = outgoingInfo
+  return {
+    small: [
+      `（1）支持 ${formatFileSize(small.size)} 及以内的文件，每日外发次数上限为${small.limit}次；`,
+      '（2）禁止外发原始数据；禁止外发 .zip、.rar 等压缩文件；',
+      '（3）无需审核，快速通过；',
+      '（4）外发标准详见“智能云科研平台”的常见问题解答板块。',
+    ],
+    big:  [
+      `（1）支持 ${formatFileSize(big.size)} 及以内的文件外发，每日外发次数不限；`,
       '（2）管理员将在1 - 2个工作日内，完成外发数据的审核；',
       '（3）禁止外发原始数据；',
       '（4）不符合外发标准的文件将被驳回，符合条件的文件将发送至您的邮箱；',
       '（5）支持.zip 、.rar 等文件的外发；',
       '（6）外发文件审核标准见“智能云科研平台”的常见问题解答板块。',
-    ],
-  },
+    ]
+  }
+})
+
+onMounted(async () => {
+  loading.value = true
+
+  try {
+    const { export: data } = await getConfig('file') || {}
+    if (data) {
+      const { sizeLimitSm, sizeLimitLg, dailyLimit } = data
+      outgoingInfo.small.size = sizeLimitSm || EXPORT_DFT_SM_SIZE_LIMIT
+      outgoingInfo.small.limit = dailyLimit || EXPORT_DFT_SM_DAILY_LIMIT
+      outgoingInfo.big.size = sizeLimitLg || EXPORT_DFT_LG_SIZE_LIMIT
+    }
+  }
+  catch(_) {}
+  finally {
+    loading.value = false
+  }
 })
 
 /**
@@ -59,7 +89,7 @@ function dropFiles(e: DragEvent) {
  * 选择文件
  */
 function selectedFiles() {
-  const fileList = document?.querySelector('.drop-zone-file')?.files as FileList
+  const fileList = (document?.querySelector('.drop-zone-file') as HTMLInputElement)?.files as FileList
   addFile(fileList)
 }
 
@@ -156,9 +186,9 @@ async function outConfirm() {
  * 清除已选文件
  */
 function clearInputFiles() {
-  const el = document?.querySelector('.drop-zone-file')
+  const el = document?.querySelector('.drop-zone-file') as HTMLInputElement
   if (el)
-    el.value = null
+    el.value = ''
 }
 </script>
 
@@ -187,7 +217,7 @@ function clearInputFiles() {
     <!-- 外发提示信息 -->
     <div flex="~ col items-center" w-full bg-grey-2 py-4>
       <div flex="~ col items-start" mb-4 text-grey-8 gap-2>
-        <div v-for="(item, index) in outgoingInfo[model].desc" :key="index" v-text="item" />
+        <div v-for="(item, index) in hintInfo[model]" :key="index" v-text="item" />
       </div>
       <span text-alert-error>注：您的所有数据外发行为将被保留，用于平台行为审查，请严格遵守平台外发规则！</span>
     </div>
