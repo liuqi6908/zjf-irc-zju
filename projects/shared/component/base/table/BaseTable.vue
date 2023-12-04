@@ -112,6 +112,8 @@ defineExpose({
     padding: 0 8px
     background: var(--grey-2)
     color: var(--grey-8)
+    font-size: 14px
+
   .q-table__control .q-btn i
     font-size: 1rem
 
