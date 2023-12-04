@@ -32,31 +32,36 @@ $http.interceptors.response.use(
     if (!error.response)
       return
 
-    const errorDetailList = error.response.data.detail
+    if (error.config.headers.message === false)
+      return Promise.reject(error)
+
+    const { status, detail, message } = error.response.data
 
     /** 判断登录是否过期 */
-    if (error.response.status === 401 || error.response.data?.status === ErrorCode.AUTH_LOGIN_EXPIRED) {
+    if (status === ErrorCode.AUTH_LOGIN_EXPIRED) {
       authToken.value = null
       userInfo.value = undefined
     }
-    else if (Array.isArray(errorDetailList)) {
-      errorDetailList.forEach(detail =>
-        showNotify(detail.message),
+    else if (Array.isArray(detail)) {
+      detail.forEach(item =>
+        showNotify(item.message),
       )
     }
     else {
-      showNotify(error.response.data.message)
+      showNotify(message)
     }
 
     return Promise.reject(error)
   },
 )
 
-function showNotify(massage: string) {
-  Notify.create({
-    type: 'danger',
-    message: massage,
-  })
+function showNotify(message: string) {
+  if (message) {
+    Notify.create({
+      type: 'danger',
+      message,
+    })
+  }
 }
 
 export default $http

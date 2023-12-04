@@ -254,7 +254,7 @@ function uploadFile() {
         for (let i = 0; i < total; i++) {
           try {
             jsonArray[i].expiredAt = new Date(jsonArray[i].expiredAt).toISOString()
-            const res = await createDesktop(jsonArray[i] as any, { headers: { dialog: false } })
+            const res = await createDesktop(jsonArray[i] as any, { headers: { message: false } })
             if (res)
               success++
             else

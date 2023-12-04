@@ -53,7 +53,7 @@ const navList = [
   },
   {
     id: 'authorityAdmin',
-    name: '权限管理',
+    name: '用户权限管理',
     icon: 'i-mingcute:profile-line',
   },
 

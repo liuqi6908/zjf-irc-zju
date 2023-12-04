@@ -21,6 +21,7 @@ const tabList = ref<TabItem[]>([
   { id: 0, label: '大文件外发待审核', component: markRaw(defineAsyncComponent(() => import('~/view/exportFile/LargeFileAudit.vue'))), params: { cols } },
   { id: 1, label: '大文件外发审核记录', component: markRaw(defineAsyncComponent(() => import('~/view/exportFile/LargeFileRecord.vue'))), params: { cols } },
   { id: 2, label: '小文件自动外发记录', component: markRaw(defineAsyncComponent(() => import('~/view/exportFile/SmallFileRecord.vue'))), params: { cols } },
+  { id: 4, label: '外发配置管理', component: markRaw(defineAsyncComponent(() => import('~/view/exportFile/exportConfig.vue'))) },
 ])
 const tab = ref(tabList.value[0].id)
 </script>

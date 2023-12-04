@@ -31,8 +31,8 @@ const dialog = ref(false)
 const loading = ref(false)
 
 const previewTableData = computed(() => {
-  let row = [] as any
-  const col = [] as any
+  let row: any[] = []
+  const col: any[] = []
 
   if (previewTable.value && previewTable.value.length) {
     const fieldArr = previewTable.value[0]
@@ -46,6 +46,14 @@ const previewTableData = computed(() => {
     }
     row = cloneDeep(previewTable.value)
   }
+  else {
+    col.push({
+      name: 'empty',
+      label: '暂无数据',
+      align: 'center',
+    })
+  }
+
   return {
     row,
     col,
@@ -62,12 +70,18 @@ const isExist = ref(false)
 onBeforeMount(async () => {
   loading.value = true
 
-  const field = await getDataFields(route.query.dataId as string)
-  tableFieldRows.value = field
+  try {
+    const id = route.query.dataId as string
 
-  previewTable.value = (await getDataPreview(route.query.dataId as string).finally(() => {
+    tableFieldRows.value = await getDataFields(id)
+
+    previewTable.value = (await getDataPreview(id))
+      .filter((row: any) => Object.values(row).some(v => v))
+  }
+  catch(_) {}
+  finally {
     loading.value = false
-  })).filter((row: any) => Object.values(row).some(v => v))
+  }
 
   // 不在云桌面 且 已通过认证，判断是否已申请云桌面
   if (!isDesktop.value && isVerify.value)
@@ -148,11 +162,12 @@ async function downloadData() {
       <div class="w-full h-10" />
 
       <div flex="~ col" mt-5 gap-5>
-        <span flex="~ row" text-4 font-600 text-grey-8> 表格数据预览</span>
+        <span flex="~ row" text-4 font-600 text-grey-8>表格数据预览</span>
 
         <BaseTable
           v-slot="{ props, col }"
           :loading="loading" :cols="previewTableData.col" :rows="previewTableData.row"
+          no-data-label="管理员正在配置中"
         >
           <div>
             {{ props.row[`${col}`] }}

@@ -26,9 +26,6 @@ defineProps<Props>()
 
 
 <style lang="scss" scoped>
-.border-color {
-   background-color: var(--transparency-white-3, rgba(255, 255, 255, 0.30));;
-}
 .footer-item:not(:last-child) {
   position: relative;
 
@@ -42,6 +39,5 @@ defineProps<Props>()
     top: 50%;
     transform: translateY(-50%);
   }
-
 }
 </style>
