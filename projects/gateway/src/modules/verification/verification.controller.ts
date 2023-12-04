@@ -134,17 +134,11 @@ export class VerificationController {
       VerificationStatus.APPROVED,
     )
     // 自动为用户分配角色
-    let updateRes
     try {
-      updateRes = await this._userSrv.repo().update({ id: user.id }, { dataRoleName: verification.identify || null })
+      this._userSrv.repo().update({ id: verification.founderId }, { dataRoleName: verification.identify || null })
     }
-    catch (e) {
-      updateRes = e
-    }
-    return {
-      ...res,
-      updateRes,
-    }
+    catch (_) {}
+    return res
   }
 
   @ApiOperation({ summary: '驳回一个认证申请' })
