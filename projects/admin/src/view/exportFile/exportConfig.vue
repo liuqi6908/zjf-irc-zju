@@ -42,6 +42,18 @@ const loading = ref(false)
 
 onMounted(reset)
 
+const disabled = computed(() => {
+  for (const key of Object.keys(config) as Array<keyof IConfigDto>) {
+    if (
+      typeof config[key].value !== 'number' ||
+      !(config[key].value > 0) ||
+      config[key].unit && !fileSizeUnits.includes(config[key].unit!)
+    )
+      return true
+  }
+  return false
+})
+
 /**
  * 重置配置
  */
@@ -133,8 +145,19 @@ async function submit() {
       </div>
     </div>
     <div flex="~ row justify-end gap-6" p-4>
-      <q-btn color="primary" w-28 h-10 outline rounded-2 text-base label="重 置" @click="reset" />
-      <q-btn color="primary" rounded-2 w-28 h-10 text-base label="确 认" @click="submit" />
+      <q-btn
+        color="primary"
+        w-28 h-10 outline rounded-2 text-base
+        label="重 置"
+        @click="reset"
+      />
+      <q-btn
+        color="primary"
+        rounded-2 w-28 h-10 text-base
+        label="确 认"
+        :disable="disabled"
+        @click="submit"
+      />
     </div>
   </div>
 </template>
