@@ -10,9 +10,9 @@ export class SysConfigService {
     private readonly _sysCfgRepo: Repository<Config>,
   ) {}
 
-  async getConfig() {
+  async getConfig(version: string) {
     return (await this._sysCfgRepo.findOne({
-      where: {},
+      where: { version },
       select: ['config'],
     }))?.config
   }
