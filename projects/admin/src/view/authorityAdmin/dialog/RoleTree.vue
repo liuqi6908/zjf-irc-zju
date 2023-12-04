@@ -80,110 +80,112 @@ function checkRole(id: string) {
       />
     </div>
     <!-- 权限 -->
-    <div flex="~ 1 row" h-0 gap-4>
-      <!-- 类 -->
-      <div class="roles">
-        <div
-          v-for="item in tree"
-          :key="item.id"
-          class="role"
-          :class="{
-            active: expanded[0] === item.id,
-          }"
-        >
-          <q-checkbox
-            :model-value="list.includes(item.id)"
-            size="sm"
-            @click="checkRole(item.id)"
-          />
-          <div @click="() => expanded[0] === item.id ? expanded[0] = '' : expanded[0] = item.id">
-            <span v-text="item.label" />
-            <q-icon v-if="item.children && item.children.length" name="fas fa-chevron-right" />
+    <q-scroll-area flex-1 h-0>
+      <div flex="~ row" h-full gap-4>
+        <!-- 类 -->
+        <div class="roles">
+          <div
+            v-for="item in tree"
+            :key="item.id"
+            class="role"
+            :class="{
+              active: expanded[0] === item.id,
+            }"
+          >
+            <q-checkbox
+              :model-value="list.includes(item.id)"
+              size="sm"
+              @click="checkRole(item.id)"
+            />
+            <div @click="() => expanded[0] === item.id ? expanded[0] = '' : expanded[0] = item.id">
+              <div v-text="item.label" />
+              <q-icon v-if="item.children && item.children.length" name="fas fa-chevron-right" />
+            </div>
+          </div>
+        </div>
+        <!-- 数据库 -->
+        <div class="roles">
+          <div
+            v-for="item in tree.find(v => v.id === expanded[0])?.children"
+            :key="item.id"
+            class="role"
+            :class="{
+              active: expanded[1] === item.id,
+            }"
+          >
+            <q-checkbox
+              :model-value="list.includes(item.id)"
+              size="sm"
+              @click="checkRole(item.id)"
+            />
+            <div @click="() => expanded[1] === item.id ? expanded[1] = '' : expanded[1] = item.id">
+              <div v-text="item.label" />
+              <q-icon v-if="item.children && item.children.length" name="fas fa-chevron-right" />
+            </div>
+          </div>
+        </div>
+        <!-- 子库 -->
+        <div class="roles">
+          <div
+            v-for="item in tree.find(v => v.id === expanded[0])?.children?.find(v => v.id === expanded[1])?.children"
+            :key="item.id"
+            class="role"
+            :class="{
+              active: expanded[2] === item.id,
+            }"
+          >
+            <q-checkbox
+              :model-value="list.includes(item.id)"
+              size="sm"
+              @click="checkRole(item.id)"
+            />
+            <div @click="() => expanded[2] === item.id ? expanded[2] = '' : expanded[2] = item.id">
+              <div v-text="item.label" />
+              <q-icon v-if="item.children && item.children.length" name="fas fa-chevron-right" />
+            </div>
+          </div>
+        </div>
+        <!-- 模块 -->
+        <div class="roles">
+          <div
+            v-for="item in tree.find(v => v.id === expanded[0])?.children?.find(v => v.id === expanded[1])?.children?.find(v => v.id === expanded[2])?.children"
+            :key="item.id"
+            class="role"
+            :class="{
+              active: expanded[3] === item.id,
+            }"
+          >
+            <q-checkbox
+              :model-value="list.includes(item.id)"
+              size="sm"
+              @click="checkRole(item.id)"
+            />
+            <div @click="() => expanded[3] === item.id ? expanded[3] = '' : expanded[3] = item.id">
+              <div v-text="item.label" />
+              <q-icon v-if="item.children && item.children.length" name="fas fa-chevron-right" />
+            </div>
+          </div>
+        </div>
+        <!-- 表格 -->
+        <div class="roles">
+          <div
+            v-for="item in tree.find(v => v.id === expanded[0])?.children?.find(v => v.id === expanded[1])?.children?.find(v => v.id === expanded[2])?.children?.find(v => v.id === expanded[3])?.children"
+            :key="item.id"
+            class="role"
+          >
+            <q-checkbox
+              :model-value="list.includes(item.id)"
+              size="sm"
+              @click="checkRole(item.id)"
+            />
+            <div>
+              <div v-text="item.label" />
+              <q-icon v-if="item.children && item.children.length" name="fas fa-chevron-right" />
+            </div>
           </div>
         </div>
       </div>
-      <!-- 数据库 -->
-      <div class="roles">
-        <div
-          v-for="item in tree.find(v => v.id === expanded[0])?.children"
-          :key="item.id"
-          class="role"
-          :class="{
-            active: expanded[1] === item.id,
-          }"
-        >
-          <q-checkbox
-            :model-value="list.includes(item.id)"
-            size="sm"
-            @click="checkRole(item.id)"
-          />
-          <div @click="() => expanded[1] === item.id ? expanded[1] = '' : expanded[1] = item.id">
-            <span v-text="item.label" />
-            <q-icon v-if="item.children && item.children.length" name="fas fa-chevron-right" />
-          </div>
-        </div>
-      </div>
-      <!-- 子库 -->
-      <div class="roles">
-        <div
-          v-for="item in tree.find(v => v.id === expanded[0])?.children?.find(v => v.id === expanded[1])?.children"
-          :key="item.id"
-          class="role"
-          :class="{
-            active: expanded[2] === item.id,
-          }"
-        >
-          <q-checkbox
-            :model-value="list.includes(item.id)"
-            size="sm"
-            @click="checkRole(item.id)"
-          />
-          <div @click="() => expanded[2] === item.id ? expanded[2] = '' : expanded[2] = item.id">
-            <span v-text="item.label" />
-            <q-icon v-if="item.children && item.children.length" name="fas fa-chevron-right" />
-          </div>
-        </div>
-      </div>
-      <!-- 模块 -->
-      <div class="roles">
-        <div
-          v-for="item in tree.find(v => v.id === expanded[0])?.children?.find(v => v.id === expanded[1])?.children?.find(v => v.id === expanded[2])?.children"
-          :key="item.id"
-          class="role"
-          :class="{
-            active: expanded[3] === item.id,
-          }"
-        >
-          <q-checkbox
-            :model-value="list.includes(item.id)"
-            size="sm"
-            @click="checkRole(item.id)"
-          />
-          <div @click="() => expanded[3] === item.id ? expanded[3] = '' : expanded[3] = item.id">
-            <span v-text="item.label" />
-            <q-icon v-if="item.children && item.children.length" name="fas fa-chevron-right" />
-          </div>
-        </div>
-      </div>
-      <!-- 表格 -->
-      <div class="roles">
-        <div
-          v-for="item in tree.find(v => v.id === expanded[0])?.children?.find(v => v.id === expanded[1])?.children?.find(v => v.id === expanded[2])?.children?.find(v => v.id === expanded[3])?.children"
-          :key="item.id"
-          class="role"
-        >
-          <q-checkbox
-            :model-value="list.includes(item.id)"
-            size="sm"
-            @click="checkRole(item.id)"
-          />
-          <div>
-            <span v-text="item.label" />
-            <q-icon v-if="item.children && item.children.length" name="fas fa-chevron-right" />
-          </div>
-        </div>
-      </div>
-    </div>
+    </q-scroll-area>
     <!-- 已选择 -->
     <div flex gap="x-4 y-2" flex-wrap items-center max-h-20 overflow-hidden hover:overflow-auto>
       <div h-9 leading-9 v-text="'已选择：'" />
@@ -204,7 +206,9 @@ function checkRole(id: string) {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+
   &::-webkit-scrollbar-track {
     background-color: transparent;
     border: none;
@@ -223,11 +227,13 @@ function checkRole(id: string) {
       border-radius: 4px;
     }
   }
+
   .role {
     display: flex;
     flex-direction: row;
     align-items: center;
     height: 35px;
+
     > div:last-child {
       display: flex;
       flex-direction: row;
@@ -235,10 +241,16 @@ function checkRole(id: string) {
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
+
+      > div {
+        white-space: nowrap;
+      }
+
       > .q-icon {
         margin-left: 16px;
       }
     }
+
     &.active {
       color: var(--primary);
     }
@@ -268,6 +280,12 @@ function checkRole(id: string) {
   }
   &::-webkit-scrollbar-thumb:hover {
     background-color: #6E7686;
+  }
+}
+
+.q-scrollarea {
+  :deep(.q-scrollarea__content) {
+    height: 100%;
   }
 }
 </style>

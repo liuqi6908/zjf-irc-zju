@@ -82,8 +82,13 @@ function updateDataRole() {
 </script>
 
 <template>
-  <q-dialog :model-value="modelValue" persistent>
-    <q-card class="max-w-auto!" flex="~ col" p-6 relative min-w-375 h-0 gap-4 min-h-200>
+  <q-dialog :model-value="modelValue" persistent class="role-dialog">
+    <q-card
+      class="max-w-auto!"
+      flex="~ col" p-6 relative gap-4
+      max-w="inherit!" w="90%" min-h-125
+      style="height: calc(100% - 100px);"
+    >
       <header text-lg relative font-600>
         编辑权限
         <q-btn
@@ -118,3 +123,11 @@ function updateDataRole() {
     </q-card>
   </q-dialog>
 </template>
+
+<style lang="scss">
+.role-dialog {
+  .q-dialog__inner {
+    overflow: auto;
+  }
+}
+</style>
