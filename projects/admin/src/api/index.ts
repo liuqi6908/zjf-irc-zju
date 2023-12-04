@@ -35,7 +35,7 @@ $http.interceptors.response.use(
     if (!error.response)
       return
 
-    if (error.config.headers.dialog === false)
+    if (error.config.headers.message === false)
       return Promise.reject(error)
 
     const { status, detail, message } = error.response.data
