@@ -2,33 +2,40 @@
 import { cmsConfig } from 'shared/constants/cms.constant'
 import { getCms } from '~/api/cms/getCms'
 
-const cmsId = ref('home')
-const homeList = ref<any>([])
-const questionProps = ref<[{ title: string; svg: string; richText: string }]>()
-const route = useRoute()
 const { cmsProps } = useCms()
 
+const cmsId = 'home'
+const cmsList = ref<any>([])
+const question = ref<{
+  title: string
+  svg: string
+  richText: string
+}[]>()
+
+/**
+ * 获取组件
+ * @param id
+ */
 function currCom(id: string) {
-  const list = cmsConfig.find(i => i.id === cmsId.value)?.children
-  const item = list?.find(i => i.id === id)
-  if (item)
-    return item.component
+  return cmsConfig.find(v => v.id === cmsId)?.children
+    .find(v => v.id === id)?.component
 }
-const comProps = computed(() => (currId: string) => {
+
+/**
+ * 获取组件对应的参数
+ */
+const comProps = computed(() => (id: string) => {
   const json: any[] = []
-  if (homeList.value.length) {
-    const clone = homeList.value.find((i: any) => i.id === currId)
-    if (!clone)
-      return
-    const jsons = clone.json
-    if (jsons && json) {
-      jsons.forEach((item: any, index: number) => {
+  if (cmsList.value.length) {
+    const cms = cmsList.value.find((v: any) => v.id === id)
+    if (cms?.json) {
+      cms.json.forEach((item: any, index: number) => {
+        const { title, uploadImg, richText } = item
         json.push({
-          name: `silder${index}`,
-          content: item.content,
-          title: item.title,
-          img: item.uploadImg,
-          richText: item.richText,
+          name: `slider${index}`,
+          title,
+          img: uploadImg,
+          richText,
         })
       })
     }
@@ -36,31 +43,48 @@ const comProps = computed(() => (currId: string) => {
   return json
 })
 
-onMounted(async () => {
-  questionProps.value = await cmsProps('questionItem')
-})
-watch(() => route.name, async () => {
-  // Do something here...
-  const list = cmsConfig.find(i => i.id === cmsId.value)?.children
-  if (!list)
-    return
-  for (const cms of list) {
-    const res = await getCms(cms.id)
-    homeList.value.push(res)
-  }
-}, { immediate: true })
+onMounted(init)
+
+/**
+ * 初始化页面
+ */
+async function init() {
+  const list = ['homeCarousel', 'homeDataIntroduce', 'homeContent']
+  list.forEach(async (id) => {
+    const res = await getCms(id)
+    cmsList.value.push(res)
+  })
+  question.value = await cmsProps('questionItem')
+}
 </script>
 
 <template>
   <div>
-    <component :is="currCom('homeCarousel')" v-if="comProps('homeCarousel') && comProps('homeCarousel')?.length && currCom('homeCarousel')" :list="comProps('homeCarousel')" />
+    <component
+      v-if="comProps('homeCarousel') && comProps('homeCarousel')?.length"
+      :is="currCom('homeCarousel')"
+      :list="comProps('homeCarousel')"
+    />
 
-    <component :is="currCom('homeDataIntroduce')" v-if="comProps('homeDataIntroduce') && comProps('homeDataIntroduce')?.length" :list="comProps('homeDataIntroduce')" />
+    <component
+      v-if="comProps('homeDataIntroduce') && comProps('homeDataIntroduce')?.length"
+      :is="currCom('homeDataIntroduce')"
+      :list="comProps('homeDataIntroduce')"
+    />
+
+    <div v-if="comProps('homeContent') && comProps('homeContent')?.length" flex="~ justify-center" pb-20>
+      <div w-full max-w-240>
+        <component
+          :is="currCom('homeContent')"
+          :list="comProps('homeContent')"
+        />
+      </div>
+    </div>
 
     <div flex-center bg-grey-2>
       <div grid my-20 max-w-4xl gap-12 lg:grid-cols-1 xl:grid-cols-2>
         <RouterLink
-          v-for="(item, index) in questionProps"
+          v-for="(item, index) in question"
           :key="index"
           :to="{ path: '/question', query: { title: item.title, index } }"
         >

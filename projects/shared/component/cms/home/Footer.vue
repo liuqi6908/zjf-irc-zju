@@ -1,29 +1,34 @@
-<template >
-    <div
-      flex="~ row justify-center"
-      p25 text-grey-1 w-full bg="#001020"
-      gap24
-    >
-      <div v-for="(item,index) in list" :key="index" flex="~ row" class="footer-item">
-        <div flex="~ col">
-            <span text-4.5 font-500 mb-5>{{ item.title }}</span>
-            <div class="col-grow items-center" v-html="item.richText"/>
-        </div>
-      </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
-interface footerItem {
-    title: string
-    richText: string
+interface Item {
+  title: string
+  richText: string
 }
+
 interface Props {
-    list : footerItem[]
+  list: Item[]
 }
+
 defineProps<Props>()
 </script>
 
+<template >
+  <div
+    flex="~ row justify-center"
+    p25 text="left grey-1" w-full bg="#001020"
+    gap24
+  >
+    <div
+      v-for="(item, index) in list"
+      :key="index"
+      class="footer-item"
+    >
+      <div flex="~ col gap-8">
+        <div text-lg font-500 v-text="item.title" />
+        <div text-sm v-html="item.richText" />
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .footer-item:not(:last-child) {

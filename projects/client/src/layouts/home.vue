@@ -223,9 +223,9 @@ async function changePassword() {
     </div>
 
     <component
-      :is="currComponent('home', 'footer')"
       v-if="footerProps && footerProps.length"
-      w-full :list="footerProps" text-left
+      :is="currComponent('home', 'footer')"
+      :list="footerProps"
     />
 
     <ZDialog

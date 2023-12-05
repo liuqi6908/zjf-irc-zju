@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 const autoplay = ref(true)
 
 export interface Carousel {
+  name: string
+  title: string,
   img: string,
   richText: string,
-  title: string,
-  name: string
 }
 
 interface Props {
@@ -14,47 +14,68 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const slidername = ref('')
+const sliderName = ref('')
 
-const slider = computed({
-  get: () => {
-    return slidername.value
+watch(
+  () => props.list,
+  () => {
+    if (props.list && props.list.length !== 0) {
+      sliderName.value = props.list[0].name
+    }
   },
-  set: (val) => {
-    slidername.value = val
-  }
-})
-
-watch(() => props.list, () => {
-  if (props.list && props.list.length !== 0) {
-    slidername.value = props.list[0].name
-  }
-}, { immediate: true })
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <template>
-  <div>
-    <q-carousel navigation v-model="slider" arrows animated height="400px" :autoplay="autoplay"
-      @mouseenter="autoplay = false" @mouseleave="autoplay = true">
-      <q-carousel-slide pa-none  v-for="(l, index) in list" :key="index" :name="l.name" :img-src="l.img">
-        <div class="custom-caption" flex-center>
-          <div text-grey-1 max-w-4xl>
-            <div title-2 font-600 >{{ l.title }}</div>
-            <div v-html="l.richText"/>
-          </div>
+  <q-carousel
+    v-model="sliderName"
+    class="home-carousel"
+    navigation arrows animated
+    height="400px" :autoplay="autoplay"
+    @mouseenter="autoplay = false"
+    @mouseleave="autoplay = true"
+  >
+    <q-carousel-slide
+      v-for="(item, index) in list"
+      :key="index"
+      :name="item.name"
+      :img-src="item.img"
+      pa-none
+    >
+      <div flex-center full text-center bg="#025cb9b3">
+        <div text-grey-1 max-w-4xl>
+          <div
+            title-2 font-600
+            v-text="item.title"
+          />
+          <div v-html="item.richText"/>
         </div>
-      </q-carousel-slide>
-      <template #navigation-icon="{ active, onClick }">
-        <div rounded-1000 w3 h3 mx2 border-1 border-grey-1 :class="active ? 'bg-grey-1' : ''" @click="onClick" />
-      </template>
-    </q-carousel>
-  </div>
+      </div>
+    </q-carousel-slide>
+    <template #navigation-icon="{ active, onClick }">
+      <div
+        rounded-full
+        w3 h3 mx2 cursor-pointer
+        border-1 border-grey-1
+        :class="active ? 'bg-grey-1' : ''"
+        @click="onClick"
+      />
+    </template>
+  </q-carousel>
 </template>
-<style scoped lang="scss">
-.custom-caption {
-  text-align: center;
-  height: 100%;
-  width: 100%;
-  background-color: rgba(2, 92, 185, 0.70)
+
+<style lang="scss">
+.home-carousel {
+  .q-carousel__arrow {
+    opacity: 0;
+    transition: opacity .3s;
+  }
+
+  &:hover .q-carousel__arrow {
+    opacity: 1;
+  }
 }
 </style>

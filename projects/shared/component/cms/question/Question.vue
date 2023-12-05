@@ -11,6 +11,7 @@ interface Question {
 interface Props {
   list: Question[]
 }
+
 const props = defineProps<Props>()
 
 const link = ref('')

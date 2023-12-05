@@ -34,7 +34,7 @@ function handleCreated(editor: any) {
 </script>
 
 <template>
-  <div flex="~ col">
+  <div flex="~ col" border="1px solid grey-3" rounded-2 overflow-hidden>
     <Toolbar
       :editor="editorRef"
       :default-config="toolbarConfig"
