@@ -225,6 +225,7 @@ const disable = computed(() => !editInfo.id || !editInfo.nameZH || !editInfo.nam
       </Tabs>
     </q-card>
 
+    <!-- 编辑/新增 数据大类 -->
     <q-dialog v-model="dialog">
       <q-card min-w-100 p-5>
         <div title-4 v-text="editInfo.type ? '编辑' : '新增'" />
@@ -279,6 +280,7 @@ const disable = computed(() => !editInfo.id || !editInfo.nameZH || !editInfo.nam
       </q-card>
     </q-dialog>
 
+    <!-- 右击菜单 -->
     <QList ref="editRef" style="display: none" bordered absolute top-12 bg-grey-1 z-100 shadow-lg>
       <q-item clickable>
         <q-item-section @click="dialog = true">

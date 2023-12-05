@@ -59,7 +59,7 @@ export function createDataDirectoryTree(
       }
 
       objectKeys(info).forEach((key) => {
-        if (!info[key])
+        if (!info[key] && info[key] !== false)
           delete info[key]
       })
 
