@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { cmsConfig } from 'shared/constants'
-import type { TabItem } from '~/components/tab/Tabs.vue'
 import Page from '~/view/home/index.vue'
 
-const tabList = ref<TabItem[]>(
+const tabList = ref(
   cmsConfig.find(v => v.id === 'home')?.children.map((v) => {
     return {
       id: v.id,

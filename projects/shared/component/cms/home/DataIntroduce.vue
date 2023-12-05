@@ -1,30 +1,30 @@
 <script lang="ts" setup>
-interface Item{
-    title:string
-    richText:string
+interface Item {
+  title: string
+  richText: string
 }
 
-interface Props{
-    list: Item[]
+interface Props {
+  list: Item[]
 }
+
 defineProps<Props>()
 </script>
 
 <template>
-    <div w-full bg-grey-1  flex-center py-20 >
-        <div flex="~ row" gap-20 items-center>
-            <div h-60 w-80 class="introduce_bg-img" /> 
-            <div max-w-xl class="col-grow" v-if="list && list.length">
-                <div title-1 text-grey-8>{{ list[0].title }}</div>
-                <br/>
-                <div text-4.5 indent-1 text-grey-8 v-html="list[0].richText" />
-            </div>
-        </div>
+  <div w-full bg-grey-1 flex-center py-20 >
+    <div flex="~ row items-center gap-20">
+      <div h-60 w-80 class="introduce-bg" />
+      <div v-if="list && list.length" max-w-xl text-grey-8>
+        <h1 text-8 leading-12 v-text="list[0].title" />
+        <div text-lg mt-6 v-html="list[0].richText" />
+      </div>
     </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-.introduce_bg-img {
-    background: no-repeat center / cover url("../../../assets/imgs/introduce.svg");
+.introduce-bg {
+  background: no-repeat center / cover url("../../../assets/imgs/introduce.svg");
 }
 </style>

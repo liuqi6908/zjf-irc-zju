@@ -3,57 +3,55 @@ const HomeCarousel = defineAsyncComponent(() => import('../component/cms/home/Ho
 const DataIntroduce = defineAsyncComponent(() => import('../component/cms/home/DataIntroduce.vue'))
 const Footer = defineAsyncComponent(()=>import('../component/cms/home/Footer.vue'))
 const Question = defineAsyncComponent(()=>import('../component/cms/question/Question.vue'))
-const UpdateDescribe = defineAsyncComponent(()=>import('../component/cms/user/UpdateDescribe.vue'))
+const RichText = defineAsyncComponent(()=>import('../component/cms/richText/index.vue'))
 
 export const cmsConfig = [
   {
-    parentId: '',
     id: 'home',
-    label: '',
     children: [
       {
         id: 'homeCarousel',
         label: '首页轮播图',
-        parentId: 'home',
         component: markRaw(HomeCarousel),
-        col: ['title', 'uploadImg','richText', 'delete', 'sort', 'add'],
+        col: ['title', 'uploadImg', 'richText', 'delete', 'sort', 'add'],
         rows: []
       },
       {
         id: 'homeDataIntroduce',
         label: '平台介绍',
-        parentId: 'home',
         component: markRaw(DataIntroduce),
         col: ['title', 'richText'],
-        rows: [{ title: null, richText: null }]
+        rows: [{ title: '', richText: '' }]
+      },
+      {
+        id: 'homeContent',
+        label: '首页内容',
+        component: markRaw(RichText),
+        col: ['richText', 'delete', 'sort', 'add'],
+        rows: [{ richText: '' }]
       },
       {
         id: 'footer',
         label: '联系方式',
-        parentId: 'footer',
         component: markRaw(Footer),
-        col: ['title', 'richText','delete', 'sort', 'add',],
+        col: ['title', 'richText', 'delete', 'sort', 'add'],
         rows: []
       },
       {
         id: 'homeUpdateDescribe',
         label: '数据上传说明',
-        parentId: 'userUpdateDescribe',
-        component: markRaw(UpdateDescribe),
+        component: markRaw(RichText),
         col: ['richText'],
-        rows: [{ richText: null }]
+        rows: [{ richText: '' }]
       },
     ]
   },
   {
-    parentId: '',
     id: 'question',
-    label: '',
     children: [
       {
         id: 'questionItem',
         label: '问答',
-        parentId: 'question',
         component: markRaw(Question),
         col: ['title', 'svg', 'richText', 'delete', 'sort', 'add'],
         rows: []

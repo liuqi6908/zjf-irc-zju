@@ -38,7 +38,7 @@ $http.interceptors.response.use(
     const { status, detail, message } = error.response.data
 
     /** 判断登录是否过期 */
-    if (status === ErrorCode.AUTH_LOGIN_EXPIRED) {
+    if (error.response.status === 401 || status === ErrorCode.AUTH_LOGIN_EXPIRED) {
       authToken.value = null
       userInfo.value = undefined
     }
