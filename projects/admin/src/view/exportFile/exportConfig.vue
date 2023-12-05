@@ -23,16 +23,17 @@ withDefaults(defineProps<Props>(), {
 
 const $q = useQuasar()
 
+const units = reactive(fileSizeUnits.filter((_, i) => i < 4))
 const config = reactive<Config>({
   sizeLimitSm: {
     label: '小文件尺寸限制',
     value: EXPORT_DFT_SM_SIZE_LIMIT,
-    unit: fileSizeUnits[0]
+    unit: units[0]
   },
   sizeLimitLg:  {
     label: '大文件尺寸限制',
     value: EXPORT_DFT_LG_SIZE_LIMIT,
-    unit: fileSizeUnits[0]
+    unit: units[0]
   },
   dailyLimit:  {
     label: '小文件每日外发限制',
@@ -48,7 +49,7 @@ const disabled = computed(() => {
     if (
       typeof config[key].value !== 'number' ||
       !(config[key].value > 0) ||
-      config[key].unit && !fileSizeUnits.includes(config[key].unit!)
+      config[key].unit && !units.includes(config[key].unit!)
     )
       return true
   }
@@ -69,10 +70,14 @@ async function reset() {
     } } = await getConfig('file') || {}
     if (data) {
       for (const key of Object.keys(data) as Array<keyof IConfigDto>) {
-        if (config[key].unit) {
+        if (config[key].unit && data[key] < Math.pow(1024, 4)) {
           const size = formatFileSize(data[key]).split(' ')
           config[key].value = Number(size[0])
           config[key].unit = size[1]
+        }
+        else if (config[key].unit) {
+          config[key].value = data[key]
+          config[key].unit = units[0]
         }
         else {
           config[key].value = data[key]
@@ -97,8 +102,8 @@ async function submit() {
     const { sizeLimitSm, sizeLimitLg, dailyLimit } = config
     const body: IUpsertConfigBodyDto = {
       version: 'file',
-      sizeLimitSm: sizeLimitSm.value * Math.pow(k, fileSizeUnits.indexOf(sizeLimitSm.unit!)),
-      sizeLimitLg: sizeLimitLg.value * Math.pow(k, fileSizeUnits.indexOf(sizeLimitLg.unit!)),
+      sizeLimitSm: sizeLimitSm.value * Math.pow(k, units.indexOf(sizeLimitSm.unit!)),
+      sizeLimitLg: sizeLimitLg.value * Math.pow(k, units.indexOf(sizeLimitLg.unit!)),
       dailyLimit: dailyLimit.value,
     }
     await upsertConfig(body)
@@ -143,7 +148,7 @@ async function submit() {
           <div v-text="'单位'" />
           <q-select
             v-model="item.unit"
-            :options="fileSizeUnits"
+            :options="units"
             filled dense w-10
           />
         </div>

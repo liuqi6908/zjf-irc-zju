@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { cloneDeep } from 'lodash-es'
 import { Notify } from 'quasar'
 import type { QTableProps } from 'quasar'
 import type { IDataDirectory } from 'zjf-types'
@@ -24,7 +23,6 @@ const emits = defineEmits(['update:midTable', 'update:describe', 'update:referen
 const midTable = ref<File>()
 const refDialog = ref(false)
 const reference = reactive<Reference>({ id: '', text: '' })
-const rowData = ref<any>([])
 const uploadTab = ref('uploadMid')
 const fileOssList = ref<string[]>([])
 
@@ -128,7 +126,7 @@ function fetchFileIsExist(entName: string) {
   xhr.send()
 }
 
-function flattenTree(tree: IDataDirectory, parentNames = [], result = ([] as any[])) {
+function flattenTree(tree: IDataDirectory, parentNames = ([] as any[]), result = ([] as any[])) {
   if (!tree.children)
     return
 
@@ -172,26 +170,27 @@ function flattenTree(tree: IDataDirectory, parentNames = [], result = ([] as any
 }
 
 const tableData = computed(() => {
-  if (!props.treeData?.data)
-    return []
-  if (!props.treeData.data.length)
+  if (!props.treeData?.data || !props.treeData.data.length)
     return []
 
-  const res = flattenTree(props.treeData.data[0])
-  rowData.value = cloneDeep(res)
-
-  return rowData.value
+  return flattenTree(props.treeData.data[0])
 })
 
 const empty = computed(() => !props.dataBase?.length)
 
-watch(uploadTab, (currTab) => {
-  if (currTab === 'uploadDataIntroduce') {
-    props.dataBase?.forEach((item: any) => {
-      fetchFileIsExist(item.nameEN)
-    })
+watch(
+  uploadTab,
+  (currTab) => {
+    if (currTab === 'uploadDataIntroduce') {
+      props.dataBase?.forEach((item: any) => {
+        fetchFileIsExist(item.nameEN)
+      })
+    }
+  },
+  {
+    immediate: true
   }
-}, { immediate: true })
+)
 </script>
 
 <template>
@@ -204,16 +203,16 @@ watch(uploadTab, (currTab) => {
       >
         <q-tab name="uploadMid" label="上传中间表" />
         <q-tab name="uploadDataIntroduce" label="上传数据库介绍" />
-        <q-tab name="uploadRefrence" label="上传引用规范" />
+        <q-tab name="uploadReference" label="上传引用规范" />
       </q-tabs>
     </div>
 
     <q-tab-panels v-model="uploadTab" vertical animated class="col-grow" flex-1 w-0>
-      <q-tab-panel name="uploadMid" p-0 flex="~ col" gap-2>
+      <q-tab-panel name="uploadMid" p-0 flex="~ col gap-4">
         <header flex="~ row items-center gap-10">
-          <span title-4>
+          <div title-4>
             上传中间表
-          </span>
+          </div>
           <Upload
             :model-value="midTable"
             w-30
@@ -222,18 +221,24 @@ watch(uploadTab, (currTab) => {
           />
         </header>
 
-        <base-table
-          v-slot="{ props, col }"
-          :loading="loading"
-          :cols="tableCol"
+        <q-table
+          :rows-per-page-options="rowsPerPageOptions"
           :rows="tableData"
-          flex-1
-          class="h-0!"
+          :columns="tableCol"
+          :loading="loading"
+          flex-1 h="0!"
         >
-          <div flex="~ row">
-            {{ props.row[`${col}`] }}
-          </div>
-        </base-table>
+          <template #body="props">
+            <q-tr>
+              <q-td v-for="col in tableCol" :key="col.name">
+                {{ props.row[col.name] }}
+              </q-td>
+            </q-tr>
+          </template>
+          <template #loading>
+            <q-inner-loading showing color="primary" />
+          </template>
+        </q-table>
       </q-tab-panel>
 
       <q-tab-panel name="uploadDataIntroduce" p-0 text-left>
@@ -275,7 +280,7 @@ watch(uploadTab, (currTab) => {
         </div>
       </q-tab-panel>
 
-      <q-tab-panel name="uploadRefrence" p-0 text-left>
+      <q-tab-panel name="uploadReference" p-0 text-left>
         <div min-h-2xl>
           <header title-4>
             引用规范
