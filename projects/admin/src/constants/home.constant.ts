@@ -3,14 +3,16 @@ import { PermissionType } from 'zjf-types'
 interface Nav {
   id: string
   name: string
+  label?: string
   icon: string
-  permission: string[]
+  permission: PermissionType[]
 }
 
 export const navList: Nav[] = [
   {
     id: 'home',
     name: '首页管理',
+    label: '页面管理',
     icon: 'fa fa-home',
     permission: [
       PermissionType.CMS_CREATE,
@@ -31,6 +33,7 @@ export const navList: Nav[] = [
   {
     id: 'userAdmin',
     name: '用户管理',
+    label: '用户管理',
     icon: 'fas fa-user',
     permission: [
       PermissionType.ACCOUNT_CREATE,
@@ -47,6 +50,7 @@ export const navList: Nav[] = [
   {
     id: 'dataAdmin',
     name: '数据管理',
+    label: '数据管理',
     icon: 'fas fa-chart-bar',
     permission: [
       PermissionType.DATA_UPLOAD,
@@ -62,6 +66,7 @@ export const navList: Nav[] = [
   {
     id: 'logAdmin',
     name: '日志管理',
+    label: '日志管理',
     icon: 'fas fa-clipboard-list',
     permission: [
       PermissionType.LOG_VIEW,
@@ -70,6 +75,7 @@ export const navList: Nav[] = [
   {
     id: 'authorityAdmin',
     name: '用户权限管理',
+    label: '用户权限管理',
     icon: 'fas fa-address-card',
     permission: [
       PermissionType.ACCOUNT_UPDATE_DATA_ROLE,
@@ -83,6 +89,7 @@ export const navList: Nav[] = [
   {
     id: 'desktopAdmin',
     name: '桌面管理',
+    label: '桌面管理',
     icon: 'fas fa-cloud',
     permission: [
       PermissionType.DESKTOP_REQUEST_CAT_ATTACHMENT,
@@ -102,6 +109,7 @@ export const navList: Nav[] = [
   {
     id: 'adminClient',
     name: '管理员分配',
+    label: '管理员分配',
     icon: 'fas fa-user-cog',
     permission: [
       PermissionType.ACCOUNT_UPDATE_ROLE,
@@ -114,6 +122,7 @@ export const navList: Nav[] = [
   {
     id: 'workAdmin',
     name: '作品管理',
+    label: '作品管理',
     icon: 'fas fa-book',
     permission: [
       PermissionType.WORK_QUERY_ALL,
@@ -123,6 +132,7 @@ export const navList: Nav[] = [
   {
     id: 'requestPurchase',
     name: '申请采购',
+    label: '申请采购',
     icon: 'fas fa-edit',
     permission: [
       PermissionType.DATA_SUGGEST_QUERY_ALL,
@@ -131,6 +141,7 @@ export const navList: Nav[] = [
   {
     id: 'exportFile',
     name: '文件外发',
+    label: '文件外发',
     icon: 'fas fa-file-export',
     permission: [
       PermissionType.EXPORT_LG_QUERY_ALL,
@@ -143,3 +154,6 @@ export const navList: Nav[] = [
     ],
   },
 ]
+
+export const permissionList = navList.filter(v => v.label)
+  .map(({ label, permission }) => ({ label: label!, permission }))

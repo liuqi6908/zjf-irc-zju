@@ -1,23 +1,25 @@
 <script setup lang="ts">
-import { useQuasar } from 'quasar'
-import { queryDataRole, updateUserDataRole } from '~/api/dataRole'
+import { Notify } from 'quasar'
+import { getRoles, updateUserRole } from '~/api/role'
+import { IRole } from 'zjf-types'
 
 interface Props {
   id: string
-  dataRoleName?: string
+  roleName?: string
   callback: () => void
 }
 
-const { id, dataRoleName, callback = () => {} } = defineProps<Props>()
-const $q = useQuasar()
+const { id, roleName, callback = () => {} } = defineProps<Props>()
 
 const dialog = ref(true)
 const loading = ref(false)
-const name = ref(dataRoleName)
-const options = ref<any[]>([])
+const name = ref(roleName)
+const options = ref<IRole[]>([])
 
 onBeforeMount(async () => {
-  options.value = await queryDataRole()
+  loading.value = true
+  options.value = await getRoles()
+  loading.value = false
 })
 
 /**
@@ -28,9 +30,9 @@ async function assignRoles() {
     return
   try {
     loading.value = true
-    const flag = await updateUserDataRole(id, name.value)
+    const flag = await updateUserRole(id, name.value)
     if (flag) {
-      $q.notify({
+      Notify.create({
         message: '分配成功！',
         type: 'success',
       })
@@ -38,7 +40,7 @@ async function assignRoles() {
       callback()
     }
   }
-  catch (_) { }
+  catch (_) {}
   finally {
     loading.value = false
   }
@@ -49,7 +51,7 @@ async function assignRoles() {
   <QDialog v-model="dialog">
     <QCard relative p-6 min-w-80 w-30vw class="max-w-inherit!">
       <header relative text-lg mb-5>
-        分配角色
+        分配权限
         <q-btn v-close-popup size="10px" icon="fas fa-times" absolute flat top-0 right-0 px-1 />
       </header>
       <q-list>

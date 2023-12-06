@@ -43,6 +43,7 @@ declare global {
   const downloadFile: typeof import('./utils/tool')['downloadFile']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
+  const expandArray: typeof import('./utils/array')['expandArray']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const flattenJSON: typeof import('./utils/tool')['flattenJSON']
   const flowOpts: typeof import('./constants/trade.constant')['flowOpts']
@@ -51,8 +52,10 @@ declare global {
   const generateRandomString: typeof import('./utils/tool')['generateRandomString']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
+  const getRolePermissions: typeof import('./utils/role')['getRolePermissions']
   const goodsMap: typeof import('./constants/goods.constant')['goodsMap']
   const h: typeof import('vue')['h']
+  const hasIntersection: typeof import('./utils/array')['hasIntersection']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const indexOpts2: typeof import('./constants/startup-index.constant')['indexOpts2']
   const inject: typeof import('vue')['inject']
@@ -65,6 +68,7 @@ declare global {
   const isRef: typeof import('vue')['isRef']
   const keepProperties: typeof import('./utils/object')['keepProperties']
   const labelCoords: typeof import('./constants/silkworm.constant')['labelCoords']
+  const labelToRolePermissions: typeof import('./utils/role')['labelToRolePermissions']
   const levelOpts: typeof import('./constants/trade.constant')['levelOpts']
   const levelOpts2: typeof import('./constants/startup-index.constant')['levelOpts2']
   const linearGradient: typeof import('./constants/map.constant')['linearGradient']
@@ -111,6 +115,7 @@ declare global {
   const onUpdated: typeof import('vue')['onUpdated']
   const partnerOpts: typeof import('./constants/trade.constant')['partnerOpts']
   const pausableWatch: typeof import('@vueuse/core')['pausableWatch']
+  const permissionList: typeof import('./constants/home.constant')['permissionList']
   const preferredDark: typeof import('./composables/dark')['preferredDark']
   const provide: typeof import('vue')['provide']
   const rangeOptsF: typeof import('./constants/family-survey.constant')['rangeOptsF']
@@ -133,6 +138,7 @@ declare global {
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
   const roleOpts: typeof import('./constants/trade.constant')['roleOpts']
+  const rolePermissionsToLabel: typeof import('./utils/role')['rolePermissionsToLabel']
   const rowsPerPageOptions: typeof import('./constants/table.constant')['rowsPerPageOptions']
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
@@ -398,12 +404,14 @@ declare module 'vue' {
     readonly downloadFile: UnwrapRef<typeof import('./utils/tool')['downloadFile']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
+    readonly expandArray: UnwrapRef<typeof import('./utils/array')['expandArray']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly flattenJSON: UnwrapRef<typeof import('./utils/tool')['flattenJSON']>
     readonly generateRandomString: UnwrapRef<typeof import('./utils/tool')['generateRandomString']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
+    readonly hasIntersection: UnwrapRef<typeof import('./utils/array')['hasIntersection']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly isDark: UnwrapRef<typeof import('./composables/dark')['isDark']>
@@ -413,6 +421,7 @@ declare module 'vue' {
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
+    readonly labelToRolePermissions: UnwrapRef<typeof import('./utils/role')['labelToRolePermissions']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly navList: UnwrapRef<typeof import('./constants/home.constant')['navList']>
@@ -437,6 +446,7 @@ declare module 'vue' {
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
+    readonly permissionList: UnwrapRef<typeof import('./constants/home.constant')['permissionList']>
     readonly preferredDark: UnwrapRef<typeof import('./composables/dark')['preferredDark']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly reactify: UnwrapRef<typeof import('@vueuse/core')['reactify']>
@@ -455,6 +465,7 @@ declare module 'vue' {
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
+    readonly rolePermissionsToLabel: UnwrapRef<typeof import('./utils/role')['rolePermissionsToLabel']>
     readonly rowsPerPageOptions: UnwrapRef<typeof import('./constants/table.constant')['rowsPerPageOptions']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
@@ -700,12 +711,14 @@ declare module '@vue/runtime-core' {
     readonly downloadFile: UnwrapRef<typeof import('./utils/tool')['downloadFile']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
+    readonly expandArray: UnwrapRef<typeof import('./utils/array')['expandArray']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly flattenJSON: UnwrapRef<typeof import('./utils/tool')['flattenJSON']>
     readonly generateRandomString: UnwrapRef<typeof import('./utils/tool')['generateRandomString']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
+    readonly hasIntersection: UnwrapRef<typeof import('./utils/array')['hasIntersection']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly isDark: UnwrapRef<typeof import('./composables/dark')['isDark']>
@@ -715,6 +728,7 @@ declare module '@vue/runtime-core' {
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
+    readonly labelToRolePermissions: UnwrapRef<typeof import('./utils/role')['labelToRolePermissions']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly navList: UnwrapRef<typeof import('./constants/home.constant')['navList']>
@@ -739,6 +753,7 @@ declare module '@vue/runtime-core' {
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
+    readonly permissionList: UnwrapRef<typeof import('./constants/home.constant')['permissionList']>
     readonly preferredDark: UnwrapRef<typeof import('./composables/dark')['preferredDark']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly reactify: UnwrapRef<typeof import('@vueuse/core')['reactify']>
@@ -757,6 +772,7 @@ declare module '@vue/runtime-core' {
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
+    readonly rolePermissionsToLabel: UnwrapRef<typeof import('./utils/role')['rolePermissionsToLabel']>
     readonly rowsPerPageOptions: UnwrapRef<typeof import('./constants/table.constant')['rowsPerPageOptions']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
