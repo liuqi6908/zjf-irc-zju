@@ -110,9 +110,7 @@ async function uploadIntermediateTable(file: File) {
         message: '上传成功',
         type: 'success',
       })
-      setTimeout(() => {
-        getDataByRootId(id)
-      }, 500)
+      getDataByRootId(id)
     }
     else {
       loading.value = false
@@ -213,8 +211,8 @@ async function massUploadTableDataFile(type: UploadType, files: File[]) {
   getDataByRootId(id)
   if (success !== total) {
     notify({
-      type: success ? 'danger' : 'warn',
-      message: `共 ${total} 条数据，${success ? '全部上传失败' : `已成功上传 ${success} 条`}`,
+      type: success ? 'warn' : 'danger',
+      message: `共 ${total} 条数据，${success ? `已成功上传 ${success} 条` : '全部上传失败'}`,
       caption: Object.keys(error).map(v => `${v}：${error[v]}`).join('<br/>'),
       multiLine: true,
       html: true,
@@ -222,7 +220,7 @@ async function massUploadTableDataFile(type: UploadType, files: File[]) {
       actions: [
         { label: '确认', color: 'white', handler: () => {} },
       ],
-      color: success ? 'negative' : 'warning',
+      color: success ? 'warning' : 'negative',
     })
   }
   else {
