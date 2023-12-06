@@ -142,32 +142,30 @@ export class DataController {
     const logger = {
       log: (...msgs: any[]) => _.log('[上传中间表]', ...msgs),
       error: _.error,
-    };
+    }
 
-    (async () => {
-      const newIds = nodes.map(node => node.id)
-      if (query.clear) {
-        const where: FindOptionsWhere<DataDirectory> = {
-          rootId: param.dataRootId,
-          parentId: Not(IsNull()),
-          id: Not(In(newIds)),
-        }
-        const deleteCount = await this._dataSrv.dirRepo().count({ where })
-        logger.log(`clear ${deleteCount} rows`)
-        await this._dataSrv.dirRepo().softDelete(where)
-        logger.log('clear success')
+    const newIds = nodes.map(node => node.id)
+    if (query.clear) {
+      const where: FindOptionsWhere<DataDirectory> = {
+        rootId: param.dataRootId,
+        parentId: Not(IsNull()),
+        id: Not(In(newIds)),
       }
-      try {
-        await batchSave(this._dataSrv.dirRepo(), nodes, 'id', 1, true)
-        await batchSave(this._dataSrv.fieldRepo(), fields, 'id')
-        logger.log('upload success')
-        this._dataSrv.cacheDir()
-      }
-      catch (err) {
-        logger.error(err)
-        logger.error('upload failed')
-      }
-    })()
+      const deleteCount = await this._dataSrv.dirRepo().count({ where })
+      logger.log(`clear ${deleteCount} rows`)
+      await this._dataSrv.dirRepo().softDelete(where)
+      logger.log('clear success')
+    }
+    try {
+      await batchSave(this._dataSrv.dirRepo(), nodes, 'id', 1, true)
+      await batchSave(this._dataSrv.fieldRepo(), fields, 'id')
+      logger.log('upload success')
+      this._dataSrv.cacheDir()
+    }
+    catch (err) {
+      logger.error(err)
+      logger.error('upload failed')
+    }
 
     return {
       nodes: nodes.length,
