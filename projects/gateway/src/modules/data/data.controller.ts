@@ -209,7 +209,7 @@ export class DataController {
   }
 
   @ApiOperation({ summary: '更新引用规范' })
-  @HasPermission(PermissionType.DATA_PERMISSION_UPDATE_REFERENCE)
+  @HasPermission(PermissionType.DATA_EDIT_REFERENCE)
   @ApiParam({ name: 'dataDirectoryId', description: '数据目录的唯一标识' })
   @Patch('reference/:dataDirectoryId')
   public async updateReference(
@@ -296,7 +296,7 @@ export class DataController {
     summary: '上传表格 预览/下载 数据',
     description: '预览数据文件名为: `TABLE_ENG` + `.csv`；下载数据文件名为: `TABLE_ENG` + `.zip`',
   })
-  @HasPermission(PermissionType.DATA_UPLOAD)
+  @HasPermission(PermissionType.DATA_UPLOAD_TABLE)
   @ApiSuccessResponse(SuccessStringDto)
   @ApiFormData()
   @Put(':uploadType/:dataRootId/:filename')

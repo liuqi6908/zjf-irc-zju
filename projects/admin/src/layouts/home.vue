@@ -25,65 +25,6 @@ watch(
   },
 )
 
-const navList = [
-  {
-    id: 'home',
-    name: '首页管理',
-    icon: ' i-mingcute:home-4-line',
-  },
-  {
-    id: 'qnaAdmin',
-    name: '问答管理',
-    icon: 'i-mingcute:question-line',
-  },
-  {
-    id: 'userAdmin',
-    name: '用户管理',
-    icon: 'i-mingcute:user-setting-line',
-  },
-  {
-    id: 'dataAdmin',
-    name: '数据管理',
-    icon: 'i-mingcute:chart-bar-line',
-  },
-  {
-    id: 'logAdmin',
-    name: '日志管理',
-    icon: 'i-mingcute:list-search-line',
-  },
-  {
-    id: 'authorityAdmin',
-    name: '用户权限管理',
-    icon: 'i-mingcute:profile-line',
-  },
-
-  {
-    id: 'desktopAdmin',
-    name: '桌面管理',
-    icon: 'i-mingcute:cloud-line',
-  },
-  {
-    id: 'adminClient',
-    name: '管理员分配',
-    icon: 'i-mingcute:user-add-2-line',
-  },
-  {
-    id: 'workAdmin',
-    name: '作品管理',
-    icon: 'i-mingcute:notebook-line',
-  },
-  {
-    id: 'requestPurchase',
-    name: '申请采购',
-    icon: 'i-mingcute:pencil-2-line',
-  },
-  {
-    id: 'exportFile',
-    name: '文件外发',
-    icon: 'i-mingcute:file-export-line',
-  },
-]
-
 const showMenu = computed(() => {
   return $route.name !== 'denied'
 })

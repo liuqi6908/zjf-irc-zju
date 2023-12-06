@@ -18,7 +18,7 @@ export class CmsController {
 
   @ApiOperation({ summary: '创建或更新内容' })
   @ApiSuccessResponse(CmsResDto)
-  @HasPermission([PermissionType.CMS_CREATE, PermissionType.ACCOUNT_UPDATE], 'AND')
+  @HasPermission([PermissionType.CMS_CREATE, PermissionType.CMS_UPDATE], 'AND')
   @Post('upsert/:cmsId')
   public async upsert(
     @Body() body: UpsertCmsBodyDto<any>,

@@ -86,6 +86,7 @@ declare global {
   const menuOptsF: typeof import('./constants/family-survey.constant')['menuOptsF']
   const nationalMap: typeof import('./constants/national.constant')['nationalMap']
   const nationalMapReverse: typeof import('./constants/national.constant')['nationalMapReverse']
+  const navList: typeof import('./constants/home.constant')['navList']
   const navs: typeof import('./constants/index')['navs']
   const nextTick: typeof import('vue')['nextTick']
   const onActivated: typeof import('vue')['onActivated']
@@ -411,6 +412,7 @@ declare module 'vue' {
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
+    readonly navList: UnwrapRef<typeof import('./constants/home.constant')['navList']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
@@ -710,6 +712,7 @@ declare module '@vue/runtime-core' {
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
+    readonly navList: UnwrapRef<typeof import('./constants/home.constant')['navList']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>

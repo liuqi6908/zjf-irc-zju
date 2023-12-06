@@ -28,7 +28,7 @@ export class ConfigController {
     summary: '创建/更新全局配置',
     description: '配置版本为唯一标识，如果存在，则会更新配置内容',
   })
-  @HasPermission([PermissionType.EXPORT_LG_QUERY_ALL, PermissionType.EXPORT_SM_QUERY_ALL], 'AND')
+  @HasPermission(PermissionType.CONFIG_UPDATE_EXPORT)
   @Post()
   public async upsertConfig(@Body() body: UpsertConfigBodyDto) {
     const { version, ...config } = body
