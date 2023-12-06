@@ -4,24 +4,14 @@ interface Nav {
   id: string
   name: string
   icon: string
-  permission: string[]
+  permission: PermissionType[]
 }
 
 export const navList: Nav[] = [
   {
     id: 'home',
-    name: '首页管理',
+    name: '页面管理',
     icon: 'fa fa-home',
-    permission: [
-      PermissionType.CMS_CREATE,
-      PermissionType.CMS_UPDATE,
-      PermissionType.CMS_DELETE,
-    ],
-  },
-  {
-    id: 'qnaAdmin',
-    name: '问答管理',
-    icon: 'fas fa-question-circle',
     permission: [
       PermissionType.CMS_CREATE,
       PermissionType.CMS_UPDATE,

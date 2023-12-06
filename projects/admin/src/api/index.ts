@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Notify } from 'quasar'
-import { AUTH_TOKEN_KEY } from 'shared/constants'
+import { ADMIN_ROLE_PERMISSION_KEY } from 'shared/constants'
 import { ErrorCode } from 'zjf-types'
 import { ctx } from '../modules/ctx'
 
@@ -9,9 +9,8 @@ const $http = axios.create({
 })
 
 $http.interceptors.request.use((config) => {
-  const token = localStorage.getItem(AUTH_TOKEN_KEY)
-  if (token && !config.headers.Authorization)
-    config.headers.Authorization = `Bearer ${token?.trim()}`
+  if (authToken.value && !config.headers.Authorization)
+    config.headers.Authorization = `Bearer ${authToken.value?.trim()}`
 
   const baseURLWhiteList = ['http', '//']
   if (
@@ -54,7 +53,9 @@ $http.interceptors.response.use(
     else if (status === ErrorCode.AUTH_LOGIN_EXPIRED) {
       showNotify('登录过期，请重新登录')
       ctx.router?.replace({ path: 'auth/login' })
-      localStorage.removeItem(AUTH_TOKEN_KEY)
+      authToken.value = null
+      userInfo.value = undefined
+      localStorage.removeItem(ADMIN_ROLE_PERMISSION_KEY)
     }
     else if (Array.isArray(detail)) {
       detail.forEach(item =>

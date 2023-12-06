@@ -1,32 +1,39 @@
 <script setup lang="ts">
 const $router = useRouter()
 const $route = useRoute()
-const { isLogin, roleName, useLogout } = useUser()
+const { isLogin, rolePermission, useLogout, useGetProfile } = useUser()
 const drawer = ref(false)
-const routerLink = ref('')
 
-const link = computed({
-  get: () => { return $router.currentRoute.value.name as string },
-  set: (val: string) => {
-    routerLink.value = val
-  },
+const link = computed(() => $route.name as string)
+
+const navs = computed(() => {
+  return navList.filter(v => rolePermission.value?.includes(v.name))
 })
 
-watch(
-  link,
-  () => {
-    if (!isLogin.value)
-      $router.replace({ path: 'auth/login' })
-    else if (roleName.value !== 'root')
+onMounted(async () => {
+  if (isLogin.value) {
+    await useGetProfile()
+    if (!navs.value?.length)
       $router.replace({ path: 'denied' })
-  },
-  {
-    immediate: true,
-  },
-)
+  }
+  else {
+    $router.replace({ path: 'auth/login' })
+  }
+})
 
 const showMenu = computed(() => {
   return $route.name !== 'denied'
+})
+
+$router.beforeEach((to, _, next) => {
+  if (!navs.value.length)
+    next('denied')
+
+  const { name } = to
+  if (navs.value.find(v => v.id === name))
+    next()
+  else
+    next(navs.value[0].id)
 })
 </script>
 
@@ -75,7 +82,7 @@ const showMenu = computed(() => {
           <!-- menu -->
           <q-list>
             <RouterLink
-              v-for="item in navList"
+              v-for="item in navs"
               :key="item.id"
               replace
               :to="`/${item.id}`"
@@ -86,7 +93,6 @@ const showMenu = computed(() => {
                 :name="item.name"
                 :icon="item.icon"
                 :click-id="link"
-                @update:id="(val) => link = val"
               />
             </RouterLink>
           </q-list>
@@ -102,9 +108,3 @@ const showMenu = computed(() => {
     </q-layout>
   </main>
 </template>
-
-<style lang="scss" scoped>
-.nav-Br {
-  border-radius:0.5rem 0 0 0.5rem ;
-}
-</style>

@@ -3,19 +3,16 @@ import { cmsConfig } from 'shared/constants'
 import Page from '~/view/home/index.vue'
 
 const tabList = ref(
-  cmsConfig.find(v => v.id === 'home')?.children.map((v) => {
-    return {
-      id: v.id,
-      label: v.label,
-    }
-  }) || [],
+  expandArray(
+    cmsConfig.map(v => v.children.map(({ id, label, sort }) => ({ id, label, sort, page: v.id })))
+  ).sort((a, b) => a.sort - b.sort)
 )
 const tab = ref(tabList.value[0].id)
 </script>
 
 <template>
   <Tabs v-model="tab" :tab-list="tabList" absolute>
-    <Page :id="tab" page="home" full />
+    <Page :page="tabList.find(v => v.id === tab)?.page" :id="tab" full />
   </Tabs>
 </template>
 

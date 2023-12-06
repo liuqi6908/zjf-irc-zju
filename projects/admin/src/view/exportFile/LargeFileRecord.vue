@@ -181,7 +181,10 @@ function download(name: string, id: string) {
   >
     <template #body="prop">
       <q-tr :props="prop">
-        <q-td v-for="col in columns" :key="col.name">
+        <q-td
+          v-for="col in columns"
+          :key="col.name"
+        >
           <template v-if="col.name === 'operation'">
             <q-btn label="下载" color="primary" size="sm" @click="download(prop.row.fileName, prop.row.id)" />
           </template>
@@ -192,6 +195,12 @@ function download(name: string, id: string) {
               :icon="`fas fa-${statusArr.find((v: any) => v.value === prop.row.status)?.icon}`"
               size="sm"
               :label="statusArr.find((v: any) => v.value === prop.row.status)?.label"
+            />
+          </template>
+          <template v-else-if="col.name === 'rejectReason'">
+            <div
+              min-w-35 max-w-30vw overflow-hidden text-ellipsis
+              v-text="prop.row[col.field as string]"
             />
           </template>
           <template v-else>
