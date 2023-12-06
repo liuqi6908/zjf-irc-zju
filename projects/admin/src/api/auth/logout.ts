@@ -1,5 +1,7 @@
 const { $post } = useRequest()
+const { isLogin } = useUser()
 
 export function logout() {
-  return $post('/auth/logout', {})
+  if (isLogin.value)
+    return $post('/auth/logout', {})
 }

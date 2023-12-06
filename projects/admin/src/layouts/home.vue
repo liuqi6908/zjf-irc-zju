@@ -30,7 +30,7 @@ const showMenu = computed(() => {
 
 $router.beforeEach((to, _, next) => {
   const { name } = to
-  if (name === 'denied') {
+  if (name === 'denied' || name === 'auth-login') {
     next()
   }
   else if (!navs.value.length) {
