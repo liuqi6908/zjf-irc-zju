@@ -46,6 +46,8 @@ export enum PermissionType {
   DATA_UPLOAD = 'data:upload',
   /** 上传数据库介绍 */
   DATA_UPLOAD_INTRO = 'data:upload-intro',
+  /** 上传表格样例/下载文件 */
+  DATA_UPLOAD_TABLE = 'data:upload-table',
   /** 编辑数据引用规范 */
   DATA_EDIT_REFERENCE = 'data:edit-reference',
   /** 查询所有的数据资源 */
@@ -66,8 +68,6 @@ export enum PermissionType {
   DATA_PERMISSION_DELETE = 'data-permission:delete',
   /** 查询数据角色 */
   DATA_PERMISSION_QUERY = 'data-permission:query',
-  /** 更新引用规范 */
-  DATA_PERMISSION_UPDATE_REFERENCE = 'data-permission:update-reference',
 
   // ------------------ 日志访问 ---------------------
   /** 查看日志 */
@@ -101,6 +101,15 @@ export enum PermissionType {
   /** 云桌面过期检查 */
   DESKTOP_EXPIRE_CHECK = 'desktop:expire-check',
 
+  // ------------------ 用户角色-权限 ---------------------
+  /** 创建用户角色 */
+  ROLE_CREATE = 'role:create',
+  /** 更新用户角色 */
+  ROLE_UPDATE = 'role:update',
+  /** 删除用户角色 */
+  ROLE_DELETE = 'role:delete',
+  /** 查询用户角色 */
+  ROLE_QUERY = 'role:query',
 
   // ------------------ 数据外发 ---------------------
   /** 查询所有大文件外发历史 */
@@ -115,6 +124,10 @@ export enum PermissionType {
   EXPORT_LG_REJECT = 'export-lg:reject',
   /** 下载大文件外发的文件 */
   EXPORT_LG_DOWNLOAD = 'export-lg:download',
+
+  // ------------------ 全局配置 ---------------------
+  /** 更新文件外发的全局配置 */
+  CONFIG_UPDATE_EXPORT = 'config:update-export',
 
   // ------------------ 作品/成果 ---------------------
   /** 查询所有作品/成果 */
@@ -148,6 +161,7 @@ export const permissionDescriptions: Record<PermissionType, string> = {
 
   [PermissionType.DATA_UPLOAD]: '上传中间表',
   [PermissionType.DATA_UPLOAD_INTRO]: '上传数据库介绍',
+  [PermissionType.DATA_UPLOAD_TABLE]: '上传表格样例/下载文件',
   [PermissionType.DATA_EDIT_REFERENCE]: '编辑数据引用规范',
   [PermissionType.DATA_QUERY_ALL]: '查询所有的数据资源',
   [PermissionType.DATA_ROOT_CREATE]: '创建数据大类',
@@ -158,7 +172,6 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.DATA_PERMISSION_UPDATE]: '更新数据角色',
   [PermissionType.DATA_PERMISSION_DELETE]: '删除数据角色',
   [PermissionType.DATA_PERMISSION_QUERY]: '查询数据角色',
-  [PermissionType.DATA_PERMISSION_UPDATE_REFERENCE]: '更新引用规范',
 
   [PermissionType.LOG_VIEW]: '查看日志',
 
@@ -176,12 +189,19 @@ export const permissionDescriptions: Record<PermissionType, string> = {
   [PermissionType.DESKTOP_QUERY]: '查询云桌面',
   [PermissionType.DESKTOP_EXPIRE_CHECK]: '云桌面过期检查',
 
+  [PermissionType.ROLE_CREATE]: '创建用户角色',
+  [PermissionType.ROLE_UPDATE]: '更新用户角色',
+  [PermissionType.ROLE_DELETE]: '删除用户角色',
+  [PermissionType.ROLE_QUERY]: '查询用户角色',
+
   [PermissionType.EXPORT_LG_QUERY_ALL]: '查询所有大文件外发历史',
   [PermissionType.EXPORT_SM_QUERY_ALL]: '查询所有小文件外发历史',
   [PermissionType.EXPORT_SM_DOWNLOAD]: '下载小文件外发的文件',
   [PermissionType.EXPORT_LG_APPROVE]: '通过大文件外发申请',
   [PermissionType.EXPORT_LG_REJECT]: '驳回大文件外发申请',
   [PermissionType.EXPORT_LG_DOWNLOAD]: '下载大文件外发的文件',
+
+  [PermissionType.CONFIG_UPDATE_EXPORT]: '更新文件外发的全局配置',
 
   [PermissionType.WORK_QUERY_ALL]: '查询所有作品/成果',
   [PermissionType.WORK_DOWNLOAD]: '下载指定作品/成果的附件',

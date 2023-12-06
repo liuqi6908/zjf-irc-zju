@@ -142,32 +142,30 @@ export class DataController {
     const logger = {
       log: (...msgs: any[]) => _.log('[上传中间表]', ...msgs),
       error: _.error,
-    };
+    }
 
-    (async () => {
-      const newIds = nodes.map(node => node.id)
-      if (query.clear) {
-        const where: FindOptionsWhere<DataDirectory> = {
-          rootId: param.dataRootId,
-          parentId: Not(IsNull()),
-          id: Not(In(newIds)),
-        }
-        const deleteCount = await this._dataSrv.dirRepo().count({ where })
-        logger.log(`clear ${deleteCount} rows`)
-        await this._dataSrv.dirRepo().softDelete(where)
-        logger.log('clear success')
+    const newIds = nodes.map(node => node.id)
+    if (query.clear) {
+      const where: FindOptionsWhere<DataDirectory> = {
+        rootId: param.dataRootId,
+        parentId: Not(IsNull()),
+        id: Not(In(newIds)),
       }
-      try {
-        await batchSave(this._dataSrv.dirRepo(), nodes, 'id', 1, true)
-        await batchSave(this._dataSrv.fieldRepo(), fields, 'id')
-        logger.log('upload success')
-        this._dataSrv.cacheDir()
-      }
-      catch (err) {
-        logger.error(err)
-        logger.error('upload failed')
-      }
-    })()
+      const deleteCount = await this._dataSrv.dirRepo().count({ where })
+      logger.log(`clear ${deleteCount} rows`)
+      await this._dataSrv.dirRepo().softDelete(where)
+      logger.log('clear success')
+    }
+    try {
+      await batchSave(this._dataSrv.dirRepo(), nodes, 'id', 1, true)
+      await batchSave(this._dataSrv.fieldRepo(), fields, 'id')
+      logger.log('upload success')
+      this._dataSrv.cacheDir()
+    }
+    catch (err) {
+      logger.error(err)
+      logger.error('upload failed')
+    }
 
     return {
       nodes: nodes.length,
@@ -209,7 +207,7 @@ export class DataController {
   }
 
   @ApiOperation({ summary: '更新引用规范' })
-  @HasPermission(PermissionType.DATA_PERMISSION_UPDATE_REFERENCE)
+  @HasPermission(PermissionType.DATA_EDIT_REFERENCE)
   @ApiParam({ name: 'dataDirectoryId', description: '数据目录的唯一标识' })
   @Patch('reference/:dataDirectoryId')
   public async updateReference(
@@ -296,7 +294,7 @@ export class DataController {
     summary: '上传表格 预览/下载 数据',
     description: '预览数据文件名为: `TABLE_ENG` + `.csv`；下载数据文件名为: `TABLE_ENG` + `.zip`',
   })
-  @HasPermission(PermissionType.DATA_UPLOAD)
+  @HasPermission(PermissionType.DATA_UPLOAD_TABLE)
   @ApiSuccessResponse(SuccessStringDto)
   @ApiFormData()
   @Put(':uploadType/:dataRootId/:filename')
