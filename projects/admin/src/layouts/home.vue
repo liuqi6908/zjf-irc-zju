@@ -27,22 +27,6 @@ onMounted(async () => {
 const showMenu = computed(() => {
   return $route.name !== 'denied'
 })
-
-$router.beforeEach((to, _, next) => {
-  const { name } = to
-  if (name === 'denied' || name === 'auth-login') {
-    next()
-  }
-  else if (!navs.value.length) {
-    next('denied')
-  }
-  else {
-    if (navs.value.find(v => v.id === name))
-      next()
-    else
-      next(navs.value[0].id)
-  }
-})
 </script>
 
 <template>

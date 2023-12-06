@@ -62,8 +62,8 @@ export function useUser($router = useRouter()) {
       cancel: '取消',
       ok: '确认',
     })
-      .onOk(() => {
-        logout()
+      .onOk(async () => {
+        await logout()
         authToken.value = null
         userInfo.value = undefined
         rolePermission.value = null

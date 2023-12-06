@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { isClient } from '@vueuse/core'
 
+const $router = useRouter()
+const { isLogin, rolePermission } = useUser()
+
 useHead({
   title: '智能云科研平台-管理后台',
   meta: [
@@ -42,6 +45,29 @@ watch(
     immediate: true,
   },
 )
+
+$router.beforeEach((to, _, next) => {
+  const navs = computed(() => {
+    return navList.filter(v => rolePermission.value?.includes(v.name))
+  })
+
+  const { name } = to
+  if (name === 'denied' || (name === 'auth-login' && !isLogin.value)) {
+    next()
+  }
+  else if (!isLogin.value) {
+    next('auth-login')
+  }
+  else if (!navs.value.length) {
+    next('denied')
+  }
+  else {
+    if (navs.value.find(v => v.id === name))
+      next()
+    else
+      next(navs.value[0].id)
+  }
+})
 </script>
 
 <template>
