@@ -110,9 +110,7 @@ async function uploadIntermediateTable(file: File) {
         message: '上传成功',
         type: 'success',
       })
-      setTimeout(() => {
-        getDataByRootId(id)
-      }, 500)
+      getDataByRootId(id)
     }
     else {
       loading.value = false
@@ -213,8 +211,8 @@ async function massUploadTableDataFile(type: UploadType, files: File[]) {
   getDataByRootId(id)
   if (success !== total) {
     notify({
-      type: success ? 'danger' : 'warn',
-      message: `共 ${total} 条数据，${success ? '全部上传失败' : `已成功上传 ${success} 条`}`,
+      type: success ? 'warn' : 'danger',
+      message: `共 ${total} 条数据，${success ? `已成功上传 ${success} 条` : '全部上传失败'}`,
       caption: Object.keys(error).map(v => `${v}：${error[v]}`).join('<br/>'),
       multiLine: true,
       html: true,
@@ -222,7 +220,7 @@ async function massUploadTableDataFile(type: UploadType, files: File[]) {
       actions: [
         { label: '确认', color: 'white', handler: () => {} },
       ],
-      color: success ? 'negative' : 'warning',
+      color: success ? 'warning' : 'negative',
     })
   }
   else {
@@ -252,14 +250,14 @@ async function massUploadTableDataFile(type: UploadType, files: File[]) {
         label="上传样例数据"
         accept="text/csv,application/vnd.ms-excel"
         ml-auto color="green"
-        multiple :max-files="100"
+        multiple :max-files="10000"
         @update:model-value="val => massUploadTableDataFile(UploadType.PREVIEW, val)"
       />
       <Upload
         :model-value="file"
         label="上传下载数据"
         accept="application/x-zip-compressed"
-        multiple :max-files="100"
+        multiple :max-files="10000"
         @update:model-value="val => massUploadTableDataFile(UploadType.DOWNLOAD, val)"
       />
     </div>
@@ -286,7 +284,7 @@ async function massUploadTableDataFile(type: UploadType, files: File[]) {
               />
               <Upload
                 :model-value="file"
-                accept="application/x-zip-compressed"
+                accept="application/zip,application/x-zip-compressed"
                 label="下载" size="sm"
                 @update:model-value="val => uploadTableDataFile(UploadType.DOWNLOAD, val, props.row)"
               />
