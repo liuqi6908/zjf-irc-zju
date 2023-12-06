@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, forwardRef } from '@nestjs/common'
 import { In, Not, Repository } from 'typeorm'
 import type { OnModuleInit } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -14,6 +14,7 @@ export class PermissionService implements OnModuleInit {
   constructor(
     @InjectRepository(Permission)
     private readonly _permissionRepo: Repository<Permission>,
+    @Inject(forwardRef(() => RoleService))
     private readonly _roleSrv: RoleService,
   ) {}
 

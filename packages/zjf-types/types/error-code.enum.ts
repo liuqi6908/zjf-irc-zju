@@ -56,7 +56,7 @@ export enum ErrorCode {
   /** 用户邮箱不匹配 */
   USER_EMAIL_NOT_MATCHED = 400008,
 
-  // 身份验证相关 
+  // 身份验证相关
   /** 驳回原因必填 */
   VERIFICATION_REJECT_REASON_REQUIRED = 500001,
   /** 已存在待处理的身份验证 */
@@ -69,13 +69,12 @@ export enum ErrorCode {
   VERIFICATION_NOT_APPROVED = 500005,
 
   // 文件相关错误
-  /** 文件类型不允许 */ 
+  /** 文件类型不允许 */
   FILE_TYPE_NOT_ALLOWED = 600001,
   /** 文件不存在 */
   FILE_NOT_FOUND = 600002,
   /** 文件大小超出限制 */
   FILE_TOO_LARGE = 600003,
-
 
   // 数据相关错误
   /** 禁止删除访客角色 */
@@ -95,7 +94,7 @@ export enum ErrorCode {
   /** 存在排队中的云桌面申请 */
   DESKTOP_REQUEST_QUEUE_EXISTS = 800002,
   /** 存在正在使用中的云桌面 */
-  DESKTOP_REQUEST_IN_USE_EXISTS = 800003, 
+  DESKTOP_REQUEST_IN_USE_EXISTS = 800003,
   /** 仅待审核状态允许被操作 */
   DESKTOP_REQUEST_PENDING_ONLY = 800004,
   /** 仅排队状态允许被操作 */
@@ -125,14 +124,20 @@ export enum ErrorCode {
 
   // 建议采购相关错误
   /** 重复的采购建议 */
-  DATA_SUGGEST_DUPLICATED = 110001
+  DATA_SUGGEST_DUPLICATED = 110001,
+
+  // 角色相关错误
+  /** 禁止删除root角色 */
+  ROLE_DELETE_ROOT = 120001,
+  /** 角色已被分配 */
+  ROLE_IN_USAGE = 120002,
 }
 
 export type ErrorMessageCollection = Partial<
   Record<
     ErrorCode,
-    { 
-      httpStatus: import('@nestjs/common').HttpStatus; 
+    {
+      httpStatus: import('@nestjs/common').HttpStatus;
       message: string;
       detail?: any;
     }

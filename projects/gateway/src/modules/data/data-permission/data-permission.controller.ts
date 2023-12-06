@@ -39,7 +39,7 @@ export class DataPermissionController {
       const sqlError = parseSqlError(err)
       if (sqlError === SqlError.FOREIGN_KEY_CONSTRAINT_FAILS)
         responseError(ErrorCode.DATA_ROLE_IN_USAGE)
-      responseError(ErrorCode.COMMON_UNEXPECTED_ERROR)
+      throw err
     }
   }
 

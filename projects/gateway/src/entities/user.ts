@@ -61,7 +61,7 @@ export class User extends BaseTimeStamp implements IUser {
   @OneToOne(() => UserDeleted, deleted => deleted.user)
   deletedRecord?: UserDeleted
 
-  @ManyToOne(() => Role, role => role.users, { onDelete: 'SET NULL' })
+  @ManyToOne(() => Role, role => role.users)
   @JoinColumn()
   role?: Role
 
