@@ -4,6 +4,7 @@ import type { QTableProps } from 'quasar'
 import { uploadDataByRootId, uploadTableData } from '~/api/data'
 import type { Node } from '~/composables/database'
 import { UploadType } from 'zjf-types'
+import { csvFileType, zipFileType } from '~/utils/file'
 
 interface Props {
   id: string
@@ -242,13 +243,13 @@ async function massUploadTableDataFile(type: UploadType, files: File[]) {
       <Upload
         :model-value="file"
         label="上传中间表"
-        accept="text/csv,application/vnd.ms-excel"
+        :accept="csvFileType.join(',')"
         @update:model-value="val => uploadIntermediateTable(val)"
       />
       <Upload
         :model-value="file"
         label="上传样例数据"
-        accept="text/csv,application/vnd.ms-excel"
+        :accept="csvFileType.join(',')"
         ml-auto color="green"
         multiple :max-files="10000"
         @update:model-value="val => massUploadTableDataFile(UploadType.PREVIEW, val)"
@@ -256,7 +257,7 @@ async function massUploadTableDataFile(type: UploadType, files: File[]) {
       <Upload
         :model-value="file"
         label="上传下载数据"
-        accept="application/x-zip-compressed"
+        :accept="zipFileType.join(',')"
         multiple :max-files="10000"
         @update:model-value="val => massUploadTableDataFile(UploadType.DOWNLOAD, val)"
       />
@@ -278,13 +279,13 @@ async function massUploadTableDataFile(type: UploadType, files: File[]) {
             <div v-else-if="col.name === 'operation'" flex="~ row gap-2">
               <Upload
                 :model-value="file"
-                accept="text/csv,application/vnd.ms-excel"
+                :accept="csvFileType.join(',')"
                 label="样例" color="green" size="sm"
                 @update:model-value="val => uploadTableDataFile(UploadType.PREVIEW, val, props.row)"
               />
               <Upload
                 :model-value="file"
-                accept="application/zip,application/x-zip-compressed"
+                :accept="zipFileType.join(',')"
                 label="下载" size="sm"
                 @update:model-value="val => uploadTableDataFile(UploadType.DOWNLOAD, val, props.row)"
               />

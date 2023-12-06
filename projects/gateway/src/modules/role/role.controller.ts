@@ -1,5 +1,7 @@
 import { Controller, Get } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { HasPermission } from 'src/guards/permission.guard'
+import { PermissionType } from 'zjf-types'
 
 import { RoleService } from './role.service'
 
@@ -11,6 +13,7 @@ export class RoleController {
   ) {}
 
   @ApiOperation({ summary: '获取全部角色列表' })
+  @HasPermission(PermissionType.ROLE_QUERY)
   @Get('list')
   public async getRoles() {
     return this._roleSrv.repo().find({
