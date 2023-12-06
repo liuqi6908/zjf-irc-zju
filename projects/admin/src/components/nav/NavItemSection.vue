@@ -11,7 +11,7 @@ defineProps<Props>()
 
 <template>
   <q-item-section v-if="icon" avatar min-w-0 p-0>
-    <div :class="icon" :style="{ width: `${iconSize}px`, height: `${iconSize}px` }" />
+    <q-icon :name="icon" :style="{ fontSize: `${iconSize}px` }" />
   </q-item-section>
   <q-item-section :class="icon ? 'ml-4' : 'ml-0'" text-sm items-start font-500>
     {{ name }}
