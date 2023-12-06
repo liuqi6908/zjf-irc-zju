@@ -42,7 +42,7 @@ $http.interceptors.response.use(
     /** 判断是否有权限 */
     if (status === ErrorCode.PERMISSION_DENIED) {
       showNotify(message)
-      ctx.router?.replace({ path: 'denied' })
+      // ctx.router?.replace({ path: 'denied' })
     }
     /* 判断登录是否未登录 */
     else if (status === ErrorCode.AUTH_LOGIN_REQUIRED) {

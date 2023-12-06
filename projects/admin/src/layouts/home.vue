@@ -13,8 +13,11 @@ const navs = computed(() => {
 onMounted(async () => {
   if (isLogin.value) {
     await useGetProfile()
+    const { name } = $route
     if (!navs.value?.length)
       $router.replace({ path: 'denied' })
+    else if (!navs.value.find(v => v.id === name))
+      $router.replace({ path: navs.value[0].id })
   }
   else {
     $router.replace({ path: 'auth/login' })
@@ -26,14 +29,19 @@ const showMenu = computed(() => {
 })
 
 $router.beforeEach((to, _, next) => {
-  if (!navs.value.length)
-    next('denied')
-
   const { name } = to
-  if (navs.value.find(v => v.id === name))
+  if (name === 'denied') {
     next()
-  else
-    next(navs.value[0].id)
+  }
+  else if (!navs.value.length) {
+    next('denied')
+  }
+  else {
+    if (navs.value.find(v => v.id === name))
+      next()
+    else
+      next(navs.value[0].id)
+  }
 })
 </script>
 
