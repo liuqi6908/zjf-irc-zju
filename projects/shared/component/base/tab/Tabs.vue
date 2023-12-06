@@ -1,58 +1,30 @@
 <script setup lang="ts">
-import type { QTableProps } from 'quasar'
-import { watch } from 'vue'
-
 export interface TabItem {
   label: string
-  /** tab名称 */
   id: string
-  /** 当前tab是否已经请求数据 */
-  isRequest: boolean
   to?: string
-  currTabObj?: any
-  rightEvent?: string
-  nameEN?:string
-  tableData?: {
-    row: QTableProps['rows']
-    col: QTableProps['columns']
-  }
-  children?: TabItem[]
+  nameEN?: string
+  order?: number
 }
+
 interface Props {
   modelValue: string
   tabList: TabItem[]
-  align?:string
-  showcaption?:boolean
-  indicatorColor?:string
+  align?: 'center' | 'left' | 'right'
+  showCaption?: boolean
+  indicatorColor?: string
 }
 
-const props =   withDefaults(defineProps<Props>(),{
+withDefaults(defineProps<Props>(), {
   indicatorColor: 'primary-1'
 })
 
-const emits = defineEmits(['update:modelValue', 'update:currTabObj','update:rightEvent'])
-
-function editPopup(val: any, event: any){
-  emits('update:rightEvent',{ val,event})
-}
-
-watch(
-  () => props.modelValue,
-  () => {
-      const tabObj = props.tabList.find(i => i.id === props.modelValue)
-      if (tabObj){
-          emits('update:currTabObj', tabObj)
-      }
-  },
-  {
-    immediate: true,
-  },
-)
+const emits = defineEmits(['update:modelValue', 'rightEvent'])
 </script>
 
 <template>
   <div full>
-    <div flex="~ row" :class="align ? `justify-${align}` : 'justify-center'">
+    <div flex="~ row" :justify="align ? align : 'center'">
       <q-tabs
         :indicator-color="indicatorColor"
         font-600
@@ -64,19 +36,23 @@ watch(
       >
         <div v-for="tab in tabList" :key="tab.id" >
           <q-route-tab v-if="tab.to" :to="tab.to">
-              {{ tab.label }}
+            {{ tab.label }}
           </q-route-tab>
 
           <q-tab
-              v-else
-              @click.right.prevent="editPopup(tab,$event)"
-              text-4
-              font-600
-              :name="tab.id"
+            v-else
+            @click.right.prevent="$emit('rightEvent', { val: tab, event: $event })"
+            text-4
+            font-600
+            :name="tab.id"
           >
             <div flex="~ col">
-              <span>{{ tab.label }}</span>
-              <span v-if="showcaption" style="text-transform: lowercase">{{ tab.nameEN }}</span>
+              <div v-text="tab.label" />
+              <div
+                v-if="showCaption"
+                style="text-transform: lowercase"
+                v-text="tab.nameEN"
+              />
             </div>
           </q-tab>
         </div>
@@ -84,7 +60,10 @@ watch(
       <slot name="right"/>
     </div>
 
-    <q-tab-panels :model-value="modelValue" @update:model-value="(tab) => $emit('update:modelValue', tab)">
+    <q-tab-panels
+      :model-value="modelValue"
+      @update:model-value="(tab) => $emit('update:modelValue', tab)"
+    >
       <q-tab-panel p-none :name="modelValue">
         <div>
           <slot />

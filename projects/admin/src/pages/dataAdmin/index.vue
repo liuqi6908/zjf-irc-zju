@@ -1,39 +1,38 @@
 <script setup lang="ts">
-import type { IDataDirectory } from 'zjf-types'
-import { fileToFormData } from 'zjf-utils'
 import Tabs from 'shared/component/base/tab/Tabs.vue'
-import { Notify, QList } from 'quasar'
-import DataResource from '~/view/dataAdmin/DataResource.vue'
+import type { TabItem } from 'shared/component/base/tab/Tabs.vue'
+import { QList, Notify } from 'quasar'
+import DataAdmin from '~/view/dataAdmin/index.vue'
 
-import { uploadDataByRootId } from '~/api/data/uploadDataByRootId'
-import { uploadDataDescribe } from '~/api/file/dataDescribe'
-import { putRootData } from '~/api/data/putRootData'
-import { deleteRootData } from '~/api/data/delecteRootData'
-import { updateRootData } from '~/api/data/updateRootData'
+import { createDataRoot, updateDataRoot, deleteDataRoot } from '~/api/data'
 
-const { getDataByRootId, geRootData, rootTabList, loading } = useDataBase()
+const { rootList, getRootList, loading } = useDatabase()
 
 const tab = ref('')
-const currentTabObj = ref()
+const tabList = computed<TabItem[]>(() => {
+  return rootList.value?.map((item) => {
+    return {
+      ...item,
+      label: item.nameZH
+    }
+  }) || []
+})
 
 const editRef = ref<typeof QList>()
 const dialog = ref(false)
-const editInfo = reactive({
+const editInfo = ref({
   /** 操作类型（0新增、1编辑） */
   type: 0,
   id: '',
-  nameEN: '',
   nameZH: '',
-  order: undefined,
+  nameEN: '',
+  order: 0,
 })
 
-const midTable = ref<File>()
-const describe = ref()
-
 onBeforeMount(async () => {
-  await geRootData()
-  if (rootTabList.value.length)
-    tab.value = rootTabList.value[0].id
+  await getRootList()
+  if (rootList.value?.length)
+    tab.value = rootList.value[0].id
 })
 
 onMounted(() => {
@@ -49,11 +48,14 @@ onMounted(() => {
  */
 function rightEvent(params: any) {
   const { val, event } = params
-  editInfo.type = 1
-  editInfo.id = val.id
-  editInfo.nameZH = val.label
-  editInfo.nameEN = val.nameEN
-  editInfo.order = val.order ?? 0
+  const { id, label, nameEN = '', order = 0 } = val as TabItem
+  editInfo.value = {
+    type: 1,
+    id,
+    nameZH: label,
+    nameEN,
+    order,
+  }
   const el = editRef.value?.$el
   if (el) {
     el.style.left = `${event.clientX - 250}px`
@@ -66,34 +68,32 @@ function rightEvent(params: any) {
  */
 function openAddDialog() {
   dialog.value = true
-  editInfo.type = 0
-  editInfo.id = ''
-  editInfo.nameZH = ''
-  editInfo.nameEN = ''
-  editInfo.order = undefined
+  editInfo.value = {
+    type: 0,
+    id: '',
+    nameZH: '',
+    nameEN: '',
+    order: 0,
+  }
 }
 
 /**
  * 新建/更新数据大类
  */
-async function confirmEditInfo() {
+async function confirm() {
   let res
-  const body = {
-    nameZH: editInfo.nameZH,
-    nameEN: editInfo.nameEN,
-    order: Number(editInfo.order) ?? 0,
-  }
-  if (editInfo.type)
-    res = await updateRootData(editInfo.id, body)
+  const { type } = editInfo.value
+  if (type)
+    res = await updateDataRoot(editInfo.value)
   else
-    res = await putRootData({ ...body, id: editInfo.id })
-  dialog.value = false
+    res = await createDataRoot(editInfo.value)
 
+  dialog.value = false
   if (res) {
-    await geRootData()
+    await getRootList()
     Notify.create({
-      message: `${editInfo.type ? '编辑' : '新增'}成功`,
-      type: 'success',
+      message: `${type ? '编辑' : '新增'}成功`,
+      type: 'success'
     })
   }
 }
@@ -101,101 +101,24 @@ async function confirmEditInfo() {
 /**
  * 删除数据大类
  */
-async function deleteDataBase() {
-  const res = await deleteRootData(editInfo.id)
+async function deleteRoot() {
+  const res = await deleteDataRoot(editInfo.value.id)
   if (res) {
+    await getRootList()
     Notify.create({
       message: '删除成功',
       type: 'success',
     })
-    await geRootData()
   }
 }
 
 /**
- * 获取指定分类的数据
- * @param id
+ * 禁用提交按钮
  */
-async function getRootDataById(id: string) {
-  const res = await getDataByRootId(id)
-  if (res && currentTabObj.value)
-    currentTabObj.value.data = res
-}
-
-/**
- * 上传中间表
- * @param id
- * @param file
- */
-async function uploadFile(id: string, file: File) {
-  const fromData = new FormData()
-  fromData.append('file', file)
-
-  const res = await uploadDataByRootId(id, fromData)
-  if (res) {
-    Notify.create({
-      message: '上传成功',
-      type: 'success',
-    })
-    await getRootDataById(id)
-  }
-}
-
-function findLevelObjects(tree: IDataDirectory[], targetLevel: number, currentLevel = 0): IDataDirectory[] {
-  const levelObjects: IDataDirectory[] = []
-
-  for (const node of tree) {
-    if (currentLevel === targetLevel)
-      levelObjects.push(node)
-
-    if (node.children && node.children.length > 0) {
-      const childLevelObjects = findLevelObjects(node.children, targetLevel, currentLevel + 1)
-      levelObjects.push(...childLevelObjects)
-    }
-  }
-
-  return levelObjects
-}
-
-const dataBase = computed(() => {
-  if (currentTabObj.value.data && currentTabObj.value.data.length)
-    return findLevelObjects(currentTabObj.value.data, 1)
+const disable = computed(() => {
+  const { id, nameZH, nameEN, order } = editInfo.value
+  return !id || !nameZH || !nameEN || typeof order !== 'number'
 })
-
-watch(
-  tab,
-  async (newVal) => {
-    if (newVal)
-      getRootDataById(newVal)
-  },
-)
-
-watch(
-  midTable,
-  async (newVal) => {
-    if (newVal)
-      await uploadFile(tab.value, newVal)
-  },
-)
-
-watch(
-  describe,
-  async (newVal) => {
-    if (newVal && newVal.file) {
-      const formData = fileToFormData(newVal.file)
-      const filename = `${newVal.enName}.docx`
-      const res = await uploadDataDescribe(tab.value, filename, formData)
-      if (res) {
-        Notify.create({
-          type: 'success',
-          message: '上传成功',
-        })
-      }
-    }
-  },
-)
-
-const disable = computed(() => !editInfo.id || !editInfo.nameZH || !editInfo.nameEN)
 </script>
 
 <template>
@@ -203,27 +126,27 @@ const disable = computed(() => !editInfo.id || !editInfo.nameZH || !editInfo.nam
     <q-card full overflow-hidden>
       <Tabs
         v-model="tab"
-        v-model:curr-tab-obj="currentTabObj"
         flex="~ col"
-        showcaption items-center
-        :tab-list="rootTabList"
-        @update:right-event="rightEvent"
+        showCaption
+        :tab-list="tabList"
+        @right-event="rightEvent"
       >
         <template #right>
           <q-btn flat text-primary-1 @click="openAddDialog()">
             <div i-material-symbols:add />
           </q-btn>
         </template>
-        <DataResource
-          v-model:mid-table="midTable"
-          v-model:describe="describe"
-          :loading="loading"
-          :data-root-id="tab"
-          :data-base="dataBase"
-          :tree-data="currentTabObj"
-        />
+        <DataAdmin :id="tab" />
       </Tabs>
     </q-card>
+
+    <q-inner-loading
+      :showing="loading"
+      label="加载中..."
+      color="primary"
+      label-class="text-primary"
+      z-99
+    />
 
     <!-- 编辑/新增 数据大类 -->
     <q-dialog v-model="dialog">
@@ -267,7 +190,7 @@ const disable = computed(() => !editInfo.id || !editInfo.nameZH || !editInfo.nam
             :rules="[val => val && val.length > 0 || '请输入英文名']"
           />
           <q-input
-            v-model="editInfo.order"
+            v-model.number="editInfo.order"
             label="排序字段"
             filled
             type="number"
@@ -275,20 +198,24 @@ const disable = computed(() => !editInfo.id || !editInfo.nameZH || !editInfo.nam
         </q-card-section>
         <div text-right>
           <q-btn label="取消" color="primary" flat mr-2 @click="dialog = false" />
-          <q-btn label="确认" color="primary" :disable="disable" @click="confirmEditInfo" />
+          <q-btn label="确认" color="primary" :disable="disable" @click="confirm" />
         </div>
       </q-card>
     </q-dialog>
 
     <!-- 右击菜单 -->
-    <QList ref="editRef" style="display: none" bordered absolute top-12 bg-grey-1 z-100 shadow-lg>
+    <QList
+      ref="editRef"
+      style="display: none"
+      bordered absolute top-12 bg-grey-1 z-100 shadow-lg
+    >
       <q-item clickable>
         <q-item-section @click="dialog = true">
           编辑
         </q-item-section>
       </q-item>
       <q-item clickable>
-        <q-item-section @click="deleteDataBase()">
+        <q-item-section @click="deleteRoot">
           删除
         </q-item-section>
       </q-item>
@@ -299,7 +226,6 @@ const disable = computed(() => !editInfo.id || !editInfo.nameZH || !editInfo.nam
 <style lang="scss" scoped>
 .data-admin {
   :deep(.q-tab-panels) {
-    width: 100%;
     flex: 1;
     .q-tab-panel > div {
       height: 100%;

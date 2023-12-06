@@ -8,6 +8,7 @@ interface Props {
   accept?: string
   multiple?: boolean
   maxFiles?: number
+  size?: string
 }
 withDefaults(defineProps<Props>(), {
   color: 'primary',
@@ -45,7 +46,7 @@ function onRejected() {
     />
     <div @click="clickFileInput">
       <slot>
-        <QBtn :color="color" :label="label" w-full />
+        <QBtn :color="color" :label="label" w-full :size="size" />
       </slot>
     </div>
   </div>

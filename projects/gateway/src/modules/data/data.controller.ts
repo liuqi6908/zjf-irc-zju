@@ -19,7 +19,9 @@ import { createDataDirectoryTree } from 'src/utils/data-directory-tree'
 import { responseParamsError } from 'src/utils/response/validate-exception-factory'
 import { Body, Controller, Delete, Get, Logger, Param, Patch, Put, Query, Req } from '@nestjs/common'
 
+import { SuccessStringDto } from 'src/dto/success.dto'
 import { FileService } from '../file/file.service'
+import { UploadTableDataParamDto } from './dto/upload-table-data.param.dto'
 import { DataService } from './data.service'
 import { CreateRootBodyDto } from './dto/create-root.body.dto'
 import { UpdateRootBodyDto } from './dto/update-root.body.dto'
@@ -290,6 +292,35 @@ export class DataController {
     catch (err) {
       response(ErrorCode.COMMON_UNEXPECTED_ERROR)
     }
+  }
+
+  @ApiOperation({
+    summary: '上传表格 预览/下载 数据',
+    description: '预览数据文件名为: `TABLE_ENG` + `.csv`；下载数据文件名为: `TABLE_ENG` + `.zip`',
+  })
+  @HasPermission(PermissionType.DATA_UPLOAD)
+  @ApiSuccessResponse(SuccessStringDto)
+  @ApiFormData()
+  @Put(':uploadType/:dataRootId/:filename')
+  public async uploadTableData(
+    @Param() param: UploadTableDataParamDto,
+    @Body() body: any,
+  ) {
+    const buffer = await body?.file?.toBuffer()
+    const filename = param.filename
+    const type = param.uploadType
+    const arr = filename.split('.')
+    const ext = arr.pop()
+    if (
+      (type === 'preview' && ext !== 'csv')
+      || (type === 'download' && ext !== 'zip')
+    )
+      responseError(ErrorCode.FILE_TYPE_NOT_ALLOWED)
+    const name = arr.join('.')
+    const saveFilename = `${name}.${ext}`
+    const path = `${type}/${param.dataRootId}/${saveFilename}`
+    await this._fileSrv.upload('data', path, buffer)
+    return saveFilename
   }
 
   @ApiOperation({ summary: '获取数据下载链接' })
