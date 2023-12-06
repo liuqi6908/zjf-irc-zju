@@ -6,6 +6,7 @@ import { objectPick } from '@catsjuice/utils'
 import type { FindOptionsWhere } from 'typeorm'
 import { batchSave } from 'src/utils/db/batch-save'
 import { ErrorCode, PermissionType, UploadType } from 'zjf-types'
+import { isUTF8 } from 'zjf-utils'
 import { DataRootIdDto } from 'src/dto/id/data-root.dto'
 import { HasPermission } from 'src/guards/permission.guard'
 import { DataDirectory } from 'src/entities/data-directory'
@@ -129,13 +130,10 @@ export class DataController {
     const buffer: Buffer = await body?.file?.toBuffer()
     // TODO: extract this
     // check is utf8
-    const c1 = buffer[0]
-    const c2 = buffer[1]
-    const c3 = buffer[2]
-    const isUtf8 = c1 === 0xEF && c2 === 0xBB && c3 === 0xBF
     let str = buffer.toString()
-    if (!isUtf8)
+    if (!isUTF8(buffer))
       str = iconv.decode(buffer, 'gbk')
+
     const csv = Papa.parse(str, { header: true }).data
 
     const { nodes, fields } = dataCsvParser(csv, param.dataRootId)

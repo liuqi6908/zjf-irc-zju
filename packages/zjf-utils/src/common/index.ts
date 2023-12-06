@@ -8,6 +8,7 @@ export * from "./pick"
 export * from "./enum-markdown"
 export * from "./md5"
 export * from './fileToFormdata'
+export * from './file'
 export * from './format-file-size'
 export * from './hash-object'
 export * from './download-file'
