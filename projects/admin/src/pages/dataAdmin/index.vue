@@ -209,13 +209,13 @@ const disable = computed(() => {
       style="display: none"
       bordered absolute top-12 bg-grey-1 z-100 shadow-lg
     >
-      <q-item clickable>
-        <q-item-section @click="dialog = true">
+      <q-item clickable @click="dialog = true">
+        <q-item-section>
           编辑
         </q-item-section>
       </q-item>
-      <q-item clickable>
-        <q-item-section @click="deleteRoot">
+      <q-item clickable @click="deleteRoot">
+        <q-item-section>
           删除
         </q-item-section>
       </q-item>
