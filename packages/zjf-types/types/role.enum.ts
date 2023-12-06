@@ -19,15 +19,6 @@ export const defaultRoles: IRole[] = [
     name: 'root',
     description: "完整的访问权限",
     permissions: allPermissionNames.map(pn => getPermission(pn))
-  },
-  {
-    name: "超级管理员",
-    description: "所有的管理权限",
-    permissions: [
-      PermissionType.VERIFICATION_LIST_ALL,
-      PermissionType.VERIFICATION_APPROVE,
-      PermissionType.VERIFICATION_REJECT,
-    ].map(pn => getPermission(pn))
   }
 ]
 
