@@ -2,23 +2,20 @@ import { Repository } from 'typeorm'
 import { Role } from 'src/entities/role'
 import { defaultRoles } from 'zjf-types'
 import { Injectable } from '@nestjs/common'
-import type { OnModuleInit } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { UserService } from '../user/user.service'
 
 @Injectable()
-export class RoleService implements OnModuleInit {
+export class RoleService {
   constructor(
     @InjectRepository(Role)
     private readonly _roleRepo: Repository<Role>,
     private readonly _userSrv: UserService,
   ) {}
 
-  onModuleInit() {
-    // this._initDefaultRoles()
-    // do not init here, init after permission init in "permission.service.ts"
-  }
-
+  /**
+   * 初始化默认角色
+   */
   public async initDefaultRoles() {
     // 初始化所有的默认角色
     await this._roleRepo.save(defaultRoles)
