@@ -7,6 +7,7 @@ import _exportErrors from './_export.error'
 import _suggestError from './_suggest.error'
 import _desktopErrors from './_desktop.error'
 import _permissionErrors from './_permission.error'
+import _roleErrors from './_role.error'
 import _verificationErrors from './_verification.error'
 
 export const errorMessages: ErrorMessageCollection = {
@@ -19,5 +20,6 @@ export const errorMessages: ErrorMessageCollection = {
   ..._exportErrors,
   ..._desktopErrors,
   ..._permissionErrors,
+  ..._roleErrors,
   ..._verificationErrors,
 }
