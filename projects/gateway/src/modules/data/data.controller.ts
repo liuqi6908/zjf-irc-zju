@@ -18,7 +18,8 @@ import { DataRoleCheck } from 'src/guards/data-role-permission.guard'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
 import { createDataDirectoryTree } from 'src/utils/data-directory-tree'
 import { responseParamsError } from 'src/utils/response/validate-exception-factory'
-import { Body, Controller, Delete, Get, Logger, Param, Patch, Put, Query, Req } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Put, Query, Req } from '@nestjs/common'
+import { Throttle } from '@nestjs/throttler'
 
 import { SuccessStringDto } from 'src/dto/success.dto'
 import { FileService } from '../file/file.service'
@@ -39,7 +40,6 @@ interface Nodes extends DataDirectory {
 @ApiTags('Data | 数据服务')
 @Controller('data')
 export class DataController {
-  private readonly _logger = new Logger(DataController.name)
   constructor(
     private readonly _dataSrv: DataService,
     private readonly _fileSrv: FileService,
@@ -294,6 +294,7 @@ export class DataController {
     summary: '上传表格 预览/下载 数据',
     description: '预览数据文件名为: `TABLE_ENG` + `.csv`；下载数据文件名为: `TABLE_ENG` + `.zip`',
   })
+  @Throttle(10000, 60)
   @HasPermission(PermissionType.DATA_UPLOAD_TABLE)
   @ApiSuccessResponse(SuccessStringDto)
   @ApiFormData()
