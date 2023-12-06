@@ -5,7 +5,7 @@ import { In, IsNull, Not } from 'typeorm'
 import { objectPick } from '@catsjuice/utils'
 import type { FindOptionsWhere } from 'typeorm'
 import { batchSave } from 'src/utils/db/batch-save'
-import { ErrorCode, PermissionType } from 'zjf-types'
+import { ErrorCode, PermissionType, UploadType } from 'zjf-types'
 import { DataRootIdDto } from 'src/dto/id/data-root.dto'
 import { HasPermission } from 'src/guards/permission.guard'
 import { DataDirectory } from 'src/entities/data-directory'
@@ -312,8 +312,8 @@ export class DataController {
     const arr = filename.split('.')
     const ext = arr.pop()
     if (
-      (type === 'preview' && ext !== 'csv')
-      || (type === 'download' && ext !== 'zip')
+      (type === UploadType.PREVIEW && ext !== 'csv')
+      || (type === UploadType.DOWNLOAD && ext !== 'zip')
     )
       responseError(ErrorCode.FILE_TYPE_NOT_ALLOWED)
     const name = arr.join('.')
