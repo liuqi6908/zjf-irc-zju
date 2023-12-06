@@ -23,7 +23,7 @@ function clickFileInput() {
   myFileInput.value?.$el.click()
 }
 
-function onRejected() {
+function onRejected(val: any) {
   Notify.create({
     type: 'danger',
     message: '不支持的文件类型',

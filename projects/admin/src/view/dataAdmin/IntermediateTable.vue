@@ -250,14 +250,14 @@ async function massUploadTableDataFile(type: UploadType, files: File[]) {
         label="上传样例数据"
         accept="text/csv,application/vnd.ms-excel"
         ml-auto color="green"
-        multiple :max-files="100"
+        multiple :max-files="10000"
         @update:model-value="val => massUploadTableDataFile(UploadType.PREVIEW, val)"
       />
       <Upload
         :model-value="file"
         label="上传下载数据"
         accept="application/x-zip-compressed"
-        multiple :max-files="100"
+        multiple :max-files="10000"
         @update:model-value="val => massUploadTableDataFile(UploadType.DOWNLOAD, val)"
       />
     </div>
@@ -284,7 +284,7 @@ async function massUploadTableDataFile(type: UploadType, files: File[]) {
               />
               <Upload
                 :model-value="file"
-                accept="application/x-zip-compressed"
+                accept="application/zip,application/x-zip-compressed"
                 label="下载" size="sm"
                 @update:model-value="val => uploadTableDataFile(UploadType.DOWNLOAD, val, props.row)"
               />
