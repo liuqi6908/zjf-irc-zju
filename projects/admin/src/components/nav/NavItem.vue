@@ -12,7 +12,7 @@ export interface ItemList {
   closePopup?: boolean
 }
 const props = withDefaults(defineProps<ItemList>(), {
-  iconSize: 22,
+  iconSize: 16,
   backIcon: 'i-mingcute:right-line',
 })
 const emits = defineEmits(['update:id'])

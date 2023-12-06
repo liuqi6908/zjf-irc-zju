@@ -11,7 +11,7 @@ export const navList: Nav[] = [
   {
     id: 'home',
     name: '首页管理',
-    icon: ' i-mingcute:home-4-line',
+    icon: 'fa fa-home',
     permission: [
       PermissionType.CMS_CREATE,
       PermissionType.CMS_UPDATE,
@@ -21,7 +21,7 @@ export const navList: Nav[] = [
   {
     id: 'qnaAdmin',
     name: '问答管理',
-    icon: 'i-mingcute:question-line',
+    icon: 'fas fa-question-circle',
     permission: [
       PermissionType.CMS_CREATE,
       PermissionType.CMS_UPDATE,
@@ -31,7 +31,7 @@ export const navList: Nav[] = [
   {
     id: 'userAdmin',
     name: '用户管理',
-    icon: 'i-mingcute:user-setting-line',
+    icon: 'fas fa-user',
     permission: [
       PermissionType.ACCOUNT_CREATE,
       PermissionType.ACCOUNT_DELETE,
@@ -47,7 +47,7 @@ export const navList: Nav[] = [
   {
     id: 'dataAdmin',
     name: '数据管理',
-    icon: 'i-mingcute:chart-bar-line',
+    icon: 'fas fa-chart-bar',
     permission: [
       PermissionType.DATA_UPLOAD,
       PermissionType.DATA_UPLOAD_INTRO,
@@ -62,7 +62,7 @@ export const navList: Nav[] = [
   {
     id: 'logAdmin',
     name: '日志管理',
-    icon: 'i-mingcute:list-search-line',
+    icon: 'fas fa-clipboard-list',
     permission: [
       PermissionType.LOG_VIEW,
     ],
@@ -70,7 +70,7 @@ export const navList: Nav[] = [
   {
     id: 'authorityAdmin',
     name: '用户权限管理',
-    icon: 'i-mingcute:profile-line',
+    icon: 'fas fa-address-card',
     permission: [
       PermissionType.ACCOUNT_UPDATE_DATA_ROLE,
       PermissionType.DATA_PERMISSION_CREATE,
@@ -83,7 +83,7 @@ export const navList: Nav[] = [
   {
     id: 'desktopAdmin',
     name: '桌面管理',
-    icon: 'i-mingcute:cloud-line',
+    icon: 'fas fa-cloud',
     permission: [
       PermissionType.DESKTOP_REQUEST_CAT_ATTACHMENT,
       PermissionType.DESKTOP_REQUEST_CREATE,
@@ -102,7 +102,7 @@ export const navList: Nav[] = [
   {
     id: 'adminClient',
     name: '管理员分配',
-    icon: 'i-mingcute:user-add-2-line',
+    icon: 'fas fa-user-cog',
     permission: [
       PermissionType.ACCOUNT_UPDATE_ROLE,
       PermissionType.ROLE_CREATE,
@@ -114,7 +114,7 @@ export const navList: Nav[] = [
   {
     id: 'workAdmin',
     name: '作品管理',
-    icon: 'i-mingcute:notebook-line',
+    icon: 'fas fa-book',
     permission: [
       PermissionType.WORK_QUERY_ALL,
       PermissionType.WORK_DOWNLOAD,
@@ -123,7 +123,7 @@ export const navList: Nav[] = [
   {
     id: 'requestPurchase',
     name: '申请采购',
-    icon: 'i-mingcute:pencil-2-line',
+    icon: 'fas fa-edit',
     permission: [
       PermissionType.DATA_SUGGEST_QUERY_ALL,
     ],
@@ -131,7 +131,7 @@ export const navList: Nav[] = [
   {
     id: 'exportFile',
     name: '文件外发',
-    icon: 'i-mingcute:file-export-line',
+    icon: 'fas fa-file-export',
     permission: [
       PermissionType.EXPORT_LG_QUERY_ALL,
       PermissionType.EXPORT_SM_QUERY_ALL,
