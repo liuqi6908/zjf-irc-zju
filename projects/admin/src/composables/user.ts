@@ -27,6 +27,7 @@ export function useUser($router = useRouter()) {
       const { sign, user } = res
       authToken.value = sign.access_token
       userInfo.value = user
+      await useGetProfile()
       $router.replace({ path: '/' })
     }
   }
