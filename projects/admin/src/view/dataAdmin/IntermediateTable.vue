@@ -1,15 +1,16 @@
 <script lang="ts" setup>
 import { Notify } from 'quasar'
 import type { QTableProps } from 'quasar'
-import { uploadDataByRootId } from '~/api/data'
+import { uploadDataByRootId, uploadTableData } from '~/api/data'
 import type { Node } from '~/composables/database'
+import { UploadType } from 'zjf-types'
 
 interface Props {
   id: string
 }
 
 const { id } = defineProps<Props>()
-const { getDataByRootId, rootData } = useDatabase()
+const { getDataByRootId, rootData, loading } = useDatabase()
 
 const file = ref<File>()
 
@@ -87,43 +88,149 @@ function flattenTree(tree: Node, parentNames = ([] as any[]), result = ([] as an
 }
 
 /**
- * 更多操作类型
- * @param file
- * @param flag
- */
-function operationType(file: File, flag: 0 | 1 | 2) {
-  if (file) {
-    if (flag === 0) {
-      if (isFileType(file, 'csv')) {
-        uploadIntermediateTable(file)
-      }
-      else {
-        Notify.create({
-          message: '只能上传 CSV 文件',
-          type: 'danger',
-        })
-      }
-    }
-    else if (flag === 1) {}
-    else if (flag === 2) {}
-  }
-}
-
-/**
  * 上传中间表
  * @param file
  */
 async function uploadIntermediateTable(file: File) {
-  const fromData = new FormData()
-  fromData.append('file', file)
+  try {
+    if (!isFileType(file, 'csv')) {
+      return Notify.create({
+        message: '只能上传 CSV 文件',
+        type: 'danger',
+      })
+    }
 
-  const res = await uploadDataByRootId(id, fromData)
-  if (res) {
+    loading.value = true
+    const fromData = new FormData()
+    fromData.append('file', file)
+
+    const res = await uploadDataByRootId(id, fromData)
+    if (res) {
+      Notify.create({
+        message: '上传成功',
+        type: 'success',
+      })
+      setTimeout(() => {
+        getDataByRootId(id)
+      }, 500)
+    }
+    else {
+      loading.value = false
+    }
+  }
+  catch (_) {
+    loading.value = false
+  }
+}
+
+/**
+ * 上传表格 预览/下载 数据文件
+ */
+async function uploadTableDataFile(type: UploadType, file: File, row?: any) {
+  try {
+    const fileType = type === UploadType.PREVIEW ? 'csv' : 'zip'
+    if (!isFileType(file, fileType)) {
+      return Notify.create({
+        message: `只能上传 ${fileType.toLocaleUpperCase()} 文件`,
+        type: 'danger',
+      })
+    }
+
+    loading.value = true
+    const { DATABASE_ENG, B_DATABASE_ENG, PART_ENG, TABLE_ENG } = row || {}
+
+    await uploadTableData(type, id, file, TABLE_ENG)
     Notify.create({
       message: '上传成功',
       type: 'success',
     })
-    await getDataByRootId(id)
+    if (rootData.value?.length && DATABASE_ENG && B_DATABASE_ENG && PART_ENG && TABLE_ENG) {
+      const table = rootData.value[0].children?.find(v => v.nameEN === DATABASE_ENG)
+        ?.children?.find(v => v.nameEN === B_DATABASE_ENG)
+        ?.children?.find(v => v.nameEN === PART_ENG)
+        ?.children?.find(v => v.nameEN === TABLE_ENG)
+      if (table) {
+        table[type] = true
+      }
+    }
+  }
+  catch (e: any) {
+    const { message } = e.response?.data || {}
+    if (message) {
+      Notify.create({
+        message,
+        type: 'danger',
+      })
+    }
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+/**
+ * 批量上传表格 预览/下载 数据文件
+ * @param type
+ * @param files
+ */
+async function massUploadTableDataFile(type: UploadType, files: File[]) {
+  if (!files.length)
+    return
+
+  const total = files.length
+  let success = 0
+  const error: Record<string, string> = {}
+
+  const fileType = type === UploadType.PREVIEW ? 'csv' : 'zip'
+
+  const notify = Notify.create({
+    type: 'ongoing',
+    message: `正在上传中，请耐心等待！进度：0 / ${total}`,
+    position: 'top',
+    color: 'warning',
+    classes: `user-${id}`,
+  })
+
+  for (const file of files) {
+    const { name } = file
+    if (!isFileType(file, fileType)) {
+      error[name] = '文件类型不允许'
+      continue
+    }
+    try {
+      await uploadTableData(type, id, file)
+      success++
+    }
+    catch (e: any) {
+      error[name] = e.response?.data?.message || '未知错误'
+    }
+    finally {
+      notify({
+        message: `正在上传中，请耐心等待！进度：${success + Object.keys(error).length} / ${total}`,
+      })
+    }
+  }
+  getDataByRootId(id)
+  if (success !== total) {
+    notify({
+      type: success ? 'danger' : 'warn',
+      message: `共 ${total} 条数据，${success ? '全部上传失败' : `已成功上传 ${success} 条`}`,
+      caption: Object.keys(error).map(v => `${v}：${error[v]}`).join('<br/>'),
+      multiLine: true,
+      html: true,
+      timeout: 0,
+      actions: [
+        { label: '确认', color: 'white', handler: () => {} },
+      ],
+      color: success ? 'negative' : 'warning',
+    })
+  }
+  else {
+    notify({
+      type: 'success',
+      message: `已成功上传 ${success} 条数据`,
+      color: 'positive',
+    })
   }
 }
 </script>
@@ -138,7 +245,7 @@ async function uploadIntermediateTable(file: File) {
         :model-value="file"
         label="上传中间表"
         accept="text/csv,application/vnd.ms-excel"
-        @update:model-value="val => operationType(val, 0)"
+        @update:model-value="val => uploadIntermediateTable(val)"
       />
       <Upload
         :model-value="file"
@@ -146,14 +253,14 @@ async function uploadIntermediateTable(file: File) {
         accept="text/csv,application/vnd.ms-excel"
         ml-auto color="green"
         multiple :max-files="100"
-        @update:model-value="val => operationType(val, 1)"
+        @update:model-value="val => massUploadTableDataFile(UploadType.PREVIEW, val)"
       />
       <Upload
         :model-value="file"
         label="上传下载数据"
         accept="application/x-zip-compressed"
         multiple :max-files="100"
-        @update:model-value="val => operationType(val, 2)"
+        @update:model-value="val => massUploadTableDataFile(UploadType.DOWNLOAD, val)"
       />
     </div>
 
@@ -175,11 +282,13 @@ async function uploadIntermediateTable(file: File) {
                 :model-value="file"
                 accept="text/csv,application/vnd.ms-excel"
                 label="样例" color="green" size="sm"
+                @update:model-value="val => uploadTableDataFile(UploadType.PREVIEW, val, props.row)"
               />
               <Upload
                 :model-value="file"
                 accept="application/x-zip-compressed"
                 label="下载" size="sm"
+                @update:model-value="val => uploadTableDataFile(UploadType.DOWNLOAD, val, props.row)"
               />
             </div>
             <template v-else>
