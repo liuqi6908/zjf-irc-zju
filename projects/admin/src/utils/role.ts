@@ -6,8 +6,8 @@ import type { PermissionType } from 'zjf-types'
  * @returns
  */
 export function rolePermissionsToLabel(permissions: PermissionType[] = []) {
-  return permissionList.filter(v => hasIntersection(v.permission, permissions))
-    .map(v => v.label)
+  return navList.filter(v => hasIntersection(v.permission, permissions))
+    .map(v => v.name)
 }
 
 /**
@@ -16,6 +16,6 @@ export function rolePermissionsToLabel(permissions: PermissionType[] = []) {
  * @returns
  */
 export function labelToRolePermissions(permissions: string[] = []) {
-  return expandArray(permissionList.filter(v => permissions.includes(v.label))
+  return expandArray(navList.filter(v => permissions.includes(v.name))
     .map(v => v.permission))
 }

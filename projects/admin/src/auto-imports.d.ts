@@ -8,6 +8,7 @@ declare global {
   const DEBUG_STORAGE_KEY: typeof import('./constants/debug.constant')['DEBUG_STORAGE_KEY']
   const EffectScope: typeof import('vue')['EffectScope']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
+  const authToken: typeof import('./composables/auth-token')['authToken']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const carouselOpts: typeof import('./constants/trade.constant')['carouselOpts']
   const checkAttachment: typeof import('./utils/tool')['checkAttachment']
@@ -320,7 +321,7 @@ declare global {
   const useToggle: typeof import('@vueuse/core')['useToggle']
   const useTransition: typeof import('@vueuse/core')['useTransition']
   const useUrlSearchParams: typeof import('@vueuse/core')['useUrlSearchParams']
-  const useUser: typeof import('./composables/useUser')['useUser']
+  const useUser: typeof import('./composables/user')['useUser']
   const useUserMedia: typeof import('@vueuse/core')['useUserMedia']
   const useUserStore: typeof import('./stores/user')['useUserStore']
   const useVModel: typeof import('@vueuse/core')['useVModel']
@@ -336,6 +337,7 @@ declare global {
   const useWindowScroll: typeof import('@vueuse/core')['useWindowScroll']
   const useWindowSize: typeof import('@vueuse/core')['useWindowSize']
   const userIdentify: typeof import('./constants/user.constant')['userIdentify']
+  const userInfo: typeof import('./composables/user-info')['userInfo']
   const userStatus: typeof import('./constants/user.constant')['userStatus']
   const userTableCols: typeof import('./constants/table.constant')['userTableCols']
   const valueFormatter: typeof import('./constants/map.constant')['valueFormatter']
@@ -375,6 +377,7 @@ declare module 'vue' {
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
+    readonly authToken: UnwrapRef<typeof import('./composables/auth-token')['authToken']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly checkAttachment: UnwrapRef<typeof import('./utils/tool')['checkAttachment']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
@@ -446,7 +449,6 @@ declare module 'vue' {
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
-    readonly permissionList: UnwrapRef<typeof import('./constants/home.constant')['permissionList']>
     readonly preferredDark: UnwrapRef<typeof import('./composables/dark')['preferredDark']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly reactify: UnwrapRef<typeof import('@vueuse/core')['reactify']>
@@ -642,7 +644,7 @@ declare module 'vue' {
     readonly useToggle: UnwrapRef<typeof import('@vueuse/core')['useToggle']>
     readonly useTransition: UnwrapRef<typeof import('@vueuse/core')['useTransition']>
     readonly useUrlSearchParams: UnwrapRef<typeof import('@vueuse/core')['useUrlSearchParams']>
-    readonly useUser: UnwrapRef<typeof import('./composables/useUser')['useUser']>
+    readonly useUser: UnwrapRef<typeof import('./composables/user')['useUser']>
     readonly useUserMedia: UnwrapRef<typeof import('@vueuse/core')['useUserMedia']>
     readonly useVModel: UnwrapRef<typeof import('@vueuse/core')['useVModel']>
     readonly useVModels: UnwrapRef<typeof import('@vueuse/core')['useVModels']>
@@ -656,6 +658,7 @@ declare module 'vue' {
     readonly useWindowFocus: UnwrapRef<typeof import('@vueuse/core')['useWindowFocus']>
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
+    readonly userInfo: UnwrapRef<typeof import('./composables/user-info')['userInfo']>
     readonly userStatus: UnwrapRef<typeof import('./constants/user.constant')['userStatus']>
     readonly userTableCols: UnwrapRef<typeof import('./constants/table.constant')['userTableCols']>
     readonly verifyTableCols: UnwrapRef<typeof import('./constants/table.constant')['verifyTableCols']>
@@ -682,6 +685,7 @@ declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
+    readonly authToken: UnwrapRef<typeof import('./composables/auth-token')['authToken']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly checkAttachment: UnwrapRef<typeof import('./utils/tool')['checkAttachment']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
@@ -753,7 +757,6 @@ declare module '@vue/runtime-core' {
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
-    readonly permissionList: UnwrapRef<typeof import('./constants/home.constant')['permissionList']>
     readonly preferredDark: UnwrapRef<typeof import('./composables/dark')['preferredDark']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly reactify: UnwrapRef<typeof import('@vueuse/core')['reactify']>
@@ -949,7 +952,7 @@ declare module '@vue/runtime-core' {
     readonly useToggle: UnwrapRef<typeof import('@vueuse/core')['useToggle']>
     readonly useTransition: UnwrapRef<typeof import('@vueuse/core')['useTransition']>
     readonly useUrlSearchParams: UnwrapRef<typeof import('@vueuse/core')['useUrlSearchParams']>
-    readonly useUser: UnwrapRef<typeof import('./composables/useUser')['useUser']>
+    readonly useUser: UnwrapRef<typeof import('./composables/user')['useUser']>
     readonly useUserMedia: UnwrapRef<typeof import('@vueuse/core')['useUserMedia']>
     readonly useVModel: UnwrapRef<typeof import('@vueuse/core')['useVModel']>
     readonly useVModels: UnwrapRef<typeof import('@vueuse/core')['useVModels']>
@@ -963,6 +966,7 @@ declare module '@vue/runtime-core' {
     readonly useWindowFocus: UnwrapRef<typeof import('@vueuse/core')['useWindowFocus']>
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
+    readonly userInfo: UnwrapRef<typeof import('./composables/user-info')['userInfo']>
     readonly userStatus: UnwrapRef<typeof import('./constants/user.constant')['userStatus']>
     readonly userTableCols: UnwrapRef<typeof import('./constants/table.constant')['userTableCols']>
     readonly verifyTableCols: UnwrapRef<typeof import('./constants/table.constant')['verifyTableCols']>

@@ -14,35 +14,40 @@ export const cmsConfig = [
         label: '首页轮播图',
         component: markRaw(HomeCarousel),
         col: ['title', 'uploadImg', 'richText', 'delete', 'sort', 'add'],
-        rows: []
+        rows: [],
+        sort: 1
       },
       {
         id: 'homeDataIntroduce',
         label: '平台介绍',
         component: markRaw(DataIntroduce),
         col: ['title', 'richText'],
-        rows: [{ title: '', richText: '' }]
+        rows: [{ title: '', richText: '' }],
+        sort: 2
       },
       {
         id: 'homeContent',
         label: '首页内容',
         component: markRaw(RichText),
         col: ['richText', 'delete', 'sort', 'add'],
-        rows: [{ richText: '' }]
+        rows: [{ richText: '' }],
+        sort: 3
       },
       {
         id: 'footer',
         label: '联系方式',
         component: markRaw(Footer),
         col: ['title', 'richText', 'delete', 'sort', 'add'],
-        rows: []
+        rows: [],
+        sort: 4
       },
       {
         id: 'homeUpdateDescribe',
         label: '数据上传说明',
         component: markRaw(RichText),
         col: ['richText'],
-        rows: [{ richText: '' }]
+        rows: [{ richText: '' }],
+        sort: 6
       },
     ]
   },
@@ -54,7 +59,8 @@ export const cmsConfig = [
         label: '问答',
         component: markRaw(Question),
         col: ['title', 'svg', 'richText', 'delete', 'sort', 'add'],
-        rows: []
+        rows: [],
+        sort: 5
       },
     ]
   },

@@ -33,11 +33,6 @@ export function useRequest() {
     const queryParams = new URLSearchParams(query)
     return `${url}?${queryParams.toString()}`
   }
-  //   function loadingWrapper<T>(promise: Promise<T>) {
-  //     const loading = ref(true)
-  //     promise.finally(() => loading.value = false)
-  //     return { loading, data: promise }
-  //   }
 
   async function $get<T = any>(url: string, query?: any, isResponseData = true, options?: AxiosRequestConfig, useCache = false): Promise<T> {
     const cacheKey = url + JSON.stringify(options)
@@ -53,7 +48,6 @@ export function useRequest() {
     useCache && cache.set(cacheKey, response.data)
     if (isResponseData)
       return response.data
-
     else
       return response
   }

@@ -1,23 +1,23 @@
-import { useStorage } from '@vueuse/core'
 import { encryptPasswordInHttp } from 'zjf-utils'
-import { ADMIN_ROLE_NAME, AUTH_TOKEN_KEY } from 'shared/constants'
+import { ADMIN_ROLE_PERMISSION_KEY } from 'shared/constants'
 import { Dialog, Notify } from 'quasar'
 
+import { getProfile } from '~/api/auth/getProfile'
 import { login } from '~/api/auth/login'
 import { logout } from '~/api/auth/logout'
 import { register } from '~/api/auth/register'
 
-/** 用户token */
-const authToken = useStorage(AUTH_TOKEN_KEY, '')
-const roleName = useStorage(ADMIN_ROLE_NAME, '')
+const rolePermission = useStorage<string[]>(ADMIN_ROLE_PERMISSION_KEY, [])
 
 export function useUser($router = useRouter()) {
-  /** 登录 */
-  const useLogin = async (options: {
+  /**
+   * 登录
+   */
+  async function useLogin(options: {
     password: string
     account?: string
     email?: string
-  }) => {
+  }) {
     const res = await login({
       ...options,
       /** 加密 */
@@ -26,19 +26,21 @@ export function useUser($router = useRouter()) {
     if (res) {
       const { sign, user } = res
       authToken.value = sign.access_token
-      roleName.value = user.roleName
+      userInfo.value = user
       $router.replace({ path: '/' })
     }
   }
 
-  /** 注册 */
-  const useRegister = async (
+  /**
+   * 注册
+   */
+  async function useRegister(
     account: string,
     email: string,
     password: string,
     bizId: string,
     code: string,
-  ) => {
+  ) {
     const res = await register(account, email, encryptPasswordInHttp(password), bizId, code)
     if (res) {
       Notify.create({
@@ -49,31 +51,50 @@ export function useUser($router = useRouter()) {
     }
   }
 
-  /** 登出 */
-  const useLogout = () => {
+  /**
+   * 登出
+   */
+  function useLogout() {
     Dialog.create({
       title: '退出登录',
-      message: '是否退出登录',
+      message: '是否退出登录？',
       cancel: '取消',
       ok: '确认',
     })
       .onOk(() => {
         logout()
         authToken.value = null
-        roleName.value = null
+        userInfo.value = undefined
+        rolePermission.value = null
         $router.replace({ path: '/auth/login' })
       })
   }
 
-  /** 用户是否登录 */
+  /**
+   * 获取当前登入用户信息
+   */
+  async function useGetProfile(relation = 'role.permissions') {
+    const res = await getProfile(relation)
+    if (res) {
+      userInfo.value = res
+      const permissions = res.role?.permissions?.map(v => v.name)
+      rolePermission.value = rolePermissionsToLabel(permissions)
+    }
+  }
+
+  /**
+   * 用户是否登录
+   */
   const isLogin = computed(() => !!authToken.value)
 
   return {
     authToken,
-    roleName,
+    userInfo,
+    rolePermission,
     isLogin,
     useLogin,
     useRegister,
     useLogout,
+    useGetProfile,
   }
 }

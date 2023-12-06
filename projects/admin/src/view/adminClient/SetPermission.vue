@@ -202,11 +202,11 @@ async function confirm() {
           />
           <q-checkbox
             indeterminate
-            :model-value="!editInfo.permissions.length ? false : editInfo.permissions.length === permissionList.length ? true : null"
+            :model-value="!editInfo.permissions.length ? false : editInfo.permissions.length === navList.length ? true : null"
             left-label size="sm" mt-4
             @update:model-value="(val) => {
               if (val)
-                editInfo.permissions = permissionList.map(v => v.label)
+                editInfo.permissions = navList.map(v => v.name)
               else
                 editInfo.permissions = []
             }"
@@ -217,14 +217,14 @@ async function confirm() {
           </q-checkbox>
           <div flex="~ row gap-x-4 wrap">
             <q-checkbox
-              v-for="{ label } in permissionList"
-              :key="label"
+              v-for="{ name } in navList"
+              :key="name"
               v-model="editInfo.permissions"
-              :val="label"
+              :val="name"
               left-label size="xs"
             >
               <div text-sm>
-                {{ label }}
+                {{ name }}
               </div>
             </q-checkbox>
           </div>
