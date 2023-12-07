@@ -33,7 +33,13 @@ async function queryUserList(props: any) {
         page,
         pageSize: rowsPerPage,
       },
-      filters: [],
+      filters: [
+        {
+          field: 'account',
+          type: '!=',
+          value: 'root'
+        }
+      ],
       sort: [
         {
           field: 'roleName',
@@ -150,8 +156,8 @@ async function assignRoles(id: string, roleName?: string) {
             <q-btn flat color="primary" label="查看认证材料" @click="checkAttachment(props.row[col.field as string], props.row.id)" />
           </template>
           <template v-else-if="col.name === 'action'">
-            <q-btn label="分配" :disable="props.row.account === 'root'" color="primary" mr-2 size="sm" @click="assignRoles(props.row.id, props.row.roleName)" />
-            <q-btn label="取消" :disable="!props.row.roleName || props.row.account === 'root'" color="red" size="sm" @click="cancelAdmin(props.row.id)" />
+            <q-btn label="分配" color="primary" mr-2 size="sm" @click="assignRoles(props.row.id, props.row.roleName)" />
+            <q-btn label="取消" :disable="!props.row.roleName" color="red" size="sm" @click="cancelAdmin(props.row.id)" />
           </template>
           <template v-else>
             {{ props.row[col.field as string] }}

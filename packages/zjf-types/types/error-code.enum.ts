@@ -129,8 +129,10 @@ export enum ErrorCode {
   // 角色相关错误
   /** 禁止删除root角色 */
   ROLE_DELETE_ROOT = 120001,
+  /** 禁止更新root角色 */
+  ROLE_UPDATE_ROOT = 120002,
   /** 角色已被分配 */
-  ROLE_IN_USAGE = 120002,
+  ROLE_IN_USAGE = 120003,
 }
 
 export type ErrorMessageCollection = Partial<

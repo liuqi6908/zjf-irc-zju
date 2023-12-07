@@ -35,6 +35,8 @@ export class RoleService {
    * @returns
    */
   async upsertRole(role: UpsertRoleBodyDto) {
+    if (defaultRoles.map(v => v.name).includes(role.name))
+      responseError(ErrorCode.ROLE_UPDATE_ROOT)
     const permissions = await this._permissionSrv.repo().find({ where: {} })
     const saveInfo: Role = {
       ...role,
