@@ -48,7 +48,7 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
 <template>
   <div>
     <header flex="~ items-center" mb-10 relative>
-      <div i-mingcute:left-line cursor-pointer text-xl @click="$router.replace({ path: 'login' })" />
+      <div i-mingcute:left-line cursor-pointer text-xl @click="$router.push('/auth/login')" />
       <span text-3xl font-600 absolute-x-center>智能云科研平台</span>
     </header>
 

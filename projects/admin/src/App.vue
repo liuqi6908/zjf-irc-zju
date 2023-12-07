@@ -2,7 +2,12 @@
 import { isClient } from '@vueuse/core'
 
 const $router = useRouter()
-const { isLogin, rolePermission } = useUser()
+const $route = useRoute()
+const { isLogin, rolePermission, useGetProfile } = useUser()
+
+const navs = computed(() => {
+  return navList.filter(v => rolePermission.value?.includes(v.name))
+})
 
 useHead({
   title: '智能云科研平台-管理后台',
@@ -47,25 +52,36 @@ watch(
 )
 
 $router.beforeEach((to, _, next) => {
-  const navs = computed(() => {
-    return navList.filter(v => rolePermission.value?.includes(v.name))
-  })
+  const name = to.name as string
 
-  const { name } = to
-  if (name === 'denied' || (name === 'auth-login' && !isLogin.value)) {
+  if (!navList.map(v => v.id).includes(name)) {
     next()
   }
   else if (!isLogin.value) {
-    next('auth-login')
+    next('/auth/login')
   }
   else if (!navs.value.length) {
-    next('denied')
+    next('/denied')
   }
   else {
-    if (navs.value.find(v => v.id === name))
+    if (navs.value.map(v => v.id).includes(name))
       next()
     else
-      next(navs.value[0].id)
+      next(`/${navs.value[0].id}`)
+  }
+})
+
+onBeforeMount(async () => {
+  if (isLogin.value) {
+    await useGetProfile()
+    const { name } = $route
+    if (!navs.value?.length)
+      $router.push('/denied')
+    else if (!navs.value.find(v => v.id === name))
+      $router.push(`/${navs.value[0].id}`)
+  }
+  else {
+    $router.push('/auth/login')
   }
 })
 </script>

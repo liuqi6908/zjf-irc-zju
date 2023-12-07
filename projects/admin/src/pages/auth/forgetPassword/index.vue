@@ -42,7 +42,7 @@ async function finish() {
       type: 'success',
       message: '修改密码成功',
     })
-    $router.replace('/auth/login')
+    $router.push('/auth/login')
   }
 }
 
@@ -52,7 +52,7 @@ const disable = computed(() => Object.values(acceptObj).includes(false))
 <template>
   <div>
     <header flex="~ items-center" mb-10 relative>
-      <div i-mingcute:left-line cursor-pointer text-xl @click="$router.replace({ path: 'login' })" />
+      <div i-mingcute:left-line cursor-pointer text-xl @click="$router.push('/auth/login')" />
       <span text-3xl font-600 absolute-x-center>邮箱找回</span>
     </header>
 

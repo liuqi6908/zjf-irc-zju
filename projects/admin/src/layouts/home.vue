@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const $router = useRouter()
 const $route = useRoute()
-const { isLogin, rolePermission, useLogout, useGetProfile } = useUser()
+const $router = useRouter()
+const { rolePermission, useLogout, isLogin } = useUser()
 const drawer = ref(false)
 
 const link = computed(() => $route.name as string)
@@ -10,22 +10,14 @@ const navs = computed(() => {
   return navList.filter(v => rolePermission.value?.includes(v.name))
 })
 
-onMounted(async () => {
-  if (isLogin.value) {
-    await useGetProfile()
-    const { name } = $route
-    if (!navs.value?.length)
-      $router.replace({ path: 'denied' })
-    else if (!navs.value.find(v => v.id === name))
-      $router.replace({ path: navs.value[0].id })
-  }
-  else {
-    $router.replace({ path: 'auth/login' })
-  }
-})
-
 const showMenu = computed(() => {
   return $route.name !== 'denied'
+})
+
+onBeforeMount(() => {
+  if (!isLogin.value) {
+    $router.replace({ path: 'auth/login' })
+  }
 })
 </script>
 

@@ -28,7 +28,7 @@ export function useUser($router = useRouter()) {
       authToken.value = sign.access_token
       userInfo.value = user
       await useGetProfile()
-      $router.replace({ path: '/' })
+      $router.push('/home')
     }
   }
 
@@ -63,11 +63,11 @@ export function useUser($router = useRouter()) {
       ok: '确认',
     })
       .onOk(async () => {
+        $router.push('/auth/login')
         await logout()
         authToken.value = null
         userInfo.value = undefined
         rolePermission.value = null
-        $router.replace({ path: '/auth/login' })
       })
   }
 
