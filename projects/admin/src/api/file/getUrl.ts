@@ -1,13 +1,5 @@
-import { AUTH_TOKEN_KEY } from 'shared/constants'
-
 const { $getUri } = useRequest()
 
-let tokenStr: any = null
-if (typeof window !== 'undefined') {
-  // Perform localStorage action
-  tokenStr = localStorage.getItem(AUTH_TOKEN_KEY) || null
-}
-
-export function getUrlByToken(url: string, params?: any, token = tokenStr) {
+export function getUrlByToken(url: string, params?: any, token = authToken.value) {
   return $getUri(`${url}?token=${token}`, params)
 }
