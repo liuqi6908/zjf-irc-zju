@@ -34,7 +34,7 @@ const desktopInfo = ref<IDesktop>()
 const hidePassword = ref(true)
 const desktopTable = computed(() => {
   return [
-    { label: '云桌面访问地址', value: desktopInfo.value?.accessUrl },
+    { label: '云桌面访问地址', href: desktopInfo.value?.accessUrl },
     { label: '云桌面账号', value: desktopInfo.value?.account },
     { label: '云桌面初始密码', value: desktopInfo.value?.password, hide: true },
   ]
@@ -263,7 +263,15 @@ function copyText(text: string) {
         >
           <div overflow-hidden bg-grey-2 text-ellipsis whitespace-nowrap px-6 py-3 v-text="item.label" />
           <div flex pl-6 items-center justify-between h-11 pr-4>
+            <a
+              v-if="item.href"
+              text-grey-8
+              target="_blank"
+              :href="item.href"
+              v-text="item.href"
+            />
             <div
+              v-else
               w-0 overflow-hidden text-ellipsis whitespace-nowrap flex-1
               v-text="item.value !== '您的登录密码' && item.hide && hidePassword ? '********' : item.value"
             />
