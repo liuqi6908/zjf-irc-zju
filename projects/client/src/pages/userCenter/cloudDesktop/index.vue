@@ -280,7 +280,7 @@ function copyText(text: string) {
                 <div v-if="hidePassword" text-xl i-mingcute:eye-close-line />
                 <div v-else text-xl i-mingcute:eye-2-line />
               </q-btn>
-              <q-btn flat px-2 @click="copyText(item.value || '')">
+              <q-btn flat px-2 @click="copyText(item.value || item.href || '')">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M7 18V2H20V18H7ZM9 16H18V4H9V16ZM3 22V6H5V20H16V22H3Z" fill="#A6B1C2" />
                 </svg>
