@@ -1,4 +1,5 @@
 import { In } from 'typeorm'
+import { Throttle } from '@nestjs/throttler'
 import { getQuery } from 'src/utils/query'
 import { IsLogin } from 'src/guards/login.guard'
 import type { Desktop } from 'src/entities/desktop'
@@ -44,6 +45,7 @@ export class DesktopController {
   }
 
   @ApiOperation({ summary: '创建一个云桌面' })
+  @Throttle(10000, 60)
   @HasPermission(PermissionType.DESKTOP_CREATE)
   @Put()
   public async createDesktop(@Body() body: CreateDesktopBodyDto) {
