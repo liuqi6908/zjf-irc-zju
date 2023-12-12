@@ -149,7 +149,7 @@ async function changePassword() {
         <div my-4 flex="~ row gap-2 items-center" text-primary-1>
           <img w-10 src="../assets/layout/cloud.png">
           <div font-600 text-2xl>
-            智能云科研平台
+            数智三农云科研平台
           </div>
           <div w-3px h-8 bg-primary-1 />
           <div text-lg>

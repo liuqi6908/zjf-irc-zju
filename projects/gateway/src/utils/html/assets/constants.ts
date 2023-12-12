@@ -1,1 +1,1 @@
-export const APP_NAME = '智能云科研平台'
+export const APP_NAME = '数智三农云科研平台'

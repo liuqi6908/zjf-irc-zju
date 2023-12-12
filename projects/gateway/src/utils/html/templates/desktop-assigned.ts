@@ -28,7 +28,7 @@ export function getDesktopConnectInfo(desktop: Desktop) {
       importantInfo('云桌面登录账号', account).indent(),
       importantInfo('云桌面初始密码', password).indent(),
 
-      HtmlTag.create('div').indent().text('登录云桌面的使用教程请查看智能云科研平台的常见问题解答板块。'),
+      HtmlTag.create('div').indent().text('登录云桌面的使用教程请查看数智三农云科研平台的常见问题解答板块。'),
       HtmlTag.create('div').indent().text('请务必保管好上述信息，以防外泄，若他人知悉您的账号密码，将有权登录并查看该账号上所有信息！').color(DANGER).style({ fontWeight: '500' }),
     )
 }

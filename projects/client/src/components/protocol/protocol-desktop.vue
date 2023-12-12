@@ -23,7 +23,7 @@ const dialog = ref(false)
       <span
         text-primary-1 cursor-pointer hover:underline
         @click="dialog = true"
-      >《「智能云科研平台」云桌面使用协议》</span>
+      >《「数智三农云科研平台」云桌面使用协议》</span>
     </div>
     <ZDialog
       v-model="dialog"
@@ -33,7 +33,7 @@ const dialog = ref(false)
         height: '95vh',
       }"
       scroll
-      title="「智能云科研平台」云桌面使用协议"
+      title="「数智三农云科研平台」云桌面使用协议"
     >
       <DesktopDoc />
     </ZDialog>

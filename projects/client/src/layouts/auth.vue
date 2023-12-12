@@ -8,7 +8,7 @@ const $router = useRouter()
       <header flex="~ items-center gap-2" text-grey-1 absolute cursor-pointer left-12 top-10 @click="$router.push('/')">
         <img w-12 src="../assets/auth/couldTitle.png">
         <div text-7 font-600>
-          智能云科研平台
+          数智三农云科研平台
         </div>
         <div w-3px h-8 bg-grey-1 />
         <div text-lg>
