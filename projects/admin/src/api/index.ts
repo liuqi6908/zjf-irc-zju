@@ -48,6 +48,9 @@ $http.interceptors.response.use(
     else if (status === ErrorCode.AUTH_LOGIN_REQUIRED) {
       showNotify(message)
       ctx.router?.replace({ path: 'auth/login' })
+      authToken.value = null
+      userInfo.value = undefined
+      localStorage.removeItem(ADMIN_ROLE_PERMISSION_KEY)
     }
     /* 判断登录是否过期 */
     else if (status === ErrorCode.AUTH_LOGIN_EXPIRED) {

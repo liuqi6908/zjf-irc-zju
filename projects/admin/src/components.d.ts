@@ -7,7 +7,6 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    BaseTable: typeof import('./components/table/BaseTable.vue')['default']
     Btn: typeof import('./components/btn/Btn.vue')['default']
     BtnGroup: typeof import('./components/btn/BtnGroup.vue')['default']
     EditableGrid: typeof import('./components/table/EditableGrid.vue')['default']
