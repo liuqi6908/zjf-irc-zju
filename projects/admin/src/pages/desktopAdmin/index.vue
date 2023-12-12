@@ -3,9 +3,8 @@ import type { TabItem } from '~/components/tab/Tabs.vue'
 
 const tabList = ref<TabItem[]>([
   { id: 0, label: '待审核', component: markRaw(defineAsyncComponent(() => import('~/view/desktopAdmin/AuditQueue.vue'))) },
-  { id: 1, label: '待分配', component: markRaw(defineAsyncComponent(() => import('~/view/desktopAdmin/AssignQueue.vue'))) },
-  { id: 2, label: '云桌面分配情况', component: markRaw(defineAsyncComponent(() => import('~/view/desktopAdmin/DesktopAllocation.vue'))) },
-  { id: 3, label: '停用列表', component: markRaw(defineAsyncComponent(() => import('~/view/desktopAdmin/DeactivationList.vue'))) },
+  { id: 1, label: '云桌面分配情况', component: markRaw(defineAsyncComponent(() => import('~/view/desktopAdmin/DesktopAllocation.vue'))) },
+  { id: 2, label: '停用列表', component: markRaw(defineAsyncComponent(() => import('~/view/desktopAdmin/DeactivationList.vue'))) },
 ])
 const tab = ref(tabList.value[0].id)
 </script>
