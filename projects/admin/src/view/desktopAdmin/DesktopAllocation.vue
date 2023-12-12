@@ -32,6 +32,7 @@ const cols: QTableProps['columns'] = reactive([
 const rows: Array<any> = reactive([])
 const pagination = tablePagination()
 const loading = ref(true)
+const showPassword = ref(false)
 
 const file = ref<File>()
 
@@ -359,6 +360,15 @@ function uploadFile() {
     <template #loading>
       <q-inner-loading showing color="primary" />
     </template>
+    <template #header-cell-password>
+      <th>
+        <div flex="center gap-2">
+          密码
+          <div v-if="!showPassword" i-mdi:eye-off-outline cursor-pointer @click="showPassword = true" />
+          <div v-else i-mdi:eye-outline cursor-pointer @click="showPassword = false" />
+        </div>
+      </th>
+    </template>
     <template #body="props">
       <q-tr :props="props">
         <q-td v-for="col in cols" :key="col.name">
@@ -369,6 +379,9 @@ function uploadFile() {
             <q-btn label="分配" :disable="Boolean(props.row.userId)" color="green" size="sm" mr-2 @click="allocationDesktop(props.row.id)" />
             <q-btn label="编辑" color="primary" size="sm" mr-2 @click="desktopDialog(props.row)" />
             <q-btn label="停用" color="red" size="sm" @click="deleteDesktop(props.row.id)" />
+          </template>
+          <template v-else-if="col.name === 'password' && !showPassword">
+            ********
           </template>
           <template v-else>
             {{ props.row[col.field as string] }}
