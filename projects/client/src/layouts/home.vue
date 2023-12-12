@@ -246,7 +246,7 @@ async function changePassword() {
       :disable-confirm="Object.values(acceptObj).includes(false)"
       @ok="changePassword()"
     >
-      欢迎“区域发展政策大脑”用户登录本平台，考虑到安全因素，您在政策大脑使用的密码不会被同步到本平台，请在下方设置默认密码，以便后续使用！
+      欢迎您登录本平台，由于您登录的账号密码不存在，为了您的账号安全，请在下方设置默认密码，以便后续使用！
       <div mt-2 v-text="'密码'" />
       <PasswordInput
         v-model:password="password"

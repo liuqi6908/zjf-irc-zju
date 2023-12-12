@@ -85,7 +85,7 @@ async function handleEnter() {
       footer
       @ok="$router.push('forgetPassword')"
     >
-      区域发展政策大脑用户第一次登录本平台，需要设置初始密码，请前往“邮箱找回”设置密码。
+      您登录的账号密码不存在，为了您的账号安全，请先前往“邮箱找回”设置初始密码。
     </ZDialog>
   </div>
 </template>
