@@ -204,10 +204,10 @@ async function downloadTemplate() {
   try {
     const data = await getVmList()
     if (Array.isArray(data)) {
-      const accessUrl = 'https://36.26.47.210:8443/'
       const expiredAt = moment(new Date().setFullYear(new Date().getFullYear() + 1)).format('YYYY-MM-DD')
       arr.push(...data.map((v) => {
         const { uuid, name, ip } = v
+        const accessUrl = `${ip}:6389`
         return [uuid, name, ip, accessUrl, `user-${name}`, generateRandomString(), expiredAt]
       }))
       downloadCsv(arr.map(v => v.join(',')).join('\n'), '桌面分配')
