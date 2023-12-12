@@ -27,8 +27,6 @@ function currCom(id: string) {
 const comProps = computed(() => (id: string) => {
   const json: any[] = []
   if (cmsList.value.length) {
-    console.log(cmsList.value);
-    
     const cms = cmsList.value.find((v: any) => v.id === id)
     if (cms?.json) {
       cms.json.forEach((item: any, index: number) => {
