@@ -65,17 +65,6 @@ export class DesktopRequestController {
     )
   }
 
-  @ApiOperation({
-    deprecated: true,
-    summary: '取消当前用户正待审核/排队中的桌面使用申请',
-  })
-  @Post('cancel/own')
-  async cancelRequestDesktop() {}
-
-  // @ApiOperation({ summary: '获取在当前用户前面等待的人数' })
-  // @Get('request/queue/length')
-  // async getQueueLength() {}
-
   @ApiOperation({ summary: '获取当前用户的云桌面使用申请情况' })
   @ApiSuccessResponse(GetOwnDesktopReqResDto)
   @IsLogin()

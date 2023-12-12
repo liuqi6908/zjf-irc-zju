@@ -7,10 +7,8 @@ import { mergeDeep } from 'src/utils/mergeDeep'
 import type { OnModuleInit } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { responseError } from 'src/utils/response'
-import { HttpService } from '@nestjs/axios'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { encryptPassword } from 'src/utils/encrypt/encrypt-password'
-import { rsaEncrypt } from 'src/utils/rsa'
 
 import type {
   FindManyOptions,
@@ -22,7 +20,6 @@ import {
   Not,
   Repository,
 } from 'typeorm'
-import type { YunApp } from 'src/config/_yun.config'
 import type { SysAdmin } from 'src/config/_sa.config'
 
 const defaultQueryUserOptions = {
@@ -35,7 +32,6 @@ export class UserService implements OnModuleInit {
     @InjectRepository(User)
     private readonly _userRepo: Repository<User>,
     private readonly _cfgSrv: ConfigService,
-    private readonly _httpSrv: HttpService,
   ) {}
 
   onModuleInit() {
@@ -84,24 +80,6 @@ export class UserService implements OnModuleInit {
     )
   }
 
-  /**
-   * 查找指定 id 列表的用户
-   * @param ids
-   * @param options
-   * @returns
-   */
-  public async findByIds(ids: string[], options?: FindManyOptions<User>) {
-    const defaultOptions: FindManyOptions<User> = {
-      ...defaultQueryUserOptions,
-    }
-    const requiredOptions: FindManyOptions<User> = {
-      where: { id: In(ids) },
-    }
-    return this._userRepo.find(
-      mergeDeep(defaultOptions, options, requiredOptions),
-    )
-  }
-
   /** 自定义查询单个用户 */
   public async queryUser(options: FindOneOptions<User>) {
     const defaultOptions: FindOneOptions<User> = {
@@ -146,26 +124,6 @@ export class UserService implements OnModuleInit {
   }
 
   /**
-   * 删除指定的账户
-   * @param where
-   * @returns
-   */
-  public async deleteUser(where: FindOptionsWhere<User>) {
-    await this._userRepo.update(where, {
-      isDeleted: true,
-      account: null,
-      email: null,
-    })
-  }
-
-  /**
-   * 更新指定用户的手机号
-   */
-  public async updateUserPhone() {
-    throw new Error('Not implemented')
-  }
-
-  /**
    * 更新指定用户的邮箱
    * @param id
    * @param newEmail
@@ -189,22 +147,11 @@ export class UserService implements OnModuleInit {
    * @param newPassword
    */
   public async updateUserPassword(
-    id: string,
+    where: FindOptionsWhere<User> | string | number,
     newPassword: string,
   ) {
-    await this._userRepo.manager.transaction(async (transactionRepository) => {
-      try {
-        await transactionRepository.update(User, { id }, { password: await encryptPassword(newPassword) })
-        // await this._userRepo.update({ id }, { password: await encryptPassword(newPassword) })
-        const user = await this._userRepo.createQueryBuilder('user')
-          .where('user.id = :id', { id })
-          .addSelect('user.password')
-          .getOne()
-        await this.syncAccountPassword({ account: user.account, password: newPassword }, !user.password ? 0 : 1)
-      }
-      catch (_) {
-        responseError(ErrorCode.COMMON_UNEXPECTED_ERROR)
-      }
+    await this._userRepo.update(where, {
+      password: await encryptPassword(newPassword),
     })
   }
 
@@ -221,33 +168,6 @@ export class UserService implements OnModuleInit {
     const filteredBasicInfo = objectPick(newBasicInfo, allowedKeys, true)
     const updateRes = await this._userRepo.update(where, filteredBasicInfo)
     return updateRes.affected > 0
-  }
-
-  /**
-   * 同步账号密码至云之遥
-   * @param userInfo
-   * @param flag
-   */
-  public async syncAccountPassword(userInfo: {
-    account: string
-    password?: string
-  }, flag: 0 | 1) {
-    const { account, password } = userInfo
-    if (account && password) {
-      const url = ['/newAdUser', '/changeAdUserPasswors']
-      const { host, public_key } = this._cfgSrv.get<YunApp>('yun')
-      const { data } = await this._httpSrv.axiosRef({
-        baseURL: host,
-        method: 'POST',
-        url: url[flag],
-        data: {
-          account,
-          [['password', 'newPassword'][flag]]: await rsaEncrypt(password, public_key),
-        },
-      })
-      if (data.code !== 200)
-        throw new Error('同步账号失败')
-    }
   }
 
   public qb(alias = 'u') {

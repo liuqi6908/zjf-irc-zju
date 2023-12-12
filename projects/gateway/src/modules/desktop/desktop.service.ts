@@ -6,14 +6,9 @@ import { Desktop } from 'src/entities/desktop'
 import { InjectRepository } from '@nestjs/typeorm'
 import { responseError } from 'src/utils/response'
 import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import { HttpService } from '@nestjs/axios'
 
-import type { User } from 'src/entities/user'
-import type { YunApp } from 'src/config/_yun.config'
 import { RedisService } from '../redis/redis.service'
 import { NotifyService } from '../notify/notify.service'
-import { ZstackService } from './zstack/zstack.service'
 import { DesktopRequestService } from './desktop-request/desktop-request.service'
 import type { CreateDesktopBodyDto } from './dto/create-desktop.body.dto'
 
@@ -28,9 +23,6 @@ export class DesktopService {
 
     private readonly _redisSrv: RedisService,
     private readonly _notifySrv: NotifyService,
-    private readonly _cfgSrv: ConfigService,
-    private readonly _httpSrv: HttpService,
-    private readonly _zstackSrv: ZstackService,
     @Inject(forwardRef(() => DesktopRequestService))
     private readonly _desktopReqSrv: DesktopRequestService,
   ) {}
@@ -176,50 +168,6 @@ export class DesktopService {
     desktops.forEach(desktop => desktopIpMap.set(desktop.internalIp, desktop))
     list.forEach(item => item[desktopKey] = desktopIpMap.get(item[ipKey] as string))
     return list
-  }
-
-  /**
-   * 申请或停用云桌面
-   * @param user
-   */
-  public async applyOrStopDesktop(user: User, flag: 0 | 1, duration?: number): Promise<boolean> {
-    if (!user)
-      return false
-
-    try {
-      const url = ['/applyDesktop', '/stopDesktop']
-      const { host } = this._cfgSrv.get<YunApp>('yun')
-      const { data } = await this._httpSrv.axiosRef({
-        baseURL: host,
-        method: 'POST',
-        url: url[flag],
-        data: { account: user.account },
-      })
-
-      // 开通云桌面并分配
-      if (data.code === 200 && flag === 0) {
-        const { desktopId, desktopName } = data.data
-        if (!desktopId || !desktopName)
-          return data
-        // 获取云桌面ip
-        const ip = (await this._zstackSrv.vmList()).find(v => v.uuid === desktopId)?.ip || '127.0.0.1'
-        const id = await this.createDesktop({
-          id: desktopId,
-          name: desktopName,
-          internalIp: ip,
-          accessUrl: 'https://36.26.47.210:8443/',
-          account: user.account,
-          password: '您的登录密码',
-          expiredAt: undefined,
-        })
-        await this.allocationDesktop(id, user.id, duration)
-        return true
-      }
-      return data
-    }
-    catch (_) {
-      return false
-    }
   }
 
   repo() {

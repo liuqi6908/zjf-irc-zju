@@ -1,7 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common'
 import { Login } from 'src/entities/login'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { HttpModule } from '@nestjs/axios'
 
 import { UserModule } from '../user/user.module'
 import { CodeModule } from '../code/code.module'
@@ -12,7 +11,6 @@ import { AuthService } from './auth.service'
 
 @Module({
   imports: [
-    HttpModule,
     TypeOrmModule.forFeature([Login]),
     CodeModule, EmailModule,
     forwardRef(() => UserModule),

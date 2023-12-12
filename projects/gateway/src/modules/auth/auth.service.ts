@@ -7,14 +7,8 @@ import { responseError } from 'src/utils/response'
 import { InjectRepository } from '@nestjs/typeorm'
 import { LessThan, MoreThan, Repository } from 'typeorm'
 import { Inject, Injectable, forwardRef } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import { HttpService } from '@nestjs/axios'
-import type { AxiosResponse } from 'axios'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import { comparePassword } from 'src/utils/encrypt/encrypt-password'
-
-import { generateSign, rsaDecrypt } from 'src/utils/rsa'
-import type { LoginApp } from 'src/config/_login.config'
 
 import { UserService } from '../user/user.service'
 import { CodeService } from '../code/code.service'
@@ -22,18 +16,12 @@ import { EmailService } from '../email/email.service'
 import { JwtAuthService } from '../jwt-auth/jwt-auth.service'
 
 import type { LoginByPasswordBodyDto } from './dto/login-by-password.body.dto'
-import type { LoginByPasswordPlusBodyDto } from './dto/login-by-password-plus.body.dto'
 import type { RegisterBodyDto } from './dto/register.body.dto'
 import type { LoginByEmailCodeBodyDto } from './dto/login-by-email-code.body.dto'
 import type { LoginByEmailLinkDto } from './dto/login-by-email-link.body.dto'
 
 @Injectable()
 export class AuthService {
-  private _oauth = {
-    token: '',
-    expireAt: 0,
-  }
-
   constructor(
     private readonly _codeSrv: CodeService,
     private readonly _emailSrv: EmailService,
@@ -44,66 +32,12 @@ export class AuthService {
     private readonly _jwtAuthSrv: JwtAuthService,
     @InjectRepository(Login)
     private readonly _loginRepo: Repository<Login>,
-
-    private readonly _cfgSrv: ConfigService,
-    private readonly _httpSrv: HttpService,
   ) {}
 
   @Cron('*/30 * * * * *')
   public async clearExpiredLogin() {
     await this._loginRepo.delete({
       expireAt: LessThan(new Date()),
-    })
-  }
-
-  /**
-   * 获取区域发展政策大脑平台签发的 token
-   */
-  private async _getAuthToken() {
-    const { host, app_key, app_secret, public_key } = this._cfgSrv.get<LoginApp>('login')
-
-    const getCfg = (token: string) => ({
-      baseURL: host,
-      headers: {
-        token,
-      },
-    })
-
-    if (this._oauth.token && this._oauth.expireAt > Date.now())
-      return getCfg(this._oauth.token)
-
-    const sign = await generateSign(app_key, app_secret, public_key)
-
-    const res = await this._httpSrv.axiosRef({
-      method: 'GET',
-      url: '/authtoken',
-      params: {
-        sign,
-      },
-      baseURL: host,
-    })
-    const { success, data } = res.data
-
-    if (!success && !data)
-      throw new Error('身份验证错误')
-
-    this._oauth = {
-      token: data,
-      expireAt: Date.now() + 1000 * 60 * 30,
-    }
-    return getCfg(data)
-  }
-
-  private requestWithSession<T = any>(
-    request: (axiosCfg) => Promise<AxiosResponse<T>>,
-  ) {
-    return new Promise<T>((resolve, reject) => {
-      this._getAuthToken().then(
-        config =>
-          request(config)
-            .then(response => resolve(response.data))
-            .catch(reject),
-      ).catch(reject)
     })
   }
 
@@ -140,64 +74,6 @@ export class AuthService {
 
     // 签发 access_token
     return await this.signLoginTicket(user)
-  }
-
-  /**
-   * 区域发展政策大脑平台通过 账号 + 密码 登录，校验并签发 access_token
-   * @param body
-   * @returns
-   */
-  public async loginByPasswordPlus(body: LoginByPasswordPlusBodyDto) {
-    try {
-      const res = await this.requestWithSession((cfg) => {
-        return this._httpSrv.axiosRef({
-          ...cfg,
-          method: 'GET',
-          url: '/getUserInfo',
-          params: body,
-        })
-      })
-
-      const { success, data } = res
-      if (!success || !data) {
-        return res
-      }
-      else {
-        const { private_key } = this._cfgSrv.get<LoginApp>('login')
-        const account = await rsaDecrypt(data.username, private_key)
-        const email = await rsaDecrypt(data.email, private_key)
-
-        // 校验 邮箱 是否被注册
-        let user = await this._userSrv.qb()
-          .where('email = :email', { email })
-          .getOne()
-        if (!user) {
-          user = await this._userSrv.qb()
-            .where('account = :account', { account })
-            .getOne()
-          if (!user) {
-            user = await this._userSrv.insertUser({
-              account,
-              email,
-            })
-          }
-          else {
-            return {
-              success: false,
-              errorCode: '40002',
-              errorMsg: '账号已注册',
-              data: null,
-            }
-          }
-        }
-
-        const { access_token } = await this._jwtAuthSrv.signLoginAuthToken(user)
-        return { status: 0, token: access_token }
-      }
-    }
-    catch (_) {
-      responseError(ErrorCode.AUTH_VALIDATION_ERROR)
-    }
   }
 
   /**
@@ -265,7 +141,7 @@ export class AuthService {
    */
   public async register(body: RegisterBodyDto) {
     // 校验 账号 是否被注册
-    let user = await this._userSrv.qb()
+    const user = await this._userSrv.qb()
       .where('account = :account', { account: body.account })
       .getOne()
     if (user)
@@ -280,25 +156,14 @@ export class AuthService {
 
     // 创建用户
     try {
-      user = await this._userSrv.insertUser(userInfo)
-      // 将账号密码同步至云之遥
-      await this._userSrv.syncAccountPassword(userInfo, 0)
+      const user = await this._userSrv.insertUser(userInfo)
       const sign = await this._jwtAuthSrv.signLoginAuthToken(user)
       return { sign, user: objectOmit(user, ['password']) }
     }
     catch (e) {
-      if (user) {
-        await this._userSrv.repo()
-          .createQueryBuilder()
-          .delete()
-          .where({ id: user.id })
-          .execute()
-      }
       const sqlError = parseSqlError(e)
       if (sqlError === SqlError.DUPLICATE_ENTRY)
         responseError(ErrorCode.USER_EXISTED, '邮箱或账号已被注册')
-      else if (e.message === '同步账号失败')
-        responseError(ErrorCode.COMMON_UNEXPECTED_ERROR, e.message)
       throw e
     }
   }

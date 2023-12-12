@@ -7,7 +7,6 @@ import { DesktopQueueHistory } from 'src/entities/desktop-queue-history'
 
 import { NotifyModule } from '../notify/notify.module'
 import { ExportModule } from '../export/export.module'
-import { UserModule } from '../user/user.module'
 import { DesktopService } from './desktop.service'
 import { ZstackService } from './zstack/zstack.service'
 import { DesktopController } from './desktop.controller'
@@ -22,7 +21,6 @@ import { DesktopQueueHistoryService } from './desktop-queue-history/desktop-queu
     forwardRef(() => ExportModule),
     HttpModule,
     NotifyModule,
-    UserModule,
     TypeOrmModule.forFeature([
       Desktop,
       DesktopQueue,

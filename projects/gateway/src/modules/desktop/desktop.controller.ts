@@ -4,7 +4,6 @@ import { getQuery } from 'src/utils/query'
 import { IsLogin } from 'src/guards/login.guard'
 import type { Desktop } from 'src/entities/desktop'
 import { DesktopIdDto } from 'src/dto/id/desktop.dto'
-import { UserIdDto } from 'src/dto/user-id.dto'
 import { QueryDto, QueryResDto } from 'src/dto/query.dto'
 import { HasPermission } from 'src/guards/permission.guard'
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
@@ -15,7 +14,6 @@ import { DesktopQueueHistoryStatus, DesktopQueueStatus, ErrorCode, PermissionTyp
 import { VerifiedRequiredToken } from 'src/guards/verify-required-token.guard'
 
 import { NotifyService } from '../notify/notify.service'
-import { UserService } from '../user/user.service'
 import { DesktopService } from './desktop.service'
 import { DesktopResDto } from './dto/desktop.res.dto'
 import { CreateDesktopBodyDto } from './dto/create-desktop.body.dto'
@@ -34,7 +32,6 @@ export class DesktopController {
     private readonly _desktopReqSrv: DesktopRequestService,
     private readonly _desktopHisSrv: DesktopQueueHistoryService,
     private readonly _zstackSrv: ZstackService,
-    private readonly _userSrv: UserService,
   ) {}
 
   @ApiOperation({ summary: '判断当前客户端是否在云桌面内使用' })
@@ -60,26 +57,6 @@ export class DesktopController {
     }
   }
 
-  @ApiOperation({ summary: '自动创建一个云桌面并分配' })
-  @HasPermission([PermissionType.DESKTOP_CREATE, PermissionType.DESKTOP_ASSIGN], 'AND')
-  @Post('create/:userId')
-  public async createAndAssignDesktop(
-    @Param() param: UserIdDto,
-  ) {
-    // 根据用户账号调用云之遥接口开通云桌面
-    const request = await this._desktopReqSrv.repo().findOne(
-      {
-        where: { userId: param.userId },
-      },
-    )
-    // 确认是否已是排队状态
-    if (request.status !== DesktopQueueStatus.Queueing)
-      responseError(ErrorCode.DESKTOP_REQUEST_QUEUE_ONLY)
-
-    const user = await this._userSrv.repo().findOne({ where: { id: param.userId } })
-    return await this._desktopSrv.applyOrStopDesktop(user, 0, request.duration)
-  }
-
   @ApiOperation({ summary: '停用一个云桌面' })
   @HasPermission(PermissionType.DESKTOP_DISABLE)
   @Delete(':desktopId')
@@ -97,10 +74,6 @@ export class DesktopController {
         DesktopQueueHistoryStatus.Expired,
         {},
       )
-
-      // 根据用户账号调用云之遥接口停用云桌面
-      const user = await this._userSrv.repo().findOne({ where: { id: desktop.userId } })
-      this._desktopSrv.applyOrStopDesktop(user, 1)
     }
 
     const updateRes = await this._desktopSrv.repo().update(

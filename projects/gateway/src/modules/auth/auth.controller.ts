@@ -9,10 +9,9 @@ import { emailAccountAtLeastOne } from 'src/utils/validator/account-phone-at-lea
 import { JwtAuthService } from '../jwt-auth/jwt-auth.service'
 import { AuthService } from './auth.service'
 import { RegisterBodyDto } from './dto/register.body.dto'
-import { LoginByPasswordPlusSuccessResDto, LoginSuccessResDto } from './dto/login-success.res.dto'
+import { LoginSuccessResDto } from './dto/login-success.res.dto'
 import { LoginByEmailLinkDto } from './dto/login-by-email-link.body.dto'
 import { LoginByPasswordBodyDto } from './dto/login-by-password.body.dto'
-import { LoginByPasswordPlusBodyDto } from './dto/login-by-password-plus.body.dto'
 import { LoginByEmailCodeBodyDto } from './dto/login-by-email-code.body.dto'
 
 @ApiTags('Auth | 身份验证')
@@ -29,13 +28,6 @@ export class AuthController {
   public async loginByPassword(@Body() body: LoginByPasswordBodyDto) {
     emailAccountAtLeastOne(body)
     return await this._authSrv.loginByPassword(body)
-  }
-
-  @ApiOperation({ summary: '区域发展政策大脑平台通过 账号 + 密码 登录' })
-  @ApiSuccessResponse(LoginByPasswordPlusSuccessResDto)
-  @Post('login/passwordplus')
-  public async loginByPasswordPlus(@Body() body: LoginByPasswordPlusBodyDto) {
-    return await this._authSrv.loginByPasswordPlus(body)
   }
 
   @ApiOperation({

@@ -1,5 +1,5 @@
 import { LessThan, Repository } from 'typeorm'
-import { Inject, Injectable, forwardRef } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import type { User } from 'src/entities/user'
 import { InjectRepository } from '@nestjs/typeorm'
 import { responseError } from 'src/utils/response'
@@ -8,8 +8,6 @@ import { DesktopQueueStatus, ErrorCode } from 'zjf-types'
 import { parseSqlError } from 'src/utils/sql-error/parse-sql-error'
 import type { UserIdDto } from 'src/dto/user-id.dto'
 import { NotifyService } from 'src/modules/notify/notify.service'
-import { UserService } from 'src/modules/user/user.service'
-import { DesktopService } from '../desktop.service'
 
 import type { CreateDesktopRequestBodyDto } from './dto/create-desktop-req.body.dto'
 
@@ -19,9 +17,6 @@ export class DesktopRequestService {
     @InjectRepository(DesktopQueue)
     private readonly _desktopQueueRepo: Repository<DesktopQueue>,
     private readonly _notifySrv: NotifyService,
-    @Inject(forwardRef(() => DesktopService))
-    private readonly _desktopSrv: DesktopService,
-    private readonly _userSrv: UserService,
   ) {}
 
   /**
