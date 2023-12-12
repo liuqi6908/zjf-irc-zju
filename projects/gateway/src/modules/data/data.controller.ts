@@ -32,11 +32,6 @@ import { GetDataFieldListResDto } from './dto/get-field-list.res.dto'
 import { UpdateReferenceBodyDto } from './dto/update-reference.body.dto'
 import { UploadDirectoryQueryDto } from './dto/upload-directory.query.dto'
 
-interface Nodes extends DataDirectory {
-  preview?: boolean
-  download?: boolean
-}
-
 @ApiTags('Data | 数据服务')
 @Controller('data')
 export class DataController {
@@ -184,19 +179,7 @@ export class DataController {
     const dataRole = req.dataRole
     const nodes = await this._dataSrv.dirRepo().find({
       where: { rootId: param.dataRootId },
-    }) as Nodes[]
-
-    // 判断表格的文件是否存在
-    for (const node of nodes) {
-      const { level, rootId, nameEN } = node
-      if (level === 4) {
-        const preview = `preview/${rootId}/${nameEN}.csv`
-        const download = `download/${rootId}/${nameEN}.zip`
-
-        node.preview = await this._fileSrv.isExist('data', preview).then(() => true).catch(() => false)
-        node.download = await this._fileSrv.isExist('data', download).then(() => true).catch(() => false)
-      }
-    }
+    })
 
     const allowedScopes = dataRole === '*'
       ? [param.dataRootId]
@@ -363,30 +346,6 @@ export class DataController {
         responseError(ErrorCode.FILE_NOT_FOUND)
       else
         response(ErrorCode.COMMON_UNEXPECTED_ERROR)
-    }
-  }
-
-  @ApiOperation({ summary: '判断文件是否存在' })
-  @ApiParam({ name: 'dataDirectoryId', description: '数据目录的id（请注意，只能传表级别，其他级别没有意义，会直接报错）' })
-  @Get('isExist/:dataDirectoryId')
-  public async isExist(
-    @Param('dataDirectoryId') dataDirectoryId: string,
-  ) {
-    const { code, dataDirectory } = await this._dataSrv.getDataDirectory(dataDirectoryId)
-
-    if (code !== 200)
-      return false
-
-    const dataRootId = dataDirectory?.rootId
-
-    const tableEn = dataDirectory.nameEN
-    const path = `download/${dataRootId}/${tableEn}.zip`
-    try {
-      await this._fileSrv.isExist('data', path)
-      return true
-    }
-    catch (err) {
-      return false
     }
   }
 }

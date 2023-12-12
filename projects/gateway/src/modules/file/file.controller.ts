@@ -8,12 +8,13 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { HasPermission } from 'src/guards/permission.guard'
 import { DataRoleCheck } from 'src/guards/data-role-permission.guard'
 import { ApiSuccessResponse, responseError } from 'src/utils/response'
-import { Body, Controller, Get, Headers, Param, Put, Query, Req, Res, StreamableFile } from '@nestjs/common'
+import { Body, Controller, Get, Headers, Param, Post, Put, Query, Req, Res, StreamableFile } from '@nestjs/common'
 
 import { ApiFormData } from '../../decorators/api/api-form-data'
 import { FileService } from './file.service'
 import { UploadDataIntroParamDto } from './dto/upload-data-intro.param.dto'
 import { GetVerifyAttachmentParamDto } from './dto/get-verify-attachment.param.dto'
+import { FileIsExistParamDto } from './dto/file-is-exist.param.dto'
 
 @SkipThrottle()
 @ApiTags('File | 文件服务')
@@ -196,5 +197,17 @@ export class FileController {
 
     const path = `db/intro/${param.dataRootId}/${param.filename}`
     return new StreamableFile(await this._fileSrv.download('pri', path))
+  }
+
+  @ApiOperation({ summary: '判断文件是否存在' })
+  @Post('isExist')
+  public async isExist(@Body() body: FileIsExistParamDto) {
+    try {
+      await this._fileSrv.isExist(body.bucket, body.path)
+      return true
+    }
+    catch (err) {
+      return false
+    }
   }
 }
