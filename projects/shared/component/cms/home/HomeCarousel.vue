@@ -45,7 +45,7 @@ watch(
       :img-src="item.img"
       pa-none
     >
-      <div flex-center full text-center bg="#025cb9b3">
+      <div flex-center full text-center>
         <div text-grey-1 max-w-4xl>
           <div
             title-2 font-600

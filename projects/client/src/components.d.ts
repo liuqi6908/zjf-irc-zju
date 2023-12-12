@@ -41,7 +41,6 @@ declare module 'vue' {
     VerifyStatus: typeof import('./components/user/VerifyStatus.vue')['default']
     WorksDoc: typeof import('./components/protocol/works-doc.vue')['default']
     ZDialog: typeof import('./components/dialog/ZDialog.vue')['default']
-    ZRadio: typeof import('./components/radio/ZRadio.vue')['default']
     ZSelect: typeof import('./components/select/ZSelect.vue')['default']
   }
 }

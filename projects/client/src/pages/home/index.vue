@@ -27,6 +27,8 @@ function currCom(id: string) {
 const comProps = computed(() => (id: string) => {
   const json: any[] = []
   if (cmsList.value.length) {
+    console.log(cmsList.value);
+    
     const cms = cmsList.value.find((v: any) => v.id === id)
     if (cms?.json) {
       cms.json.forEach((item: any, index: number) => {
@@ -52,7 +54,8 @@ async function init() {
   const list = ['homeCarousel', 'homeDataIntroduce', 'homeContent']
   list.forEach(async (id) => {
     const res = await getCms(id)
-    cmsList.value.push(res)
+    if (res)
+      cmsList.value.push(res)
   })
   question.value = await cmsProps('questionItem')
 }
