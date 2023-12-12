@@ -10,9 +10,9 @@ const navs = computed(() => {
 })
 
 useHead({
-  title: '数智三农云科研平台-管理后台',
+  title: '南方科技大学云科研平台-管理后台',
   meta: [
-    { name: 'description', content: '「数智三农云科研平台」是一整套供科研人员处理分析大数据和开展学术研究的云端超融合系统的简称。' },
+    { name: 'description', content: '「南方科技大学云科研平台」是一整套供科研人员处理分析大数据和开展学术研究的云端超融合系统的简称。' },
   ],
   link: [
     {

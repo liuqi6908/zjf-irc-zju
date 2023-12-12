@@ -25,12 +25,12 @@ const showUserAgreementDialog = ref(false)
       <span
         text-primary-1 cursor-pointer hover:underline
         @click="showPrivacyDialog = true"
-      >《「数智三农云科研平台」隐私政策》</span>
+      >《「南方科技大学云科研平台」隐私政策》</span>
       <span>、</span>
       <span
         text-primary-1 cursor-pointer hover:underline
         @click="showUserAgreementDialog = true"
-      >《「数智三农云科研平台」用户使用协议》</span>
+      >《「南方科技大学云科研平台」用户使用协议》</span>
     </div>
     <ZDialog
       v-model="showPrivacyDialog"
@@ -40,7 +40,7 @@ const showUserAgreementDialog = ref(false)
         height: '95vh',
       }"
       scroll
-      title="「数智三农云科研平台」隐私政策"
+      title="「南方科技大学云科研平台」隐私政策"
     >
       <PrivacyDoc />
     </ZDialog>
@@ -52,7 +52,7 @@ const showUserAgreementDialog = ref(false)
         height: '95vh',
       }"
       scroll
-      title="「数智三农云科研平台」用户使用协议"
+      title="「南方科技大学云科研平台」用户使用协议"
     >
       <UserAgreementDoc />
     </ZDialog>
