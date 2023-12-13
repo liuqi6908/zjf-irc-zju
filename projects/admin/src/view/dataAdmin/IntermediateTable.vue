@@ -11,7 +11,7 @@ interface Props {
 }
 
 const { id } = defineProps<Props>()
-const { getDataByRootId, rootData, loading } = useDatabase()
+const { getDataByRootId, rootData, loading, downloadFiles, previewFiles } = useDatabase()
 
 const file = ref<File>()
 
@@ -61,7 +61,7 @@ function flattenTree(tree: Node, parentNames = ([] as any[]), result = ([] as an
 
             if (tableChildren) {
               for (const table of tableChildren) {
-                const { nameZH: tableNameZH, nameEN: tableNameEN, preview, download } = table as Node
+                const { nameZH: tableNameZH, nameEN: tableNameEN } = table as Node
 
                 result.push({
                   DATABASE: currentNames[0].nameZH,
@@ -72,8 +72,8 @@ function flattenTree(tree: Node, parentNames = ([] as any[]), result = ([] as an
                   PART_ENG: partNameEN,
                   TABLE: tableNameZH,
                   TABLE_ENG: tableNameEN,
-                  preview,
-                  download
+                  preview: previewFiles.value.includes(tableNameEN),
+                  download: downloadFiles.value.includes(tableNameEN),
                 })
               }
             }
@@ -273,8 +273,7 @@ async function massUploadTableDataFile(type: UploadType, files: File[]) {
         <q-tr>
           <q-td v-for="col in columns" :key="col.name">
             <template v-if="['preview', 'download'].includes(col.name)">
-              <div v-if="typeof props.row[col.name] !== 'boolean'" i-mingcute:loading-fill m-auto text="lg alert-warning" animate-spin />
-              <div v-else-if="props.row[col.name]" i-mdi:check-bold m-auto text="lg alert-success" />
+              <div v-if="props.row[col.name]" i-mdi:check-bold m-auto text="lg alert-success" />
               <div v-else i-mdi:close-thick m-auto text="lg alert-error" />
             </template>
             <div v-else-if="col.name === 'operation'" flex="~ row gap-2">

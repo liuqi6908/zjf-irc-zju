@@ -1,5 +1,4 @@
 import $http from 'axios'
-import type { UploadType } from 'zjf-types'
 
 const { $put, $post } = useRequest()
 const { authToken } = useUser()
@@ -35,14 +34,13 @@ export function uploadIntroduceFile(id: string, nameEn: string, file: FormData) 
 }
 
 /**
- * 表格文件是否存在
- * @param rootId
- * @param dataDirectorId
- * @returns
+ * 获取指定文件夹下的文件列表
  */
-export function tableFileIsExist(uploadType: UploadType, rootId: string, tableEn: string) {
-  return $post<boolean>('/file/isExist', {
-    bucket: 'data',
-    path: `/${uploadType}/${rootId}/${tableEn}.${uploadType === 'download' ? 'zip' : 'csv'}`,
-  })
+export function getFolderFiles(body: {
+  bucket: 'data' | 'pri' | 'pub'
+  path: string
+}) {
+  return $post<{
+    name: string
+  }[]>('/file/folderFiles', body)
 }

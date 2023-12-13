@@ -1,6 +1,5 @@
-import { UploadType } from 'zjf-types'
 import type { IDataDirectory } from 'zjf-types'
-import { tableFileIsExist } from '~/api/file'
+import { getFolderFiles } from '~/api/file'
 
 const { $get } = useRequest()
 
@@ -20,6 +19,10 @@ const loading = ref(false)
 const rootList = ref<IDataDirectory[]>()
 /** 分类数据 */
 const rootData = ref<Node[]>()
+/** 数据大类中所有的下载文件 */
+const downloadFiles = ref<Array<string | undefined>>([])
+/** 数据大类中所有的样例文件 */
+const previewFiles = ref<Array<string | undefined>>([])
 
 export function useDatabase() {
   /**
@@ -33,30 +36,28 @@ export function useDatabase() {
       loading.value = true
       try {
         rootData.value = await $get<Node[]>(`/data/list/${id}`)
+        if (rootData.value[0]?.children?.length) {
+          const { id } = rootData.value[0]
+
+          const _getFileNames = (arr: { name: string }[]) => {
+            return arr.map(({ name }) => {
+              return name.split('/').pop()?.split('.').shift()
+            }).filter(v => v)
+          }
+
+          downloadFiles.value = _getFileNames(await getFolderFiles({
+            bucket: 'data',
+            path: `/download/${id}/`,
+          }))
+          previewFiles.value = _getFileNames(await getFolderFiles({
+            bucket: 'data',
+            path: `/preview/${id}/`,
+          }))
+        }
       }
       catch (_) {}
       finally {
         loading.value = false
-        if (rootData.value[0]?.children?.length) {
-          const { id, children } = rootData.value[0]
-          for (const database of children) {
-            if (database.children?.length) {
-              for (const b_database of database.children) {
-                if (b_database.children?.length) {
-                  for (const part of b_database.children) {
-                    if (part.children?.length) {
-                      for (const table of part.children) {
-                        const { nameEN } = table
-                        table.preview = await tableFileIsExist(UploadType.PREVIEW, id, nameEN)
-                        table.download = await tableFileIsExist(UploadType.DOWNLOAD, id, nameEN)
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     }
   }
@@ -76,5 +77,7 @@ export function useDatabase() {
     loading,
     rootList,
     rootData,
+    downloadFiles,
+    previewFiles,
   }
 }
