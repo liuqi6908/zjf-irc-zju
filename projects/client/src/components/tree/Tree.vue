@@ -50,7 +50,16 @@ const route = useRoute()
             <q-item
               v-for="i in child.children"
               :key="i.nameEN"
-              :to="{ path: '/database/dataIntroduce', query: { dataId: i.id, rootId: route.query.database, reference, label: props.label } }"
+              :to="{
+                path: '/database/dataIntroduce',
+                query: {
+                  label: props.label,
+                  rootId: route.query.database,
+                  dataId: i.id,
+                  tableEn: i.nameEN,
+                  reference,
+                }
+              }"
               clickable dense rounded-0 text-left text-nowrap text-grey-8
               :title="i.nameZH"
               @click="$emit('update:id', i.id)"

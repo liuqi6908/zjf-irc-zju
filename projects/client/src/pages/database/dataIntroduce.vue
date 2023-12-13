@@ -87,8 +87,10 @@ onBeforeMount(async () => {
   if (!isDesktop.value && isVerify.value)
     getRequestInfo()
   // 在云桌面中，判断该表格文件是否存在
-  else if (isDesktop.value)
-    isExist.value = await tableFileIsExist(route.query.dataId as string)
+  else if (isDesktop.value) {
+    const { rootId, tableEn } = route.query as Record<string, string>
+    isExist.value = await tableFileIsExist(rootId, tableEn)
+  }
 })
 
 /**
