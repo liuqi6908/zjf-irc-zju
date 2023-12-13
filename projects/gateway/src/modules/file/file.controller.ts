@@ -1,5 +1,5 @@
 import { IsLogin } from 'src/guards/login.guard'
-import { SkipThrottle } from '@nestjs/throttler'
+import { SkipThrottle, Throttle } from '@nestjs/throttler'
 import { FilenameDto } from 'src/dto/filename.dto'
 import { FilePathDto } from 'src/dto/file-path.dto'
 import { ErrorCode, PermissionType } from 'zjf-types'
@@ -200,6 +200,7 @@ export class FileController {
   }
 
   @ApiOperation({ summary: '判断文件是否存在' })
+  @Throttle(10000, 60)
   @Post('isExist')
   public async isExist(@Body() body: FileIsExistParamDto) {
     try {
