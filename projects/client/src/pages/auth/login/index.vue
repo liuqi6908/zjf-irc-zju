@@ -1,18 +1,33 @@
 <script setup lang="ts">
-import { validateEmail, validatePassword } from 'zjf-utils'
+import { validateEmail, validatePassword, decryptPasswordInHttp } from 'zjf-utils'
 import { ErrorCode } from 'zjf-types'
+import { REMEMBER_LOGIN_INFO_KEY } from 'shared/constants/token.constant'
 
 const { useLogin } = useUser()
 const $router = useRouter()
 
 const userCode = ref('')
 const password = ref('')
+const rememberPassword = ref(false)
 const acceptObj = reactive({
   password: false,
 })
 
 /** 登录提示对话框 */
 const dialog = ref(false)
+
+onBeforeMount(() => {
+  try {
+    const loginInfo = JSON.parse(localStorage.getItem(REMEMBER_LOGIN_INFO_KEY) || '{}')
+    if (loginInfo.userCode && loginInfo.password) {
+      userCode.value = loginInfo.userCode
+      password.value = decryptPasswordInHttp(loginInfo.password)
+      acceptObj.password = true
+      rememberPassword.value = true
+    }
+  }
+  catch (_) {}
+})
 
 function passwordRule(val: string) {
   return validatePassword(val) || true
@@ -35,7 +50,7 @@ async function handleEnter() {
     return
 
   try {
-    await useLogin(logArg.value)
+    await useLogin(logArg.value, rememberPassword.value)
   }
   catch (e: any) {
     const { status } = e.response?.data || {}
@@ -64,7 +79,14 @@ async function handleEnter() {
       @keydown.enter="handleEnter()"
     />
 
-    <RouterLink text-grey-1 font-400 mt-2 :to="{ path: 'forgetPassword' }" v-text="'忘记密码？'" />
+    <q-checkbox
+      v-model="rememberPassword"
+      dark color="primary" size="sm"
+      label="记住账号密码"
+      relative right-2
+    />
+
+    <RouterLink text-grey-1 font-400 mt-4 :to="{ path: 'forgetPassword' }" v-text="'忘记密码？'" />
 
     <client-only>
       <Btn color="primary-1" mt-20 h="12!" bg-color="grey-1" :disable="disable" @click="handleEnter">

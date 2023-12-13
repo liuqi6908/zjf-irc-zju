@@ -2,6 +2,7 @@ import { VerificationStatus } from 'zjf-types'
 import type { IVerificationHistory } from 'zjf-types'
 import { encryptPasswordInHttp } from 'zjf-utils'
 import { Notify } from 'quasar'
+import { REMEMBER_LOGIN_INFO_KEY } from 'shared/constants/token.constant'
 
 import { getProfile } from '~/api/auth/getProfile'
 import { login } from '~/api/auth/login'
@@ -22,7 +23,7 @@ export function useUser($router = useRouter()) {
     password: string
     account?: string
     email?: string
-  }) => {
+  }, rememberPassword = false) => {
     const res = await login({
       ...options,
       /** 加密 */
@@ -32,6 +33,12 @@ export function useUser($router = useRouter()) {
       authToken.value = res.sign.access_token
       userInfo.value = res.user
       $router.replace({ path: '/' })
+      if (rememberPassword) {
+        localStorage.setItem(REMEMBER_LOGIN_INFO_KEY, JSON.stringify({
+          userCode: options.account || options.email,
+          password: encryptPasswordInHttp(options.password),
+        }))
+      }
     }
   }
 
@@ -54,8 +61,8 @@ export function useUser($router = useRouter()) {
   }
 
   /** 登出 */
-  const useLogout = () => {
-    logout()
+  const useLogout = async () => {
+    await logout()
     authToken.value = null
     userInfo.value = undefined
     $router.replace({ path: '/' })
