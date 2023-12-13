@@ -70,6 +70,29 @@ export class FileService {
     }
   }
 
+  /**
+   * 获取指定文件夹下的文件列表
+   * @param bucket
+   * @param path
+   * @returns
+   */
+  public async getFolderFiles(bucket: keyof MinioConfig['bucket'], path: string) {
+    const client = this.getClient()
+    const filesList = []
+    return new Promise((resolve, reject) => {
+      client.listObjects(this._cfg.bucket[bucket], path, true)
+        .on('data', (obj) => {
+          filesList.push(obj)
+        })
+        .on('error', (err) => {
+          reject(err)
+        })
+        .on('end', () => {
+          resolve(filesList)
+        })
+    })
+  }
+
   private async _download(bucket: keyof MinioConfig['bucket'], path: string, range?: { start: number; end: number }) {
     const client = this.getClient()
 

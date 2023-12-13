@@ -211,4 +211,10 @@ export class FileController {
       return false
     }
   }
+
+  @ApiOperation({ summary: '获取指定文件夹下的文件列表' })
+  @Post('folderFiles')
+  public async getFolderFiles(@Body() body: FileIsExistParamDto) {
+    return await this._fileSrv.getFolderFiles(body.bucket, body.path)
+  }
 }
