@@ -24,7 +24,7 @@ const baseInfoList = reactive([
   {
     label: '邮箱',
     id: 'email',
-    caption: '可用于接受平台信息',
+    caption: '可用于接收平台信息',
     inputVal: '',
     edit: '',
     smsCode: '',
