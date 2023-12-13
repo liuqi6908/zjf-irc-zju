@@ -136,22 +136,18 @@ async function uploadTableDataFile(type: UploadType, file: File, row?: any) {
     }
 
     loading.value = true
-    const { DATABASE_ENG, B_DATABASE_ENG, PART_ENG, TABLE_ENG } = row || {}
+    const { TABLE_ENG } = row || {}
 
     await uploadTableData(type, id, file, TABLE_ENG)
     Notify.create({
       message: '上传成功',
       type: 'success',
     })
-    if (rootData.value?.length && DATABASE_ENG && B_DATABASE_ENG && PART_ENG && TABLE_ENG) {
-      const table = rootData.value[0].children?.find(v => v.nameEN === DATABASE_ENG)
-        ?.children?.find(v => v.nameEN === B_DATABASE_ENG)
-        ?.children?.find(v => v.nameEN === PART_ENG)
-        ?.children?.find(v => v.nameEN === TABLE_ENG)
-      if (table) {
-        table[type] = true
-      }
-    }
+
+    if (type === UploadType.PREVIEW)
+      previewFiles.value.push(TABLE_ENG)
+    else
+      downloadFiles.value.push(TABLE_ENG)
   }
   catch (e: any) {
     const { message } = e.response?.data || {}

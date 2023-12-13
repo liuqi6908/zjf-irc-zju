@@ -47,11 +47,11 @@ export function useDatabase() {
 
           downloadFiles.value = _getFileNames(await getFolderFiles({
             bucket: 'data',
-            path: `/download/${id}/`,
+            path: `download/${id}`,
           }))
           previewFiles.value = _getFileNames(await getFolderFiles({
             bucket: 'data',
-            path: `/preview/${id}/`,
+            path: `preview/${id}`,
           }))
         }
       }
