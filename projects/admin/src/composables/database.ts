@@ -39,23 +39,23 @@ export function useDatabase() {
         loading.value = false
         if (rootData.value[0]?.children?.length) {
           const { id, children } = rootData.value[0]
-          children.forEach((database) => {
+          for (const database of children) {
             if (database.children?.length) {
-              database.children.forEach((b_database) => {
+              for (const b_database of database.children) {
                 if (b_database.children?.length) {
-                  b_database.children.forEach((part) => {
+                  for (const part of b_database.children) {
                     if (part.children?.length) {
-                      part.children.forEach(async (table) => {
+                      for (const table of part.children) {
                         const { nameEN } = table
                         table.preview = await tableFileIsExist(UploadType.PREVIEW, id, nameEN)
                         table.download = await tableFileIsExist(UploadType.DOWNLOAD, id, nameEN)
-                      })
+                      }
                     }
-                  })
+                  }
                 }
-              })
+              }
             }
-          })
+          }
         }
       }
     }
