@@ -1,6 +1,7 @@
 import $http from 'axios'
+import type { UploadType } from 'zjf-types'
 
-const { $put } = useRequest()
+const { $put, $post } = useRequest()
 const { authToken } = useUser()
 
 /**
@@ -31,4 +32,17 @@ export function getIntroduceFile(id: string, nameEn: string) {
  */
 export function uploadIntroduceFile(id: string, nameEn: string, file: FormData) {
   return $put(`/file/private/db/${id}/${nameEn}.docx`, file)
+}
+
+/**
+ * 表格文件是否存在
+ * @param rootId
+ * @param dataDirectorId
+ * @returns
+ */
+export function tableFileIsExist(uploadType: UploadType, rootId: string, tableEn: string) {
+  return $post<boolean>('/file/isExist', {
+    bucket: 'data',
+    path: `/${uploadType}/${rootId}/${tableEn}.${uploadType === 'download' ? 'zip' : 'csv'}`,
+  })
 }

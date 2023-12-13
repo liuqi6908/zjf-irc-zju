@@ -1,4 +1,6 @@
+import { UploadType } from 'zjf-types'
 import type { IDataDirectory } from 'zjf-types'
+import { tableFileIsExist } from '~/api/file'
 
 const { $get } = useRequest()
 
@@ -29,8 +31,33 @@ export function useDatabase() {
     rootData.value = []
     if (id) {
       loading.value = true
-      rootData.value = await $get<Node[]>(`/data/list/${id}`)
-      loading.value = false
+      try {
+        rootData.value = await $get<Node[]>(`/data/list/${id}`)
+      }
+      catch (_) {}
+      finally {
+        loading.value = false
+        if (rootData.value[0]?.children?.length) {
+          const { id, children } = rootData.value[0]
+          children.forEach((database) => {
+            if (database.children?.length) {
+              database.children.forEach((b_database) => {
+                if (b_database.children?.length) {
+                  b_database.children.forEach((part) => {
+                    if (part.children?.length) {
+                      part.children.forEach(async (table) => {
+                        const { nameEN } = table
+                        table.preview = await tableFileIsExist(UploadType.PREVIEW, id, nameEN)
+                        table.download = await tableFileIsExist(UploadType.DOWNLOAD, id, nameEN)
+                      })
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      }
     }
   }
 
